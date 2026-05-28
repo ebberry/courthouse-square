@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lease &amp; Leasing Process — Courthouse Square</title>
+  <meta name="description" content="Read the standard Courthouse Square lease and the leasing process. We post our lease publicly so prospective tenants can show up to the conversation already informed." />
+
+  <!-- Tailwind CDN. Mirrors the config in index.html so styles match. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            evergreen: {
+              50:'#f2f6f3',100:'#dde8e0',200:'#bcd0c2',300:'#92b29c',400:'#699177',
+              500:'#4b755c',600:'#385c47',700:'#2c4a39',800:'#243b2f',900:'#1e3128',950:'#0f1d16'
+            },
+            sand: { 50:'#faf7f2',100:'#f3ece0',200:'#e6d7bf',300:'#d4bb95',400:'#c19c6b',500:'#b08550' }
+          },
+          fontFamily: {
+            sans:  ['Inter','ui-sans-serif','system-ui','sans-serif'],
+            serif: ['Fraunces','ui-serif','Georgia','serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; letter-spacing: -0.01em; }
+
+    /* Typography for the rendered Markdown lease body. */
+    .prose-lease { color: #1e3128; line-height: 1.7; }
+    .prose-lease h1 { font-size: 2rem; font-weight: 600; margin: 2rem 0 1rem; color: #1e3128; }
+    .prose-lease h2 { font-size: 1.5rem; font-weight: 600; margin: 2rem 0 .75rem; color: #1e3128; border-bottom: 1px solid #dde8e0; padding-bottom: .25rem; }
+    .prose-lease h3 { font-size: 1.2rem; font-weight: 600; margin: 1.5rem 0 .5rem; color: #243b2f; }
+    .prose-lease p, .prose-lease li { font-family: 'Inter', sans-serif; }
+    .prose-lease p { margin: .75rem 0; }
+    .prose-lease ul, .prose-lease ol { margin: .75rem 0 .75rem 1.5rem; }
+    .prose-lease ul { list-style: disc; }
+    .prose-lease ol { list-style: decimal; }
+    .prose-lease li { margin: .35rem 0; }
+    .prose-lease strong { color: #1e3128; }
+    .prose-lease hr { border: 0; border-top: 1px solid #dde8e0; margin: 2rem 0; }
+    .prose-lease blockquote {
+      border-left: 3px solid #4b755c;
+      padding: .25rem 1rem;
+      color: #385c47;
+      background: #f2f6f3;
+      margin: 1rem 0;
+      font-style: italic;
+    }
+    .prose-lease code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      background: #f3ece0;
+      padding: .1rem .35rem;
+      border-radius: 3px;
+      font-size: .9em;
+    }
+  </style>
+</head>
+
+<body class="bg-sand-50 text-evergreen-950 antialiased">
+
+<!-- ============================================================
+     NAV
+============================================================ -->
+<header class="sticky top-0 z-40 bg-sand-50/90 backdrop-blur border-b border-evergreen-100">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-3 flex items-center justify-between">
+    <a href="/" class="flex items-baseline gap-2">
+      <span class="font-serif font-semibold text-lg sm:text-xl text-evergreen-900">Courthouse Square</span>
+      <span class="hidden sm:inline text-xs text-evergreen-700">Vashon Island, WA</span>
+    </a>
+    <nav class="flex items-center gap-4 sm:gap-6 text-sm">
+      <a href="/#suites" class="hover:text-evergreen-700">Suites</a>
+      <a href="/#location" class="hover:text-evergreen-700">Location</a>
+      <a href="/lease/" class="text-evergreen-900 font-medium">Lease</a>
+      <a href="/#inquire"
+         class="inline-flex items-center rounded-md bg-evergreen-800 text-sand-50 px-3 py-1.5 hover:bg-evergreen-700 transition">
+        Inquire
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main class="mx-auto max-w-4xl px-4 sm:px-6 py-12 sm:py-16">
+
+  <!-- ============================================================
+       VERSION BANNER
+       Updated whenever a new lease version is tagged.
+  ============================================================ -->
+  <div class="rounded-md border border-evergreen-200 bg-evergreen-50 px-4 py-3 text-sm text-evergreen-900 flex flex-wrap items-center justify-between gap-2">
+    <span>
+      <strong>Current version:</strong>
+      <span id="current-version">v2026.05.28</span>
+    </span>
+    <a href="/lease/history/" class="underline hover:text-evergreen-700">View prior versions →</a>
+  </div>
+
+  <!-- ============================================================
+       LEASING PROCESS
+  ============================================================ -->
+  <section class="mt-10">
+    <h1 class="text-4xl sm:text-5xl font-serif font-semibold text-evergreen-900">Our leasing process</h1>
+    <p class="mt-4 text-lg text-evergreen-800/90 leading-relaxed">
+      Leasing a suite at Courthouse Square is straightforward. Here's the sequence from first tour to signed lease.
+    </p>
+
+    <ol class="mt-8 space-y-5">
+      <li class="flex gap-4">
+        <span class="shrink-0 w-9 h-9 rounded-full bg-evergreen-800 text-sand-50 font-serif flex items-center justify-center">1</span>
+        <div>
+          <h3 class="font-serif text-xl text-evergreen-900">Tour the space</h3>
+          <p class="text-evergreen-800/90">In person or virtually. We'll walk you through the available suites and the building's shared spaces.</p>
+        </div>
+      </li>
+      <li class="flex gap-4">
+        <span class="shrink-0 w-9 h-9 rounded-full bg-evergreen-800 text-sand-50 font-serif flex items-center justify-center">2</span>
+        <div>
+          <h3 class="font-serif text-xl text-evergreen-900">Send us a Letter of Intent</h3>
+          <p class="text-evergreen-800/90">It tells us the suite you want, your proposed start date, term length, and any special needs. Email the completed Part I to <a href="mailto:leasing@jtsheffield.com" class="underline hover:text-evergreen-700">leasing@jtsheffield.com</a> along with a refundable <strong>$100 Good Faith Deposit</strong> — credited toward your first month's rent if we sign, refunded in full within three business days if we don't.</p>
+        </div>
+      </li>
+      <li class="flex gap-4">
+        <span class="shrink-0 w-9 h-9 rounded-full bg-evergreen-800 text-sand-50 font-serif flex items-center justify-center">3</span>
+        <div>
+          <h3 class="font-serif text-xl text-evergreen-900">We review and respond</h3>
+          <p class="text-evergreen-800/90">Usually within a few business days. We run standard background and credit checks (authorized in the LOI) and either confirm, ask clarifying questions, or propose adjustments.</p>
+        </div>
+      </li>
+      <li class="flex gap-4">
+        <span class="shrink-0 w-9 h-9 rounded-full bg-evergreen-800 text-sand-50 font-serif flex items-center justify-center">4</span>
+        <div>
+          <h3 class="font-serif text-xl text-evergreen-900">Sign and move in</h3>
+          <p class="text-evergreen-800/90">The signed lease is the same standard lease you can read below, with your specific terms filled in.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============================================================
+       TRANSPARENCY STATEMENT
+  ============================================================ -->
+  <section class="mt-12 rounded-lg bg-evergreen-900 text-sand-50 p-6 sm:p-8">
+    <h2 class="text-2xl font-serif font-semibold">Why is the lease public?</h2>
+    <p class="mt-3 text-sand-100 leading-relaxed">
+      We post our standard lease publicly because no one should have to commit before they've seen the fine print. Read it. Share it with your attorney. Show up to the conversation already informed.
+    </p>
+  </section>
+
+  <!-- ============================================================
+       DOWNLOAD BUTTONS
+  ============================================================ -->
+  <section class="mt-10 flex flex-wrap gap-3">
+    <a href="/lease/letter-of-intent.pdf"
+       class="inline-flex items-center rounded-md bg-evergreen-800 text-sand-50 px-5 py-3 font-medium hover:bg-evergreen-700 transition">
+      Download Letter of Intent (PDF)
+    </a>
+    <a id="lease-pdf-link"
+       href="/lease/archive/v2026.05.28/lease.pdf"
+       class="inline-flex items-center rounded-md border border-evergreen-800 text-evergreen-900 px-5 py-3 font-medium hover:bg-evergreen-50 transition">
+      Download current lease (PDF)
+    </a>
+  </section>
+
+  <!-- ============================================================
+       STANDARD LEASE
+       Rendered from /lease/lease.md client-side via marked.js.
+  ============================================================ -->
+  <section class="mt-14">
+    <h2 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900 border-b border-evergreen-200 pb-3">Standard lease</h2>
+
+    <article id="lease-body" class="prose-lease mt-6">
+      <p class="text-evergreen-800/80 italic">Loading lease text…</p>
+    </article>
+  </section>
+
+</main>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer class="bg-evergreen-950 text-sand-100 mt-16">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-10 grid sm:grid-cols-3 gap-6 text-sm">
+    <div>
+      <svg viewBox="0 0 280 160" role="img" aria-label="Courthouse Square — Vashon"
+           class="h-20 w-auto text-sand-50" fill="currentColor"
+           xmlns="http://www.w3.org/2000/svg">
+        <g font-family="Fraunces, Georgia, 'Times New Roman', serif" text-anchor="middle">
+          <circle cx="140" cy="14" r="3" />
+          <text x="140" y="60" font-size="38" font-weight="600" letter-spacing="2">COURTHOUSE</text>
+          <text x="140" y="100" font-size="38" font-weight="600" letter-spacing="2">SQUARE</text>
+          <line x1="60" y1="118" x2="220" y2="118" stroke="currentColor" stroke-width="1.5" />
+          <text x="140" y="142" font-size="18" font-weight="500" letter-spacing="6">VASHON</text>
+        </g>
+      </svg>
+      <address class="not-italic mt-3 text-sand-200">
+        19001 Vashon Hwy SW<br/>
+        Vashon, WA 98070
+      </address>
+    </div>
+    <div>
+      <p class="text-sand-200">Owned and operated by J.T. Sheffield LLC.</p>
+      <p class="mt-2">
+        General: <a href="mailto:Info@JTSHeffield.com" class="underline hover:text-sand-50">Info@JTSHeffield.com</a>
+      </p>
+      <p class="mt-1">
+        Leasing: <a href="mailto:leasing@jtsheffield.com" class="underline hover:text-sand-50">leasing@jtsheffield.com</a>
+      </p>
+    </div>
+    <div class="sm:text-right">
+      <ul class="space-y-1">
+        <li><a href="/lease/" class="hover:text-sand-50">Lease &amp; process</a></li>
+        <li><a href="/lease/history/" class="hover:text-sand-50">Lease history</a></li>
+        <li><a href="/#inquire" class="hover:text-sand-50">Inquire</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-evergreen-800">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 py-4 text-xs text-sand-200/80 flex flex-wrap justify-between gap-2">
+      <span>&copy; <span id="copyright-year"></span> J.T. Sheffield LLC. All rights reserved.</span>
+      <span>Vashon Island, Washington</span>
+    </div>
+  </div>
+</footer>
+
+<!-- marked.js renders the lease.md Markdown to HTML in the browser. -->
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script>
+  document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+  // Fetch and render the lease.
+  (async function () {
+    const body = document.getElementById('lease-body');
+    try {
+      const res = await fetch('/lease/lease.md', { cache: 'no-cache' });
+      if (!res.ok) throw new Error('Could not load lease.');
+      const md = await res.text();
+      // marked options: sane defaults. We control the source markdown so XSS isn't a concern.
+      body.innerHTML = marked.parse(md);
+    } catch (err) {
+      body.innerHTML = '<p>The lease text is being updated. Please <a class="underline" href="/#inquire">contact us</a> to request a copy.</p>';
+    }
+  })();
+</script>
+
+</body>
+</html>

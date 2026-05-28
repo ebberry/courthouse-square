@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Courthouse Square — Professional Office Space on Vashon Island</title>
+  <meta name="description" content="Quiet, professional office suites on Vashon Island, WA. Abundant free parking, a shared patio, and an easy in-and-out location near the Athletic Center, schools, and Metro transit." />
+
+  <!-- Open Graph / social -->
+  <meta property="og:title" content="Courthouse Square — Professional Office Space on Vashon Island" />
+  <meta property="og:description" content="Quiet, professional offices for businesses whose clients come by appointment. Free parking, shared patio, easy in-and-out." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/images/hero.jpg" />
+
+  <!-- Tailwind via CDN. No build step. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Tailwind config — muted natural palette inspired by Pacific Northwest evergreens.
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            evergreen: {
+              50:  '#f2f6f3',
+              100: '#dde8e0',
+              200: '#bcd0c2',
+              300: '#92b29c',
+              400: '#699177',
+              500: '#4b755c',
+              600: '#385c47',
+              700: '#2c4a39',
+              800: '#243b2f',
+              900: '#1e3128',
+              950: '#0f1d16'
+            },
+            sand: {
+              50:  '#faf7f2',
+              100: '#f3ece0',
+              200: '#e6d7bf',
+              300: '#d4bb95',
+              400: '#c19c6b',
+              500: '#b08550'
+            },
+            slate: {
+              // Tailwind's default slate works; aliased here for clarity.
+            }
+          },
+          fontFamily: {
+            sans:   ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            serif:  ['Fraunces', 'ui-serif', 'Georgia', 'serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Fonts: Inter for body, Fraunces for headings. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; letter-spacing: -0.01em; }
+
+    /* Image fallback: muted block if a real photo hasn't been dropped in yet. */
+    .photo-placeholder {
+      background: linear-gradient(135deg, #2c4a39 0%, #4b755c 50%, #92b29c 100%);
+      color: #f3ece0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      text-align: center;
+      padding: 1rem;
+    }
+    img.with-fallback { background: #2c4a39; }
+  </style>
+</head>
+
+<body class="bg-sand-50 text-evergreen-950 antialiased">
+
+<!-- ============================================================
+     NAV
+     Minimal sticky nav. Anchors to landing page sections.
+============================================================ -->
+<header class="sticky top-0 z-40 bg-sand-50/90 backdrop-blur border-b border-evergreen-100">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-3 flex items-center justify-between">
+    <a href="/" class="flex items-baseline gap-2">
+      <span class="font-serif font-semibold text-lg sm:text-xl text-evergreen-900">Courthouse Square</span>
+      <span class="hidden sm:inline text-xs text-evergreen-700">Vashon Island, WA</span>
+    </a>
+    <nav class="flex items-center gap-4 sm:gap-6 text-sm">
+      <a href="#suites"   class="hover:text-evergreen-700">Suites</a>
+      <a href="#location" class="hover:text-evergreen-700">Location</a>
+      <a href="/lease/"   class="hover:text-evergreen-700">Lease</a>
+      <a href="#inquire"
+         class="inline-flex items-center rounded-md bg-evergreen-800 text-sand-50 px-3 py-1.5 hover:bg-evergreen-700 transition">
+        Inquire
+      </a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============================================================
+     1. HERO
+============================================================ -->
+<section class="relative">
+  <!-- Background photo. Owner drops a real photo at /images/hero.jpg. -->
+  <div class="absolute inset-0 -z-10">
+    <img src="/images/hero.jpg" alt=""
+         class="w-full h-full object-cover with-fallback"
+         onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');" />
+    <!-- Dark overlay so text stays legible over any photo. -->
+    <div class="absolute inset-0 bg-evergreen-950/55"></div>
+  </div>
+
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-24 sm:py-36 text-sand-50">
+    <!-- Courthouse Square wordmark. Inline SVG so it inherits the current
+         text color via `fill="currentColor"`. Stand-alone version is at
+         /images/logo.svg for download / print use. -->
+    <svg viewBox="0 0 280 160" role="img" aria-label="Courthouse Square — Vashon"
+         class="h-28 sm:h-36 w-auto mb-8 text-sand-50" fill="currentColor"
+         xmlns="http://www.w3.org/2000/svg">
+      <g font-family="Fraunces, Georgia, 'Times New Roman', serif" text-anchor="middle">
+        <circle cx="140" cy="14" r="3" />
+        <text x="140" y="60" font-size="38" font-weight="600" letter-spacing="2">COURTHOUSE</text>
+        <text x="140" y="100" font-size="38" font-weight="600" letter-spacing="2">SQUARE</text>
+        <line x1="60" y1="118" x2="220" y2="118" stroke="currentColor" stroke-width="1.5" />
+        <text x="140" y="142" font-size="18" font-weight="500" letter-spacing="6">VASHON</text>
+      </g>
+    </svg>
+    <p class="uppercase tracking-widest text-xs sm:text-sm text-sand-200 mb-4">Vashon Island, Washington</p>
+    <h1 class="text-4xl sm:text-6xl font-serif font-semibold max-w-3xl leading-tight">
+      A calm, professional home for your practice.
+    </h1>
+    <p class="mt-6 max-w-2xl text-lg sm:text-xl text-sand-100">
+      Courthouse Square is a quiet office building for businesses whose clients arrive by appointment — with the parking, patio, and easy access that downtown storefronts simply can't offer.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="#suites"
+         class="inline-flex items-center rounded-md bg-sand-50 text-evergreen-900 px-5 py-3 font-medium hover:bg-sand-100 transition">
+        View available suites
+      </a>
+      <a href="#inquire"
+         class="inline-flex items-center rounded-md border border-sand-50/60 text-sand-50 px-5 py-3 font-medium hover:bg-sand-50/10 transition">
+        Get in touch
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     2. WHO IT'S FOR
+============================================================ -->
+<section class="bg-sand-50">
+  <div class="mx-auto max-w-4xl px-4 sm:px-6 py-16 sm:py-20 text-center">
+    <h2 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900">Built for practices that run on appointments.</h2>
+    <p class="mt-6 text-lg text-evergreen-800/90 leading-relaxed">
+      Medical, dental, legal, accounting, therapy, bodywork, tutoring, small professional services — the kinds of businesses whose clients want to park easily, find the door, and get on with their day. If that sounds like you, you'll feel at home here.
+    </p>
+  </div>
+</section>
+
+<!-- ============================================================
+     3. WHY THIS LOCATION
+     Four-up feature grid hitting the core advantages.
+============================================================ -->
+<section class="bg-evergreen-50 border-y border-evergreen-100">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-20">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900">Why Courthouse Square</h2>
+      <p class="mt-3 text-evergreen-800/80">The advantages that come from being on the right side of the highway.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      <!-- Parking -->
+      <div class="bg-sand-50 rounded-lg p-6 border border-evergreen-100">
+        <div class="w-10 h-10 rounded-md bg-evergreen-800 text-sand-50 flex items-center justify-center mb-4" aria-hidden="true">
+          <!-- car icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 17h14M5 17a2 2 0 1 1-4 0M5 17V10l2-5h10l2 5v7M19 17a2 2 0 1 0 4 0M7 13h10"/></svg>
+        </div>
+        <h3 class="font-serif text-xl text-evergreen-900">Free on-site parking</h3>
+        <p class="mt-2 text-sm text-evergreen-800/80">Plenty of it. Your clients won't circle the block, and your team won't fight for a spot at 9 a.m.</p>
+      </div>
+
+      <!-- Patio -->
+      <div class="bg-sand-50 rounded-lg p-6 border border-evergreen-100">
+        <div class="w-10 h-10 rounded-md bg-evergreen-800 text-sand-50 flex items-center justify-center mb-4" aria-hidden="true">
+          <!-- tree icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3 6 12h4l-3 5h10l-3-5h4z M12 17v4"/></svg>
+        </div>
+        <h3 class="font-serif text-xl text-evergreen-900">Shared outdoor patio</h3>
+        <p class="mt-2 text-sm text-evergreen-800/80">A real spot to eat lunch, take a call, or step out between clients. Open to all tenants.</p>
+      </div>
+
+      <!-- Neighborhood -->
+      <div class="bg-sand-50 rounded-lg p-6 border border-evergreen-100">
+        <div class="w-10 h-10 rounded-md bg-evergreen-800 text-sand-50 flex items-center justify-center mb-4" aria-hidden="true">
+          <!-- map-pin icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7-7.5-7-12a7 7 0 1 1 14 0c0 4.5-7 12-7 12Z M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>
+        </div>
+        <h3 class="font-serif text-xl text-evergreen-900">Right in the middle of things</h3>
+        <p class="mt-2 text-sm text-evergreen-800/80">Walking distance to the Vashon Athletic Center, the schools, and a King County Metro bus stop.</p>
+      </div>
+
+      <!-- Quiet professional -->
+      <div class="bg-sand-50 rounded-lg p-6 border border-evergreen-100">
+        <div class="w-10 h-10 rounded-md bg-evergreen-800 text-sand-50 flex items-center justify-center mb-4" aria-hidden="true">
+          <!-- waveform-low icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12h2m4 0h2m4 0h2m4 0h2"/></svg>
+        </div>
+        <h3 class="font-serif text-xl text-evergreen-900">Quiet, low-traffic setting</h3>
+        <p class="mt-2 text-sm text-evergreen-800/80">A professional environment where your clients can think, talk, and breathe.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     4. AVAILABLE SUITES
+     Cards rendered client-side from /data/vacancies.json.
+============================================================ -->
+<section id="suites" class="bg-sand-50">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-20">
+    <div class="flex flex-wrap items-end justify-between gap-4 mb-10">
+      <div>
+        <h2 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900">Available suites</h2>
+        <p class="mt-2 text-evergreen-800/80">All-in monthly figures include Rent, CAM, and Utilities. No surprises.</p>
+      </div>
+      <p class="text-xs text-evergreen-700/80">Snapshot as of 2026-05-21.</p>
+    </div>
+
+    <!-- Cards mount here. -->
+    <div id="suites-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Loading skeleton -->
+      <p class="text-evergreen-800/70 text-sm">Loading suites…</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     5. LEASE TERMS
+============================================================ -->
+<section class="bg-evergreen-900 text-sand-50">
+  <div class="mx-auto max-w-4xl px-4 sm:px-6 py-16 sm:py-20 text-center">
+    <h2 class="text-3xl sm:text-4xl font-serif font-semibold">No hidden fine print.</h2>
+    <p class="mt-6 text-lg text-sand-100 leading-relaxed">
+      We post our standard lease publicly so you can read it — and share it with your attorney — before you commit. When you're ready to move forward, a short Letter of Intent kicks off the formal process.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3 justify-center">
+      <a href="/lease/letter-of-intent.pdf"
+         class="inline-flex items-center rounded-md bg-sand-50 text-evergreen-900 px-5 py-3 font-medium hover:bg-sand-100 transition">
+        Download Letter of Intent
+      </a>
+      <a href="/lease/"
+         class="inline-flex items-center rounded-md border border-sand-50/60 text-sand-50 px-5 py-3 font-medium hover:bg-sand-50/10 transition">
+        View lease terms
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     6. GALLERY
+     Responsive photo grid. Owner replaces files in /images/.
+============================================================ -->
+<section class="bg-sand-50">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-20">
+    <h2 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900 mb-2">A look around</h2>
+    <p class="text-evergreen-800/80 mb-10">Building exterior, patio, and typical suite interiors.</p>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+      <!-- Each tile has an onerror fallback to a styled placeholder block. -->
+      <figure class="aspect-[4/3] overflow-hidden rounded-md">
+        <img src="/images/gallery-1.jpg" alt="Courthouse Square exterior, north building"
+             class="w-full h-full object-cover with-fallback"
+             onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Exterior photo<br/>(/images/gallery-1.jpg)</div>'" />
+      </figure>
+      <figure class="aspect-[4/3] overflow-hidden rounded-md">
+        <img src="/images/gallery-2.jpg" alt="Shared outdoor patio at Courthouse Square"
+             class="w-full h-full object-cover with-fallback"
+             onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Patio photo<br/>(/images/gallery-2.jpg)</div>'" />
+      </figure>
+      <figure class="aspect-[4/3] overflow-hidden rounded-md">
+        <img src="/images/gallery-3.jpg" alt="Typical suite interior with natural light"
+             class="w-full h-full object-cover with-fallback"
+             onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Typical suite<br/>(/images/gallery-3.jpg)</div>'" />
+      </figure>
+      <figure class="aspect-[4/3] overflow-hidden rounded-md">
+        <img src="/images/gallery-4.jpg" alt="Reception or common area"
+             class="w-full h-full object-cover with-fallback"
+             onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Common area<br/>(/images/gallery-4.jpg)</div>'" />
+      </figure>
+      <figure class="aspect-[4/3] overflow-hidden rounded-md">
+        <img src="/images/gallery-5.jpg" alt="Parking lot view"
+             class="w-full h-full object-cover with-fallback"
+             onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Parking lot<br/>(/images/gallery-5.jpg)</div>'" />
+      </figure>
+      <figure class="aspect-[4/3] overflow-hidden rounded-md">
+        <img src="/images/gallery-6.jpg" alt="Building entrance"
+             class="w-full h-full object-cover with-fallback"
+             onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Entrance<br/>(/images/gallery-6.jpg)</div>'" />
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     7. LOCATION
+============================================================ -->
+<section id="location" class="bg-evergreen-50 border-y border-evergreen-100">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-20 grid lg:grid-cols-2 gap-10 items-start">
+    <div>
+      <h2 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900">Find us</h2>
+      <address class="not-italic mt-4 text-lg text-evergreen-800">
+        19001 Vashon Hwy SW<br/>
+        Vashon, WA 98070
+      </address>
+
+      <h3 class="mt-8 font-serif text-xl text-evergreen-900">From the ferries</h3>
+      <ul class="mt-3 space-y-2 text-evergreen-800/90">
+        <li><strong>Fauntleroy (West Seattle):</strong> About 15 minutes south on Vashon Hwy SW. You'll come straight up the island and find us on the right.</li>
+        <li><strong>Point Defiance (Tacoma):</strong> About 20 minutes north on Vashon Hwy SW from the south-end dock.</li>
+      </ul>
+
+      <h3 class="mt-8 font-serif text-xl text-evergreen-900">Nearby</h3>
+      <ul class="mt-3 space-y-2 text-evergreen-800/90">
+        <li>Vashon Athletic Center — across the street.</li>
+        <li>Vashon schools — walking distance.</li>
+        <li>King County Metro bus stop — at the corner.</li>
+      </ul>
+    </div>
+
+    <div class="rounded-lg overflow-hidden border border-evergreen-200 shadow-sm">
+      <!-- Google Maps embed pointing at the building address. -->
+      <iframe
+        title="Map showing 19001 Vashon Hwy SW, Vashon, WA 98070"
+        src="https://www.google.com/maps?q=19001+Vashon+Hwy+SW,+Vashon,+WA+98070&output=embed"
+        width="100%" height="420" style="border:0;"
+        loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     8. INQUIRY FORM
+     Netlify Forms. Form is statically declared so Netlify can
+     detect it at build time. Suite dropdown gets dynamically
+     populated from vacancies.json, plus the "Any" option.
+============================================================ -->
+<section id="inquire" class="bg-sand-50">
+  <div class="mx-auto max-w-3xl px-4 sm:px-6 py-16 sm:py-20">
+    <h2 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900">Tell us a little about your business.</h2>
+    <p class="mt-3 text-evergreen-800/80">We'll get back to you within a few business days.</p>
+
+    <!-- Netlify form. The hidden form-name field is required. -->
+    <form id="inquiry-form"
+          name="inquiry"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          class="mt-8 grid sm:grid-cols-2 gap-5">
+
+      <input type="hidden" name="form-name" value="inquiry" />
+      <!-- Honeypot field. Hidden from real users; bots fill it and get rejected. -->
+      <p class="hidden">
+        <label>Don't fill this out: <input name="bot-field" /></label>
+      </p>
+
+      <label class="sm:col-span-1">
+        <span class="block text-sm font-medium text-evergreen-900">Name <span class="text-evergreen-700">*</span></span>
+        <input name="name" required autocomplete="name"
+               class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600" />
+      </label>
+
+      <label class="sm:col-span-1">
+        <span class="block text-sm font-medium text-evergreen-900">Email <span class="text-evergreen-700">*</span></span>
+        <input type="email" name="email" required autocomplete="email"
+               class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600" />
+      </label>
+
+      <label class="sm:col-span-1">
+        <span class="block text-sm font-medium text-evergreen-900">Phone (optional)</span>
+        <input type="tel" name="phone" autocomplete="tel"
+               class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600" />
+      </label>
+
+      <label class="sm:col-span-1">
+        <span class="block text-sm font-medium text-evergreen-900">Suite of interest</span>
+        <select name="suite" id="suite-select"
+                class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600">
+          <option value="">Any / not sure</option>
+          <!-- More options injected by JS from vacancies.json. -->
+        </select>
+      </label>
+
+      <label class="sm:col-span-2">
+        <span class="block text-sm font-medium text-evergreen-900">Message</span>
+        <textarea name="message" rows="5"
+                  placeholder="Tell us what kind of business you run and what you're looking for."
+                  class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600"></textarea>
+      </label>
+
+      <div class="sm:col-span-2 flex items-center justify-between">
+        <p class="text-xs text-evergreen-700/80">We don't share your contact information. Ever.</p>
+        <button type="submit"
+                class="inline-flex items-center rounded-md bg-evergreen-800 text-sand-50 px-6 py-3 font-medium hover:bg-evergreen-700 transition">
+          Send inquiry
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer class="bg-evergreen-950 text-sand-100">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-10 grid sm:grid-cols-3 gap-6 text-sm">
+    <div>
+      <svg viewBox="0 0 280 160" role="img" aria-label="Courthouse Square — Vashon"
+           class="h-20 w-auto text-sand-50" fill="currentColor"
+           xmlns="http://www.w3.org/2000/svg">
+        <g font-family="Fraunces, Georgia, 'Times New Roman', serif" text-anchor="middle">
+          <circle cx="140" cy="14" r="3" />
+          <text x="140" y="60" font-size="38" font-weight="600" letter-spacing="2">COURTHOUSE</text>
+          <text x="140" y="100" font-size="38" font-weight="600" letter-spacing="2">SQUARE</text>
+          <line x1="60" y1="118" x2="220" y2="118" stroke="currentColor" stroke-width="1.5" />
+          <text x="140" y="142" font-size="18" font-weight="500" letter-spacing="6">VASHON</text>
+        </g>
+      </svg>
+      <address class="not-italic mt-3 text-sand-200">
+        19001 Vashon Hwy SW<br/>
+        Vashon, WA 98070
+      </address>
+    </div>
+    <div>
+      <p class="text-sand-200">Owned and operated by J.T. Sheffield LLC.</p>
+      <p class="mt-2">
+        General: <a href="mailto:Info@JTSHeffield.com" class="underline hover:text-sand-50">Info@JTSHeffield.com</a>
+      </p>
+      <p class="mt-1">
+        Leasing: <a href="mailto:leasing@jtsheffield.com" class="underline hover:text-sand-50">leasing@jtsheffield.com</a>
+      </p>
+    </div>
+    <div class="sm:text-right">
+      <ul class="space-y-1">
+        <li><a href="/lease/" class="hover:text-sand-50">Lease &amp; process</a></li>
+        <li><a href="/lease/history/" class="hover:text-sand-50">Lease history</a></li>
+        <li><a href="#inquire" class="hover:text-sand-50">Inquire</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-evergreen-800">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 py-4 text-xs text-sand-200/80 flex flex-wrap justify-between gap-2">
+      <span>&copy; <span id="copyright-year"></span> J.T. Sheffield LLC. All rights reserved.</span>
+      <span>Vashon Island, Washington</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     SCRIPTS
+     - Render suite cards from /data/vacancies.json
+     - Populate suite dropdown
+     - Wire "Inquire about this suite" buttons to prefill + scroll
+============================================================ -->
+<script>
+  // Format a number as USD without cents.
+  const fmtMoney = n => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  const fmtMoneyCents = n => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  // Render the suite cards and populate the form dropdown.
+  async function loadVacancies() {
+    let data;
+    try {
+      const res = await fetch('/data/vacancies.json', { cache: 'no-cache' });
+      if (!res.ok) throw new Error('Failed to load vacancies.');
+      data = await res.json();
+    } catch (err) {
+      document.getElementById('suites-grid').innerHTML =
+        '<p class="text-evergreen-800/80">Suite information is being updated. Please <a href="#inquire" class="underline">contact us</a> for the latest availability.</p>';
+      return;
+    }
+
+    renderSuiteCards(data);
+    populateSuiteDropdown(data);
+  }
+
+  function renderSuiteCards(suites) {
+    const grid = document.getElementById('suites-grid');
+    if (!suites.length) {
+      grid.innerHTML = '<p class="text-evergreen-800/80">No suites currently available. Please <a href="#inquire" class="underline">contact us</a> to be notified.</p>';
+      return;
+    }
+
+    grid.innerHTML = suites.map(s => `
+      <article class="bg-white rounded-lg border border-evergreen-100 shadow-sm overflow-hidden flex flex-col">
+        <div class="p-6 flex-1">
+          <div class="flex items-baseline justify-between">
+            <h3 class="font-serif text-2xl text-evergreen-900">Suite ${s.unit}</h3>
+            <span class="text-xs uppercase tracking-wider text-evergreen-700">${s.building} building</span>
+          </div>
+          <p class="mt-1 text-sm text-evergreen-800/80">${s.sqft.toLocaleString()} sq ft</p>
+
+          <p class="mt-6 text-3xl font-serif font-semibold text-evergreen-900">
+            ${fmtMoney(s.allIn)} <span class="text-base font-sans font-normal text-evergreen-700">/ month all-in</span>
+          </p>
+
+          <details class="mt-4 text-sm group">
+            <summary class="cursor-pointer text-evergreen-700 hover:text-evergreen-900 select-none">
+              See cost breakdown
+            </summary>
+            <dl class="mt-3 grid grid-cols-2 gap-y-1 text-evergreen-800">
+              <dt>Rent</dt>      <dd class="text-right">${fmtMoneyCents(s.rent)}</dd>
+              <dt>CAM</dt>       <dd class="text-right">${fmtMoneyCents(s.cam)}</dd>
+              <dt>Utilities</dt> <dd class="text-right">${fmtMoneyCents(s.utilities)}</dd>
+              <dt class="border-t border-evergreen-100 pt-1 font-medium">Total</dt>
+              <dd class="border-t border-evergreen-100 pt-1 text-right font-medium">${fmtMoney(s.allIn)}</dd>
+            </dl>
+          </details>
+        </div>
+        <div class="px-6 pb-6">
+          <button type="button"
+                  data-suite="${s.unit}"
+                  class="suite-inquire w-full inline-flex justify-center items-center rounded-md bg-evergreen-800 text-sand-50 px-4 py-2.5 hover:bg-evergreen-700 transition">
+            Inquire about Suite ${s.unit}
+          </button>
+        </div>
+      </article>
+    `).join('');
+
+    // Wire each inquiry button to prefill the form and scroll.
+    grid.querySelectorAll('.suite-inquire').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const unit = btn.dataset.suite;
+        const select = document.getElementById('suite-select');
+        if (select) {
+          // Make sure the option exists before selecting.
+          if (![...select.options].some(o => o.value === unit)) {
+            const opt = document.createElement('option');
+            opt.value = unit;
+            opt.textContent = `Suite ${unit}`;
+            select.appendChild(opt);
+          }
+          select.value = unit;
+        }
+        document.getElementById('inquire').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+
+  function populateSuiteDropdown(suites) {
+    const select = document.getElementById('suite-select');
+    if (!select) return;
+    suites.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.unit;
+      opt.textContent = `Suite ${s.unit} — ${s.sqft.toLocaleString()} sq ft (${fmtMoney(s.allIn)}/mo)`;
+      select.appendChild(opt);
+    });
+  }
+
+  // Copyright year.
+  document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+  loadVacancies();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Backup files from sed/etc.
+*.bak
+
+# Claude Code workspace files (local dev only — not part of the deploy).
+.claude/
+
+# Netlify CLI cache
+.netlify/
+
+# Node (in case a tool ever lands)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment / secrets
+.env
+.env.*
+!.env.example

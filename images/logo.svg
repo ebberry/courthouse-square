@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Courthouse Square wordmark.
+  Pure SVG so it stays crisp at any size and inherits the current text color
+  via `fill="currentColor"`. Uses Fraunces (loaded by the host page) with a
+  serif fallback so it still looks right if the font hasn't loaded yet.
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 280 160"
+     role="img"
+     aria-label="Courthouse Square — Vashon"
+     fill="currentColor">
+  <g font-family="Fraunces, Georgia, 'Times New Roman', serif" text-anchor="middle">
+    <!-- Decorative dot above the wordmark. -->
+    <circle cx="140" cy="14" r="3" />
+
+    <!-- Stacked main wordmark. -->
+    <text x="140" y="60" font-size="38" font-weight="600" letter-spacing="2">COURTHOUSE</text>
+    <text x="140" y="100" font-size="38" font-weight="600" letter-spacing="2">SQUARE</text>
+
+    <!-- Divider rule between SQUARE and VASHON. -->
+    <line x1="60" y1="118" x2="220" y2="118" stroke="currentColor" stroke-width="1.5" />
+
+    <!-- Sub-wordmark. -->
+    <text x="140" y="142" font-size="18" font-weight="500" letter-spacing="6">VASHON</text>
+  </g>
+</svg>

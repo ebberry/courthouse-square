@@ -1,0 +1,99 @@
+name: Generate lease PDF on tag
+
+# Triggered when a tag starting with "lease-v" is pushed, e.g. lease-v2026.05.28.
+# The workflow:
+#   1. Extracts the version (everything after "lease-").
+#   2. Renders /lease/lease.md to a PDF using Pandoc + a LaTeX engine.
+#   3. Commits the PDF and a Markdown snapshot into /lease/archive/<version>/.
+#   4. Also updates /lease/lease.pdf as a convenience pointer to the latest PDF.
+
+on:
+  push:
+    tags:
+      - 'lease-v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-pdf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository at the tag
+        uses: actions/checkout@v4
+        with:
+          # We commit back into the default branch, so we need history + write token.
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          # GITHUB_REF_NAME is the tag, e.g. "lease-v2026.05.28".
+          VERSION="${GITHUB_REF_NAME#lease-}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Building lease PDF for version: $VERSION"
+
+      - name: Install Pandoc and LaTeX engine
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            pandoc \
+            texlive-latex-recommended \
+            texlive-fonts-recommended \
+            texlive-latex-extra \
+            lmodern
+
+      - name: Render lease.md to PDF
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          ARCHIVE_DIR="lease/archive/${VERSION}"
+          mkdir -p "${ARCHIVE_DIR}"
+
+          # Snapshot the Markdown source alongside the PDF so the archived
+          # version is fully self-contained.
+          cp lease/lease.md "${ARCHIVE_DIR}/lease.md"
+
+          # Render PDF.
+          pandoc lease/lease.md \
+            --from gfm \
+            --pdf-engine=pdflatex \
+            -V geometry:margin=1in \
+            -V fontsize=11pt \
+            -V mainfont="Latin Modern Roman" \
+            -V colorlinks=true \
+            -V linkcolor=black \
+            -V urlcolor=blue \
+            --metadata title="Courthouse Square — Standard Lease (${VERSION})" \
+            -o "${ARCHIVE_DIR}/lease.pdf"
+
+          # Also publish a top-level convenience pointer to the latest PDF
+          # so the lease page's "Download current lease" button works without
+          # needing to be edited every release.
+          cp "${ARCHIVE_DIR}/lease.pdf" lease/lease.pdf
+
+      - name: Commit archived PDF back to the default branch
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          # Figure out the default branch name.
+          DEFAULT_BRANCH=$(gh api "repos/${GITHUB_REPOSITORY}" --jq .default_branch)
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout "${DEFAULT_BRANCH}"
+
+          git add "lease/archive/${VERSION}/lease.md" \
+                  "lease/archive/${VERSION}/lease.pdf" \
+                  "lease/lease.pdf"
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Add archived lease PDF for ${VERSION}"
+          git push origin "${DEFAULT_BRANCH}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

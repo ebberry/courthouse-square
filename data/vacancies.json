@@ -1,0 +1,10 @@
+[
+  { "unit": "N101", "building": "North", "sqft": 259, "rent": 815.85, "cam": 198.19, "utilities": 166.97, "allIn": 1181 },
+  { "unit": "N102", "building": "North", "sqft": 100, "rent": 315.00, "cam": 76.53,  "utilities": 64.46,  "allIn": 456  },
+  { "unit": "N103", "building": "North", "sqft": 160, "rent": 504.00, "cam": 122.45, "utilities": 103.14, "allIn": 730  },
+  { "unit": "N108", "building": "North", "sqft": 254, "rent": 800.10, "cam": 194.36, "utilities": 163.74, "allIn": 1158 },
+  { "unit": "N110", "building": "North", "sqft": 150, "rent": 472.50, "cam": 114.79, "utilities": 96.69,  "allIn": 684  },
+  { "unit": "N203", "building": "North", "sqft": 200, "rent": 630.00, "cam": 153.06, "utilities": 128.95, "allIn": 912  },
+  { "unit": "N204", "building": "North", "sqft": 200, "rent": 630.00, "cam": 153.06, "utilities": 128.95, "allIn": 912  },
+  { "unit": "N206", "building": "North", "sqft": 300, "rent": 945.00, "cam": 229.59, "utilities": 193.40, "allIn": 1368 }
+]
