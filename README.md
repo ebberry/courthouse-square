@@ -1,6 +1,6 @@
 # Courthouse Square website
 
-Static marketing site for **Courthouse Square**, a professional office building at 19001 Vashon Hwy SW, Vashon, WA 98070. Owned and operated by J.T. Sheffield LLC.
+Static marketing site for **Courthouse Square**, a professional office building at 19001 Vashon Hwy SW, Vashon, WA 98070. Owned by Courthouse Square Vashon LLC. Managed by Bangasser & Associates (bangasser.com).
 
 The site exists for one job: turn prospective tenants into people who fill out the inquiry form.
 
@@ -107,11 +107,11 @@ See `images/README.md` for the full list of filenames and recommended sizes. Qui
 
 Netlify automatically detects the `<form name="inquiry" data-netlify="true">` block in `index.html` on first deploy and starts capturing submissions.
 
-To have submissions emailed to **Info@JTSHeffield.com**:
+To have submissions emailed to **CHSLeasing@bangasser.com**:
 
 1. Open the deployed site's Netlify dashboard → **Forms** → click the `inquiry` form.
 2. Go to **Settings & usage** → **Form notifications** → **Add notification** → **Email notification**.
-3. Enter `Info@JTSHeffield.com` and save.
+3. Enter `CHSLeasing@bangasser.com` and save.
 
 Submissions also remain visible in the Netlify dashboard as a backup.
 
@@ -140,10 +140,11 @@ If you'd rather host on GitHub Pages:
 
 ## Email routing
 
-Two addresses are surfaced on the site:
+A single address handles all contact for this site:
 
-- **`Info@JTSHeffield.com`** — general inquiries and the destination for Netlify inquiry-form submissions. Configure this in the Netlify dashboard (see "Netlify Forms" above).
-- **`leasing@jtsheffield.com`** — where completed Letters of Intent + Good Faith Deposits are sent. This is referenced in the LOI PDF and the leasing-process section on `/lease/`.
+- **`CHSLeasing@bangasser.com`** — Bangasser & Associates' inbox for Courthouse Square. This is the Netlify inquiry-form notification target, the address shown in every footer, and where completed Letters of Intent + Good Faith Deposits are sent.
+
+> **Heads up about the LOI PDF.** `lease/letter-of-intent.pdf` is the original Part I document supplied by the prior management. If it still names a `@jtsheffield.com` address inside the PDF itself, replace it with a corrected version when convenient.
 
 ## Accessibility &amp; performance notes
 

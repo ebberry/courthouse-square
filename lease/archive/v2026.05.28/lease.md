@@ -1,7 +1,8 @@
 # Courthouse Square — Standard Commercial Lease Terms
 
 **Version 1.0 — May 28, 2026**
-**Landlord:** JT Sheffield LLC, 1301 Spring Street, Unit 29H, Seattle, Washington 98104
+**Landlord:** Courthouse Square Vashon LLC, 1301 Spring Street, Unit 29H, Seattle, Washington 98104
+**Property Manager:** Bangasser & Associates
 **Property:** Courthouse Square, 19001 Vashon Hwy SW, Vashon, WA 98070
 
 > **Applicability.** This document contains the standard operating and legal terms (Parts IV and V) for the Property. Capitalized terms used herein are defined either in Part V (Definitions & Glossary of Terms) or Part II (Individual Terms, Conditions & Signatures) of the Tenant's specific Commercial Lease Agreement. Landlord may amend Parts IV and V from time to time as the standard form for the Property; such amendments apply only to Commercial Lease Agreements executed after the effective date of the amendment, and the version date of Parts IV and V incorporated into any specific Lease shall be as stated in Part II, Section 7 of that Lease.
@@ -244,4 +245,4 @@ Tenant warrants it has dealt with no brokers other than those explicitly named, 
 
 ---
 
-*— End of JT Sheffield LLC Standard Commercial Lease Boilerplate, Version 1.0 —*
+*— End of Courthouse Square Vashon LLC Standard Commercial Lease, Version 1.0 —*
