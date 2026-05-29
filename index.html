@@ -617,7 +617,12 @@
   function renderTenantCards(tenants) {
     const grid = document.getElementById('tenants-grid');
     grid.innerHTML = tenants.map(t => `
-      <article class="bg-sand-50 text-evergreen-950 rounded-lg p-6 shadow-sm">
+      <article class="bg-sand-50 text-evergreen-950 rounded-lg p-6 shadow-sm flex flex-col">
+        ${t.logo
+            ? `<img src="${esc(t.logo)}" alt="${esc(t.name)} logo"
+                    class="h-12 w-auto mb-4 object-contain self-start"
+                    onerror="this.style.display='none'" />`
+            : ''}
         <div class="flex items-start justify-between gap-3 mb-2">
           <h3 class="font-serif text-xl text-evergreen-900">${esc(t.name)}</h3>
           ${t.suite ? `<span class="shrink-0 inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-evergreen-100 text-evergreen-800">Suite ${esc(t.suite)}</span>` : ''}

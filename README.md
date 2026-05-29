@@ -48,9 +48,14 @@ The "Current tenants" section on the landing page is sourced from `data/tenants.
   "suite":    "N101",                                   // suite number — shown as a badge (optional)
   "category": "Dental",                                 // short type label, e.g. "Medical", "Legal" (optional)
   "blurb":    "General dentistry, cosmetic, pediatric.",// 1-2 sentence description (optional)
-  "website":  "https://smithfamilydental.com"           // tenant's site (optional)
+  "website":  "https://smithfamilydental.com",          // tenant's site (optional)
+  "logo":     "/images/tenants/smith-family-dental.png" // path to tenant's logo (optional)
 }
 ```
+
+### Tenant logos
+
+Drop logo files into **`images/tenants/`** and reference them from the `logo` field by their absolute site path (e.g. `/images/tenants/foo.svg`). See `images/tenants/README.md` for the recommended dimensions and tips. If a logo file is missing or broken, the card hides the image gracefully — the rest of the card still renders.
 
 To add, remove, or edit tenants:
 
