@@ -94,6 +94,7 @@
       <span class="hidden sm:inline text-xs text-evergreen-700">Vashon Island, WA</span>
     </a>
     <nav class="flex items-center gap-4 sm:gap-6 text-sm">
+      <a href="#tenants"  class="hover:text-evergreen-700">Tenants</a>
       <a href="#suites"   class="hover:text-evergreen-700">Suites</a>
       <a href="#location" class="hover:text-evergreen-700">Location</a>
       <a href="/lease/"   class="hover:text-evergreen-700">Lease</a>
@@ -222,7 +223,28 @@
 </section>
 
 <!-- ============================================================
-     4. AVAILABLE SUITES
+     4. CURRENT TENANTS
+     Directory rendered client-side from /data/tenants.json.
+     The whole section auto-hides if the JSON is empty, so we can
+     ship the infrastructure before tenant data exists.
+============================================================ -->
+<section id="tenants" class="bg-evergreen-900 text-sand-50">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-20">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl sm:text-4xl font-serif font-semibold">Current tenants</h2>
+      <p class="mt-3 text-sand-100/90">Meet the businesses currently leasing at Courthouse Square.</p>
+    </div>
+
+    <!-- Tenant cards mount here. -->
+    <div id="tenants-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Loading skeleton (replaced or removed once data is fetched). -->
+      <p class="text-sand-100/70 text-sm">Loading directory…</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     5. AVAILABLE SUITES
      Cards rendered client-side from /data/vacancies.json.
 ============================================================ -->
 <section id="suites" class="bg-sand-50">
@@ -564,10 +586,56 @@
     });
   }
 
+  // ---- Tenants directory ----------------------------------------
+
+  // Minimal HTML escape so tenant-supplied strings can't break out of the card.
+  function esc(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  async function loadTenants() {
+    const section = document.getElementById('tenants');
+    let tenants;
+    try {
+      const res = await fetch('/data/tenants.json', { cache: 'no-cache' });
+      if (!res.ok) throw new Error('tenants.json not reachable');
+      tenants = await res.json();
+    } catch (err) {
+      // No directory data → hide the section entirely rather than show an error.
+      section?.remove();
+      return;
+    }
+
+    if (!Array.isArray(tenants) || tenants.length === 0) {
+      section?.remove();
+      return;
+    }
+
+    renderTenantCards(tenants);
+  }
+
+  function renderTenantCards(tenants) {
+    const grid = document.getElementById('tenants-grid');
+    grid.innerHTML = tenants.map(t => `
+      <article class="bg-sand-50 text-evergreen-950 rounded-lg p-6 shadow-sm">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <h3 class="font-serif text-xl text-evergreen-900">${esc(t.name)}</h3>
+          ${t.suite ? `<span class="shrink-0 inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-evergreen-100 text-evergreen-800">Suite ${esc(t.suite)}</span>` : ''}
+        </div>
+        ${t.category ? `<p class="text-sm text-evergreen-700 mb-3">${esc(t.category)}</p>` : ''}
+        ${t.blurb    ? `<p class="text-sm text-evergreen-800/90 leading-relaxed">${esc(t.blurb)}</p>` : ''}
+        ${t.website
+            ? `<p class="mt-4"><a href="${esc(t.website)}" target="_blank" rel="noopener" class="text-sm font-medium text-evergreen-700 hover:text-evergreen-900 underline">Visit website &rarr;</a></p>`
+            : ''}
+      </article>
+    `).join('');
+  }
+
   // Copyright year.
   document.getElementById('copyright-year').textContent = new Date().getFullYear();
 
   loadVacancies();
+  loadTenants();
 </script>
 
 </body>

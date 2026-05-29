@@ -38,6 +38,28 @@ The site exists for one job: turn prospective tenants into people who fill out t
     └── lease-pdf.yml             Renders lease.md to PDF on every "lease-v*" tag
 ```
 
+## Editing the tenant directory
+
+The "Current tenants" section on the landing page is sourced from `data/tenants.json`. Each entry is an object with these fields:
+
+```json
+{
+  "name":     "Smith Family Dental",                    // displayed business name (required)
+  "suite":    "N101",                                   // suite number — shown as a badge (optional)
+  "category": "Dental",                                 // short type label, e.g. "Medical", "Legal" (optional)
+  "blurb":    "General dentistry, cosmetic, pediatric.",// 1-2 sentence description (optional)
+  "website":  "https://smithfamilydental.com"           // tenant's site (optional)
+}
+```
+
+To add, remove, or edit tenants:
+
+1. Open `data/tenants.json`.
+2. Add an object per tenant (only `name` is strictly required; everything else gracefully omits if missing).
+3. Save and deploy. The directory re-renders on next page load.
+
+If the file is `[]` (empty array) or can't be loaded, the "Current tenants" section is **automatically hidden** — no broken UI shown to visitors. That's how the site behaves until you add your first tenant.
+
 ## Editing vacancies
 
 All available suites come from `data/vacancies.json`. To add, remove, or change a suite:
