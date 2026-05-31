@@ -42,6 +42,8 @@
     .prose-lease h1 { font-size: 2rem; font-weight: 600; margin: 2rem 0 1rem; color: #1e3128; }
     .prose-lease h2 { font-size: 1.5rem; font-weight: 600; margin: 2rem 0 .75rem; color: #1e3128; border-bottom: 1px solid #dde8e0; padding-bottom: .25rem; }
     .prose-lease h3 { font-size: 1.2rem; font-weight: 600; margin: 1.5rem 0 .5rem; color: #243b2f; }
+    /* Offset anchored headings so they clear the sticky nav when jumped to from the TOC. */
+    .prose-lease h2, .prose-lease h3 { scroll-margin-top: 5rem; }
     .prose-lease p, .prose-lease li { font-family: 'Inter', sans-serif; }
     .prose-lease p { margin: .75rem 0; }
     .prose-lease ul, .prose-lease ol { margin: .75rem 0 .75rem 1.5rem; }
@@ -100,7 +102,7 @@
   <div class="rounded-md border border-evergreen-200 bg-evergreen-50 px-4 py-3 text-sm text-evergreen-900 flex flex-wrap items-center justify-between gap-2">
     <span>
       <strong>Current version:</strong>
-      <span id="current-version">v2026.05.28</span>
+      <span id="current-version">v2026.05.31</span>
     </span>
     <a href="/lease/history/" class="underline hover:text-evergreen-700">View prior versions →</a>
   </div>
@@ -126,7 +128,7 @@
         <span class="shrink-0 w-9 h-9 rounded-full bg-evergreen-800 text-sand-50 font-serif flex items-center justify-center">2</span>
         <div>
           <h3 class="font-serif text-xl text-evergreen-900">Send us a Letter of Intent</h3>
-          <p class="text-evergreen-800/90">It tells us the suite you want, your proposed start date, term length, and any special needs. Email the completed Part I to <a href="mailto:CHSLeasing@bangasser.com" class="underline hover:text-evergreen-700">CHSLeasing@bangasser.com</a> along with a refundable <strong>$100 Good Faith Deposit</strong> — credited toward your first month's rent if we sign, refunded in full within three business days if we don't.</p>
+          <p class="text-evergreen-800/90">It tells us the suite you want, your proposed start date, term length, and any special needs. Email the completed Part I to <a href="mailto:leasing@courthousesquarevashon.com" class="underline hover:text-evergreen-700">leasing@courthousesquarevashon.com</a> along with a refundable <strong>$100 Good Faith Deposit</strong> — credited toward your first month's rent if we sign, refunded in full within three business days if we don't.</p>
         </div>
       </li>
       <li class="flex gap-4">
@@ -165,7 +167,7 @@
       Download Letter of Intent (PDF)
     </a>
     <a id="lease-pdf-link"
-       href="/lease/archive/v2026.05.28/lease.pdf"
+       href="/lease/archive/v2026.05.31/lease.pdf"
        class="inline-flex items-center rounded-md border border-evergreen-800 text-evergreen-900 px-5 py-3 font-medium hover:bg-evergreen-50 transition">
       Download current lease (PDF)
     </a>
@@ -178,7 +180,16 @@
   <section class="mt-14">
     <h2 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900 border-b border-evergreen-200 pb-3">Standard lease</h2>
 
-    <article id="lease-body" class="prose-lease mt-6">
+    <!-- Clickable table of contents. Hidden by default; populated and
+         revealed by buildLeaseTOC() after the Markdown renders. If JS
+         fails or there are no headings, it simply stays hidden. -->
+    <nav id="lease-toc" aria-label="Lease table of contents"
+         class="hidden mt-6 rounded-lg border border-evergreen-200 bg-evergreen-50 p-5 sm:p-6">
+      <h3 class="font-serif text-lg text-evergreen-900 mb-3">Jump to a section</h3>
+      <div id="lease-toc-list"></div>
+    </nav>
+
+    <article id="lease-body" class="prose-lease mt-8">
       <p class="text-evergreen-800/80 italic">Loading lease text…</p>
     </article>
   </section>
@@ -208,10 +219,10 @@
       </address>
     </div>
     <div>
-      <p class="text-sand-200">Owned by Courthouse Square Vashon LLC.</p>
+      <p class="text-sand-200">Owned by Courthouse Square LLC.</p>
       <p class="text-sand-200 mt-1">Managed by <a href="https://bangasser.com" target="_blank" rel="noopener" class="underline hover:text-sand-50">Bangasser &amp; Associates</a>.</p>
       <p class="mt-3">
-        Contact: <a href="mailto:CHSLeasing@bangasser.com" class="underline hover:text-sand-50">CHSLeasing@bangasser.com</a>
+        Contact: <a href="mailto:leasing@courthousesquarevashon.com" class="underline hover:text-sand-50">leasing@courthousesquarevashon.com</a>
       </p>
     </div>
     <div class="sm:text-right">
@@ -224,7 +235,7 @@
   </div>
   <div class="border-t border-evergreen-800">
     <div class="mx-auto max-w-6xl px-4 sm:px-6 py-4 text-xs text-sand-200/80 flex flex-wrap justify-between gap-2">
-      <span>&copy; <span id="copyright-year"></span> Courthouse Square Vashon LLC. All rights reserved.</span>
+      <span>&copy; <span id="copyright-year"></span> Courthouse Square LLC. All rights reserved.</span>
       <a href="https://bangasser.com" target="_blank" rel="noopener" class="underline hover:text-sand-50">View other available properties &rarr;</a>
     </div>
   </div>
@@ -235,7 +246,7 @@
 <script>
   document.getElementById('copyright-year').textContent = new Date().getFullYear();
 
-  // Fetch and render the lease.
+  // Fetch and render the lease, then build the clickable table of contents.
   (async function () {
     const body = document.getElementById('lease-body');
     try {
@@ -244,10 +255,65 @@
       const md = await res.text();
       // marked options: sane defaults. We control the source markdown so XSS isn't a concern.
       body.innerHTML = marked.parse(md);
+      buildLeaseTOC();
     } catch (err) {
       body.innerHTML = '<p>The lease text is being updated. Please <a class="underline" href="/#inquire">contact us</a> to request a copy.</p>';
     }
   })();
+
+  // Turn a heading's text into a URL-safe, unique id.
+  function slugify(text, used) {
+    let base = text.toLowerCase().trim()
+      .replace(/[^\w\s-]/g, '')   // drop punctuation
+      .replace(/\s+/g, '-')        // spaces -> hyphens
+      .replace(/-+/g, '-');        // collapse repeats
+    if (!base) base = 'section';
+    let slug = base, n = 2;
+    while (used.has(slug)) { slug = `${base}-${n++}`; }
+    used.add(slug);
+    return slug;
+  }
+
+  // Build a two-level TOC (Part = h2, Article = h3) from the rendered
+  // lease body. Each heading gets an id; each TOC entry links to it.
+  function buildLeaseTOC() {
+    const body = document.getElementById('lease-body');
+    const nav  = document.getElementById('lease-toc');
+    const list = document.getElementById('lease-toc-list');
+    if (!body || !nav || !list) return;
+
+    // The first h1 is the document title — skip it. We index h2/h3.
+    const headings = Array.from(body.querySelectorAll('h2, h3'));
+    if (headings.length === 0) return;
+
+    const used = new Set();
+    const groups = [];   // [{ part: <h2 entry>, items: [<h3 entries>] }]
+
+    headings.forEach(h => {
+      h.id = slugify(h.textContent, used);
+      if (h.tagName === 'H2') {
+        groups.push({ heading: h, items: [] });
+      } else {
+        // h3 — attach to the current part, or start a loose group if none yet.
+        if (groups.length === 0) groups.push({ heading: null, items: [] });
+        groups[groups.length - 1].items.push(h);
+      }
+    });
+
+    list.innerHTML = groups.map(g => {
+      const partLink = g.heading
+        ? `<a href="#${g.heading.id}" class="block font-medium text-evergreen-900 hover:text-evergreen-700">${g.heading.textContent}</a>`
+        : '';
+      const items = g.items.length
+        ? `<ul class="mt-2 mb-4 sm:columns-2 sm:gap-x-8 space-y-1">
+             ${g.items.map(h => `<li class="break-inside-avoid"><a href="#${h.id}" class="text-evergreen-700 hover:text-evergreen-900 hover:underline">${h.textContent}</a></li>`).join('')}
+           </ul>`
+        : '';
+      return `<div class="mb-3">${partLink}${items}</div>`;
+    }).join('');
+
+    nav.classList.remove('hidden');
+  }
 </script>
 
 </body>

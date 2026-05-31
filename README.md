@@ -1,6 +1,6 @@
 # Courthouse Square website
 
-Static marketing site for **Courthouse Square**, a professional office building at 19001 Vashon Hwy SW, Vashon, WA 98070. Owned by Courthouse Square Vashon LLC. Managed by Bangasser & Associates (bangasser.com).
+Static marketing site for **Courthouse Square**, a professional office building at 19001 Vashon Hwy SW, Vashon, WA 98070. Owned by Courthouse Square LLC. Managed by Bangasser & Associates (bangasser.com).
 
 The site exists for one job: turn prospective tenants into people who fill out the inquiry form.
 
@@ -31,9 +31,9 @@ The site exists for one job: turn prospective tenants into people who fill out t
 │   ├── history/
 │   │   └── index.html            Reverse-chronological list of all versions
 │   └── archive/
-│       └── v2026.05.28/
+│       └── v2026.05.31/          Current published version (one folder per tag)
 │           ├── lease.md          Frozen Markdown copy at the time of the tag
-│           └── lease.pdf         Auto-generated PDF (committed by the workflow)
+│           └── lease.pdf         Boilerplate PDF for this version
 └── .github/workflows/
     └── lease-pdf.yml             Renders lease.md to PDF on every "lease-v*" tag
 ```
@@ -134,11 +134,11 @@ See `images/README.md` for the full list of filenames and recommended sizes. Qui
 
 Netlify automatically detects the `<form name="inquiry" data-netlify="true">` block in `index.html` on first deploy and starts capturing submissions.
 
-To have submissions emailed to **CHSLeasing@bangasser.com**:
+To have submissions emailed to **leasing@courthousesquarevashon.com**:
 
 1. Open the deployed site's Netlify dashboard → **Forms** → click the `inquiry` form.
 2. Go to **Settings & usage** → **Form notifications** → **Add notification** → **Email notification**.
-3. Enter `CHSLeasing@bangasser.com` and save.
+3. Enter `leasing@courthousesquarevashon.com` and save.
 
 Submissions also remain visible in the Netlify dashboard as a backup.
 
@@ -159,9 +159,8 @@ If you'd rather host on GitHub Pages:
 ## Things the owner still needs to provide
 
 - Real building photos (see `images/README.md`).
-- A registered domain name.
 
-> **Already in place:** the Courthouse Square wordmark (`images/logo.svg`), the standard lease language (`lease/lease.md` + matching PDF in `lease/archive/v2026.05.28/`), and the LOI PDF (`lease/letter-of-intent.pdf`).
+> **Already in place:** the domain (courthousesquarevashon.com, live on Netlify), the Courthouse Square wordmark (`images/logo.svg`), the standard lease language v1.1 (`lease/lease.md` + matching PDF in `lease/archive/v2026.05.31/`), and the LOI PDF (`lease/letter-of-intent.pdf`).
 >
 > The site uses a muted evergreen + warm neutral palette by default. If you want brand-color tweaks, adjust the Tailwind config block at the top of `index.html`, `lease/index.html`, and `lease/history/index.html`.
 
@@ -169,9 +168,9 @@ If you'd rather host on GitHub Pages:
 
 A single address handles all contact for this site:
 
-- **`CHSLeasing@bangasser.com`** — Bangasser & Associates' inbox for Courthouse Square. This is the Netlify inquiry-form notification target, the address shown in every footer, and where completed Letters of Intent + Good Faith Deposits are sent.
+- **`leasing@courthousesquarevashon.com`** — the building's own leasing inbox. This is the Netlify inquiry-form notification target, the address shown in every footer, the LOI-submission address in the lease text and the Part I LOI PDF, and where completed Letters of Intent + Good Faith Deposits are sent.
 
-> **Heads up about the LOI PDF.** `lease/letter-of-intent.pdf` is the original Part I document supplied by the prior management. If it still names a `@jtsheffield.com` address inside the PDF itself, replace it with a corrected version when convenient.
+> **Setup reminder:** this address must exist as a real mailbox (or alias/forward) on the courthousesquarevashon.com domain, and the Netlify Forms email notification must be pointed at it (Forms → `inquiry` → Settings & usage → Form notifications). Until both are done, inquiries won't reach anyone.
 
 ## Accessibility &amp; performance notes
 
