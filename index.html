@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Courthouse Square — Professional Office Space on Vashon Island</title>
+  <title>Professional Office Space at Courthouse Square, Vashon Island</title>
   <meta name="description" content="Quiet, professional office suites on Vashon Island, WA. Abundant free parking, a shared patio, and an easy in-and-out location near the Athletic Center, schools, and Metro transit." />
 
   <!-- Open Graph / social -->
-  <meta property="og:title" content="Courthouse Square — Professional Office Space on Vashon Island" />
+  <meta property="og:title" content="Professional Office Space at Courthouse Square, Vashon Island" />
   <meta property="og:description" content="Quiet, professional offices for businesses whose clients come by appointment. Free parking, shared patio, easy in-and-out." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="/images/hero.jpg" />
@@ -40,6 +40,13 @@
               300: '#d4bb95',
               400: '#c19c6b',
               500: '#b08550'
+            },
+            // Warm rust accent, used for the "OPEN" ribbon and available-suite
+            // highlights on the Your Neighbors card wall.
+            rust: {
+              400: '#d98a52',
+              500: '#b4521f',
+              600: '#9a4419'
             },
             slate: {
               // Tailwind's default slate works; aliased here for clarity.
@@ -78,6 +85,98 @@
       padding: 1rem;
     }
     img.with-fallback { background: #2c4a39; }
+
+    /* ============================================================
+       YOUR NEIGHBORS card wall
+       Masonry via CSS multi-column. Cards avoid breaking across
+       columns. Occupied and open cards share one frame; open cards
+       get a warm tint, a slow breathing glow, and an OPEN ribbon.
+    ============================================================ */
+    .neighbor-wall { columns: 3; column-gap: 1.25rem; }
+    @media (max-width: 880px) { .neighbor-wall { columns: 2; } }
+    @media (max-width: 560px) { .neighbor-wall { columns: 1; } }
+
+    .neighbor-card {
+      break-inside: avoid;
+      margin-bottom: 1.25rem;
+      position: relative;
+      overflow: hidden;
+      border-radius: 14px;
+      transition: transform 0.4s cubic-bezier(0.2,0.8,0.2,1),
+                  opacity 0.4s ease, box-shadow 0.4s ease, filter 0.4s ease;
+    }
+    .neighbor-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 40px -18px rgba(40,30,18,0.30);
+    }
+    /* Left accent stripe, color set inline per category. */
+    .neighbor-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--accent, #bcd0c2);
+      opacity: 0.9;
+    }
+
+    /* Open (available) card treatment. */
+    .neighbor-card.is-open {
+      border: 1px solid #d98a52;
+      background: linear-gradient(135deg, rgba(217,138,82,0.12), rgba(201,138,43,0.05));
+    }
+    .neighbor-card.is-open::after {
+      content: 'OPEN';
+      position: absolute;
+      top: 16px; right: -30px;
+      transform: rotate(45deg);
+      background: #b4521f;
+      color: #faf7f2;
+      font-family: 'Fraunces', serif;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      padding: 4px 36px;
+      z-index: 2;
+    }
+    .neighbor-card .glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 70% 20%, rgba(217,138,82,0.22), transparent 60%);
+      opacity: 0.3;
+      animation: breathe 4.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes breathe { 0%,100% { opacity: 0.3; } 50% { opacity: 0.8; } }
+    @media (prefers-reduced-motion: reduce) {
+      .neighbor-card .glow { animation: none; }
+      .neighbor-card:hover { transform: none; }
+    }
+
+    /* Filter states, toggled by JS. */
+    .neighbor-card.dim   { opacity: 0.32; filter: saturate(0.5); transform: scale(0.985); }
+    .neighbor-card.recede { opacity: 0.42; filter: saturate(0.6); }
+
+    /* Open toggle (driven by aria-pressed, so it doesn't depend on the CDN
+       JIT-generating a class that's only toggled at runtime). */
+    #open-toggle .toggle-track { transition: background-color 0.3s ease; }
+    #open-toggle .toggle-knob  { transition: transform 0.3s cubic-bezier(0.4,1.4,0.5,1); }
+    #open-toggle[aria-pressed="true"] .toggle-track { background-color: #b4521f; }
+    #open-toggle[aria-pressed="true"] .toggle-knob  { transform: translateX(20px); }
+
+    /* Active category tag. */
+    .neighbor-tag.tag-active {
+      background-color: #1e3128;
+      color: #faf7f2;
+      border-color: #1e3128;
+    }
+
+    /* Background swirl behind the section, brand-tinted. */
+    .neighbor-swirl {
+      background-image:
+        radial-gradient(ellipse 80% 50% at 12% -5%, rgba(180,82,31,0.08), transparent 60%),
+        radial-gradient(ellipse 70% 50% at 90% 8%, rgba(44,74,57,0.10), transparent 55%),
+        radial-gradient(ellipse 90% 60% at 50% 108%, rgba(75,117,92,0.08), transparent 60%);
+    }
   </style>
 </head>
 
@@ -94,8 +193,7 @@
       <span class="hidden sm:inline text-xs text-evergreen-700">Vashon Island, WA</span>
     </a>
     <nav class="flex items-center gap-4 sm:gap-6 text-sm">
-      <a href="#tenants"  class="hover:text-evergreen-700">Tenants</a>
-      <a href="#suites"   class="hover:text-evergreen-700">Suites</a>
+      <a href="#suites"   class="hover:text-evergreen-700">Suites &amp; neighbors</a>
       <a href="#location" class="hover:text-evergreen-700">Location</a>
       <a href="/lease/"   class="hover:text-evergreen-700">Lease</a>
       <a href="#inquire"
@@ -107,49 +205,55 @@
 </header>
 
 <!-- ============================================================
-     1. HERO
+     1. HERO  (split layout: text panel + brand-anchor photo)
+     Left: the pitch on a deep evergreen panel. Right: the Julie
+     Spidel sculpture at the entrance (placeholder until the
+     building refresh photos are ready; drops in at
+     /images/sculpture.jpg). Stacks to a single column on mobile.
 ============================================================ -->
-<section class="relative">
-  <!-- Background photo. Owner drops a real photo at /images/hero.jpg. -->
-  <div class="absolute inset-0 -z-10">
-    <img src="/images/hero.jpg" alt=""
-         class="w-full h-full object-cover with-fallback"
-         onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');" />
-    <!-- Dark overlay so text stays legible over any photo. -->
-    <div class="absolute inset-0 bg-evergreen-950/55"></div>
-  </div>
+<section class="bg-evergreen-950">
+  <div class="mx-auto max-w-6xl grid lg:grid-cols-2 items-stretch">
 
-  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-24 sm:py-36 text-sand-50">
-    <!-- Courthouse Square wordmark. Inline SVG so it inherits the current
-         text color via `fill="currentColor"`. Stand-alone version is at
-         /images/logo.svg for download / print use. -->
-    <svg viewBox="0 0 340 160" role="img" aria-label="Courthouse Square — Vashon"
-         class="h-28 sm:h-36 w-auto mb-8 text-sand-50" fill="currentColor"
-         xmlns="http://www.w3.org/2000/svg">
-      <g font-family="Fraunces, Georgia, 'Times New Roman', serif" text-anchor="middle">
-        <circle cx="170" cy="14" r="3" />
-        <text x="170" y="60" font-size="38" font-weight="600" letter-spacing="2">COURTHOUSE</text>
-        <text x="170" y="100" font-size="38" font-weight="600" letter-spacing="2">SQUARE</text>
-        <line x1="80" y1="118" x2="260" y2="118" stroke="currentColor" stroke-width="1.5" />
-        <text x="170" y="142" font-size="18" font-weight="500" letter-spacing="6">VASHON</text>
-      </g>
-    </svg>
-    <p class="uppercase tracking-widest text-xs sm:text-sm text-sand-200 mb-4">Vashon Island, Washington</p>
-    <h1 class="text-4xl sm:text-6xl font-serif font-semibold max-w-3xl leading-tight">
-      A calm, professional home for your practice.
-    </h1>
-    <p class="mt-6 max-w-2xl text-lg sm:text-xl text-sand-100">
-      Courthouse Square is a quiet office building for businesses whose clients arrive by appointment — with the parking, patio, and easy access that downtown storefronts simply can't offer.
-    </p>
-    <div class="mt-8 flex flex-wrap gap-3">
-      <a href="#suites"
-         class="inline-flex items-center rounded-md bg-sand-50 text-evergreen-900 px-5 py-3 font-medium hover:bg-sand-100 transition">
-        View available suites
-      </a>
-      <a href="#inquire"
-         class="inline-flex items-center rounded-md border border-sand-50/60 text-sand-50 px-5 py-3 font-medium hover:bg-sand-50/10 transition">
-        Get in touch
-      </a>
+    <!-- Text panel -->
+    <div class="px-4 sm:px-6 lg:pr-10 py-20 sm:py-28 lg:py-32 text-sand-50 order-1">
+      <!-- Courthouse Square wordmark. Inline SVG inherits the current text
+           color via fill="currentColor". Standalone copy at /images/logo.svg. -->
+      <svg viewBox="0 0 340 160" role="img" aria-label="Courthouse Square, Vashon"
+           class="h-24 sm:h-32 w-auto mb-8 text-sand-50" fill="currentColor"
+           xmlns="http://www.w3.org/2000/svg">
+        <g font-family="Fraunces, Georgia, 'Times New Roman', serif" text-anchor="middle">
+          <circle cx="170" cy="14" r="3" />
+          <text x="170" y="60" font-size="38" font-weight="600" letter-spacing="2">COURTHOUSE</text>
+          <text x="170" y="100" font-size="38" font-weight="600" letter-spacing="2">SQUARE</text>
+          <line x1="80" y1="118" x2="260" y2="118" stroke="currentColor" stroke-width="1.5" />
+          <text x="170" y="142" font-size="18" font-weight="500" letter-spacing="6">VASHON</text>
+        </g>
+      </svg>
+      <p class="uppercase tracking-widest text-xs sm:text-sm text-sand-200 mb-4">Vashon Island, Washington</p>
+      <h1 class="text-4xl sm:text-5xl font-serif font-semibold leading-tight">
+        A calm, professional home for your practice.
+      </h1>
+      <p class="mt-6 max-w-xl text-lg text-sand-100">
+        CHS is a quiet office building for businesses whose clients arrive by appointment, with the parking, patio, and easy access that downtown storefronts simply can't offer.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="#suites"
+           class="inline-flex items-center rounded-md bg-sand-50 text-evergreen-900 px-5 py-3 font-medium hover:bg-sand-100 transition">
+          View available suites
+        </a>
+        <a href="#inquire"
+           class="inline-flex items-center rounded-md border border-sand-50/60 text-sand-50 px-5 py-3 font-medium hover:bg-sand-50/10 transition">
+          Get in touch
+        </a>
+      </div>
+    </div>
+
+    <!-- Brand-anchor photo: the Julie Spidel sculpture at the entrance. -->
+    <div class="relative min-h-[300px] lg:min-h-full order-2">
+      <img src="/images/sculpture.jpg"
+           alt="The Julie Spidel sculpture at the Courthouse Square entrance"
+           class="absolute inset-0 w-full h-full object-cover"
+           onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');" />
     </div>
   </div>
 </section>
@@ -161,7 +265,7 @@
   <div class="mx-auto max-w-4xl px-4 sm:px-6 py-16 sm:py-20 text-center">
     <h2 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900">Built for practices that run on appointments.</h2>
     <p class="mt-6 text-lg text-evergreen-800/90 leading-relaxed">
-      Medical, dental, legal, accounting, therapy, bodywork, tutoring, small professional services — the kinds of businesses whose clients want to park easily, find the door, and get on with their day. If that sounds like you, you'll feel at home here.
+      Medical, dental, legal, accounting, therapy, bodywork, tutoring, small professional services. These are the kinds of businesses whose clients want to park easily, find the door, and get on with their day. If that sounds like you, you'll feel at home here.
     </p>
   </div>
 </section>
@@ -223,45 +327,68 @@
 </section>
 
 <!-- ============================================================
-     4. CURRENT TENANTS
-     Directory rendered client-side from /data/tenants.json.
-     The whole section auto-hides if the JSON is empty, so we can
-     ship the infrastructure before tenant data exists.
+     4. YOUR NEIGHBORS (merged tenants + available suites)
+     One unified card wall, rendered client-side from BOTH
+     /data/tenants.json (occupied) and /data/vacancies.json (open).
+     See buildNeighborWall() in the script block below.
+
+     The section is ADAPTIVE:
+       - With occupied tenants present, it reads as "the neighbors
+         you'd be keeping": tally, category filters, a "See what's
+         open" toggle, and "you'd be next to X and Y" lines.
+       - With no tenants yet (roster still being collected), it
+         gracefully presents as a polished available-suites wall:
+         no empty tally, no filters, just the open cards. It blooms
+         into the full treatment the moment tenants are added.
+
+     id="suites" is kept so existing anchors (hero button, nav,
+     inquiry prefill) keep working.
 ============================================================ -->
-<section id="tenants" class="bg-evergreen-900 text-sand-50">
+<section id="suites" class="bg-sand-50 neighbor-swirl">
   <div class="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-20">
-    <div class="text-center mb-12">
-      <h2 class="text-3xl sm:text-4xl font-serif font-semibold">Current tenants</h2>
-      <p class="mt-3 text-sand-100/90">Meet the businesses currently leasing at Courthouse Square.</p>
+
+    <!-- Header. Eyebrow + heading + lede are filled by JS so copy can
+         adapt to whether there are neighbors yet. -->
+    <header class="max-w-3xl">
+      <p class="uppercase tracking-[0.3em] text-xs font-medium text-rust-500 mb-4">CHS &middot; Vashon Island</p>
+      <h2 id="neighbors-heading" class="text-3xl sm:text-5xl font-serif font-semibold text-evergreen-900 leading-tight">
+        Available suites
+      </h2>
+      <p id="neighbors-lede" class="mt-5 text-lg text-evergreen-800/90 leading-relaxed"></p>
+
+      <!-- Pricing framing (spec section 5). -->
+      <p class="mt-4 text-base text-evergreen-800/80 leading-relaxed">
+        Standard prices are below, but we're looking for long-term tenants we can support and help grow. If these numbers feel out of reach, let's have a conversation regardless. All-in monthly figures include Rent, CAM, and Utilities, so there are no surprises.
+      </p>
+    </header>
+
+    <!-- Tally (hidden until there are neighbors to count). -->
+    <div id="neighbors-tally" class="hidden mt-8 flex-wrap gap-x-8 gap-y-2 font-serif text-evergreen-900">
+      <span class="flex items-baseline gap-2"><b id="tally-suites" class="text-2xl font-semibold">0</b><span class="text-sm text-evergreen-700">suites</span></span>
+      <span class="flex items-baseline gap-2"><b id="tally-neighbors" class="text-2xl font-semibold">0</b><span class="text-sm text-evergreen-700">neighbors</span></span>
+      <span class="flex items-baseline gap-2"><b id="tally-open" class="text-2xl font-semibold">0</b><span class="text-sm text-evergreen-700">open</span></span>
     </div>
 
-    <!-- Tenant cards mount here. -->
-    <div id="tenants-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Loading skeleton (replaced or removed once data is fetched). -->
-      <p class="text-sand-100/70 text-sm">Loading directory…</p>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-     5. AVAILABLE SUITES
-     Cards rendered client-side from /data/vacancies.json.
-============================================================ -->
-<section id="suites" class="bg-sand-50">
-  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-20">
-    <div class="flex flex-wrap items-end justify-between gap-4 mb-10">
-      <div>
-        <h2 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900">Available suites</h2>
-        <p class="mt-2 text-evergreen-800/80">All-in monthly figures include Rent, CAM, and Utilities. No surprises.</p>
-      </div>
-      <p class="text-xs text-evergreen-700/80">Snapshot as of 2026-05-21.</p>
+    <!-- Controls (category filters + open toggle). Hidden until there
+         are occupied tenants to filter. -->
+    <div id="neighbors-controls" class="hidden mt-8 mb-2 items-center gap-3 flex-wrap border-t border-evergreen-100 pt-6">
+      <div id="neighbor-tags" class="flex gap-2 flex-wrap"></div>
+      <div class="flex-1"></div>
+      <button id="open-toggle" type="button" aria-pressed="false"
+              class="inline-flex items-center gap-3 cursor-pointer select-none font-medium text-evergreen-900">
+        <span>See what's open</span>
+        <span class="toggle-track relative w-11 h-6 rounded-full bg-evergreen-200 transition-colors">
+          <span class="toggle-knob absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"></span>
+        </span>
+      </button>
     </div>
 
-    <!-- Cards mount here. -->
-    <div id="suites-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Loading skeleton -->
+    <!-- The wall mounts here. -->
+    <div id="neighbor-wall" class="neighbor-wall mt-8">
       <p class="text-evergreen-800/70 text-sm">Loading suites…</p>
     </div>
+
+    <p class="mt-6 text-xs text-evergreen-700/80">Pricing snapshot as of May 21, 2026. Figures are a starting point for conversation.</p>
   </div>
 </section>
 
@@ -272,7 +399,7 @@
   <div class="mx-auto max-w-4xl px-4 sm:px-6 py-16 sm:py-20 text-center">
     <h2 class="text-3xl sm:text-4xl font-serif font-semibold">No hidden fine print.</h2>
     <p class="mt-6 text-lg text-sand-100 leading-relaxed">
-      We post our standard lease publicly so you can read it — and share it with your attorney — before you commit. When you're ready to move forward, a short Letter of Intent kicks off the formal process.
+      We post our standard lease publicly so you can read it, and share it with your attorney, before you commit. When you're ready to move forward, a short Letter of Intent kicks off the formal process.
     </p>
     <div class="mt-8 flex flex-wrap gap-3 justify-center">
       <a href="/lease/letter-of-intent.pdf"
@@ -352,9 +479,9 @@
 
       <h3 class="mt-8 font-serif text-xl text-evergreen-900">Nearby</h3>
       <ul class="mt-3 space-y-2 text-evergreen-800/90">
-        <li>Vashon Athletic Center — across the street.</li>
-        <li>Vashon schools — walking distance.</li>
-        <li>King County Metro bus stop — at the corner.</li>
+        <li>Vashon Athletic Center, across the street.</li>
+        <li>Vashon schools, walking distance.</li>
+        <li>King County Metro bus stop, at the corner.</li>
       </ul>
     </div>
 
@@ -445,7 +572,7 @@
 <footer class="bg-evergreen-950 text-sand-100">
   <div class="mx-auto max-w-6xl px-4 sm:px-6 py-10 grid sm:grid-cols-3 gap-6 text-sm">
     <div>
-      <svg viewBox="0 0 340 160" role="img" aria-label="Courthouse Square — Vashon"
+      <svg viewBox="0 0 340 160" role="img" aria-label="Courthouse Square, Vashon"
            class="h-20 w-auto text-sand-50" fill="currentColor"
            xmlns="http://www.w3.org/2000/svg">
         <g font-family="Fraunces, Georgia, 'Times New Roman', serif" text-anchor="middle">
@@ -495,84 +622,175 @@
   const fmtMoney = n => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
   const fmtMoneyCents = n => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  // Render the suite cards and populate the form dropdown.
-  async function loadVacancies() {
-    let data;
-    try {
-      const res = await fetch('/data/vacancies.json', { cache: 'no-cache' });
-      if (!res.ok) throw new Error('Failed to load vacancies.');
-      data = await res.json();
-    } catch (err) {
-      document.getElementById('suites-grid').innerHTML =
-        '<p class="text-evergreen-800/80">Suite information is being updated. Please <a href="#inquire" class="underline">contact us</a> for the latest availability.</p>';
-      return;
-    }
-
-    renderSuiteCards(data);
-    populateSuiteDropdown(data);
+  // Minimal HTML escape so any data-supplied string can't break out of markup.
+  function esc(s) {
+    return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
-  function renderSuiteCards(suites) {
-    const grid = document.getElementById('suites-grid');
-    if (!suites.length) {
-      grid.innerHTML = '<p class="text-evergreen-800/80">No suites currently available. Please <a href="#inquire" class="underline">contact us</a> to be notified.</p>';
+  // Category → left-stripe accent color. Lowercased category keys; falls back
+  // to a neutral line color. Tune freely as the tenant mix evolves.
+  const CATEGORY_ACCENTS = {
+    professional: '#3f5e6b',
+    medical:      '#4b755c',
+    dental:       '#4b755c',
+    wellness:     '#5c6e4a',
+    therapy:      '#7d4a5c',
+    bodywork:     '#7d4a5c',
+    legal:        '#2c4a39',
+    accounting:   '#385c47',
+    tutoring:     '#3f5e6b',
+    creative:     '#8a5a2b',
+    retail:       '#b4521f',
+    food:         '#c98a2b'
+  };
+  const accentFor = cat => CATEGORY_ACCENTS[String(cat || '').toLowerCase()] || '#bcd0c2';
+  const titleCase = s => String(s || '').replace(/\b\w/g, c => c.toUpperCase());
+
+  // Join an array of names into "A", "A and B", or "A, B and C".
+  function listText(arr) {
+    if (!arr || !arr.length) return '';
+    if (arr.length === 1) return arr[0];
+    return arr.slice(0, -1).join(', ') + ' and ' + arr.slice(-1);
+  }
+
+  // Pick up to two occupied neighbors nearest an open suite (same building
+  // letter prefix, closest suite number). Returns an array of names.
+  function neighborsFor(openUnit, tenants) {
+    const prefix = (String(openUnit).match(/^[A-Za-z]+/) || [''])[0];
+    const num = parseInt(String(openUnit).replace(/\D/g, ''), 10);
+    return tenants
+      .filter(t => t.suite && (String(t.suite).match(/^[A-Za-z]+/) || [''])[0] === prefix)
+      .map(t => ({ name: t.name, d: Math.abs(parseInt(String(t.suite).replace(/\D/g, ''), 10) - num) }))
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 2)
+      .map(t => t.name);
+  }
+
+  // State for filtering.
+  let activeCat = null;
+  let openOnly = false;
+
+  // Fetch both data sources and build the unified wall.
+  async function buildNeighborWall() {
+    const wall = document.getElementById('neighbor-wall');
+
+    const [vacancies, tenants] = await Promise.all([
+      fetch('/data/vacancies.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch('/data/tenants.json',   { cache: 'no-cache' }).then(r => r.ok ? r.json() : []).catch(() => [])
+    ]);
+
+    // Always keep the inquiry-form dropdown populated from real vacancies.
+    populateSuiteDropdown(vacancies);
+
+    if (!vacancies.length && !tenants.length) {
+      wall.innerHTML = '<p class="text-evergreen-800/80">Suite information is being updated. Please <a href="#inquire" class="underline">contact us</a> for the latest availability.</p>';
       return;
     }
 
-    grid.innerHTML = suites.map(s => `
-      <article class="bg-white rounded-lg border border-evergreen-100 shadow-sm overflow-hidden flex flex-col">
-        <div class="p-6 flex-1">
-          <div class="flex items-baseline justify-between">
-            <h3 class="font-serif text-2xl text-evergreen-900">Suite ${s.unit}</h3>
-            <span class="text-xs uppercase tracking-wider text-evergreen-700">${s.building} building</span>
-          </div>
-          <p class="mt-1 text-sm text-evergreen-800/80">${s.sqft.toLocaleString()} sq ft</p>
+    const occupiedCount = tenants.length;
+    const isAlive = occupiedCount > 0;   // do we have neighbors to show?
 
-          <p class="mt-6 text-3xl font-serif font-semibold text-evergreen-900">
-            ${fmtMoney(s.allIn)} <span class="text-base font-sans font-normal text-evergreen-700">/ month all-in</span>
-          </p>
+    // Adapt the header copy to whether the roster is populated yet.
+    const heading = document.getElementById('neighbors-heading');
+    const lede = document.getElementById('neighbors-lede');
+    if (isAlive) {
+      heading.innerHTML = 'Meet the <em class="italic text-rust-500">neighbors</em> you’d be keeping.';
+      lede.textContent = 'Courthouse Square is a working building of professionals, practitioners, and small firms, with a few doors open for whoever comes next. Here is who you would share the block with.';
+    } else {
+      heading.textContent = 'Find your place at CHS.';
+      lede.textContent = 'A handful of quiet, professional suites are open right now. Each one sits in a calm building built for businesses whose clients come by appointment.';
+    }
 
-          <details class="mt-4 text-sm group">
-            <summary class="cursor-pointer text-evergreen-700 hover:text-evergreen-900 select-none">
-              See cost breakdown
-            </summary>
-            <dl class="mt-3 grid grid-cols-2 gap-y-1 text-evergreen-800">
-              <dt>Rent</dt>      <dd class="text-right">${fmtMoneyCents(s.rent)}</dd>
-              <dt>CAM</dt>       <dd class="text-right">${fmtMoneyCents(s.cam)}</dd>
-              <dt>Utilities</dt> <dd class="text-right">${fmtMoneyCents(s.utilities)}</dd>
-              <dt class="border-t border-evergreen-100 pt-1 font-medium">Total</dt>
-              <dd class="border-t border-evergreen-100 pt-1 text-right font-medium">${fmtMoney(s.allIn)}</dd>
-            </dl>
-          </details>
-        </div>
-        <div class="px-6 pb-6">
-          <button type="button"
-                  data-suite="${s.unit}"
-                  class="suite-inquire w-full inline-flex justify-center items-center rounded-md bg-evergreen-800 text-sand-50 px-4 py-2.5 hover:bg-evergreen-700 transition">
-            Inquire about Suite ${s.unit}
-          </button>
-        </div>
-      </article>
-    `).join('');
+    // Build a unified, suite-ordered list so open and occupied interleave.
+    const items = [
+      ...tenants.map(t => ({ mode: 'occupied', sortKey: String(t.suite || '~'), data: t })),
+      ...vacancies.map(v => ({ mode: 'open', sortKey: String(v.unit || '~'), data: v }))
+    ].sort((a, b) => a.sortKey.localeCompare(b.sortKey, undefined, { numeric: true }));
 
-    // Wire each inquiry button to prefill the form and scroll.
-    grid.querySelectorAll('.suite-inquire').forEach(btn => {
+    wall.innerHTML = items.map(it =>
+      it.mode === 'occupied' ? occupiedCardHTML(it.data) : openCardHTML(it.data, tenants, isAlive)
+    ).join('');
+
+    // Wire the "Curious? Let's talk" / inquire CTAs on open cards.
+    wall.querySelectorAll('[data-inquire-suite]').forEach(btn => {
       btn.addEventListener('click', () => {
-        const unit = btn.dataset.suite;
-        const select = document.getElementById('suite-select');
-        if (select) {
-          // Make sure the option exists before selecting.
-          if (![...select.options].some(o => o.value === unit)) {
-            const opt = document.createElement('option');
-            opt.value = unit;
-            opt.textContent = `Suite ${unit}`;
-            select.appendChild(opt);
-          }
-          select.value = unit;
-        }
-        document.getElementById('inquire').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        prefillInquiry(btn.dataset.inquireSuite);
       });
     });
+
+    // Tally + controls only make sense once there are neighbors.
+    if (isAlive) {
+      setupTally(items.length, occupiedCount, vacancies.length);
+      setupControls(tenants);
+    }
+  }
+
+  function occupiedCardHTML(t) {
+    const accent = accentFor(t.category);
+    return `
+      <article class="neighbor-card bg-white border border-evergreen-100 p-6"
+               data-mode="occupied" data-cat="${esc(String(t.category || '').toLowerCase())}"
+               style="--accent:${accent}">
+        ${t.logo ? `<img src="${esc(t.logo)}" alt="${esc(t.name)} logo" class="h-10 w-auto mb-4 object-contain" onerror="this.style.display='none'" />` : ''}
+        <div class="flex items-start justify-between gap-3">
+          ${t.category ? `<span class="text-[0.66rem] font-semibold uppercase tracking-[0.18em] text-evergreen-700/80">${esc(titleCase(t.category))}</span>` : '<span></span>'}
+          ${t.suite ? `<span class="text-xs text-evergreen-700/70">Suite ${esc(t.suite)}</span>` : ''}
+        </div>
+        <h3 class="font-serif text-2xl text-evergreen-900 mt-2 leading-tight">${esc(t.name)}</h3>
+        ${t.blurb ? `<p class="mt-2 text-sm text-evergreen-800/90 leading-relaxed">${esc(t.blurb)}</p>` : ''}
+        ${t.phone || t.email ? `<p class="mt-3 text-xs text-evergreen-700/80">${[t.phone ? esc(t.phone) : '', t.email ? `<a href="mailto:${esc(t.email)}" class="underline hover:text-evergreen-900">${esc(t.email)}</a>` : ''].filter(Boolean).join(' &middot; ')}</p>` : ''}
+        ${t.website ? `<p class="mt-4"><a href="${esc(t.website)}" target="_blank" rel="noopener" class="text-sm font-medium text-rust-500 hover:text-rust-600">Visit website &rarr;</a></p>` : ''}
+      </article>`;
+  }
+
+  function openCardHTML(v, tenants, isAlive) {
+    const neighbors = isAlive ? neighborsFor(v.unit, tenants) : [];
+    const neighborLine = neighbors.length
+      ? `<p class="mt-3 pt-3 border-t border-dashed border-evergreen-200 text-sm italic text-evergreen-700/90">You'd be next to <span class="not-italic font-medium text-evergreen-800">${esc(listText(neighbors))}</span>.</p>`
+      : '';
+    return `
+      <article class="neighbor-card is-open p-6" data-mode="open" data-cat="open" style="--accent:#b4521f">
+        <div class="glow"></div>
+        <div class="relative flex items-start justify-between gap-3">
+          <span class="text-[0.66rem] font-semibold uppercase tracking-[0.18em] text-rust-600">Available</span>
+          <span class="text-xs text-evergreen-700/70">Suite ${esc(v.unit)}</span>
+        </div>
+        <h3 class="relative font-serif text-2xl text-rust-600 mt-2 leading-tight">Your name here</h3>
+        <div class="relative flex gap-6 mt-4 font-serif">
+          <div><b class="block text-xl font-semibold text-evergreen-900">${Number(v.sqft).toLocaleString()}</b><span class="text-[0.7rem] uppercase tracking-wide text-evergreen-700/70">sq ft</span></div>
+          <div><b class="block text-xl font-semibold text-evergreen-900">${fmtMoney(v.allIn)}</b><span class="text-[0.7rem] uppercase tracking-wide text-evergreen-700/70">/ mo all-in, to start</span></div>
+        </div>
+        ${v.fit ? `<p class="relative mt-3 text-sm text-evergreen-800/90 leading-relaxed">${esc(v.fit)}</p>` : ''}
+        <details class="relative mt-3 text-sm">
+          <summary class="cursor-pointer text-evergreen-700 hover:text-evergreen-900 select-none">See cost breakdown</summary>
+          <dl class="mt-2 grid grid-cols-2 gap-y-1 text-evergreen-800">
+            <dt>Rent</dt>      <dd class="text-right">${fmtMoneyCents(v.rent)}</dd>
+            <dt>CAM</dt>       <dd class="text-right">${fmtMoneyCents(v.cam)}</dd>
+            <dt>Utilities</dt> <dd class="text-right">${fmtMoneyCents(v.utilities)}</dd>
+            <dt class="border-t border-evergreen-100 pt-1 font-medium">Total</dt>
+            <dd class="border-t border-evergreen-100 pt-1 text-right font-medium">${fmtMoney(v.allIn)}</dd>
+          </dl>
+        </details>
+        ${neighborLine}
+        <button type="button" data-inquire-suite="${esc(v.unit)}"
+                class="relative mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-rust-500 hover:text-rust-600">
+          Curious? Let's talk &rarr;
+        </button>
+      </article>`;
+  }
+
+  // Scroll to the inquiry form with a suite preselected.
+  function prefillInquiry(unit) {
+    const select = document.getElementById('suite-select');
+    if (select && unit) {
+      if (![...select.options].some(o => o.value === unit)) {
+        const opt = document.createElement('option');
+        opt.value = unit; opt.textContent = `Suite ${unit}`;
+        select.appendChild(opt);
+      }
+      select.value = unit;
+    }
+    document.getElementById('inquire').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function populateSuiteDropdown(suites) {
@@ -581,66 +799,82 @@
     suites.forEach(s => {
       const opt = document.createElement('option');
       opt.value = s.unit;
-      opt.textContent = `Suite ${s.unit} — ${s.sqft.toLocaleString()} sq ft (${fmtMoney(s.allIn)}/mo)`;
+      opt.textContent = `Suite ${s.unit}, ${Number(s.sqft).toLocaleString()} sq ft (${fmtMoney(s.allIn)}/mo)`;
       select.appendChild(opt);
     });
   }
 
-  // ---- Tenants directory ----------------------------------------
-
-  // Minimal HTML escape so tenant-supplied strings can't break out of the card.
-  function esc(s) {
-    return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  // ---- Tally count-up ----
+  function setupTally(suites, neighbors, open) {
+    const box = document.getElementById('neighbors-tally');
+    box.classList.remove('hidden');
+    box.classList.add('flex');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    countUp('tally-suites', suites, reduce);
+    countUp('tally-neighbors', neighbors, reduce);
+    countUp('tally-open', open, reduce);
+  }
+  function countUp(id, target, reduce) {
+    const el = document.getElementById(id);
+    if (reduce || target <= 0) { el.textContent = target; return; }
+    let n = 0;
+    const step = Math.max(1, Math.round(target / 20));
+    const iv = setInterval(() => {
+      n += step;
+      if (n >= target) { n = target; clearInterval(iv); }
+      el.textContent = n;
+    }, 30);
   }
 
-  async function loadTenants() {
-    const section = document.getElementById('tenants');
-    let tenants;
-    try {
-      const res = await fetch('/data/tenants.json', { cache: 'no-cache' });
-      if (!res.ok) throw new Error('tenants.json not reachable');
-      tenants = await res.json();
-    } catch (err) {
-      // No directory data → hide the section entirely rather than show an error.
-      section?.remove();
-      return;
-    }
+  // ---- Filter controls ----
+  function setupControls(tenants) {
+    const controls = document.getElementById('neighbors-controls');
+    controls.classList.remove('hidden');
+    controls.classList.add('flex');
 
-    if (!Array.isArray(tenants) || tenants.length === 0) {
-      section?.remove();
-      return;
-    }
+    // Build a tag button per distinct occupied category.
+    const cats = [...new Set(tenants.map(t => String(t.category || '').toLowerCase()).filter(Boolean))].sort();
+    const tagWrap = document.getElementById('neighbor-tags');
+    tagWrap.innerHTML = cats.map(c =>
+      `<button type="button" data-cat="${esc(c)}"
+               class="neighbor-tag font-serif text-sm px-3.5 py-1.5 rounded-full border border-evergreen-200 text-evergreen-800 hover:border-rust-400 hover:text-rust-500 transition">
+         ${esc(titleCase(c))}
+       </button>`
+    ).join('');
 
-    renderTenantCards(tenants);
+    tagWrap.querySelectorAll('.neighbor-tag').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeCat = (activeCat === btn.dataset.cat) ? null : btn.dataset.cat;
+        tagWrap.querySelectorAll('.neighbor-tag').forEach(b => {
+          b.classList.toggle('tag-active', b.dataset.cat === activeCat);
+        });
+        applyFilterStates();
+      });
+    });
+
+    const toggle = document.getElementById('open-toggle');
+    toggle.addEventListener('click', () => {
+      openOnly = !openOnly;
+      toggle.setAttribute('aria-pressed', String(openOnly));   // CSS reacts to this
+      applyFilterStates();
+    });
   }
 
-  function renderTenantCards(tenants) {
-    const grid = document.getElementById('tenants-grid');
-    grid.innerHTML = tenants.map(t => `
-      <article class="bg-sand-50 text-evergreen-950 rounded-lg p-6 shadow-sm flex flex-col">
-        ${t.logo
-            ? `<img src="${esc(t.logo)}" alt="${esc(t.name)} logo"
-                    class="h-12 w-auto mb-4 object-contain self-start"
-                    onerror="this.style.display='none'" />`
-            : ''}
-        <div class="flex items-start justify-between gap-3 mb-2">
-          <h3 class="font-serif text-xl text-evergreen-900">${esc(t.name)}</h3>
-          ${t.suite ? `<span class="shrink-0 inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-evergreen-100 text-evergreen-800">Suite ${esc(t.suite)}</span>` : ''}
-        </div>
-        ${t.category ? `<p class="text-sm text-evergreen-700 mb-3">${esc(t.category)}</p>` : ''}
-        ${t.blurb    ? `<p class="text-sm text-evergreen-800/90 leading-relaxed">${esc(t.blurb)}</p>` : ''}
-        ${t.website
-            ? `<p class="mt-4"><a href="${esc(t.website)}" target="_blank" rel="noopener" class="text-sm font-medium text-evergreen-700 hover:text-evergreen-900 underline">Visit website &rarr;</a></p>`
-            : ''}
-      </article>
-    `).join('');
+  // Occupied cards dim (category filter) or recede (open-only toggle).
+  // Open cards always stay lit, so "what's available" is never hidden.
+  function applyFilterStates() {
+    document.querySelectorAll('#neighbor-wall .neighbor-card').forEach(card => {
+      card.classList.remove('dim', 'recede');
+      if (card.dataset.mode === 'open') return;
+      if (openOnly) { card.classList.add('recede'); return; }
+      if (activeCat && card.dataset.cat !== activeCat) card.classList.add('dim');
+    });
   }
 
   // Copyright year.
   document.getElementById('copyright-year').textContent = new Date().getFullYear();
 
-  loadVacancies();
-  loadTenants();
+  buildNeighborWall();
 </script>
 
 </body>

@@ -38,53 +38,54 @@ The site exists for one job: turn prospective tenants into people who fill out t
     └── lease-pdf.yml             Renders lease.md to PDF on every "lease-v*" tag
 ```
 
-## Editing the tenant directory
+## The "Your Neighbors" card wall
 
-The "Current tenants" section on the landing page is sourced from `data/tenants.json`. Each entry is an object with these fields:
+The landing page has one unified card wall (the `#suites` section) that merges the old "Current tenants" and "Available suites" sections. It reads from **both** data files and renders two kinds of cards on the same masonry wall:
+
+- **Occupied cards** come from `data/tenants.json` (the businesses already leasing).
+- **Open cards** come from `data/vacancies.json` (suites available to lease), with a warm tint, a breathing glow, an "OPEN" ribbon, the all-in monthly price framed as a starting point, and a "you'd be next to ..." line naming the nearest neighbors.
+
+**The wall is adaptive.** With at least one tenant in `tenants.json`, it presents as "Meet the neighbors you'd be keeping," with a tally (`X suites / Y neighbors / Z open`), category filter tags, and a "See what's open" toggle. With `tenants.json` empty (`[]`), it gracefully shows just the open suites as a polished available-suites wall, no empty tally or filters. It blooms into the full treatment the moment you add tenants. No code change needed either way.
+
+### Editing tenants (`data/tenants.json`)
+
+Each entry is an object. Only `name` is required; everything else gracefully omits if missing.
 
 ```json
 {
-  "name":     "Smith Family Dental",                    // displayed business name (required)
-  "suite":    "N101",                                   // suite number — shown as a badge (optional)
-  "category": "Dental",                                 // short type label, e.g. "Medical", "Legal" (optional)
-  "blurb":    "General dentistry, cosmetic, pediatric.",// 1-2 sentence description (optional)
-  "website":  "https://smithfamilydental.com",          // tenant's site (optional)
-  "logo":     "/images/tenants/smith-family-dental.png" // path to tenant's logo (optional)
+  "name":     "Smith Family Dental",                     // displayed business name (required)
+  "suite":    "N101",                                    // suite number, shown on the card (optional)
+  "category": "Dental",                                  // drives the filter tag + accent color (optional)
+  "blurb":    "General dentistry, cosmetic, pediatric.", // 1 to 2 sentence description (optional)
+  "website":  "https://smithfamilydental.com",           // tenant's site (optional)
+  "phone":    "(206) 555-0100",                          // optional, shown small on the card
+  "email":    "hello@smithfamilydental.com",             // optional, shown small on the card
+  "logo":     "/images/tenants/smith-family-dental.png"  // optional, see images/tenants/README.md
 }
 ```
 
-### Tenant logos
+**Category vocabulary.** The `category` value both creates a filter tag and sets the card's left accent-stripe color. Recognized values (case-insensitive) include: `professional`, `medical`, `dental`, `wellness`, `therapy`, `bodywork`, `legal`, `accounting`, `tutoring`, `creative`, `retail`, `food`. Any other value still works (it just uses a neutral accent). To add or recolor categories, edit the `CATEGORY_ACCENTS` map in the script block of `index.html`.
 
-Drop logo files into **`images/tenants/`** and reference them from the `logo` field by their absolute site path (e.g. `/images/tenants/foo.svg`). See `images/tenants/README.md` for the recommended dimensions and tips. If a logo file is missing or broken, the card hides the image gracefully — the rest of the card still renders.
+### Editing vacancies (`data/vacancies.json`)
 
-To add, remove, or edit tenants:
+```json
+{
+  "unit": "N101",        // suite identifier, shown on the card and in the form dropdown
+  "building": "North",   // "North" or "South" (only North is currently shown)
+  "sqft": 259,           // square footage
+  "rent": 815.85,        // monthly base rent
+  "cam": 198.19,         // monthly common-area maintenance share
+  "utilities": 166.97,   // monthly utilities share
+  "allIn": 1181,         // rent + cam + utilities, rounded (the headline figure)
+  "fit": "Room for a small practice with a waiting area, such as therapy or bodywork."  // "who'd thrive here" line (optional)
+}
+```
 
-1. Open `data/tenants.json`.
-2. Add an object per tenant (only `name` is strictly required; everything else gracefully omits if missing).
-3. Save and deploy. The directory re-renders on next page load.
+The "you'd be next to ..." line on each open card is derived automatically from the nearest occupied tenants (same building letter, closest suite number), so you don't maintain it by hand. It simply doesn't appear until there are tenants to name.
 
-If the file is `[]` (empty array) or can't be loaded, the "Current tenants" section is **automatically hidden** — no broken UI shown to visitors. That's how the site behaves until you add your first tenant.
+> **Note:** South-building suites are intentionally omitted from the public site for now. To list them publicly, add their objects to `vacancies.json` with `"building": "South"`.
 
-## Editing vacancies
-
-All available suites come from `data/vacancies.json`. To add, remove, or change a suite:
-
-1. Open `data/vacancies.json`.
-2. Each entry is an object with these fields:
-   ```json
-   {
-     "unit": "N101",        // suite identifier shown on the card and in the form dropdown
-     "building": "North",   // "North" or "South" (only North is currently shown)
-     "sqft": 259,           // square footage
-     "rent": 815.85,        // monthly base rent
-     "cam": 198.19,         // monthly common-area maintenance share
-     "utilities": 166.97,   // monthly utilities share
-     "allIn": 1181          // rent + cam + utilities, rounded to nearest dollar (headline number)
-   }
-   ```
-3. Save and deploy. The landing page re-renders the suite cards and the form dropdown automatically.
-
-> **Note:** South-building suites are intentionally omitted from the public site for now. To list them publicly, just add their objects to the JSON file with `"building": "South"`.
+> **To make the wall come alive:** add the real tenant roster to `data/tenants.json`. Each business submits its own content (blurb, optional phone/email/photo, website); the owner places it. Until then the wall shows the open suites only.
 
 ## Publishing a new lease version
 
