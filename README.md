@@ -26,16 +26,13 @@ The site exists for one job: turn prospective tenants into people who fill out t
 ├── lease/
 │   ├── index.html                Leasing process + standard lease (renders lease.md)
 │   ├── lease.md                  Current lease text (Markdown). Edit this directly.
-│   ├── letter-of-intent.pdf      LOI template — owner uploads
-│   ├── lease.pdf                 Convenience pointer to latest archived PDF (auto-generated)
-│   ├── history/
-│   │   └── index.html            Reverse-chronological list of all versions
+│   ├── lease.pdf                 The lease PDF the "Read the full lease" button links to
 │   └── archive/
-│       └── v2026.05.31/          Current published version (one folder per tag)
+│       └── v2026.05.31/          Internal record of the published lease (not surfaced publicly)
 │           ├── lease.md          Frozen Markdown copy at the time of the tag
 │           └── lease.pdf         Boilerplate PDF for this version
 └── .github/workflows/
-    └── lease-pdf.yml             Renders lease.md to PDF on every "lease-v*" tag
+    └── lease-pdf.yml             Renders lease.md to PDF on every "lease-v*" tag (internal)
 ```
 
 ## The "Your Neighbors" card wall
@@ -92,7 +89,7 @@ The "you'd be next to ..." line on each open card is derived automatically from 
 The lease lives in `lease/lease.md`. To publish a new version:
 
 1. **Edit** `lease/lease.md` with your changes.
-2. **Commit** the change. Use a descriptive message — it'll show up in `git log` and helps when writing the summary in step 4.
+2. **Commit** the change with a descriptive message.
 3. **Tag** the commit using the format `lease-vYYYY.MM.DD`:
    ```sh
    git tag lease-v2026.07.15
@@ -102,18 +99,14 @@ The lease lives in `lease/lease.md`. To publish a new version:
 4. The `.github/workflows/lease-pdf.yml` workflow will:
    - Snapshot `lease/lease.md` to `lease/archive/v2026.07.15/lease.md`
    - Render it to `lease/archive/v2026.07.15/lease.pdf`
-   - Copy the PDF to `lease/lease.pdf` (the convenience pointer used by the "Download current lease" button)
+   - Copy the PDF to `lease/lease.pdf` (the file the "Read the full lease (PDF)" button links to)
    - Commit those files back to the default branch
-5. **Update the history page**. Open `lease/history/index.html` and:
-   - Copy the existing `<article>` block at the top of the list.
-   - Edit the version tag, effective date, and one-line change summary.
-   - Update the two `href` paths to point at the new version folder.
-   - Move the `Current` badge from the previous entry to the new one.
-6. **Update the version banner on the lease page**. Open `lease/index.html` and update:
-   - The text inside `<span id="current-version">…</span>` to the new tag.
-   - The `href` on the `#lease-pdf-link` button to the new PDF path.
 
-Steps 5 and 6 are intentionally manual so the owner can write a thoughtful change summary at publishing time.
+That's it. The page always renders the current `lease/lease.md` and links to `lease/lease.pdf`, so no manual page edits are needed when you publish a new version.
+
+> **Note on public versioning:** the public version banner and the `/lease/history/` archive page have been removed at the owner's request, so the live site shows only the current lease (no version label, no prior-versions list). The `lease/archive/` folders still accumulate per-tag snapshots as an internal record. To bring the public version history back later, re-add a banner to `lease/index.html` and a history page that links into `lease/archive/`.
+
+> **Note on the Letter of Intent:** the LOI is now an internal checklist, not a public download. There is no public LOI button, and the PDF is not deployed. The leasing process invites prospects to reach out; the LOI is handled internally from there.
 
 ## Swapping in real photos
 
@@ -161,9 +154,9 @@ If you'd rather host on GitHub Pages:
 
 - Real building photos (see `images/README.md`).
 
-> **Already in place:** the domain (courthousesquarevashon.com, live on Netlify), the Courthouse Square wordmark (`images/logo.svg`), the standard lease language v1.1 (`lease/lease.md` + matching PDF in `lease/archive/v2026.05.31/`), and the LOI PDF (`lease/letter-of-intent.pdf`).
+> **Already in place:** the domain (courthousesquarevashon.com, live on Netlify), the Courthouse Square wordmark (`images/logo.svg`), and the standard lease language v1.1 (`lease/lease.md` + matching PDF in `lease/archive/v2026.05.31/`).
 >
-> The site uses a muted evergreen + warm neutral palette by default. If you want brand-color tweaks, adjust the Tailwind config block at the top of `index.html`, `lease/index.html`, and `lease/history/index.html`.
+> The site uses a muted evergreen + warm neutral palette (plus a rust accent on the suites wall) by default. If you want brand-color tweaks, adjust the Tailwind config block at the top of `index.html` and `lease/index.html`.
 
 ## Email routing
 
