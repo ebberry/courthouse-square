@@ -19,20 +19,25 @@ The site exists for one job: turn prospective tenants into people who fill out t
 ├── index.html                    Landing page
 ├── README.md                     This file
 ├── data/
-│   └── vacancies.json            Source of truth for available suites
+│   ├── vacancies.json            Source of truth for available suites
+│   └── tenants.json              Tenant roster for the Your Neighbors wall
 ├── images/
 │   ├── README.md                 What photos go where
-│   └── (hero.jpg, gallery-*.jpg, ...)   ← owner drops files here
+│   └── (sculpture.jpg, gallery-*.jpg, ...)   ← owner drops files here
 ├── lease/
 │   ├── index.html                Leasing process + standard lease (renders lease.md)
-│   ├── lease.md                  Current lease text (Markdown). Edit this directly.
-│   ├── lease.pdf                 The lease PDF the "Read the full lease" button links to
+│   ├── lease.md                  Standard Lease Terms + Definitions (Markdown). Edit this directly.
+│   ├── lease.pdf                 "Read the full standard lease" download (generated)
+│   ├── lease-terms-sheet.pdf     Fillable Lease Terms Sheet example (generated)
 │   └── archive/
-│       └── v2026.05.31/          Internal record of the published lease (not surfaced publicly)
-│           ├── lease.md          Frozen Markdown copy at the time of the tag
-│           └── lease.pdf         Boilerplate PDF for this version
+│       ├── v2026.05.31/          Prior version (internal record)
+│       └── v2026.06.08/          Current version: lease.md, lease.pdf, lease-terms-sheet.pdf
+├── tools/
+│   └── build_lease_docs.py       Regenerates all lease PDFs (run with reportlab + pypdf)
+├── review/                       Internal only, git-ignored (NOT deployed):
+│                                   letter-of-intent.pdf + the full consolidated review PDF
 └── .github/workflows/
-    └── lease-pdf.yml             Renders lease.md to PDF on every "lease-v*" tag (internal)
+    └── lease-pdf.yml             Legacy tag-based PDF render (superseded; see note below)
 ```
 
 ## The "Your Neighbors" card wall
@@ -84,29 +89,44 @@ The "you'd be next to ..." line on each open card is derived automatically from 
 
 > **To make the wall come alive:** add the real tenant roster to `data/tenants.json`. Each business submits its own content (blurb, optional phone/email/photo, website); the owner places it. Until then the wall shows the open suites only.
 
-## Publishing a new lease version
+## The lease document set (Version 1.2)
 
-The lease lives in `lease/lease.md`. To publish a new version:
+The lease is split into plain-named pieces rather than numbered "Parts":
 
-1. **Edit** `lease/lease.md` with your changes.
-2. **Commit** the change with a descriptive message.
-3. **Tag** the commit using the format `lease-vYYYY.MM.DD`:
-   ```sh
-   git tag lease-v2026.07.15
-   git push origin main
-   git push origin lease-v2026.07.15
-   ```
-4. The `.github/workflows/lease-pdf.yml` workflow will:
-   - Snapshot `lease/lease.md` to `lease/archive/v2026.07.15/lease.md`
-   - Render it to `lease/archive/v2026.07.15/lease.pdf`
-   - Copy the PDF to `lease/lease.pdf` (the file the "Read the full lease (PDF)" button links to)
-   - Commit those files back to the default branch
+- **Standard Lease Terms** + **Definitions & Glossary** — the standard terms that apply to every tenant. Source of truth: `lease/lease.md`. Rendered on `/lease/` and downloadable as `lease/lease.pdf`.
+- **Lease Terms Sheet** — the deal-specific terms a tenant fills in and signs (this merges what used to be Parts II and III). A blank **fillable PDF example** is published at `lease/lease-terms-sheet.pdf`.
+- **Letter of Intent** — an internal intake checklist. Lives only in the git-ignored `review/` folder; it is not deployed.
 
-That's it. The page always renders the current `lease/lease.md` and links to `lease/lease.pdf`, so no manual page edits are needed when you publish a new version.
+Everything is stamped with a version (currently **Version 1.2, June 8, 2026**) set near the top of `tools/build_lease_docs.py` (`VERSION` / `VDATE`).
 
-> **Note on public versioning:** the public version banner and the `/lease/history/` archive page have been removed at the owner's request, so the live site shows only the current lease (no version label, no prior-versions list). The `lease/archive/` folders still accumulate per-tag snapshots as an internal record. To bring the public version history back later, re-add a banner to `lease/index.html` and a history page that links into `lease/archive/`.
+### Regenerating the lease PDFs
 
-> **Note on the Letter of Intent:** the LOI is now an internal checklist, not a public download. There is no public LOI button, and the PDF is not deployed. The leasing process invites prospects to reach out; the LOI is handled internally from there.
+The PDFs are generated locally from `lease/lease.md` plus the form/LOI content embedded in the build script. One-time setup: `pip install reportlab pypdf`. Then:
+
+```sh
+python3 tools/build_lease_docs.py
+```
+
+This writes:
+- `lease/lease.pdf` (Standard Lease Terms + Definitions)
+- `lease/lease-terms-sheet.pdf` (fillable Lease Terms Sheet example)
+- `review/letter-of-intent.pdf` (internal)
+- `review/CourthouseSquare_FullLease_v<version>.pdf` (the full consolidated package, for deep review)
+
+### Publishing a new version
+
+1. Bump `VERSION` / `VDATE` at the top of `tools/build_lease_docs.py`.
+2. Edit `lease/lease.md` (and the Terms Sheet / LOI content in the script) as needed.
+3. Run `python3 tools/build_lease_docs.py`.
+4. Snapshot the new public docs into `lease/archive/v<YYYY.MM.DD>/` (copy `lease.md`, `lease.pdf`, `lease-terms-sheet.pdf`).
+5. Update the small "Version X, date" line in `lease/index.html` near the download buttons.
+6. Commit and push. Netlify redeploys automatically.
+
+> **Legacy GitHub Action:** `.github/workflows/lease-pdf.yml` renders `lease.md` to a plain pandoc PDF on `lease-v*` tag pushes. It is **superseded** by the local build script (which also produces the branded styling and the fillable form). Do not push `lease-v*` tags, or it will overwrite the curated `lease.pdf`. Tell me if you'd like it retired.
+
+> **Public versioning UI:** still off, per your earlier request. The documents are version-stamped and archived internally, but there's no public version banner or history page. Easy to resurface later.
+
+> **The Letter of Intent** is internal: no public button, not deployed. Prospects reach out via the form/email; the LOI is handled internally from there.
 
 ## Swapping in real photos
 

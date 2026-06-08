@@ -29,3 +29,6 @@ yarn-error.log*
 .env
 .env.*
 !.env.example
+
+# Internal lease package (LOI + full consolidated PDF) — not for the public site
+review/
