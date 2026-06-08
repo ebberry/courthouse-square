@@ -2,7 +2,7 @@
 
 **Courthouse Square LLC**
 1301 Spring Street, Unit 29H, Seattle, Washington 98104
-**Version 1.2 — June 8, 2026**
+**Version 1.2, June 8, 2026**
 
 > **Applicability.** This document contains the standard operating and legal terms for the Property (these Standard Lease Terms and the Definitions & Glossary). Capitalized terms used herein are defined either in the Definitions & Glossary below or in the Lease Terms Sheet of the Tenant's specific Commercial Lease Agreement. Landlord may amend the Standard Lease Terms and the Definitions & Glossary from time to time as the standard form for the Property; such amendments apply only to Commercial Lease Agreements executed after the effective date of the amendment, and the version incorporated into any specific Lease shall be as stated in the Lease Terms Sheet for that Lease.
 
@@ -258,4 +258,4 @@ Tenant warrants it has dealt with no brokers other than those explicitly named, 
 
 ---
 
-*— End of the Courthouse Square LLC Standard Lease Terms and Definitions, Version 1.2 —*
+*End of the Courthouse Square LLC Standard Lease Terms and Definitions, Version 1.2.*

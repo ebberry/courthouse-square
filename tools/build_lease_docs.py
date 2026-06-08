@@ -288,7 +288,7 @@ LOI_MD = f"""# Letter of Intent & Lease Application
 
 **Courthouse Square LLC**
 1301 Spring Street, Unit 29H, Seattle, Washington 98104
-**{VERSION} — {VDATE}**
+**{VERSION}, {VDATE}**
 
 > This Letter of Intent and Application (this "LOI") outlines the basic proposed terms for a commercial lease and serves as an application for tenancy. This LOI is not a binding lease agreement. A binding legal relationship will only be created upon execution of the formal, written Commercial Lease Agreement (the Lease Terms Sheet, the Standard Lease Terms, and the Definitions) by both parties. The complete Standard Lease Terms and Definitions are posted at courthousesquarevashon.com/lease/.
 
@@ -341,7 +341,7 @@ Completed applications, together with the Good Faith Deposit, are submitted to l
 
 *Agreed and authorized by applicant: signature, printed name, title, date.*
 
-*— End of the Letter of Intent —*
+*End of the Letter of Intent.*
 """
 
 def build_cover(path):
