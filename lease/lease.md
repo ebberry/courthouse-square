@@ -60,7 +60,7 @@
 
 **4.1 Tenant's Maintenance Obligations.** Tenant shall, at its sole cost, maintain the interior of the Premises (walls, floors, plumbing fixtures, interior glass, and lighting) in clean, safe condition.
 
-**4.2 HVAC.** Tenant is entirely responsible for routine maintenance and repair of the HVAC system serving the Premises. Tenant must maintain a quarterly preventative maintenance contract with a licensed HVAC contractor. If an HVAC unit requires full replacement through no fault of Tenant, Landlord shall replace it and amortize the cost into CAM Charges.
+**4.2 HVAC.** Landlord arranges routine and preventative maintenance of the HVAC systems serving the Premises through a licensed HVAC contractor, and the cost is included in CAM Charges as part of Tenant's Proportionate Share. If an HVAC unit requires full replacement through no fault of Tenant, Landlord shall replace it and amortize the cost into CAM Charges. Tenant has no separate obligation to contract for or maintain HVAC service.
 
 **4.3 Landlord's Obligations.** Subject to CAM reimbursement, Landlord shall maintain the structural foundation, load-bearing walls, exterior roof membrane, and Common Areas.
 
@@ -82,11 +82,11 @@
 
 ### Article 6: Insurance and Indemnification
 
-**6.1 Tenant's Required Insurance.** Tenant must carry: $2M per occurrence / $4M aggregate Commercial General Liability (CGL); "Special Form" Property Insurance covering 100% of Tenant's property; Business Interruption insurance; and Washington State Worker's Compensation.
+**6.1 Tenant's Required Insurance.** Tenant must carry: $1M per occurrence / $2M aggregate Commercial General Liability (CGL); "Special Form" Property Insurance covering 100% of Tenant's property; and Washington State Workers' Compensation coverage as and to the extent required by Applicable Laws for Tenant's employees, if any. If Tenant has no employees, Tenant shall upon request certify that fact to Landlord in writing.
 
 **6.2 Additional Insureds.** CGL policies must name Landlord and Landlord's lender as Additional Insureds on a primary/non-contributory basis.
 
-**6.3 Mutual Waiver of Subrogation.** Landlord and Tenant mutually waive rights of recovery against each other for any loss covered by the required property or business interruption insurance.
+**6.3 Mutual Waiver of Subrogation.** Landlord and Tenant mutually waive rights of recovery against each other for any loss covered by the required property insurance.
 
 **6.4 General Indemnification.** Tenant indemnifies and defends Landlord against claims arising from Tenant's use of the Premises or breach of Lease, except to the extent caused by Landlord's gross negligence.
 
