@@ -1,7 +1,7 @@
 # Standard Lease Terms
 
 **Courthouse Square LLC**
-1301 Spring Street, Unit 29H, Seattle, Washington 98104
+20704 Vashon Hwy SW, Vashon Island, Washington 98070
 **Version 1.2, June 8, 2026**
 
 > **Applicability.** This document contains the standard operating and legal terms for the Property (these Standard Lease Terms and the Definitions & Glossary). Capitalized terms used herein are defined either in the Definitions & Glossary below or in the Lease Terms Sheet of the Tenant's specific Commercial Lease Agreement. Landlord may amend the Standard Lease Terms and the Definitions & Glossary from time to time as the standard form for the Property; such amendments apply only to Commercial Lease Agreements executed after the effective date of the amendment, and the version incorporated into any specific Lease shall be as stated in the Lease Terms Sheet for that Lease.
@@ -26,11 +26,13 @@
 
 **1.4 Exclusions from CAM Charges.** CAM Charges shall not include: leasing commissions or legal fees for procuring tenants; costs of exclusive Tenant Improvements; Landlord's corporate/income taxes; debt service on the property; costs arising from Landlord's gross negligence; or costs to remediate Hazardous Materials present prior to the Lease Start Date.
 
-**1.5 Estimated Payments and Reconciliation.** Landlord shall provide an annual good-faith estimate of CAM Charges. Tenant shall pay 1/12th of its share monthly. Within 120 days after the calendar year, Landlord shall furnish a reconciliation statement. Tenant shall pay any deficiency within 30 days; Landlord shall credit any overage to future Rent.
+**1.5 Estimated Payments and Reconciliation.** Landlord shall provide an annual good-faith estimate of CAM Charges, and Tenant shall pay 1/12th of its share monthly. These estimated payments are reconciled against actual CAM costs through the annual review and refund described in Section 1.8.
 
 **1.6 Tenant's Audit Rights.** Once per year, provided Tenant is not in default, Tenant may audit the preceding year's CAM records using an independent CPA on an hourly basis. Request must be made within 90 days of the reconciliation statement. If Landlord overcharged by more than 5%, Landlord pays the audit cost and refunds the overage. All findings must remain strictly confidential.
 
 **1.7 NNN Variation.** If the Lease Terms Sheet (Financial Obligations) designates this Lease as Triple Net (NNN), the provisions of the NNN Lease Amendment (Exhibit D of the Lease Terms Sheet) shall modify or supersede this Article 1 to the extent set forth therein.
+
+**1.8 Annual CAM Review and Refund.** At the end of the third quarter of each year, Landlord shall review the preceding twelve-month period and compare the CAM Charges estimated and collected from Tenant against the actual CAM costs incurred, and shall furnish Tenant a written reconciliation statement of that review. If Tenant's payments exceeded its Proportionate Share of the actual CAM costs, Landlord shall refund the overcharge to Tenant. If the actual CAM costs exceeded the amounts collected, Landlord shall absorb the difference; Tenant shall not be billed for, and is not responsible for, the shortfall. This annual review and refund applies to ordinary operating costs and to routine maintenance and repairs included in CAM Charges. Major repairs, capital improvements, and emergency repairs are not covered by this annual true-up and shall be addressed separately on a case-by-case basis (including, where applicable, the capital-improvement amortization described in Section 1.3).
 
 ### Article 2: Delivery and Acceptance of Premises
 

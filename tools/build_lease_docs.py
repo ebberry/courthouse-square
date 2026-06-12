@@ -176,7 +176,7 @@ def build_terms_sheet(path):
     W = letter[0] - 1.7*inch
     st = []
     st.append(Paragraph('Lease Terms Sheet', S['title']))
-    st.append(Paragraph('Courthouse Square LLC &#183; 1301 Spring Street, Unit 29H, Seattle, WA 98104', S['sub']))
+    st.append(Paragraph('Courthouse Square LLC &#183; 20704 Vashon Hwy SW, Vashon Island, WA 98070', S['sub']))
     st.append(Paragraph(f'{VERSION} &#183; {VDATE}', S['sub']))
     st.append(Spacer(1,6))
     st.append(Paragraph('The specific, negotiated terms of your lease, including signatures and exhibits. '
@@ -230,7 +230,7 @@ def build_terms_sheet(path):
     st.append(Spacer(1,4))
 
     section('6. Notice Addresses')
-    st.append(Paragraph('Landlord: Courthouse Square LLC, 1301 Spring Street, Unit 29H, Seattle, WA 98104. '
+    st.append(Paragraph('Landlord: Courthouse Square LLC, 20704 Vashon Hwy SW, Vashon Island, WA 98070. '
                         'Courtesy email: leasing@courthousesquarevashon.com', S['body']))
     st.append(labeled('Tenant notice name:', TextField('tn_name', W-2.05*inch)))
     st.append(labeled('Tenant notice address:', TextField('tn_addr', W-2.05*inch)))
@@ -287,7 +287,7 @@ def build_terms_sheet(path):
 LOI_MD = f"""# Letter of Intent & Lease Application
 
 **Courthouse Square LLC**
-1301 Spring Street, Unit 29H, Seattle, Washington 98104
+20704 Vashon Hwy SW, Vashon Island, Washington 98070
 **{VERSION}, {VDATE}**
 
 > This Letter of Intent and Application (this "LOI") outlines the basic proposed terms for a commercial lease and serves as an application for tenancy. This LOI is not a binding lease agreement. A binding legal relationship will only be created upon execution of the formal, written Commercial Lease Agreement (the Lease Terms Sheet, the Standard Lease Terms, and the Definitions) by both parties. The complete Standard Lease Terms and Definitions are posted at courthousesquarevashon.com/lease/.
