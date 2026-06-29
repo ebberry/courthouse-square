@@ -29,13 +29,14 @@ The site exists for one job: turn prospective tenants into people who fill out t
 │   ├── lease.md                  Standard Lease Terms + Definitions (Markdown). Edit this directly.
 │   ├── lease.pdf                 "Read the full standard lease" download (generated)
 │   ├── lease-terms-sheet.pdf     Fillable Lease Terms Sheet example (generated)
+│   ├── letter-of-intent.pdf      Fillable Letter of Intent & Application (generated)
 │   └── archive/
 │       ├── v2026.05.31/          Prior version (internal record)
 │       └── v2026.06.08/          Current version: lease.md, lease.pdf, lease-terms-sheet.pdf
 ├── tools/
 │   └── build_lease_docs.py       Regenerates all lease PDFs (run with reportlab + pypdf)
 ├── review/                       Internal only, git-ignored (NOT deployed):
-│                                   letter-of-intent.pdf + the full consolidated review PDF
+│                                   the full consolidated review PDF (all parts merged)
 └── .github/workflows/
     └── lease-pdf.yml             Legacy tag-based PDF render (superseded; see note below)
 ```
@@ -95,7 +96,7 @@ The lease is split into plain-named pieces rather than numbered "Parts":
 
 - **Standard Lease Terms** + **Definitions & Glossary** — the standard terms that apply to every tenant. Source of truth: `lease/lease.md`. Rendered on `/lease/` and downloadable as `lease/lease.pdf`.
 - **Lease Terms Sheet** — the deal-specific terms a tenant fills in and signs (this merges what used to be Parts II and III). A blank **fillable PDF** (real AcroForm fields + checkboxes) is published at `lease/lease-terms-sheet.pdf`.
-- **Letter of Intent** — an internal intake **fillable PDF** form. Lives only in the git-ignored `review/` folder; it is not deployed.
+- **Letter of Intent & Application** — a **fillable PDF** form (applicant intake). Published at `lease/letter-of-intent.pdf` and linked from `/lease/`. Its fields are also offered as optional fields on the homepage inquiry form.
 
 **Two version tracks.** The Standard Lease Terms + Definitions are at **Version 1.2, June 8, 2026** (`VERSION` / `VDATE` in `tools/build_lease_docs.py`), held there pending the attorneys' redlines. The two intake forms (Letter of Intent + Lease Terms Sheet) are at **Version 1.3, June 12, 2026** (`FORM_VERSION` / `FORM_VDATE`), reflecting the assembled package: entity **Courthouse Square Vashon LLC**, building address **19001 Vashon Hwy SW**, and updated field labels. The two stamps move independently so the forms could advance without restamping the un-redlined standard terms.
 
@@ -110,7 +111,7 @@ python3 tools/build_lease_docs.py
 This writes:
 - `lease/lease.pdf` (Standard Lease Terms + Definitions — v1.2)
 - `lease/lease-terms-sheet.pdf` (fillable Lease Terms Sheet — v1.3)
-- `review/letter-of-intent.pdf` (fillable Letter of Intent, internal — v1.3)
+- `lease/letter-of-intent.pdf` (fillable Letter of Intent & Application, public — v1.3)
 - `review/CourthouseSquare_FullLease_v<date>.pdf` (the full consolidated package, for deep review; form fields preserved via `PdfWriter.append`)
 
 ### Publishing a new version
@@ -126,7 +127,7 @@ This writes:
 
 > **Public versioning UI:** still off, per your earlier request. The documents are version-stamped and archived internally, but there's no public version banner or history page. Easy to resurface later.
 
-> **The Letter of Intent** is internal: no public button, not deployed. Prospects reach out via the form/email; the LOI is handled internally from there.
+> **The Letter of Intent & Application** is now published: a fillable PDF at `lease/letter-of-intent.pdf`, linked from `/lease/`, and its fields are also available as optional fields on the homepage inquiry form. Prospects can apply online, download the PDF, or just send the short inquiry and we follow up.
 
 ## Swapping in real photos
 

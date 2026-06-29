@@ -320,8 +320,8 @@ def build_loi_form(path):
         'and Definitions are posted at courthousesquarevashon.com/lease/.', S['small']))
     st.append(Spacer(1,4))
     st.append(Paragraph(
-        '<b>Internal note.</b> Staff complete this LOI with the applicant. Prospects begin by reaching out through '
-        'the website inquiry form or by emailing leasing@courthousesquarevashon.com.', S['quote']))
+        '<b>How to apply.</b> Complete this form and email it to leasing@courthousesquarevashon.com, or start with '
+        'the shorter inquiry form at courthousesquarevashon.com and our staff will help you finish it.', S['quote']))
     st.append(Spacer(1,6)); st.append(HRFlowable(width='100%', thickness=0.6, color=LINE)); st.append(Spacer(1,8))
 
     def section(title):
@@ -408,14 +408,14 @@ def build_cover(path):
           Paragraph(f'{FORM_VERSION} &#183; {FORM_VDATE}', S['sub']),
           Spacer(1,16),
           Paragraph('Assembled for review. Contents, in order:', S['body']),
-          Paragraph('1. Letter of Intent &amp; Lease Application (internal intake; fillable)', S['body']),
+          Paragraph('1. Letter of Intent &amp; Lease Application (applicant intake; fillable)', S['body']),
           Paragraph('2. Lease Terms Sheet (deal-specific terms, signatures, and exhibits; fillable example)', S['body']),
           Paragraph('3. Standard Lease Terms (the standard terms that apply to every tenant)', S['body']),
           Paragraph('4. Definitions &amp; Glossary', S['body']),
           Spacer(1,16),
-          Paragraph('This package is for internal review and is not a public document. The Standard Lease Terms '
-                    'and Definitions are posted publicly at courthousesquarevashon.com/lease/; the Letter of Intent '
-                    'is an internal checklist.', S['small']),
+          Paragraph('This consolidated package is for internal review. Its parts are published individually at '
+                    'courthousesquarevashon.com/lease/: the Standard Lease Terms and Definitions, the fillable Lease '
+                    'Terms Sheet, and the fillable Letter of Intent &amp; Application.', S['small']),
           Spacer(1,6),
           Paragraph(f'The intake forms (Letter of Intent and Lease Terms Sheet) are at {FORM_VERSION}. The Standard '
                     f'Lease Terms and Definitions remain at {VERSION} pending attorney review.', S['small'])]
@@ -439,11 +439,11 @@ if __name__ == '__main__':
     build_prose(ROOT+'/lease/lease.pdf', lease_md)
     # 2. fillable Lease Terms Sheet (public example) — v1.3
     build_terms_sheet(ROOT+'/lease/lease-terms-sheet.pdf')
-    # 3. fillable Letter of Intent (internal) — v1.3
-    build_loi_form(REVIEW+'/letter-of-intent.pdf')
+    # 3. fillable Letter of Intent & Application (public) — v1.3
+    build_loi_form(ROOT+'/lease/letter-of-intent.pdf')
     # 4. consolidated review package (internal)
     cover = os.path.join(tempfile.gettempdir(), '_chs_cover.pdf')
     build_cover(cover)
-    merge([cover, REVIEW+'/letter-of-intent.pdf', ROOT+'/lease/lease-terms-sheet.pdf', ROOT+'/lease/lease.pdf'],
+    merge([cover, ROOT+'/lease/letter-of-intent.pdf', ROOT+'/lease/lease-terms-sheet.pdf', ROOT+'/lease/lease.pdf'],
           REVIEW+'/CourthouseSquare_FullLease_v2026.06.12.pdf')
     print('DONE')
