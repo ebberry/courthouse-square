@@ -16,14 +16,26 @@ from reportlab.lib.enums import TA_LEFT, TA_CENTER
 from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, HRFlowable,
                                 Table, TableStyle, Flowable, KeepTogether, PageBreak)
 from reportlab.pdfgen import canvas as canvaslib
-from pypdf import PdfWriter, PdfReader
+# pypdf is imported lazily inside merge(): only the consolidated review PDF needs
+# it, so generating the fillable forms never depends on it being installed.
 
 import os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REVIEW = ROOT + '/review'
+# Standard Lease Terms + Definitions stay at v1.2 pending the attorneys' redlines,
+# so lease.pdf keeps the v1.2 identity that matches lease.md's own header text.
 VERSION = 'Version 1.2'
 VDATE = 'June 8, 2026'
 FOOTER = f'Courthouse Square LLC    {VERSION}, {VDATE}'
+
+# The fillable intake forms (Letter of Intent + Lease Terms Sheet) are updated to
+# v1.3 per the assembled package: new entity name, building address, and field
+# labels. Kept separate from VERSION above so the two can move independently.
+FORM_ENTITY  = 'Courthouse Square Vashon LLC'
+FORM_ADDR    = '19001 Vashon Hwy SW, Vashon Island, WA 98070'
+FORM_VERSION = 'Version 1.3'
+FORM_VDATE   = 'June 12, 2026'
+FORM_FOOTER  = f'{FORM_ENTITY}    {FORM_VERSION}, {FORM_VDATE}'
 
 INK   = HexColor(0x1e3128)
 INK2  = HexColor(0x243b2f)
@@ -95,6 +107,7 @@ def md_to_story(md):
 
 # ---------------- numbered canvas (Page N of M + footer) ----------------
 class NumberedCanvas(canvaslib.Canvas):
+    footer_text = FOOTER   # overridden per-document via footer_canvas()
     def __init__(self, *a, **kw):
         super().__init__(*a, **kw)
         self._saved = []
@@ -108,10 +121,14 @@ class NumberedCanvas(canvaslib.Canvas):
     def _draw_footer(self, total):
         self.setFont('Helvetica', 7.5); self.setFillColor(MUTE)
         w, _ = letter
-        self.drawString(0.85*inch, 0.5*inch, FOOTER)
+        self.drawString(0.85*inch, 0.5*inch, getattr(self, 'footer_text', FOOTER))
         self.drawRightString(w - 0.85*inch, 0.5*inch, f'Page {self._pageNumber} of {total}')
         self.setStrokeColor(LINE); self.setLineWidth(0.5)
         self.line(0.85*inch, 0.62*inch, w - 0.85*inch, 0.62*inch)
+
+def footer_canvas(footer):
+    """A NumberedCanvas subclass that stamps a specific footer string."""
+    return type('FooterCanvas', (NumberedCanvas,), {'footer_text': footer})
 
 def build_prose(path, md):
     doc = SimpleDocTemplate(path, pagesize=letter,
@@ -172,12 +189,12 @@ def build_terms_sheet(path):
     doc = SimpleDocTemplate(path, pagesize=letter,
                             leftMargin=0.85*inch, rightMargin=0.85*inch,
                             topMargin=0.8*inch, bottomMargin=0.8*inch,
-                            title='Courthouse Square LLC Lease Terms Sheet')
+                            title=f'{FORM_ENTITY} Lease Terms Sheet')
     W = letter[0] - 1.7*inch
     st = []
     st.append(Paragraph('Lease Terms Sheet', S['title']))
-    st.append(Paragraph('Courthouse Square LLC &#183; 20704 Vashon Hwy SW, Vashon Island, WA 98070', S['sub']))
-    st.append(Paragraph(f'{VERSION} &#183; {VDATE}', S['sub']))
+    st.append(Paragraph(f'{FORM_ENTITY} &#183; {FORM_ADDR}', S['sub']))
+    st.append(Paragraph(f'{FORM_VERSION} &#183; {FORM_VDATE}', S['sub']))
     st.append(Spacer(1,6))
     st.append(Paragraph('The specific, negotiated terms of your lease, including signatures and exhibits. '
                         'This is a fillable example. Where this Terms Sheet is silent, the Standard Lease Terms '
@@ -189,7 +206,7 @@ def build_terms_sheet(path):
         st.append(Spacer(1,4)); st.append(Paragraph(title, S['h3']))
 
     section('1. The Parties')
-    st.append(labeled('Landlord:', Paragraph('Courthouse Square LLC, a Washington LLC', S['body'])))
+    st.append(labeled('Landlord:', Paragraph(f'{FORM_ENTITY}, a Washington Limited Liability Company', S['body'])))
     st.append(labeled('Tenant (entity):', TextField('tenant_entity', W-2.05*inch)))
     st.append(labeled('Tenant address:', TextField('tenant_address', W-2.05*inch)))
     st.append(labeled('Guarantor(s):', TextField('guarantor', W-2.05*inch)))
@@ -198,7 +215,7 @@ def build_terms_sheet(path):
     section('2. The Premises')
     st.append(labeled('Property / Building:', TextField('property_name', W-2.05*inch)))
     st.append(labeled('Address / Suite:', TextField('premises_addr', W-2.05*inch)))
-    st.append(labeled('Rentable square footage:', TextField('sqft', 1.6*inch)))
+    st.append(labeled('Approximate square footage:', TextField('sqft', 1.6*inch)))
 
     section('3. The Term')
     st.append(labeled('Lease Start Date:', TextField('start_date', 2.0*inch)))
@@ -230,15 +247,15 @@ def build_terms_sheet(path):
     st.append(Spacer(1,4))
 
     section('6. Notice Addresses')
-    st.append(Paragraph('Landlord: Courthouse Square LLC, 20704 Vashon Hwy SW, Vashon Island, WA 98070. '
+    st.append(Paragraph(f'Landlord: {FORM_ENTITY}, c/o Bangasser &amp; Associates, Inc., {FORM_ADDR}. '
                         'Courtesy email: leasing@courthousesquarevashon.com', S['body']))
     st.append(labeled('Tenant notice name:', TextField('tn_name', W-2.05*inch)))
     st.append(labeled('Tenant notice address:', TextField('tn_addr', W-2.05*inch)))
     st.append(labeled('Tenant courtesy email:', TextField('tn_email', W-2.05*inch)))
 
     section('7. Incorporation and Merger')
-    st.append(Paragraph('This Lease Terms Sheet, together with its Exhibits, the Standard Lease Terms, and the '
-                        'Definitions & Glossary (Version 1.2, June 8, 2026, posted at courthousesquarevashon.com/lease/), '
+    st.append(Paragraph(f'This Lease Terms Sheet, together with its Exhibits, the Standard Lease Terms, and the '
+                        f'Definitions &amp; Glossary ({FORM_VERSION}, {FORM_VDATE}, posted at courthousesquarevashon.com/lease/), '
                         'constitutes the entire Commercial Lease Agreement and supersedes the Letter of Intent. In the event '
                         'of any conflict between this Terms Sheet and the online Standard Lease Terms or Definitions, this '
                         'Terms Sheet prevails.', S['body']))
@@ -250,7 +267,7 @@ def build_terms_sheet(path):
         st.append(labeled('Signature:', TextField(prefix+'_sig', W-2.05*inch, underlined=True)))
         st.append(labeled('Printed name / title:', TextField(prefix+'_name', W-2.05*inch, underlined=True)))
         st.append(labeled('Date:', TextField(prefix+'_date', 2.2*inch, underlined=True)))
-    sig_block('sll', 'LANDLORD: Courthouse Square LLC')
+    sig_block('sll', f'LANDLORD: {FORM_ENTITY}')
     sig_block('stn', 'TENANT (the business entity)')
     sig_block('sgr', 'PERSONAL GUARANTOR (only if a Guarantor is named in Section 1)')
     st.append(labeled('Guarantor home address:', TextField('sgr_addr', W-2.05*inch, underlined=True)))
@@ -280,69 +297,107 @@ def build_terms_sheet(path):
     st.append(Paragraph('Exhibits B (Guaranty) and D (NNN Amendment) carry standard text supplied when they apply; '
                         'their key terms appear in the Standard Lease Terms and Definitions.', S['small']))
 
-    doc.build(st)
+    doc.build(st, canvasmaker=footer_canvas(FORM_FOOTER))
     print('wrote', path)
 
-# ---------------- Letter of Intent (internal) ----------------
-LOI_MD = f"""# Letter of Intent & Lease Application
+# ---------------- Letter of Intent (internal, fillable) ----------------
+def build_loi_form(path):
+    doc = SimpleDocTemplate(path, pagesize=letter,
+                            leftMargin=0.85*inch, rightMargin=0.85*inch,
+                            topMargin=0.8*inch, bottomMargin=0.8*inch,
+                            title=f'{FORM_ENTITY} Letter of Intent & Lease Application')
+    W = letter[0] - 1.7*inch
+    st = []
+    st.append(Paragraph('Letter of Intent &amp; Lease Application', S['title']))
+    st.append(Paragraph(f'{FORM_ENTITY} &#183; {FORM_ADDR}', S['sub']))
+    st.append(Paragraph(f'{FORM_VERSION} &#183; {FORM_VDATE}', S['sub']))
+    st.append(Spacer(1,6))
+    st.append(Paragraph(
+        'This Letter of Intent and Application (this &#8220;LOI&#8221;) outlines the basic proposed terms for a '
+        'commercial lease and serves as an application for tenancy. It is not a binding lease agreement; a binding '
+        'relationship arises only upon execution of the formal, written Commercial Lease Agreement (the Lease Terms '
+        'Sheet, the Standard Lease Terms, and the Definitions) by both parties. The complete Standard Lease Terms '
+        'and Definitions are posted at courthousesquarevashon.com/lease/.', S['small']))
+    st.append(Spacer(1,4))
+    st.append(Paragraph(
+        '<b>Internal note.</b> Staff complete this LOI with the applicant. Prospects begin by reaching out through '
+        'the website inquiry form or by emailing leasing@courthousesquarevashon.com.', S['quote']))
+    st.append(Spacer(1,6)); st.append(HRFlowable(width='100%', thickness=0.6, color=LINE)); st.append(Spacer(1,8))
 
-**Courthouse Square LLC**
-20704 Vashon Hwy SW, Vashon Island, Washington 98070
-**{VERSION}, {VDATE}**
+    def section(title):
+        st.append(Spacer(1,4)); st.append(Paragraph(title, S['h3']))
 
-> This Letter of Intent and Application (this "LOI") outlines the basic proposed terms for a commercial lease and serves as an application for tenancy. This LOI is not a binding lease agreement. A binding legal relationship will only be created upon execution of the formal, written Commercial Lease Agreement (the Lease Terms Sheet, the Standard Lease Terms, and the Definitions) by both parties. The complete Standard Lease Terms and Definitions are posted at courthousesquarevashon.com/lease/.
+    def field(label, name, height=15, multiline=False):
+        """Prompt on its own line, with a fill-in field directly beneath it."""
+        st.append(Paragraph(label, S['label']))
+        st.append(TextField(name, W, height=height, multiline=multiline, underlined=not multiline))
+        st.append(Spacer(1,7))
 
-> **Internal note.** This document is used as an internal intake checklist. Prospects begin by reaching out through the website inquiry form or by emailing leasing@courthousesquarevashon.com; staff complete this LOI with the applicant from there.
+    section('1. Applicant Information')
+    field('Legal business name (the entity)', 'loi_legal_name')
+    field('DBA (doing business as)', 'loi_dba')
+    field('Entity type and state of formation', 'loi_entity_type')
+    field('IRS business EIN; Washington UBI', 'loi_ein_ubi')
+    field('Primary contact and lease guarantor name', 'loi_contact_name')
+    field('Contact phone and email', 'loi_contact_info')
+    field('Current address', 'loi_current_addr')
 
-## 1. Applicant Information
+    section('2. Proposed Lease Terms')
+    field('Property / suite address', 'loi_premises')
+    field('Proposed permitted use', 'loi_use')
+    field('Target lease start date', 'loi_start')
+    field('Proposed initial lease term', 'loi_term')
+    st.append(Paragraph('Proposed lease type:', S['label']))
+    st.append(check_row('loi_type_cam', 'CAM Pass-Through (standard)'))
+    st.append(check_row('loi_type_nnn', 'Triple Net (NNN)'))
+    st.append(Spacer(1,5))
+    field('Proposed initial Base Rent (per month)', 'loi_base_rent')
+    field('Estimated CAM Charges (per month, subject to annual reconciliation)', 'loi_cam')
+    field('Proposed security deposit (paid upon signing the final Lease)', 'loi_deposit')
 
-- Legal business name (the entity)
-- DBA (doing business as)
-- Entity type and state of formation
-- IRS business EIN; Washington UBI
-- Primary contact and lease guarantor name
-- Contact phone and email
-- Current address
+    section('3. References &amp; Background')
+    field('Prior commercial landlord reference 1 (name, contact, property, dates, reason for departure)',
+          'loi_ref1', height=34, multiline=True)
+    field('Prior commercial landlord reference 2 (name, contact, property, dates, reason for departure)',
+          'loi_ref2', height=34, multiline=True)
+    field('Primary banking reference (bank, branch / contact, relationship duration)',
+          'loi_bank', height=28, multiline=True)
+    st.append(Paragraph('First-time commercial tenants may provide two business or professional references instead.', S['small']))
 
-## 2. Proposed Lease Terms
+    section('4. The Good Faith Deposit')
+    st.append(Paragraph(
+        'To show sincere interest while Landlord processes the application and the parties review the formal Lease, '
+        'the applicant submits a refundable Good Faith Deposit of $100.00.', S['body']))
+    st.append(Paragraph(
+        '&#8226;&nbsp; <b>If a lease is signed:</b> the deposit is fully credited toward the first month&#8217;s Rent '
+        'or Security Deposit.', S['body']))
+    st.append(Paragraph(
+        '&#8226;&nbsp; <b>If a lease is not signed</b> for any reason (Landlord declines, terms cannot be agreed, or '
+        'the applicant decides the space is not the right fit): the deposit is refunded in full within three (3) '
+        'business days.', S['body']))
 
-- Property / suite address
-- Proposed permitted use
-- Target lease start date
-- Proposed initial lease term
-- Proposed lease type: CAM Pass-Through (standard) or Triple Net (NNN)
-- Proposed initial Base Rent (per month)
-- Estimated CAM Charges (per month, subject to annual reconciliation)
-- Proposed security deposit (paid upon signing the final Lease)
+    section('5. Authorization for Credit &amp; Background Check')
+    st.append(Paragraph(
+        'By signing, the applicant (and the individual primary contact / guarantor) represents that all information '
+        'provided is true and accurate, and authorizes Landlord and its agents to obtain commercial and personal '
+        'credit reports, verify bank references, contact the references identified in Section 3, and conduct criminal '
+        'and background checks necessary to evaluate the application.', S['body']))
 
-## 3. References & Background
+    section('6. Submission')
+    st.append(Paragraph(
+        'Completed applications, together with the Good Faith Deposit, are submitted to '
+        'leasing@courthousesquarevashon.com. Instructions for transmitting the Good Faith Deposit are provided upon '
+        'receipt of the completed application.', S['body']))
+    st.append(Spacer(1,10))
+    st.append(Paragraph('Agreed and authorized by applicant:', S['label']))
+    st.append(labeled('Signature:', TextField('loi_sig', W-2.05*inch, underlined=True)))
+    st.append(labeled('Printed name / title:', TextField('loi_sig_name', W-2.05*inch, underlined=True)))
+    st.append(labeled('Date:', TextField('loi_sig_date', 2.2*inch, underlined=True)))
+    st.append(Spacer(1,6))
+    st.append(Paragraph('End of the Letter of Intent.', S['small']))
 
-- Prior commercial landlord reference 1 (name, contact, property, dates, reason for departure)
-- Prior commercial landlord reference 2 (name, contact, property, dates, reason for departure)
-- Primary banking reference (bank, branch / contact, relationship duration)
-- First-time commercial tenants may provide two business or professional references instead.
-
-## 4. The Good Faith Deposit
-
-To show sincere interest while Landlord processes the application and the parties review the formal Lease, the applicant submits a refundable Good Faith Deposit of $100.00.
-
-- **If a lease is signed:** the deposit is fully credited toward the first month's Rent or Security Deposit.
-- **If a lease is not signed:** for any reason (Landlord declines, terms cannot be agreed, or the applicant decides the space is not the right fit), the deposit is refunded in full within three (3) business days.
-
-## 5. Authorization for Credit & Background Check
-
-By signing, the applicant (and the individual primary contact / guarantor) represents that all information provided is true and accurate, and authorizes Landlord and its agents to obtain commercial and personal credit reports, verify bank references, contact the references identified in Section 3, and conduct criminal and background checks necessary to evaluate the application.
-
-## 6. Submission
-
-Completed applications, together with the Good Faith Deposit, are submitted to leasing@courthousesquarevashon.com. Instructions for transmitting the Good Faith Deposit are provided upon receipt of the completed application.
-
----
-
-*Agreed and authorized by applicant: signature, printed name, title, date.*
-
-*End of the Letter of Intent.*
-"""
+    doc.build(st, canvasmaker=footer_canvas(FORM_FOOTER))
+    print('wrote', path)
 
 def build_cover(path):
     doc = SimpleDocTemplate(path, pagesize=letter, topMargin=2.2*inch,
@@ -350,40 +405,45 @@ def build_cover(path):
     st = [Paragraph('Courthouse Square', S['title']),
           Paragraph('Complete Commercial Lease Package', S['h2']),
           Spacer(1,10),
-          Paragraph(f'{VERSION} &#183; {VDATE}', S['sub']),
+          Paragraph(f'{FORM_VERSION} &#183; {FORM_VDATE}', S['sub']),
           Spacer(1,16),
           Paragraph('Assembled for review. Contents, in order:', S['body']),
-          Paragraph('1. Letter of Intent &amp; Lease Application (internal intake)', S['body']),
+          Paragraph('1. Letter of Intent &amp; Lease Application (internal intake; fillable)', S['body']),
           Paragraph('2. Lease Terms Sheet (deal-specific terms, signatures, and exhibits; fillable example)', S['body']),
           Paragraph('3. Standard Lease Terms (the standard terms that apply to every tenant)', S['body']),
           Paragraph('4. Definitions &amp; Glossary', S['body']),
           Spacer(1,16),
           Paragraph('This package is for internal review and is not a public document. The Standard Lease Terms '
                     'and Definitions are posted publicly at courthousesquarevashon.com/lease/; the Letter of Intent '
-                    'is an internal checklist.', S['small'])]
+                    'is an internal checklist.', S['small']),
+          Spacer(1,6),
+          Paragraph(f'The intake forms (Letter of Intent and Lease Terms Sheet) are at {FORM_VERSION}. The Standard '
+                    f'Lease Terms and Definitions remain at {VERSION} pending attorney review.', S['small'])]
     doc.build(st)
     print('wrote', path)
 
 def merge(paths, out):
+    # Imported lazily: only the consolidated review PDF needs pypdf.
+    from pypdf import PdfWriter, PdfReader
     w = PdfWriter()
     for p in paths:
-        for pg in PdfReader(p).pages:
-            w.add_page(pg)
+        w.append(p)   # append() (not add_page) carries AcroForm fields through the merge
     with open(out,'wb') as f: w.write(f)
     print('wrote', out, '(%d pages)' % len(PdfReader(out).pages))
 
 if __name__ == '__main__':
-    import os
+    import os, tempfile
     os.makedirs(REVIEW, exist_ok=True)
-    # 1. public lease (standard terms + definitions)
+    # 1. public standard lease (Standard Lease Terms + Definitions) — v1.2, pending redlines
     with open(ROOT+'/lease/lease.md') as f: lease_md = f.read()
     build_prose(ROOT+'/lease/lease.pdf', lease_md)
-    # 2. fillable terms sheet (public example)
+    # 2. fillable Lease Terms Sheet (public example) — v1.3
     build_terms_sheet(ROOT+'/lease/lease-terms-sheet.pdf')
-    # 3. LOI (internal)
-    build_prose(REVIEW+'/letter-of-intent.pdf', LOI_MD)
+    # 3. fillable Letter of Intent (internal) — v1.3
+    build_loi_form(REVIEW+'/letter-of-intent.pdf')
     # 4. consolidated review package (internal)
-    build_cover('/tmp/_cover.pdf')
-    merge(['/tmp/_cover.pdf', REVIEW+'/letter-of-intent.pdf', ROOT+'/lease/lease-terms-sheet.pdf', ROOT+'/lease/lease.pdf'],
-          REVIEW+'/CourthouseSquare_FullLease_v2026.06.08.pdf')
+    cover = os.path.join(tempfile.gettempdir(), '_chs_cover.pdf')
+    build_cover(cover)
+    merge([cover, REVIEW+'/letter-of-intent.pdf', ROOT+'/lease/lease-terms-sheet.pdf', ROOT+'/lease/lease.pdf'],
+          REVIEW+'/CourthouseSquare_FullLease_v2026.06.12.pdf')
     print('DONE')

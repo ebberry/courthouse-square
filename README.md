@@ -89,15 +89,15 @@ The "you'd be next to ..." line on each open card is derived automatically from 
 
 > **To make the wall come alive:** add the real tenant roster to `data/tenants.json`. Each business submits its own content (blurb, optional phone/email/photo, website); the owner places it. Until then the wall shows the open suites only.
 
-## The lease document set (Version 1.2)
+## The lease document set (standard terms v1.2 · intake forms v1.3)
 
 The lease is split into plain-named pieces rather than numbered "Parts":
 
 - **Standard Lease Terms** + **Definitions & Glossary** — the standard terms that apply to every tenant. Source of truth: `lease/lease.md`. Rendered on `/lease/` and downloadable as `lease/lease.pdf`.
-- **Lease Terms Sheet** — the deal-specific terms a tenant fills in and signs (this merges what used to be Parts II and III). A blank **fillable PDF example** is published at `lease/lease-terms-sheet.pdf`.
-- **Letter of Intent** — an internal intake checklist. Lives only in the git-ignored `review/` folder; it is not deployed.
+- **Lease Terms Sheet** — the deal-specific terms a tenant fills in and signs (this merges what used to be Parts II and III). A blank **fillable PDF** (real AcroForm fields + checkboxes) is published at `lease/lease-terms-sheet.pdf`.
+- **Letter of Intent** — an internal intake **fillable PDF** form. Lives only in the git-ignored `review/` folder; it is not deployed.
 
-Everything is stamped with a version (currently **Version 1.2, June 8, 2026**) set near the top of `tools/build_lease_docs.py` (`VERSION` / `VDATE`).
+**Two version tracks.** The Standard Lease Terms + Definitions are at **Version 1.2, June 8, 2026** (`VERSION` / `VDATE` in `tools/build_lease_docs.py`), held there pending the attorneys' redlines. The two intake forms (Letter of Intent + Lease Terms Sheet) are at **Version 1.3, June 12, 2026** (`FORM_VERSION` / `FORM_VDATE`), reflecting the assembled package: entity **Courthouse Square Vashon LLC**, building address **19001 Vashon Hwy SW**, and updated field labels. The two stamps move independently so the forms could advance without restamping the un-redlined standard terms.
 
 ### Regenerating the lease PDFs
 
@@ -108,10 +108,10 @@ python3 tools/build_lease_docs.py
 ```
 
 This writes:
-- `lease/lease.pdf` (Standard Lease Terms + Definitions)
-- `lease/lease-terms-sheet.pdf` (fillable Lease Terms Sheet example)
-- `review/letter-of-intent.pdf` (internal)
-- `review/CourthouseSquare_FullLease_v<version>.pdf` (the full consolidated package, for deep review)
+- `lease/lease.pdf` (Standard Lease Terms + Definitions — v1.2)
+- `lease/lease-terms-sheet.pdf` (fillable Lease Terms Sheet — v1.3)
+- `review/letter-of-intent.pdf` (fillable Letter of Intent, internal — v1.3)
+- `review/CourthouseSquare_FullLease_v<date>.pdf` (the full consolidated package, for deep review; form fields preserved via `PdfWriter.append`)
 
 ### Publishing a new version
 
