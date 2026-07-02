@@ -5,61 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Professional Office Space at Courthouse Square, Vashon Island</title>
   <meta name="description" content="Quiet, professional office suites on Vashon Island, WA. Abundant free parking, a shared patio, and an easy in-and-out location near the Athletic Center, schools, and Metro transit." />
+  <link rel="canonical" href="https://courthousesquarevashon.com/" />
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#1e3128" />
 
-  <!-- Open Graph / social -->
+  <!-- Open Graph / social. Absolute image URL: most scrapers reject relative paths. -->
   <meta property="og:title" content="Professional Office Space at Courthouse Square, Vashon Island" />
   <meta property="og:description" content="A quiet, well-kept office building on Vashon Island, with free parking, a shared patio, and room for all sorts of small businesses to settle in and grow." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="/images/hero.jpg" />
+  <meta property="og:url" content="https://courthousesquarevashon.com/" />
+  <meta property="og:site_name" content="Courthouse Square" />
+  <meta property="og:image" content="https://courthousesquarevashon.com/images/og-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Professional Office Space at Courthouse Square, Vashon Island" />
+  <meta name="twitter:description" content="Quiet, professional office suites on Vashon Island, WA, with free parking and a shared patio." />
+  <meta name="twitter:image" content="https://courthousesquarevashon.com/images/og-card.png" />
 
-  <!-- Tailwind via CDN. No build step. -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    // Tailwind config — muted natural palette inspired by Pacific Northwest evergreens.
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            evergreen: {
-              50:  '#f2f6f3',
-              100: '#dde8e0',
-              200: '#bcd0c2',
-              300: '#92b29c',
-              400: '#699177',
-              500: '#4b755c',
-              600: '#385c47',
-              700: '#2c4a39',
-              800: '#243b2f',
-              900: '#1e3128',
-              950: '#0f1d16'
-            },
-            sand: {
-              50:  '#faf7f2',
-              100: '#f3ece0',
-              200: '#e6d7bf',
-              300: '#d4bb95',
-              400: '#c19c6b',
-              500: '#b08550'
-            },
-            // Warm rust accent, used for the "OPEN" ribbon and available-suite
-            // highlights on the Your Neighbors card wall.
-            rust: {
-              400: '#d98a52',
-              500: '#b4521f',
-              600: '#9a4419'
-            },
-            slate: {
-              // Tailwind's default slate works; aliased here for clarity.
-            }
-          },
-          fontFamily: {
-            sans:   ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-            serif:  ['Fraunces', 'ui-serif', 'Georgia', 'serif']
-          }
-        }
-      }
-    };
+  <!-- Structured data for local search. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Courthouse Square",
+    "description": "Professional office suites for lease on Vashon Island, Washington, with free on-site parking and a shared patio.",
+    "url": "https://courthousesquarevashon.com/",
+    "email": "leasing@courthousesquarevashon.com",
+    "image": "https://courthousesquarevashon.com/images/og-card.png",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "19001 Vashon Hwy SW",
+      "addressLocality": "Vashon",
+      "addressRegion": "WA",
+      "postalCode": "98070",
+      "addressCountry": "US"
+    }
+  }
   </script>
+
+  <!-- Prebuilt Tailwind stylesheet (generated from tailwind.config.js — the
+       shared theme source; see "Rebuilding the stylesheet" in README.md).
+       Replaces the former Play-CDN runtime compiler: faster first paint, no
+       flash of unstyled content, no third-party script. -->
+  <link rel="stylesheet" href="/css/tailwind.css" />
 
   <!-- Fonts: Inter for body, Fraunces for headings. -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -70,6 +59,9 @@
     html { scroll-behavior: smooth; }
     body { font-family: 'Inter', system-ui, sans-serif; }
     h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; letter-spacing: -0.01em; }
+
+    /* Visible keyboard-focus indicator for elements without their own focus styles. */
+    :is(a, button, summary):focus-visible { outline: 2px solid #b4521f; outline-offset: 2px; }
 
     /* Image fallback: muted block if a real photo hasn't been dropped in yet. */
     .photo-placeholder {
@@ -388,7 +380,9 @@
       <p class="text-evergreen-800/70 text-sm">Loading suites…</p>
     </div>
 
-    <p class="mt-6 text-xs text-evergreen-700/80">Pricing snapshot as of May 21, 2026. Figures are a starting point for conversation.</p>
+    <!-- The "as of" date comes from the asOf field in data/vacancies.json,
+         so it updates together with the prices. -->
+    <p id="pricing-snapshot" class="mt-6 text-xs text-evergreen-700/80">Figures are a starting point for conversation.</p>
   </div>
 </section>
 
@@ -426,32 +420,32 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
       <!-- Each tile has an onerror fallback to a styled placeholder block. -->
       <figure class="aspect-[4/3] overflow-hidden rounded-md">
-        <img src="/images/gallery-1.jpg" alt="Courthouse Square exterior, north building"
+        <img loading="lazy" decoding="async" width="1200" height="900" src="/images/gallery-1.jpg" alt="Courthouse Square exterior, north building"
              class="w-full h-full object-cover with-fallback"
              onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Exterior photo<br/>(/images/gallery-1.jpg)</div>'" />
       </figure>
       <figure class="aspect-[4/3] overflow-hidden rounded-md">
-        <img src="/images/gallery-2.jpg" alt="Shared outdoor patio at Courthouse Square"
+        <img loading="lazy" decoding="async" width="1200" height="900" src="/images/gallery-2.jpg" alt="Shared outdoor patio at Courthouse Square"
              class="w-full h-full object-cover with-fallback"
              onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Patio photo<br/>(/images/gallery-2.jpg)</div>'" />
       </figure>
       <figure class="aspect-[4/3] overflow-hidden rounded-md">
-        <img src="/images/gallery-3.jpg" alt="Typical suite interior with natural light"
+        <img loading="lazy" decoding="async" width="1200" height="900" src="/images/gallery-3.jpg" alt="Typical suite interior with natural light"
              class="w-full h-full object-cover with-fallback"
              onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Typical suite<br/>(/images/gallery-3.jpg)</div>'" />
       </figure>
       <figure class="aspect-[4/3] overflow-hidden rounded-md">
-        <img src="/images/gallery-4.jpg" alt="Reception or common area"
+        <img loading="lazy" decoding="async" width="1200" height="900" src="/images/gallery-4.jpg" alt="Reception or common area"
              class="w-full h-full object-cover with-fallback"
              onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Common area<br/>(/images/gallery-4.jpg)</div>'" />
       </figure>
       <figure class="aspect-[4/3] overflow-hidden rounded-md">
-        <img src="/images/gallery-5.jpg" alt="Parking lot view"
+        <img loading="lazy" decoding="async" width="1200" height="900" src="/images/gallery-5.jpg" alt="Parking lot view"
              class="w-full h-full object-cover with-fallback"
              onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Parking lot<br/>(/images/gallery-5.jpg)</div>'" />
       </figure>
       <figure class="aspect-[4/3] overflow-hidden rounded-md">
-        <img src="/images/gallery-6.jpg" alt="Building entrance"
+        <img loading="lazy" decoding="async" width="1200" height="900" src="/images/gallery-6.jpg" alt="Building entrance"
              class="w-full h-full object-cover with-fallback"
              onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Entrance<br/>(/images/gallery-6.jpg)</div>'" />
       </figure>
@@ -659,7 +653,7 @@
   </div>
   <div class="border-t border-evergreen-800">
     <div class="mx-auto max-w-6xl px-4 sm:px-6 py-4 text-xs text-sand-200/80 flex flex-wrap justify-between gap-2">
-      <span>&copy; <span id="copyright-year"></span> Courthouse Square LLC. All rights reserved.</span>
+      <span>&copy; <span id="copyright-year">2026</span> Courthouse Square LLC. All rights reserved.</span>
       <a href="https://bangasser.com" target="_blank" rel="noopener" class="underline hover:text-sand-50">View other available properties &rarr;</a>
     </div>
   </div>
@@ -728,10 +722,13 @@
   async function buildNeighborWall() {
     const wall = document.getElementById('neighbor-wall');
 
-    const [vacancies, tenants] = await Promise.all([
+    const [vacData, tenants] = await Promise.all([
       fetch('/data/vacancies.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : []).catch(() => []),
       fetch('/data/tenants.json',   { cache: 'no-cache' }).then(r => r.ok ? r.json() : []).catch(() => [])
     ]);
+    // vacancies.json is {asOf, suites}; tolerate the older bare-array shape too.
+    const vacancies = Array.isArray(vacData) ? vacData : (vacData.suites || []);
+    renderSnapshotDate(Array.isArray(vacData) ? '' : vacData.asOf);
 
     // Always keep the inquiry-form dropdown populated from real vacancies.
     populateSuiteDropdown(vacancies);
@@ -831,6 +828,17 @@
           Curious? Let's talk &rarr;
         </button>
       </article>`;
+  }
+
+  // Prefix the snapshot note with the asOf date from vacancies.json.
+  // Parsed by parts (not new Date(string)) to avoid UTC off-by-one-day shifts.
+  function renderSnapshotDate(asOf) {
+    const el = document.getElementById('pricing-snapshot');
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(asOf || '');
+    if (!el || !m) return;
+    const d = new Date(+m[1], +m[2] - 1, +m[3]);
+    const nice = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    el.textContent = `Pricing snapshot as of ${nice}. ` + el.textContent;
   }
 
   // Scroll to the inquiry form with a suite preselected.

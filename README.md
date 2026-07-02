@@ -6,11 +6,11 @@ The site exists for one job: turn prospective tenants into people who fill out t
 
 ## Stack
 
-- Plain HTML + [Tailwind CSS via CDN](https://tailwindcss.com/docs/installation/play-cdn). No build step.
+- Plain HTML + a **prebuilt Tailwind stylesheet** (`css/tailwind.css`, generated from `tailwind.config.js`; no CDN, no runtime compile). Rebuild only when you add new Tailwind classes — see "Rebuilding the stylesheet" below.
 - Vanilla JS for the few dynamic pieces (suite cards, form prefill, lease Markdown rendering).
-- [marked.js](https://github.com/markedjs/marked) via CDN, used only on the lease page to render `lease.md` to HTML in the browser.
+- [marked.js](https://github.com/markedjs/marked) **vendored locally** (`js/vendor/marked.min.js`, v12.0.2), used only on the lease page to render `lease.md` to HTML in the browser. No third-party scripts anywhere.
 - [Netlify Forms](https://docs.netlify.com/forms/setup/) for the inquiry form. No server required.
-- A GitHub Action that renders each tagged lease version to PDF.
+- A GitHub Action (`checks.yml`) that runs `tools/check_site.py` sanity checks on every push.
 
 ## File layout
 
@@ -18,11 +18,20 @@ The site exists for one job: turn prospective tenants into people who fill out t
 /
 ├── index.html                    Landing page
 ├── README.md                     This file
+├── robots.txt / sitemap.xml      Search-engine plumbing
+├── netlify.toml                  Security headers for the Netlify deploy
+├── tailwind.config.js            Shared Tailwind theme (single source for both pages)
+├── css/
+│   └── tailwind.css              Prebuilt stylesheet (generated; commit it)
+├── js/vendor/
+│   └── marked.min.js             Vendored Markdown renderer for the lease page
 ├── data/
-│   ├── vacancies.json            Source of truth for available suites
+│   ├── vacancies.json            Source of truth for available suites ({asOf, suites})
 │   └── tenants.json              Tenant roster for the Your Neighbors wall
 ├── images/
 │   ├── README.md                 What photos go where
+│   ├── favicon.svg               Browser-tab icon
+│   ├── og-card.png               Social-share preview card (1200×630)
 │   └── (sculpture.jpg, gallery-*.jpg, ...)   ← owner drops files here
 ├── lease/
 │   ├── index.html                Leasing process + standard lease (renders lease.md)
@@ -34,12 +43,24 @@ The site exists for one job: turn prospective tenants into people who fill out t
 │       ├── v2026.05.31/          Prior version (internal record)
 │       └── v2026.06.08/          Current version: lease.md, lease.pdf, lease-terms-sheet.pdf
 ├── tools/
-│   └── build_lease_docs.py       Regenerates all lease PDFs (run with reportlab + pypdf)
+│   ├── build_lease_docs.py       Regenerates all lease PDFs (reportlab + pypdf; byte-reproducible)
+│   ├── check_site.py             Sanity checks: pricing math, version stamps, links (run in CI)
+│   └── tailwind.src.css          Source for the generated css/tailwind.css
 ├── review/                       Internal only, git-ignored (NOT deployed):
 │                                   the full consolidated review PDF (all parts merged)
 └── .github/workflows/
-    └── lease-pdf.yml             Legacy tag-based PDF render (superseded; see note below)
+    └── checks.yml                Runs tools/check_site.py on every push/PR
 ```
+
+## Rebuilding the stylesheet
+
+`css/tailwind.css` is a committed, prebuilt artifact (like the lease PDFs), so the deploy still has no build step. Rebuild it only when you add a Tailwind class that isn't already used somewhere in the two HTML files:
+
+```sh
+npx tailwindcss@3 -c tailwind.config.js -i tools/tailwind.src.css -o css/tailwind.css --minify
+```
+
+If a new class ever seems to have no effect, this rebuild is the first thing to try.
 
 ## The "Your Neighbors" card wall
 
@@ -71,18 +92,27 @@ Each entry is an object. Only `name` is required; everything else gracefully omi
 
 ### Editing vacancies (`data/vacancies.json`)
 
+The file is an object: `asOf` (the date the prices were set, shown as "Pricing snapshot as of ..." under the wall — update it whenever you change prices) and `suites`, the array of open suites:
+
 ```json
 {
-  "unit": "N101",        // suite identifier, shown on the card and in the form dropdown
-  "building": "North",   // "North" or "South" (only North is currently shown)
-  "sqft": 259,           // square footage
-  "rent": 815.85,        // monthly base rent
-  "cam": 198.19,         // monthly common-area maintenance share
-  "utilities": 166.97,   // monthly utilities share
-  "allIn": 1181,         // rent + cam + utilities, rounded (the headline figure)
-  "fit": "Room for a small practice with a waiting area, such as therapy or bodywork."  // "who'd thrive here" line (optional)
+  "asOf": "2026-05-21",
+  "suites": [
+    {
+      "unit": "N101",        // suite identifier, shown on the card and in the form dropdown
+      "building": "North",   // "North" or "South" (only North is currently shown)
+      "sqft": 259,           // square footage
+      "rent": 815.85,        // monthly base rent
+      "cam": 198.19,         // monthly common-area maintenance share
+      "utilities": 166.97,   // monthly utilities share
+      "allIn": 1181,         // rent + cam + utilities, rounded (the headline figure)
+      "fit": "Room for a small practice with a waiting area."  // "who'd thrive here" line (optional)
+    }
+  ]
 }
 ```
+
+`tools/check_site.py` (run automatically in CI) verifies that `rent + cam + utilities` matches `allIn` for every suite, so a typo in the math fails the check rather than reaching the site.
 
 The "you'd be next to ..." line on each open card is derived automatically from the nearest occupied tenants (same building letter, closest suite number), so you don't maintain it by hand. It simply doesn't appear until there are tenants to name.
 
@@ -123,7 +153,7 @@ This writes:
 5. Update the small "Version X, date" line in `lease/index.html` near the download buttons.
 6. Commit and push. Netlify redeploys automatically.
 
-> **Legacy GitHub Action:** `.github/workflows/lease-pdf.yml` renders `lease.md` to a plain pandoc PDF on `lease-v*` tag pushes. It is **superseded** by the local build script (which also produces the branded styling and the fillable form). Do not push `lease-v*` tags, or it will overwrite the curated `lease.pdf`. Tell me if you'd like it retired.
+> **Legacy GitHub Action:** retired. The old `lease-pdf.yml` (which rendered a plain pandoc PDF on `lease-v*` tag pushes and could overwrite the curated `lease.pdf`) has been deleted; the local build script is the only PDF pipeline. The remaining workflow, `checks.yml`, only runs read-only sanity checks.
 
 > **Public versioning UI:** still off, per your earlier request. The documents are version-stamped and archived internally, but there's no public version banner or history page. Easy to resurface later.
 
@@ -192,8 +222,9 @@ A single address handles all contact for this site:
 - Semantic HTML throughout (`<header>`, `<main>`, `<section>`, `<article>`, `<address>`, `<nav>`, `<footer>`).
 - All images carry descriptive `alt` text.
 - Color contrast targets WCAG AA against the evergreen / sand palette.
-- No heavyweight libraries — only Tailwind via CDN and (on the lease page only) marked.js.
-- Google Fonts are preconnected for faster first paint.
+- No third-party scripts at all: Tailwind is a prebuilt ~17 KB stylesheet, and marked.js is vendored locally (lease page only).
+- Gallery images lazy-load with explicit dimensions (no layout shift); Google Fonts are preconnected for faster first paint.
+- Keyboard focus is visibly indicated (rust outline) on links, buttons, and summaries.
 
 ## Local preview
 

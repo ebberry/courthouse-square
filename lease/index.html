@@ -5,28 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lease &amp; Leasing Process, Courthouse Square</title>
   <meta name="description" content="Read the standard Courthouse Square lease and the leasing process. We post our lease publicly so prospective tenants can show up to the conversation already informed." />
+  <link rel="canonical" href="https://courthousesquarevashon.com/lease/" />
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#1e3128" />
+  <meta property="og:title" content="Lease &amp; Leasing Process, Courthouse Square" />
+  <meta property="og:description" content="We post our standard lease publicly so you can read it, and share it with your attorney, before you commit." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://courthousesquarevashon.com/lease/" />
+  <meta property="og:site_name" content="Courthouse Square" />
+  <meta property="og:image" content="https://courthousesquarevashon.com/images/og-card.png" />
+  <meta name="twitter:card" content="summary_large_image" />
 
-  <!-- Tailwind CDN. Mirrors the config in index.html so styles match. -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            evergreen: {
-              50:'#f2f6f3',100:'#dde8e0',200:'#bcd0c2',300:'#92b29c',400:'#699177',
-              500:'#4b755c',600:'#385c47',700:'#2c4a39',800:'#243b2f',900:'#1e3128',950:'#0f1d16'
-            },
-            sand: { 50:'#faf7f2',100:'#f3ece0',200:'#e6d7bf',300:'#d4bb95',400:'#c19c6b',500:'#b08550' }
-          },
-          fontFamily: {
-            sans:  ['Inter','ui-sans-serif','system-ui','sans-serif'],
-            serif: ['Fraunces','ui-serif','Georgia','serif']
-          }
-        }
-      }
-    };
-  </script>
+  <!-- Prebuilt Tailwind stylesheet, shared with index.html (single theme
+       source: tailwind.config.js; see "Rebuilding the stylesheet" in
+       README.md). -->
+  <link rel="stylesheet" href="/css/tailwind.css" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -36,6 +29,9 @@
     html { scroll-behavior: smooth; }
     body { font-family: 'Inter', system-ui, sans-serif; }
     h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; letter-spacing: -0.01em; }
+
+    /* Visible keyboard-focus indicator for elements without their own focus styles. */
+    :is(a, button, summary):focus-visible { outline: 2px solid #b4521f; outline-offset: 2px; }
 
     /* Typography for the rendered Markdown lease body. */
     .prose-lease { color: #1e3128; line-height: 1.7; }
@@ -236,14 +232,16 @@
   </div>
   <div class="border-t border-evergreen-800">
     <div class="mx-auto max-w-6xl px-4 sm:px-6 py-4 text-xs text-sand-200/80 flex flex-wrap justify-between gap-2">
-      <span>&copy; <span id="copyright-year"></span> Courthouse Square LLC. All rights reserved.</span>
+      <span>&copy; <span id="copyright-year">2026</span> Courthouse Square LLC. All rights reserved.</span>
       <a href="https://bangasser.com" target="_blank" rel="noopener" class="underline hover:text-sand-50">View other available properties &rarr;</a>
     </div>
   </div>
 </footer>
 
-<!-- marked.js renders the lease.md Markdown to HTML in the browser. -->
-<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<!-- marked.js renders the lease.md Markdown to HTML in the browser.
+     Vendored locally (v12.0.2, js/vendor/) so the lease page has no
+     third-party script dependency. -->
+<script src="/js/vendor/marked.min.js"></script>
 <script>
   document.getElementById('copyright-year').textContent = new Date().getFullYear();
 

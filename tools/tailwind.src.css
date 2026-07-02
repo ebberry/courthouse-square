@@ -1,0 +1,5 @@
+/* Source stylesheet for the generated css/tailwind.css.
+   See "Rebuilding the stylesheet" in README.md. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
