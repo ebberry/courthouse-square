@@ -8,6 +8,10 @@
 # Pure reportlab + pypdf (no system deps). Absolute paths only (no getcwd).
 
 import re, html
+from reportlab import rl_config
+# Deterministic output: fixed timestamps and document IDs so rebuilding without
+# content changes produces byte-identical PDFs (keeps git diffs honest).
+rl_config.invariant = 1
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from reportlab.lib.colors import HexColor
