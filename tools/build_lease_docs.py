@@ -450,6 +450,9 @@ def build_loi_form(path):
     field('Proposed initial Base Rent (per month)', 'loi_base_rent')
     field('Estimated CAM Charges (per month, subject to annual reconciliation)', 'loi_cam')
     field('Proposed security deposit (paid upon signing the final Lease)', 'loi_deposit')
+    field('Additional requests or special terms &#8212; plain language is fine, one per line '
+          '(e.g. &#8220;we have a small office dog&#8221;, &#8220;need to hang a sign over the door&#8221;)',
+          'loi_notes', height=46, multiline=True)
 
     section('3. References &amp; Background')
     field('Prior commercial landlord reference 1 (name, contact, property, dates, reason for departure)',

@@ -130,6 +130,15 @@ if os.path.exists(os.path.join(ROOT, 'lease/builder.html')):
     tw = read('tailwind.config.js')
     check('lease/builder.html' in tw,
           "tailwind.config.js content[] does not include lease/builder.html")
+    # Additional-terms flow: the checklist textarea, the LOI notes field, and
+    # the import mapping between them must all exist together.
+    check('f-addl-notes' in builder, "builder.html: missing #f-addl-notes textarea")
+    check("'f-addl-notes'" in bjs_src, "lease-builder.js: f-addl-notes not in FIELD_IDS")
+    check("loi_notes" in bjs_src, "lease-builder.js: LOI import does not map loi_notes")
+    check("'loi_notes'" in build, "build_lease_docs.py: LOI form has no loi_notes field")
+    m = re.search(r"CLAUDE_MODEL = '([^']+)'", bjs_src)
+    check(m and m.group(1) == 'claude-opus-4-8',
+          f"lease-builder.js: CLAUDE_MODEL is {m.group(1) if m else None!r}, expected 'claude-opus-4-8'")
 
 # ---------------- optional: PDF stamps (needs pypdf) ----------------
 try:

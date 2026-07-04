@@ -175,6 +175,19 @@ Beyond the basics, the builder also:
   spilling to a third page.
 - Prints a **projected rent schedule** on the CAM page when the escalation text contains a
   percentage and the term is 2+ years.
+- **Interprets natural-language requests** (section 6, "Additional Terms & Requests"). Staff type
+  each tenant request on its own line — *"Can have a dog"* — and click **Interpret with Claude**:
+  the browser sends the request lines plus the full posted lease text directly to the Anthropic
+  API (`claude-opus-4-8`), which returns a structured disposition per request — **covered** (the
+  lease already permits it; the exact article is cited), **granted** (a drafted, lease-ready term),
+  or **needs attorney review**. Every suggestion appears as an editable review card; nothing enters
+  the lease unapproved. Approved terms render as a numbered **Additional Terms** section on the
+  Terms Sheet (with clause references, e.g. *"already provided for under Article 3.5"*), later
+  sections renumber around it, and the record documents every request and its disposition. The
+  staff member's API key is stored only in their browser (localStorage) and sent only to
+  api.anthropic.com. **Add as written (no AI)** is the offline path: each line becomes a verbatim
+  editable term. The Letter of Intent has a matching "additional requests" field (`loi_notes`)
+  that imports into the checklist.
 
 The document design is the midcentury house style — Jost (Futura revival) display type and Libre
 Baskerville text, shared with the Python-built PDFs via the TTFs in `fonts/`. Powered by the
@@ -184,8 +197,9 @@ cross-checked by `tools/check_site.py` in CI. The **building total rentable squa
 for proportionate-share math lives in `data/vacancies.json` (`buildingSqft`).
 
 `tools/test_builder.py` is the end-to-end test (maximal deal, omission matrix, record-import
-round-trip, LOI import); `.github/workflows/builder-e2e.yml` runs it in CI when builder files
-change. `tools/release_lease.py --version "Version 1.6" --date "July 20, 2026"` automates a
+round-trip, LOI import, additional terms against a mocked Anthropic API, and a layout scan that
+fails on margin overruns or overlapping text; set `ANTHROPIC_API_KEY` to also exercise the live
+Claude path); `.github/workflows/builder-e2e.yml` runs it in CI when builder files change. `tools/release_lease.py --version "Version 1.6" --date "July 20, 2026"` automates a
 version bump: identity.json, the lease-page version line, rebuild, archive snapshot, checks.
 
 ### Regenerating the lease PDFs

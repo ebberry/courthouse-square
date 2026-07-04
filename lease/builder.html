@@ -231,9 +231,46 @@
       </div>
     </fieldset>
 
-    <!-- 6. Notices -->
+    <!-- 6. Additional terms (natural language -> interpreted) -->
     <fieldset>
-      <legend class="font-serif text-xl text-evergreen-900 border-b border-evergreen-200 pb-1 w-full">6 · Notice Addresses</legend>
+      <legend class="font-serif text-xl text-evergreen-900 border-b border-evergreen-200 pb-1 w-full">6 · Additional Terms &amp; Requests</legend>
+      <p class="mt-3 text-sm text-evergreen-800/80">
+        Type each tenant request on its own line, in plain language — <em>“Can have a dog”</em>,
+        <em>“Wants to hang a sign over the door.”</em> Then interpret: Claude reads the posted standard
+        lease and, for each request, either points at the clause that already covers it or drafts a
+        lease-ready term granting it. Review and edit every suggestion below before generating —
+        nothing goes into the lease without your approval.
+      </p>
+      <label class="mt-3 block">
+        <span class="block text-sm font-medium text-evergreen-900">Requests (one per line)</span>
+        <textarea id="f-addl-notes" rows="3" placeholder="Can have a dog&#10;Tenant may put a sandwich board on the sidewalk on business days"
+                  class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2"></textarea>
+        <p class="field-note">Blank: the Additional Terms section is omitted from the lease.</p>
+      </label>
+      <div class="mt-3 flex flex-wrap items-center gap-3">
+        <button type="button" id="interpret-claude"
+                class="inline-flex items-center rounded-md bg-evergreen-800 text-sand-50 px-4 py-2 text-sm font-medium hover:bg-evergreen-700 transition">
+          Interpret with Claude
+        </button>
+        <button type="button" id="interpret-manual"
+                class="inline-flex items-center rounded-md border border-evergreen-800 text-evergreen-900 px-4 py-2 text-sm font-medium hover:bg-evergreen-50 transition">
+          Add as written (no AI)
+        </button>
+        <span id="interpret-status" class="field-note"></span>
+      </div>
+      <details id="claude-key-wrap" class="mt-2">
+        <summary class="text-xs text-evergreen-700 underline cursor-pointer">Claude API key</summary>
+        <input id="claude-key" type="password" placeholder="sk-ant-…" autocomplete="off"
+               class="mt-1 block w-full max-w-md rounded-md border border-evergreen-200 bg-white px-3 py-2 text-sm" />
+        <p class="field-note">Stored only in this browser (localStorage) and sent directly from your browser
+          to api.anthropic.com — never to our server. Create one at console.anthropic.com &rarr; API keys.</p>
+      </details>
+      <div id="addl-terms-list" class="mt-4 space-y-3"></div>
+    </fieldset>
+
+    <!-- 7. Notices -->
+    <fieldset>
+      <legend class="font-serif text-xl text-evergreen-900 border-b border-evergreen-200 pb-1 w-full">7 · Notice Addresses</legend>
       <p class="mt-3 text-sm text-evergreen-800/80">Landlord's notice block is fixed. Tenant fields blank: name defaults to the tenant entity, address to the leased suite.</p>
       <div class="mt-3 grid sm:grid-cols-3 gap-4">
         <label>
@@ -251,9 +288,9 @@
       </div>
     </fieldset>
 
-    <!-- 7. Exhibits -->
+    <!-- 8. Exhibits -->
     <fieldset>
-      <legend class="font-serif text-xl text-evergreen-900 border-b border-evergreen-200 pb-1 w-full">7 · Exhibits</legend>
+      <legend class="font-serif text-xl text-evergreen-900 border-b border-evergreen-200 pb-1 w-full">8 · Exhibits</legend>
       <p class="mt-3 text-sm text-evergreen-800/80">
         Exhibit B (Guaranty) follows the Guarantor field; Exhibit D (NNN Amendment) follows the lease type.
         Only applicable exhibits appear in the generated lease.
@@ -320,8 +357,8 @@
 </main>
 
 <footer class="mx-auto max-w-4xl px-4 sm:px-6 pb-10 text-xs text-evergreen-700/70">
-  Staff tool. The generated Terms Sheet uses the current intake-form identity (Version 1.3);
-  the appended standard lease terms are the posted Version 1.2 text.
+  Staff tool. The generated package carries the currently posted lease version
+  (from <code>/data/identity.json</code>) and appends the posted standard lease terms.
 </footer>
 
 <script src="/js/vendor/pdf-lib.min.js"></script>

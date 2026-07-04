@@ -66,6 +66,8 @@
   let fontBytes = null;      // fetched TTFs, shared across generations
   const exhibitUploads = {}; // key -> {name, bytes}
   const exhibitAuto = {};    // key -> url found on the site
+  let addlTerms = [];        // interpreted additional terms, reviewed by staff
+                             // {request, disposition, clauseRef, termText, note, include}
 
   const $ = id => document.getElementById(id);
   const val = id => ($(id) ? $(id).value.trim() : '');
@@ -171,13 +173,19 @@
       return lines.length ? lines : [''];
     }
 
-    // Single line, no wrapping (used for tracked display type).
+    // Single line, no wrapping (used for tracked display type). Steps the
+    // size down until the text fits between the margins so display type can
+    // never overrun the page.
     line(str, o = {}) {
-      const font = o.font || this.f.body, size = o.size || 10;
+      const font = o.font || this.f.body;
+      let size = o.size || 10;
+      const x = o.x || M_LEFT, maxW = o.maxW || PAGE_W - M_RIGHT - x;
+      const t = safe(str);
+      while (size > 6 && font.widthOfTextAtSize(t, size) > maxW) size -= 0.25;
       const lh = o.lineHeight || size * 1.35;
       this.ensure(lh + (o.spaceAfter || 0));
       this.y -= lh;
-      this.page.drawText(safe(str), { x: o.x || M_LEFT, y: this.y, size, font, color: o.color || INK });
+      this.page.drawText(t, { x, y: this.y, size, font, color: o.color || INK });
       this.y -= (o.spaceAfter || 0);
     }
 
@@ -228,7 +236,9 @@
         this.page.drawText(idx, { x, y: this.y, size: 11, font: this.f.display, color: RUST });
         x += this.f.display.widthOfTextAtSize(idx, 11) + 8;
       }
-      this.page.drawText(safe(disp), { x, y: this.y, size: 10.2, font: this.f.label, color: INK2 });
+      let hs = 10.2;
+      while (hs > 7 && this.f.label.widthOfTextAtSize(safe(disp), hs) > PAGE_W - M_RIGHT - x) hs -= 0.25;
+      this.page.drawText(safe(disp), { x, y: this.y, size: hs, font: this.f.label, color: INK2 });
       this.y -= 5;
       this.page.drawLine({ start: { x: M_LEFT, y: this.y }, end: { x: PAGE_W - M_RIGHT, y: this.y }, thickness: 0.5, color: LINE });
       this.y -= 6;
@@ -236,12 +246,18 @@
 
     labeled(label, value, o = {}) {
       const size = o.size || 9.2, labelW = o.labelW || 158;
-      const lh = size * 1.5;
+      const lh = size * 1.5, lsize = size * 0.82;
+      // The label wraps inside its own column so long labels (e.g. the
+      // prorated first-payment line) can never collide with the value.
+      const lLines = this.wrap(safe(label).toUpperCase(), this.f.label, lsize, labelW - 4);
       const vLines = this.wrap(value || '', this.f.body, size, BODY_W - labelW - 6);
-      const h = Math.max(1, vLines.length) * lh + 3;
+      const h = Math.max(lLines.length, Math.max(1, vLines.length)) * lh + 3;
       this.ensure(h);
-      const yStart = this.y - lh;
-      this.page.drawText(safe(label).toUpperCase(), { x: M_LEFT, y: yStart, size: size * 0.82, font: this.f.label, color: INK });
+      let ly = this.y;
+      for (const ln of lLines) {
+        ly -= lh;
+        this.page.drawText(ln, { x: M_LEFT, y: ly, size: lsize, font: this.f.label, color: INK });
+      }
       let yy = this.y;
       for (const ln of vLines) {
         yy -= lh;
@@ -271,7 +287,11 @@
       this.y -= lh;
       cells.forEach((cell, i) => {
         const font = o.bold ? this.f.bold : this.f.body;
-        const t = safe(cell);
+        let t = safe(cell);
+        if (font.widthOfTextAtSize(t, size) > cols[i].w) {
+          while (t.length > 2 && font.widthOfTextAtSize(t + '...', size) > cols[i].w) t = t.slice(0, -1);
+          t += '...';
+        }
         let x = cols[i].x;
         if (cols[i].align === 'right') x = cols[i].x + cols[i].w - font.widthOfTextAtSize(t, size);
         this.page.drawText(t, { x, y: this.y, size, font, color: o.color || INK });
@@ -298,7 +318,7 @@
     'f-suite', 'f-unit-manual', 'f-sqft', 'f-share',
     'f-start', 'f-rent-start', 'f-term', 'f-end', 'f-renewal',
     'f-rent', 'f-cam', 'f-util', 'f-escalation', 'f-deposit', 'f-direct-util', 'f-first-month',
-    'f-use', 'f-delivery', 'f-exclusive', 'f-stipulations',
+    'f-use', 'f-delivery', 'f-exclusive', 'f-stipulations', 'f-addl-notes',
     'f-notice-name', 'f-notice-addr', 'f-notice-email',
     'f-ti-allowance', 'f-ti-complete', 'f-ti-scope', 'f-ex-e',
   ];
@@ -348,6 +368,9 @@
       exE: val('f-ex-e'),
     };
     d.hasTI = !!(d.tiAllowance || d.tiComplete || d.tiScope);
+    d.addlNotes = val('f-addl-notes');
+    d.addlTermsAll = addlTerms.slice();                       // record documents every request
+    d.addlTerms = addlTerms.filter(t => t.include);           // only approved terms enter the lease
     d.shareOverridden = d.calcShare > 0 && Math.abs(d.share - d.calcShare) > 0.011;
     d.proration = prorationFor(d.rentStart, d.rent + d.cam + d.util);
     const pct = /(\d+(?:\.\d+)?)\s*%/.exec(d.escalation || '');
@@ -371,6 +394,16 @@
     if (!d.use)    errs.push('Permitted Use is required.');
     if (!(d.rent > 0)) errs.push('Base Rent must be greater than zero.');
     if (d.start && d.end && d.end <= d.start) errs.push('Expiration Date must be after the Start Date.');
+    if (d.addlNotes && !addlTerms.length)
+      errs.push('Additional requests were entered but not interpreted — click "Interpret with Claude" or "Add as written" (or clear the box).');
+    for (const t of d.addlTerms) {
+      if (t.disposition === 'attorney-review')
+        errs.push(`Additional term "${t.request}" is flagged for attorney review — change its disposition after sign-off, or uncheck "include".`);
+      else if (t.disposition === 'granted' && !t.termText)
+        errs.push(`Additional term "${t.request}" is marked granted but has no term text.`);
+      else if (t.disposition === 'covered' && !t.clauseRef)
+        errs.push(`Additional term "${t.request}" is marked covered but cites no lease clause.`);
+    }
     return errs;
   }
 
@@ -452,7 +485,27 @@
     if (d.exclusive)    F.labeled('Exclusive use:', d.exclusive);
     if (d.stipulations) F.labeled('Special stipulations:', d.stipulations);
 
-    F.section('6. Notices');
+    // Sections from here renumber dynamically: Additional Terms appears as
+    // section 6 only when approved terms exist (omission design).
+    let sn = 6;
+    if (d.addlTerms.length) {
+      const an = sn;
+      F.section(`${sn++}. Additional Terms`);
+      F.text('The following negotiated terms supplement the Standard Lease Terms. Where a term cites an ' +
+             'article of the Standard Lease Terms, that article governs except as expressly modified here.',
+             { font: fonts.italic, size: 8, color: MUTE, lineHeight: 11.5 });
+      F.gap(2);
+      d.addlTerms.forEach((t, i) => {
+        const n = `${an}.${i + 1}`;
+        const body = t.disposition === 'covered'
+          ? `Requested: ${t.request} - already provided for under ${t.clauseRef} of the Standard Lease Terms; no additional term is required.`
+          : `${t.termText}${t.clauseRef ? ` (See ${t.clauseRef}.)` : ''}`;
+        F.text(`${n}   ${body}`, { size: 9.2, lineHeight: 15 });
+        F.gap(2);
+      });
+    }
+
+    F.section(`${sn++}. Notices`);
     F.text(NOTICE_SERVICE, { size: 9.2 });
     F.gap(2);
     F.text('Notice to Landlord: ' + landlordNotice(), { size: 9.2 });
@@ -461,14 +514,14 @@
     F.labeled('Tenant notice address:', d.noticeAddr);
     if (d.noticeEmail) F.labeled('Tenant courtesy email:', d.noticeEmail);
 
-    F.section('7. Incorporation and Merger');
+    F.section(`${sn++}. Incorporation and Merger`);
     F.text(`This Lease Terms Sheet, together with its Exhibits, the Standard Lease Terms, and the Definitions & ` +
            `Glossary (${IDENT.version}, ${IDENT.versionDate}, posted at courthousesquarevashon.com/lease/), constitutes ` +
            'the entire Commercial Lease Agreement and supersedes the Letter of Intent. In the event of any ' +
            'conflict between this Terms Sheet and the online Standard Lease Terms or Definitions, this Terms ' +
            'Sheet prevails.', { size: 9.2 });
 
-    F.section('8. Index of Exhibits');
+    F.section(`${sn++}. Index of Exhibits`);
     if (d.exhibits.length) {
       for (const ex of d.exhibits) F.text('-  ' + ex, { size: 9.2, lineHeight: 15 });
     } else {
@@ -539,7 +592,10 @@
     const dd = tier >= 2 ? { ...d,
       renewal: clip(d.renewal, 110), escalation: clip(d.escalation, 110),
       stipulations: clip(d.stipulations, 150), exclusive: clip(d.exclusive, 110),
-      directUtil: clip(d.directUtil, 110), exE: clip(d.exE, 80) } : d;
+      directUtil: clip(d.directUtil, 110), exE: clip(d.exE, 80),
+      addlTermsAll: d.addlTermsAll.map(t => ({ ...t,
+        request: clip(t.request, 60), termText: clip(t.termText, 90),
+        note: clip(t.note, 60), clauseRef: clip(t.clauseRef, 44) })) } : d;
 
     const { doc, fonts } = await makeDoc();
     const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -585,6 +641,26 @@
     F.labeled('Exclusive use:', dd.exclusive || NA, o);
     F.labeled('Special stipulations:', dd.stipulations || NA, o);
     F.labeled('Tenant notices:', dd.noticeName + ', ' + dd.noticeAddr + (dd.noticeEmail ? ', ' + dd.noticeEmail : ''), o);
+    head('Additional Terms Requested');
+    if (dd.addlTermsAll.length) {
+      // One compact line per request: disposition + clause. The full term
+      // text lives in the Terms Sheet; staff notes live in deal.json.
+      const cap = tier >= 2 ? 5 : 8;
+      dd.addlTermsAll.slice(0, cap).forEach(t => {
+        const dispo = !t.include
+          ? 'Not included' + (t.disposition === 'attorney-review' ? ' - flagged for attorney review' : '')
+          : t.disposition === 'covered'
+            ? `Covered by ${t.clauseRef} - noted in the Terms Sheet`
+            : `Granted in the Terms Sheet${t.clauseRef ? ` (see ${t.clauseRef})` : ''}`;
+        F.labeled('Request:', `"${t.request}" - ${dispo}`, o);
+      });
+      if (dd.addlTermsAll.length > cap)
+        F.labeled('And:', `${dd.addlTermsAll.length - cap} more request(s) - see the Terms Sheet and deal.json`, o);
+    } else if (dd.addlNotes) {
+      F.labeled('Requests (raw):', clip(dd.addlNotes, 180) + ' - not interpreted; not in the lease', o);
+    } else {
+      F.labeled('Requests:', NA, o);
+    }
     head('Exhibits');
     if (dd.exhibits.length) dd.exhibits.forEach(ex => F.labeled('Included:', ex, o));
     else F.labeled('Exhibits:', 'None attached', o);
@@ -682,11 +758,12 @@
   // ============================================================
   function snapshot() {
     return {
-      v: 2,
+      v: 3,
       generator: 'chs-lease-builder',
       fields: Object.fromEntries(FIELD_IDS.map(id => [id, val(id)])),
       checks: Object.fromEntries(CHECK_IDS.map(id => [id, $(id).checked])),
       leaseType: $('f-type-nnn').checked ? 'nnn' : 'cam',
+      addlTerms: addlTerms,
     };
   }
 
@@ -696,6 +773,8 @@
     for (const [id, v] of Object.entries(s.checks || {})) if ($(id)) $(id).checked = !!v;
     $('f-type-nnn').checked = s.leaseType === 'nnn';
     $('f-type-cam').checked = s.leaseType !== 'nnn';
+    addlTerms = Array.isArray(s.addlTerms) ? s.addlTerms : [];   // v2 snapshots: none
+    renderAddlTerms();
     manualToggle();
     return true;
   }
@@ -755,6 +834,8 @@
       applied++;
     }
     if (fields.loi_type_nnn === true) { $('f-type-nnn').checked = true; $('f-type-cam').checked = false; }
+    const notes = get('loi_notes');
+    if (notes) { $('f-addl-notes').value = notes; applied++; }
     recomputeEnd(); recomputeShare(); recomputeFirstMonth();
     return applied;
   }
@@ -801,6 +882,215 @@
   }
 
   // ============================================================
+  // Additional terms: natural-language requests -> reviewed lease terms
+  // ============================================================
+  const CLAUDE_MODEL = 'claude-opus-4-8';
+  const CLAUDE_KEY_STORE = 'chsAnthropicKey';
+  let leaseMdCache = null;
+
+  const DISPO_LABELS = {
+    'covered': 'Covered by the existing lease',
+    'granted': 'Granted as a new term',
+    'attorney-review': 'Needs attorney review',
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g,
+      c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  }
+
+  // Render the review list. Every interpreted request becomes an editable
+  // card: nothing enters the lease until staff has seen (and can edit) it.
+  function renderAddlTerms() {
+    const list = $('addl-terms-list');
+    if (!list) return;
+    if (!addlTerms.length) { list.innerHTML = ''; return; }
+    list.innerHTML = addlTerms.map((t, i) => `
+      <div class="rounded-lg border ${t.disposition === 'attorney-review' ? 'border-rust-400' : 'border-evergreen-200'} bg-white p-4" data-term="${i}">
+        <div class="flex items-start justify-between gap-3">
+          <p class="text-sm text-evergreen-900"><span class="font-medium">Request:</span> &ldquo;${esc(t.request)}&rdquo;</p>
+          <label class="flex items-center gap-1.5 text-xs whitespace-nowrap">
+            <input type="checkbox" data-k="include" ${t.include ? 'checked' : ''} /> include in lease
+          </label>
+        </div>
+        <div class="mt-2 grid sm:grid-cols-2 gap-3">
+          <label class="text-xs text-evergreen-800">Disposition
+            <select data-k="disposition" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-2 py-1.5 text-sm">
+              ${Object.entries(DISPO_LABELS).map(([v, l]) =>
+                `<option value="${v}" ${t.disposition === v ? 'selected' : ''}>${l}</option>`).join('')}
+            </select>
+          </label>
+          <label class="text-xs text-evergreen-800">Lease clause reference
+            <input data-k="clauseRef" value="${esc(t.clauseRef)}" placeholder='e.g. Article 3.5 (Use of Premises)'
+                   class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-2 py-1.5 text-sm" />
+          </label>
+          <label class="sm:col-span-2 text-xs text-evergreen-800">Term text (as it will appear in the lease; blank for &ldquo;covered&rdquo;)
+            <textarea data-k="termText" rows="2"
+                      class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-2 py-1.5 text-sm">${esc(t.termText)}</textarea>
+          </label>
+        </div>
+        ${t.note ? `<p class="field-note mt-2">${esc(t.note)}</p>` : ''}
+      </div>`).join('');
+    list.querySelectorAll('[data-term]').forEach(card => {
+      const i = +card.dataset.term;
+      card.querySelectorAll('[data-k]').forEach(el => {
+        el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', () => {
+          addlTerms[i][el.dataset.k] = el.type === 'checkbox' ? el.checked : el.value;
+          if (el.dataset.k === 'disposition') renderAddlTerms();
+          autosave();
+        });
+      });
+    });
+  }
+
+  function noteLines() {
+    return val('f-addl-notes').split(/\n+/).map(s => s.trim()).filter(Boolean);
+  }
+
+  // No-AI path: every line becomes a term exactly as written.
+  function manualInterpret() {
+    const lines = noteLines();
+    const status = $('interpret-status');
+    if (!lines.length) { status.textContent = 'Type at least one request first.'; return; }
+    addlTerms = lines.map(line => ({
+      request: line, disposition: 'granted', clauseRef: '',
+      termText: line, note: 'Added as written (no AI interpretation) - edit into lease-ready language.',
+      include: true,
+    }));
+    renderAddlTerms(); autosave();
+    status.textContent = `${lines.length} term(s) added verbatim - review and edit below.`;
+  }
+
+  const TERMS_TOOL = {
+    name: 'report_lease_terms',
+    description: 'Report the interpretation of each tenant request against the Standard Lease Terms.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        terms: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              request: { type: 'string', description: 'The original request, quoted or lightly cleaned up.' },
+              disposition: { type: 'string', enum: ['covered', 'granted', 'attorney-review'] },
+              clauseRef: { type: 'string', description: 'Exact article/section of the Standard Lease Terms this relates to, e.g. "Article 3.5 (Use of Premises)". Empty string if none. Never invent a number - cite only numbers that appear in the lease text.' },
+              termText: { type: 'string', description: 'For "granted": one or two complete, lease-ready sentences granting exactly what was asked. Empty string otherwise.' },
+              note: { type: 'string', description: 'One short sentence for staff explaining the reasoning.' },
+            },
+            required: ['request', 'disposition', 'clauseRef', 'termText', 'note'],
+          },
+        },
+      },
+      required: ['terms'],
+    },
+  };
+
+  const claudeSystem = () =>
+    `You are the leasing assistant for ${IDENT.entity} (${IDENT.building}, ${IDENT.buildingAddress}), ` +
+    'reviewing plain-language tenant requests before a commercial lease is generated. The full Standard ' +
+    'Lease Terms and Definitions are provided. For each distinct request (usually one per line; split a ' +
+    'line if it contains several), decide:\n' +
+    '- "covered": the lease text already permits or provides for it. Cite the exact article or section in clauseRef.\n' +
+    '- "granted": reasonable, does not conflict with the lease, and can be granted as a negotiated term on the ' +
+    'Lease Terms Sheet. Draft termText (one or two complete lease-ready sentences granting exactly what was ' +
+    'asked, no more) and cite the most closely related article in clauseRef when one exists.\n' +
+    '- "attorney-review": it would change liability, indemnity, insurance, assignment, or termination rights, ' +
+    'conflicts with the lease, or is beyond routine leasing judgment. Explain briefly in note.\n' +
+    'Never invent article numbers - cite only sections that appear in the provided lease text. ' +
+    'Call the report_lease_terms tool exactly once, with one entry per request.';
+
+  async function claudeInterpret() {
+    const status = $('interpret-status');
+    const say = m => { status.textContent = m; };
+    const lines = noteLines();
+    if (!lines.length) { say('Type at least one request first.'); return; }
+
+    let key = $('claude-key').value.trim() || localStorage.getItem(CLAUDE_KEY_STORE) || '';
+    if (!key) {
+      $('claude-key-wrap').open = true;
+      $('claude-key').focus();
+      say('Paste your Claude API key first (stored only in this browser).');
+      return;
+    }
+
+    const btn = $('interpret-claude');
+    btn.disabled = true;
+    try {
+      say('Reading the lease…');
+      if (!leaseMdCache) {
+        leaseMdCache = await fetch('/lease/lease.md').then(r => {
+          if (!r.ok) throw new Error('could not load /lease/lease.md');
+          return r.text();
+        });
+      }
+      const d = collect();
+      const context = [
+        d.tenant && `Tenant: ${d.tenant}`,
+        d.unit && `Suite: ${d.unit}${d.sqft ? ` (${d.sqft} sq ft)` : ''}`,
+        d.use && `Permitted use: ${d.use}`,
+        d.start && `Term: ${d.start} to ${d.end}`,
+        d.rent > 0 && `Base rent: $${d.rent}/mo`,
+      ].filter(Boolean).join('; ');
+
+      say(`Asking Claude (${CLAUDE_MODEL})…`);
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+          // Required for browser-direct calls; the key is the staff member's
+          // own and never leaves their browser except to Anthropic.
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: CLAUDE_MODEL,
+          max_tokens: 8192,
+          system: claudeSystem(),
+          tools: [TERMS_TOOL],
+          tool_choice: { type: 'tool', name: 'report_lease_terms' },
+          messages: [{
+            role: 'user',
+            content:
+              (context ? `Deal context: ${context}\n\n` : '') +
+              `Tenant requests:\n"""\n${lines.join('\n')}\n"""\n\n` +
+              `Standard Lease Terms and Definitions (${IDENT.version}, ${IDENT.versionDate}):\n"""\n${leaseMdCache}\n"""`,
+          }],
+        }),
+      });
+      if (!r.ok) {
+        let msg = `HTTP ${r.status}`;
+        try { msg = (await r.json()).error.message || msg; } catch (e) {}
+        if (r.status === 401) msg = 'API key rejected - check it at console.anthropic.com. (' + msg + ')';
+        throw new Error(msg);
+      }
+      const data = await r.json();
+      const toolUse = (data.content || []).find(b => b.type === 'tool_use' && b.name === 'report_lease_terms');
+      const terms = toolUse && toolUse.input && Array.isArray(toolUse.input.terms) ? toolUse.input.terms : null;
+      if (!terms || !terms.length) throw new Error('Claude returned no interpretable terms - try rephrasing the requests.');
+
+      localStorage.setItem(CLAUDE_KEY_STORE, key);   // it worked; remember it here
+      addlTerms = terms.map(t => ({
+        request: String(t.request || ''),
+        disposition: ['covered', 'granted', 'attorney-review'].includes(t.disposition) ? t.disposition : 'attorney-review',
+        clauseRef: String(t.clauseRef || ''),
+        termText: String(t.termText || ''),
+        note: String(t.note || ''),
+        include: t.disposition !== 'attorney-review',
+      }));
+      renderAddlTerms(); autosave();
+      const flagged = addlTerms.filter(t => t.disposition === 'attorney-review').length;
+      say(`${addlTerms.length} request(s) interpreted` +
+          (flagged ? ` - ${flagged} flagged for attorney review.` : ' - review and edit below.'));
+    } catch (err) {
+      say('Interpretation failed: ' + err.message);
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // ============================================================
   // Autosave
   // ============================================================
   const DRAFT_KEY = 'chsLeaseDraft.v2';
@@ -831,6 +1121,9 @@
     $('f-type-cam').checked = true; $('f-type-nnn').checked = false;
     Object.keys(exhibitUploads).forEach(k => delete exhibitUploads[k]);
     ['f-ex-a-file', 'f-ex-b-file', 'f-ex-d-file'].forEach(id => { if ($(id)) $(id).value = ''; });
+    addlTerms = [];
+    renderAddlTerms();
+    $('interpret-status').textContent = '';
     $('draft-note').classList.add('hidden');
     manualToggle();
   }
@@ -983,6 +1276,9 @@
     $('f-end').addEventListener('input', () => { $('f-term').value = 'custom'; });
     $('generate').addEventListener('click', generate);
     $('reset-form').addEventListener('click', resetForm);
+    $('interpret-claude').addEventListener('click', claudeInterpret);
+    $('interpret-manual').addEventListener('click', manualInterpret);
+    try { $('claude-key').value = localStorage.getItem(CLAUDE_KEY_STORE) || ''; } catch (e) {}
 
     // Autosave every field.
     FIELD_IDS.concat(CHECK_IDS).forEach(id => { if ($(id)) $(id).addEventListener('input', autosave); });
