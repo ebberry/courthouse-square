@@ -6,7 +6,7 @@
 // see "Rebuilding the stylesheet" in README.md. Rebuild whenever you add a
 // Tailwind class that isn't already used somewhere in the two HTML files.
 module.exports = {
-  content: ['./index.html', './lease/index.html'],
+  content: ['./index.html', './lease/index.html', './lease/builder.html', './js/lease-builder.js'],
   theme: {
     extend: {
       colors: {

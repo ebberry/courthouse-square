@@ -32,6 +32,14 @@ if isinstance(vac_raw, dict):
     as_of = vac_raw.get('asOf', '')
     check(re.fullmatch(r'\d{4}-\d{2}-\d{2}', str(as_of)) is not None,
           f"vacancies.json: asOf {as_of!r} is not YYYY-MM-DD")
+    bsq = vac_raw.get('buildingSqft')
+    check(isinstance(bsq, (int, float)) and 1000 <= bsq <= 100000,
+          f"vacancies.json: buildingSqft {bsq!r} missing or implausible")
+    if isinstance(bsq, (int, float)):
+        for s in vac_raw.get('suites', []):
+            if isinstance(s.get('sqft'), (int, float)):
+                check(s['sqft'] < bsq,
+                      f"vacancies.json {s.get('unit')}: sqft {s['sqft']} >= buildingSqft {bsq}")
 else:
     suites = vac_raw
 
@@ -100,6 +108,26 @@ m = re.search(r'property="og:image" content="https://courthousesquarevashon\.com
 if m:
     check(os.path.exists(os.path.join(ROOT, m.group(1).lstrip('/'))),
           f"index.html og:image points at {m.group(1)} but the file does not exist")
+
+# ---------------- lease builder (staff tool) ----------------
+if os.path.exists(os.path.join(ROOT, 'lease/builder.html')):
+    builder = read('lease/builder.html')
+    for m in re.finditer(r'<script src="(/[^"]+)"', builder):
+        rel = m.group(1).lstrip('/')
+        check(os.path.exists(os.path.join(ROOT, rel)),
+              f"builder.html loads {m.group(1)} but the file does not exist")
+    check('noindex' in builder, "builder.html: missing robots noindex meta")
+    # The builder's identity constants must match the build script's.
+    bjs = read('js/lease-builder.js')
+    for name in ('FORM_VERSION', 'FORM_VDATE'):
+        py_val = const(name)
+        m = re.search(rf"{name}\s*=\s*'([^']*)'", bjs)
+        js_val = m.group(1) if m else None
+        check(py_val == js_val,
+              f"lease-builder.js {name} ({js_val!r}) != build script ({py_val!r})")
+    tw = read('tailwind.config.js')
+    check('lease/builder.html' in tw,
+          "tailwind.config.js content[] does not include lease/builder.html")
 
 # ---------------- optional: PDF stamps (needs pypdf) ----------------
 try:

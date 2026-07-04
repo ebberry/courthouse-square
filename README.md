@@ -23,8 +23,11 @@ The site exists for one job: turn prospective tenants into people who fill out t
 ├── tailwind.config.js            Shared Tailwind theme (single source for both pages)
 ├── css/
 │   └── tailwind.css              Prebuilt stylesheet (generated; commit it)
-├── js/vendor/
-│   └── marked.min.js             Vendored Markdown renderer for the lease page
+├── js/
+│   ├── lease-builder.js          Lease Builder generation engine (staff tool)
+│   └── vendor/
+│       ├── marked.min.js         Vendored Markdown renderer for the lease page
+│       └── pdf-lib.min.js        Vendored PDF library for the Lease Builder
 ├── data/
 │   ├── vacancies.json            Source of truth for available suites ({asOf, suites})
 │   └── tenants.json              Tenant roster for the Your Neighbors wall
@@ -35,6 +38,7 @@ The site exists for one job: turn prospective tenants into people who fill out t
 │   └── (sculpture.jpg, gallery-*.jpg, ...)   ← owner drops files here
 ├── lease/
 │   ├── index.html                Leasing process + standard lease (renders lease.md)
+│   ├── builder.html              Lease Builder: staff checklist → signed-ready lease (unlinked, noindex)
 │   ├── lease.md                  Standard Lease Terms + Definitions (Markdown). Edit this directly.
 │   ├── lease.pdf                 "Read the full standard lease" download (generated)
 │   ├── lease-terms-sheet.pdf     Fillable Lease Terms Sheet example (generated)
@@ -129,6 +133,27 @@ The lease is split into plain-named pieces rather than numbered "Parts":
 - **Letter of Intent & Application** — a **fillable PDF** form (applicant intake). Published at `lease/letter-of-intent.pdf` and linked from `/lease/`. Its fields are also offered as optional fields on the homepage inquiry form.
 
 **Two version tracks.** The Standard Lease Terms + Definitions are at **Version 1.2, June 8, 2026** (`VERSION` / `VDATE` in `tools/build_lease_docs.py`), held there pending the attorneys' redlines. The two intake forms (Letter of Intent + Lease Terms Sheet) are at **Version 1.3, June 12, 2026** (`FORM_VERSION` / `FORM_VDATE`), reflecting the assembled package: entity **Courthouse Square Vashon LLC**, building address **19001 Vashon Hwy SW**, and updated field labels. The two stamps move independently so the forms could advance without restamping the un-redlined standard terms.
+
+### The Lease Builder (electronic lease preparation)
+
+**`/lease/builder.html`** is a staff tool (not linked from the public nav, `noindex`) that turns a
+filled-in checklist into the actual lease documents, entirely in the browser — no server, nothing
+uploaded anywhere. Open it, pick the suite (numbers prefill from `data/vacancies.json` and stay
+editable), fill in the deal, and click **Generate**. Two PDFs download:
+
+1. **The signature-ready lease package** — a filled Lease Terms Sheet followed by the full posted
+   standard lease text. Optional items left blank are treated as *not applicable* and are omitted
+   entirely (no guarantor → no guarantor signature block and no Exhibit B; no tenant work → no
+   Exhibit C; CAM lease → no Exhibit D; and so on). The document reflows around what's omitted.
+2. **A two-page record** — the completed checklist on page one (including exactly what was
+   omitted and why), and the suite's full CAM & cost calculations on page two: proportionate
+   share (suite ÷ building sq ft), monthly/annual/per-sq-ft cost table, CAM rate detail, and the
+   total due at signing (first month + deposit − the $100 Good Faith Deposit credit).
+
+Powered by the vendored `js/vendor/pdf-lib.min.js` + `js/lease-builder.js`. The builder's identity
+constants (entity, version) are cross-checked against `tools/build_lease_docs.py` by
+`tools/check_site.py` in CI, so the two can't silently drift. The **building total rentable square
+footage** used for proportionate-share math lives in `data/vacancies.json` (`buildingSqft`).
 
 ### Regenerating the lease PDFs
 

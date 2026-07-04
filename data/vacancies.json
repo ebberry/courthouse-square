@@ -1,5 +1,6 @@
 {
   "asOf": "2026-05-21",
+  "buildingSqft": 6630,
   "suites": [
     {"unit": "N101", "building": "North", "sqft": 259, "rent": 815.85, "cam": 198.19, "utilities": 166.97, "allIn": 1181, "fit": "Room for a small practice with a waiting area, such as therapy, counseling, or bodywork."},
     {"unit": "N102", "building": "North", "sqft": 100, "rent": 315.0, "cam": 76.53, "utilities": 64.46, "allIn": 456, "fit": "A compact single-room office, ideal for a solo practitioner or consultant."},

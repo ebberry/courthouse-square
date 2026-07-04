@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lease Builder (staff), Courthouse Square</title>
+  <!-- Staff tool: not linked from the public nav, kept out of search indexes. -->
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#1e3128" />
+  <link rel="stylesheet" href="/css/tailwind.css" />
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; letter-spacing: -0.01em; }
+    :is(a, button, summary):focus-visible { outline: 2px solid #b4521f; outline-offset: 2px; }
+    .field-note { font-size: 0.72rem; color: rgba(44,74,57,0.75); margin-top: 0.2rem; }
+    .computed { background: #f2f6f3; }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+</head>
+
+<body class="bg-sand-50 text-evergreen-950 antialiased">
+
+<header class="sticky top-0 z-40 bg-sand-50/90 backdrop-blur border-b border-evergreen-100">
+  <div class="mx-auto max-w-4xl px-4 sm:px-6 py-3 flex items-center justify-between">
+    <a href="/" class="flex items-baseline gap-2">
+      <span class="font-serif font-semibold text-lg text-evergreen-900">Courthouse Square</span>
+      <span class="hidden sm:inline text-xs text-evergreen-700">Lease Builder · staff tool</span>
+    </a>
+    <nav class="flex items-center gap-4 text-sm">
+      <a href="/lease/" class="hover:text-evergreen-700">Lease page</a>
+    </nav>
+  </div>
+</header>
+
+<main class="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-14">
+  <h1 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900">Lease checklist &amp; builder</h1>
+  <p class="mt-3 text-evergreen-800/90 max-w-2xl">
+    Fill in the deal. Anything left blank that's optional is treated as <em>not applicable</em> and
+    omitted from the generated lease. Generating produces two files:
+    the <strong>signature-ready lease package</strong> (filled Lease Terms Sheet + the standard
+    lease terms), and a <strong>two-page record</strong> (this checklist on page one, the suite's
+    full CAM &amp; cost calculations on page two).
+  </p>
+
+  <form id="builder" class="mt-8 space-y-10" autocomplete="off">
+
+    <!-- 1. Parties -->
+    <fieldset>
+      <legend class="font-serif text-xl text-evergreen-900 border-b border-evergreen-200 pb-1 w-full">1 · The Parties</legend>
+      <div class="mt-4 grid sm:grid-cols-2 gap-4">
+        <label class="sm:col-span-2">
+          <span class="block text-sm font-medium text-evergreen-900">Tenant legal name (the entity) <span class="text-rust-500">*</span></span>
+          <input id="f-tenant" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+        </label>
+        <label class="sm:col-span-2">
+          <span class="block text-sm font-medium text-evergreen-900">Tenant address (before move-in)</span>
+          <input id="f-tenant-addr" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+          <p class="field-note">Blank: uses the leased suite's address.</p>
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Guarantor name(s)</span>
+          <input id="f-guarantor" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+          <p class="field-note">Blank: no guaranty — the guarantor signature block and Exhibit B are omitted.</p>
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Guarantor home address</span>
+          <input id="f-guarantor-addr" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- 2. Premises -->
+    <fieldset>
+      <legend class="font-serif text-xl text-evergreen-900 border-b border-evergreen-200 pb-1 w-full">2 · The Premises</legend>
+      <div class="mt-4 grid sm:grid-cols-3 gap-4">
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Suite <span class="text-rust-500">*</span></span>
+          <select id="f-suite" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2">
+            <option value="">Select…</option>
+          </select>
+          <p class="field-note">Choosing a suite prefills the numbers from the current pricing data. All prefilled figures stay editable.</p>
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Approximate square footage</span>
+          <input id="f-sqft" type="number" min="1" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Proportionate Share (%)</span>
+          <input id="f-share" type="number" step="0.01" class="computed mt-1 block w-full rounded-md border border-evergreen-200 px-3 py-2" />
+          <p class="field-note">Suite sq ft ÷ building total (<span id="building-sqft-note">…</span> sq ft).</p>
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- 3. Term -->
+    <fieldset>
+      <legend class="font-serif text-xl text-evergreen-900 border-b border-evergreen-200 pb-1 w-full">3 · The Term</legend>
+      <div class="mt-4 grid sm:grid-cols-4 gap-4">
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Lease Start Date <span class="text-rust-500">*</span></span>
+          <input id="f-start" type="date" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Rent Commencement</span>
+          <input id="f-rent-start" type="date" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+          <p class="field-note">Blank: same as start date.</p>
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Term</span>
+          <select id="f-term" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2">
+            <option value="12">1 year</option>
+            <option value="24" selected>2 years</option>
+            <option value="36">3 years</option>
+            <option value="60">5 years</option>
+            <option value="custom">Custom…</option>
+          </select>
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Expiration Date <span class="text-rust-500">*</span></span>
+          <input id="f-end" type="date" class="computed mt-1 block w-full rounded-md border border-evergreen-200 px-3 py-2" />
+        </label>
+        <label class="sm:col-span-4">
+          <span class="block text-sm font-medium text-evergreen-900">Renewal options</span>
+          <input id="f-renewal" placeholder="e.g. One 2-year renewal at market rate, 90 days' notice" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+          <p class="field-note">Blank: omitted.</p>
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- 4. Financial obligations -->
+    <fieldset>
+      <legend class="font-serif text-xl text-evergreen-900 border-b border-evergreen-200 pb-1 w-full">4 · Financial Obligations</legend>
+      <div class="mt-4 grid sm:grid-cols-3 gap-4">
+        <div class="sm:col-span-3">
+          <span class="block text-sm font-medium text-evergreen-900">Lease type</span>
+          <div class="mt-1 flex gap-6">
+            <label class="flex items-center gap-2"><input type="radio" name="lease-type" id="f-type-cam" value="cam" checked /> CAM Pass-Through (standard)</label>
+            <label class="flex items-center gap-2"><input type="radio" name="lease-type" id="f-type-nnn" value="nnn" /> Triple Net (NNN) — adds Exhibit D</label>
+          </div>
+        </div>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Base Rent / month ($) <span class="text-rust-500">*</span></span>
+          <input id="f-rent" type="number" step="0.01" min="0" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Estimated CAM / month ($)</span>
+          <input id="f-cam" type="number" step="0.01" min="0" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Shared utilities / month ($)</span>
+          <input id="f-util" type="number" step="0.01" min="0" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+          <p class="field-note">Water, sewer, trash & common-area power share.</p>
+        </label>
+        <label class="sm:col-span-2">
+          <span class="block text-sm font-medium text-evergreen-900">Rent escalation</span>
+          <input id="f-escalation" placeholder="e.g. 3% annually on the anniversary of commencement" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+          <p class="field-note">Blank: omitted.</p>
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Security Deposit ($)</span>
+          <input id="f-deposit" type="number" step="0.01" min="0" value="0" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+        </label>
+        <label class="sm:col-span-2">
+          <span class="block text-sm font-medium text-evergreen-900">Direct utilities (Tenant-paid)</span>
+          <input id="f-direct-util" value="Electricity, natural gas, telephone, internet/data (accounts in Tenant's name)" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">First month Rent &amp; CAM ($)</span>
+          <input id="f-first-month" type="number" step="0.01" class="computed mt-1 block w-full rounded-md border border-evergreen-200 px-3 py-2" />
+          <p class="field-note">Base + CAM + shared utilities; edit if negotiated.</p>
+        </label>
+        <label class="sm:col-span-3 flex items-center gap-2">
+          <input id="f-gfd" type="checkbox" checked />
+          <span class="text-sm text-evergreen-900">$100 Good Faith Deposit was submitted — credit it toward amounts due at signing</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- 5. Operations -->
+    <fieldset>
+      <legend class="font-serif text-xl text-evergreen-900 border-b border-evergreen-200 pb-1 w-full">5 · Operations &amp; Special Conditions</legend>
+      <div class="mt-4 grid sm:grid-cols-2 gap-4">
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Permitted Use <span class="text-rust-500">*</span></span>
+          <input id="f-use" placeholder="e.g. Law office" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Delivery condition</span>
+          <input id="f-delivery" value="As-Is" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Exclusive use (if any)</span>
+          <input id="f-exclusive" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+          <p class="field-note">Blank: omitted.</p>
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Special stipulations</span>
+          <textarea id="f-stipulations" rows="2" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2"></textarea>
+          <p class="field-note">Blank: omitted.</p>
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- 6. Notices -->
+    <fieldset>
+      <legend class="font-serif text-xl text-evergreen-900 border-b border-evergreen-200 pb-1 w-full">6 · Notice Addresses</legend>
+      <p class="mt-3 text-sm text-evergreen-800/80">Landlord's notice block is fixed. Tenant fields blank: name defaults to the tenant entity, address to the leased suite.</p>
+      <div class="mt-3 grid sm:grid-cols-3 gap-4">
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Tenant notice name</span>
+          <input id="f-notice-name" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Tenant notice address</span>
+          <input id="f-notice-addr" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+        </label>
+        <label>
+          <span class="block text-sm font-medium text-evergreen-900">Tenant courtesy email</span>
+          <input id="f-notice-email" type="email" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- 7. Exhibits -->
+    <fieldset>
+      <legend class="font-serif text-xl text-evergreen-900 border-b border-evergreen-200 pb-1 w-full">7 · Exhibits</legend>
+      <p class="mt-3 text-sm text-evergreen-800/80">
+        Exhibit B (Guaranty) follows the Guarantor field; Exhibit D (NNN Amendment) follows the lease type.
+        Only applicable exhibits appear in the generated lease.
+      </p>
+      <div class="mt-3 space-y-3">
+        <label class="flex items-center gap-2">
+          <input id="f-ex-a" type="checkbox" />
+          <span class="text-sm">Exhibit A: Outline of the Premises (floor plan) — attached separately</span>
+        </label>
+        <div class="grid sm:grid-cols-3 gap-4 border-l-2 border-evergreen-100 pl-4">
+          <p class="sm:col-span-3 text-sm font-medium text-evergreen-900 -ml-4">Exhibit C: Tenant Work Letter <span class="font-normal text-evergreen-700/80">(fill any field to include; all blank = omitted)</span></p>
+          <label>
+            <span class="block text-sm text-evergreen-900">TI allowance ($)</span>
+            <input id="f-ti-allowance" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+          </label>
+          <label>
+            <span class="block text-sm text-evergreen-900">Substantial completion by</span>
+            <input id="f-ti-complete" type="date" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+          </label>
+          <label>
+            <span class="block text-sm text-evergreen-900">Scope of Tenant's Work</span>
+            <input id="f-ti-scope" class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2" />
+          </label>
+        </div>
+        <label class="flex items-center gap-2">
+          <span class="text-sm">Exhibit E: Other</span>
+          <input id="f-ex-e" placeholder="describe, or leave blank to omit" class="flex-1 rounded-md border border-evergreen-200 bg-white px-3 py-1.5 text-sm" />
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- Generate -->
+    <div class="border-t border-evergreen-200 pt-6">
+      <div id="builder-errors" class="hidden mb-4 rounded-md border border-rust-400 bg-rust-400/10 px-4 py-3 text-sm text-rust-600"></div>
+      <button type="button" id="generate"
+              class="inline-flex items-center rounded-md bg-evergreen-800 text-sand-50 px-6 py-3 font-medium hover:bg-evergreen-700 transition">
+        Generate lease package &amp; record
+      </button>
+      <div id="builder-output" class="hidden mt-5 rounded-lg border border-evergreen-200 bg-evergreen-50 p-5">
+        <h3 class="font-serif text-lg text-evergreen-900">Generated</h3>
+        <p class="text-sm text-evergreen-800/80 mt-1">Downloads should start automatically; if not, use the buttons.</p>
+        <div class="mt-3 flex flex-wrap gap-3">
+          <a id="dl-lease" download class="inline-flex items-center rounded-md bg-evergreen-800 text-sand-50 px-4 py-2 text-sm font-medium hover:bg-evergreen-700 transition">Download lease package (PDF)</a>
+          <a id="dl-record" download class="inline-flex items-center rounded-md border border-evergreen-800 text-evergreen-900 px-4 py-2 text-sm font-medium hover:bg-evergreen-100 transition">Download checklist + CAM record (PDF)</a>
+        </div>
+      </div>
+    </div>
+  </form>
+</main>
+
+<footer class="mx-auto max-w-4xl px-4 sm:px-6 pb-10 text-xs text-evergreen-700/70">
+  Staff tool. The generated Terms Sheet uses the current intake-form identity (Version 1.3);
+  the appended standard lease terms are the posted Version 1.2 text.
+</footer>
+
+<script src="/js/vendor/pdf-lib.min.js"></script>
+<script src="/js/lease-builder.js"></script>
+</body>
+</html>
