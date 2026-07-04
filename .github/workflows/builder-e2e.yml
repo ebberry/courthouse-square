@@ -1,0 +1,40 @@
+# End-to-end test of the Lease Builder in headless Chromium: generation,
+# omission logic, proration, imports, and the two-page record guarantee.
+# Runs only when builder-related files change (it installs a browser, so it
+# is heavier than the checks.yml sanity pass).
+name: Lease Builder E2E
+
+on:
+  push:
+    paths:
+      - 'js/**'
+      - 'lease/builder.html'
+      - 'lease/lease.pdf'
+      - 'lease/letter-of-intent.pdf'
+      - 'fonts/**'
+      - 'data/**'
+      - 'tools/test_builder.py'
+  pull_request:
+    paths:
+      - 'js/**'
+      - 'lease/builder.html'
+      - 'lease/lease.pdf'
+      - 'lease/letter-of-intent.pdf'
+      - 'fonts/**'
+      - 'data/**'
+      - 'tools/test_builder.py'
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install playwright pypdf
+      - run: playwright install --with-deps chromium
+      - run: python3 tools/test_builder.py

@@ -12,6 +12,9 @@ from reportlab import rl_config
 # Deterministic output: fixed timestamps and document IDs so rebuilding without
 # content changes produces byte-identical PDFs (keeps git diffs honest).
 rl_config.invariant = 1
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.fonts import addMapping
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from reportlab.lib.colors import HexColor
@@ -52,28 +55,93 @@ LINE  = HexColor(0xbcd0c2)
 RUST  = HexColor(0xb4521f)
 FIELDBG = HexColor(0xf7f3ea)
 
-# ---------------- styles ----------------
+# ---------------- typefaces ----------------
+# Midcentury pairing: Jost (a Futura revival) for display/labels, Libre
+# Baskerville for body text — the classic 1960s agency combination. The TTFs
+# live in /fonts and are shared with the in-browser Lease Builder.
+FONTS = ROOT + '/fonts'
+pdfmetrics.registerFont(TTFont('Jost',        FONTS + '/Jost-400.ttf'))
+pdfmetrics.registerFont(TTFont('Jost-Medium', FONTS + '/Jost-500.ttf'))
+pdfmetrics.registerFont(TTFont('Jost-Semi',   FONTS + '/Jost-600.ttf'))
+pdfmetrics.registerFont(TTFont('Baskerville',        FONTS + '/LibreBaskerville-400.ttf'))
+pdfmetrics.registerFont(TTFont('Baskerville-Bold',   FONTS + '/LibreBaskerville-700.ttf'))
+pdfmetrics.registerFont(TTFont('Baskerville-Italic', FONTS + '/LibreBaskerville-Italic.ttf'))
+# Make <b>/<i> inside Paragraphs resolve to the right cuts.
+addMapping('Baskerville', 0, 0, 'Baskerville')
+addMapping('Baskerville', 1, 0, 'Baskerville-Bold')
+addMapping('Baskerville', 0, 1, 'Baskerville-Italic')
+addMapping('Baskerville', 1, 1, 'Baskerville-Bold')
+
+def tracked(s):
+    """Letterspaced caps for display type: 'LEASE' -> 'L E A S E'.
+    Non-breaking spaces so Paragraph doesn't collapse the tracking."""
+    NB = '\u00a0'  # non-breaking space
+    return (NB.join(list(s.upper().replace(' ', '~')))).replace(NB + '~' + NB, NB * 3)
+
+# ---------------- styles (midcentury: Jost display / Baskerville text) ----------------
 def styles():
-    ss = getSampleStyleSheet()
     out = {}
-    out['title']   = ParagraphStyle('t', parent=ss['Title'], fontName='Times-Bold',
-                                     fontSize=22, textColor=INK, spaceAfter=4, leading=26, alignment=TA_LEFT)
-    out['sub']     = ParagraphStyle('sub', fontName='Helvetica', fontSize=10, textColor=MUTE, spaceAfter=2, leading=14)
-    out['h2']      = ParagraphStyle('h2', fontName='Times-Bold', fontSize=16, textColor=INK,
-                                    spaceBefore=18, spaceAfter=8, leading=20)
-    out['h3']      = ParagraphStyle('h3', fontName='Times-Bold', fontSize=12.5, textColor=INK2,
-                                    spaceBefore=12, spaceAfter=4, leading=16)
-    out['body']    = ParagraphStyle('body', fontName='Helvetica', fontSize=10, textColor=INK,
-                                    spaceAfter=7, leading=15)
-    out['bullet']  = ParagraphStyle('bullet', parent=out['body'], leftIndent=16, bulletIndent=4, spaceAfter=3)
-    out['quote']   = ParagraphStyle('quote', fontName='Helvetica-Oblique', fontSize=10, textColor=INK2,
-                                    leftIndent=12, rightIndent=8, spaceBefore=4, spaceAfter=10, leading=15,
-                                    borderColor=LINE, borderWidth=0, backColor=HexColor(0xf2f6f3))
-    out['label']   = ParagraphStyle('label', fontName='Helvetica-Bold', fontSize=9.5, textColor=INK, leading=13)
-    out['small']   = ParagraphStyle('small', fontName='Helvetica', fontSize=8.5, textColor=MUTE, leading=12)
+    # Document title: big letterspaced Futura-style caps.
+    out['title']   = ParagraphStyle('t', fontName='Jost-Semi', fontSize=23, textColor=INK,
+                                    spaceAfter=6, leading=28, alignment=TA_LEFT)
+    # Metadata line under titles.
+    out['sub']     = ParagraphStyle('sub', fontName='Jost', fontSize=9, textColor=MUTE,
+                                    spaceAfter=2, leading=13)
+    # Part heading (STANDARD LEASE TERMS / DEFINITIONS & GLOSSARY).
+    out['h2']      = ParagraphStyle('h2', fontName='Jost-Semi', fontSize=15, textColor=INK,
+                                    spaceBefore=22, spaceAfter=8, leading=19)
+    # Article heading: rust index + tracked caps (assembled in md_to_story).
+    out['h3']      = ParagraphStyle('h3', fontName='Jost-Medium', fontSize=11, textColor=INK2,
+                                    spaceBefore=16, spaceAfter=5, leading=15)
+    out['body']    = ParagraphStyle('body', fontName='Baskerville', fontSize=9.2, textColor=INK,
+                                    spaceAfter=7, leading=14.5)
+    out['bullet']  = ParagraphStyle('bullet', parent=out['body'], leftIndent=16, bulletIndent=4,
+                                    spaceAfter=3, bulletColor=RUST)
+    out['quote']   = ParagraphStyle('quote', fontName='Baskerville-Italic', fontSize=9.2, textColor=INK2,
+                                    leftIndent=14, rightIndent=10, spaceBefore=4, spaceAfter=10, leading=14.5,
+                                    borderColor=RUST, borderWidth=0, backColor=HexColor(0xf2f6f3),
+                                    borderPadding=(6, 8, 6, 8))
+    out['label']   = ParagraphStyle('label', fontName='Jost-Medium', fontSize=8.6, textColor=INK, leading=12.5)
+    out['small']   = ParagraphStyle('small', fontName='Baskerville-Italic', fontSize=8, textColor=MUTE, leading=11.5)
     out['center']  = ParagraphStyle('center', parent=out['body'], alignment=TA_CENTER)
     return out
 S = styles()
+
+def dual_rule():
+    """The midcentury double rule: a strong evergreen bar over a thin rust line."""
+    return [Spacer(1, 5),
+            HRFlowable(width='100%', thickness=2.2, color=INK, spaceAfter=2),
+            HRFlowable(width='100%', thickness=0.7, color=RUST),
+            Spacer(1, 8)]
+
+def form_section(st, title):
+    """Numbered form-section heading: rust index + tracked caps + thin rule.
+    Titles arrive possibly pre-escaped; long titles skip tracking (NBSPs
+    can't wrap, so tracked text must fit one line)."""
+    plain = html.unescape(title)
+    m = re.match(r'(\d+)\.\s*(.*)', plain)
+    idx, rest = (m.group(1), m.group(2)) if m else (None, plain)
+    disp = tracked(rest) if len(rest) <= 34 else rest.upper()
+    markup = html.escape(disp, quote=False)
+    if idx:
+        markup = (f'<font color="#b4521f">{idx}</font>'
+                  f'<font color="#bcd0c2">&nbsp;&#183;&nbsp;</font>' + markup)
+    st.append(Spacer(1, 6))
+    st.append(Paragraph(markup, S['h3']))
+    st.append(HRFlowable(width='100%', thickness=0.5, color=LINE, spaceAfter=5))
+
+def title_para(text):
+    """Tracked display title (accepts pre-escaped text)."""
+    return Paragraph(html.escape(tracked(html.unescape(text)), quote=False), S['title'])
+
+def article_heading(text):
+    """'Article 9: Default and Remedies' -> rust 'ARTICLE 9' + tracked title."""
+    m = re.match(r'(Article \d+):\s*(.*)', text)
+    if m:
+        markup = (f'<font color="#b4521f">{tracked(m.group(1))}</font>'
+                  f'<font color="#bcd0c2">&nbsp;&nbsp;|&nbsp;&nbsp;</font>{html.escape(m.group(2).upper(), quote=False)}')
+        return Paragraph(markup, S['h3'])
+    return Paragraph(html.escape(text.upper(), quote=False), S['h3'])
 
 def inline(text):
     """Escape, then convert **bold** and *italic* to reportlab markup."""
@@ -92,14 +160,15 @@ def md_to_story(md):
         if s == '':
             i += 1; continue
         if s == '---':
-            story.append(Spacer(1, 4)); story.append(HRFlowable(width='100%', thickness=0.6, color=LINE))
-            story.append(Spacer(1, 4)); i += 1; continue
+            story.extend(dual_rule()); i += 1; continue
         if s.startswith('### '):
-            story.append(Paragraph(inline(s[4:]), S['h3'])); i += 1; continue
+            story.append(article_heading(s[4:])); i += 1; continue
         if s.startswith('## '):
-            story.append(Paragraph(inline(s[3:]), S['h2'])); i += 1; continue
+            story.append(Paragraph(html.escape(tracked(s[3:]), quote=False), S['h2']))
+            story.append(HRFlowable(width='100%', thickness=0.7, color=RUST, spaceAfter=6))
+            i += 1; continue
         if s.startswith('# '):
-            story.append(Paragraph(inline(s[2:]), S['title'])); i += 1; continue
+            story.append(Paragraph(html.escape(tracked(s[2:]), quote=False), S['title'])); i += 1; continue
         if s.startswith('> '):
             story.append(Paragraph(inline(s[2:]), S['quote'])); i += 1; continue
         if s.startswith('- '):
@@ -127,12 +196,24 @@ class NumberedCanvas(canvaslib.Canvas):
             self.__dict__.update(st); self._draw_footer(n); super().showPage()
         super().save()
     def _draw_footer(self, total):
-        self.setFont('Helvetica', 7.5); self.setFillColor(MUTE)
         w, _ = letter
-        self.drawString(0.85*inch, 0.5*inch, getattr(self, 'footer_text', FOOTER))
-        self.drawRightString(w - 0.85*inch, 0.5*inch, f'Page {self._pageNumber} of {total}')
         self.setStrokeColor(LINE); self.setLineWidth(0.5)
         self.line(0.85*inch, 0.62*inch, w - 0.85*inch, 0.62*inch)
+        # Rust tick on the rule: a small midcentury signature.
+        self.setStrokeColor(RUST); self.setLineWidth(1.4)
+        self.line(0.85*inch, 0.62*inch, 0.85*inch + 18, 0.62*inch)
+        self.setFont('Jost', 6.8); self.setFillColor(MUTE)
+        t = self.beginText(0.85*inch, 0.5*inch)
+        t.setCharSpace(0.7)
+        t.textOut(getattr(self, 'footer_text', FOOTER).upper())
+        self.drawText(t)
+        pg = f'PAGE {self._pageNumber} OF {total}'
+        # right-aligned with the same tracking
+        width = pdfmetrics.stringWidth(pg, 'Jost', 6.8) + 0.7 * len(pg)
+        t2 = self.beginText(w - 0.85*inch - width, 0.5*inch)
+        t2.setCharSpace(0.7)
+        t2.textOut(pg)
+        self.drawText(t2)
 
 def footer_canvas(footer):
     """A NumberedCanvas subclass that stamps a specific footer string."""
@@ -200,7 +281,7 @@ def build_terms_sheet(path):
                             title=f'{FORM_ENTITY} Lease Terms Sheet')
     W = letter[0] - 1.7*inch
     st = []
-    st.append(Paragraph('Lease Terms Sheet', S['title']))
+    st.append(title_para('Lease Terms Sheet'))
     st.append(Paragraph(f'{FORM_ENTITY} &#183; {FORM_ADDR}', S['sub']))
     st.append(Paragraph(f'{FORM_VERSION} &#183; {FORM_VDATE}', S['sub']))
     st.append(Spacer(1,6))
@@ -211,7 +292,7 @@ def build_terms_sheet(path):
     st.append(Spacer(1,6)); st.append(HRFlowable(width='100%', thickness=0.6, color=LINE)); st.append(Spacer(1,8))
 
     def section(title):
-        st.append(Spacer(1,4)); st.append(Paragraph(title, S['h3']))
+        form_section(st, title)
 
     section('1. The Parties')
     st.append(labeled('Landlord:', Paragraph(f'{FORM_ENTITY}, a Washington Limited Liability Company', S['body'])))
@@ -322,7 +403,7 @@ def build_loi_form(path):
                             title=f'{FORM_ENTITY} Letter of Intent & Lease Application')
     W = letter[0] - 1.7*inch
     st = []
-    st.append(Paragraph('Letter of Intent &amp; Lease Application', S['title']))
+    st.append(title_para('Letter of Intent &amp; Lease Application'))
     st.append(Paragraph(f'{FORM_ENTITY} &#183; {FORM_ADDR}', S['sub']))
     st.append(Paragraph(f'{FORM_VERSION} &#183; {FORM_VDATE}', S['sub']))
     st.append(Spacer(1,6))
@@ -340,7 +421,7 @@ def build_loi_form(path):
     st.append(Spacer(1,6)); st.append(HRFlowable(width='100%', thickness=0.6, color=LINE)); st.append(Spacer(1,8))
 
     def section(title):
-        st.append(Spacer(1,4)); st.append(Paragraph(title, S['h3']))
+        form_section(st, title)
 
     def field(label, name, height=15, multiline=False):
         """Prompt on its own line, with a fill-in field directly beneath it."""
@@ -420,16 +501,23 @@ def build_loi_form(path):
 def build_cover(path):
     doc = SimpleDocTemplate(path, pagesize=letter, topMargin=2.2*inch,
                             leftMargin=0.85*inch, rightMargin=0.85*inch, bottomMargin=0.8*inch)
-    st = [Paragraph('Courthouse Square', S['title']),
-          Paragraph('Complete Commercial Lease Package', S['h2']),
-          Spacer(1,10),
+    num = lambda n: f'<font color="#b4521f">{n}</font>&nbsp;&nbsp;&nbsp;'
+    st = [HRFlowable(width=40, thickness=3, color=RUST, spaceAfter=14, hAlign='LEFT'),
+          Paragraph(html.escape(tracked('Courthouse Square'), quote=False), S['title']),
+          Paragraph(html.escape(tracked('Vashon'), quote=False),
+                    ParagraphStyle('cv', fontName='Jost-Medium', fontSize=10, textColor=MUTE, spaceAfter=8, leading=14)),
+          *dual_rule(),
+          Spacer(1,8),
+          Paragraph(html.escape(tracked('Complete Commercial Lease Package'), quote=False), S['h2']),
+          Spacer(1,6),
           Paragraph(f'{FORM_VERSION} &#183; {FORM_VDATE}', S['sub']),
-          Spacer(1,16),
-          Paragraph('Assembled for review. Contents, in order:', S['body']),
-          Paragraph('1. Letter of Intent &amp; Lease Application (applicant intake; fillable)', S['body']),
-          Paragraph('2. Lease Terms Sheet (deal-specific terms, signatures, and exhibits; fillable example)', S['body']),
-          Paragraph('3. Standard Lease Terms (the standard terms that apply to every tenant)', S['body']),
-          Paragraph('4. Definitions &amp; Glossary', S['body']),
+          Spacer(1,20),
+          Paragraph('<i>Assembled for review. Contents, in order:</i>', S['body']),
+          Spacer(1,4),
+          Paragraph(num(1) + 'Letter of Intent &amp; Lease Application (applicant intake; fillable)', S['body']),
+          Paragraph(num(2) + 'Lease Terms Sheet (deal-specific terms, signatures, and exhibits; fillable example)', S['body']),
+          Paragraph(num(3) + 'Standard Lease Terms (the standard terms that apply to every tenant)', S['body']),
+          Paragraph(num(4) + 'Definitions &amp; Glossary', S['body']),
           Spacer(1,16),
           Paragraph('This consolidated package is for internal review. Its parts are published individually at '
                     'courthousesquarevashon.com/lease/: the Standard Lease Terms and Definitions, the fillable Lease '

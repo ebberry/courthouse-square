@@ -113,6 +113,12 @@ if m:
     check(os.path.exists(os.path.join(ROOT, m.group(1).lstrip('/'))),
           f"index.html og:image points at {m.group(1)} but the file does not exist")
 
+# ---------------- shared typefaces ----------------
+for f in ('Jost-400.ttf', 'Jost-500.ttf', 'Jost-600.ttf',
+          'LibreBaskerville-400.ttf', 'LibreBaskerville-700.ttf', 'LibreBaskerville-Italic.ttf'):
+    check(os.path.exists(os.path.join(ROOT, 'fonts', f)),
+          f"fonts/{f} missing (required by the PDF build and the Lease Builder)")
+
 # ---------------- lease builder (staff tool) ----------------
 if os.path.exists(os.path.join(ROOT, 'lease/builder.html')):
     builder = read('lease/builder.html')

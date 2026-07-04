@@ -27,7 +27,8 @@ The site exists for one job: turn prospective tenants into people who fill out t
 │   ├── lease-builder.js          Lease Builder generation engine (staff tool)
 │   └── vendor/
 │       ├── marked.min.js         Vendored Markdown renderer for the lease page
-│       └── pdf-lib.min.js        Vendored PDF library for the Lease Builder
+│       ├── pdf-lib.min.js        Vendored PDF library for the Lease Builder
+│       └── fontkit.umd.min.js    Vendored font engine (custom TTFs in builder PDFs)
 ├── data/
 │   ├── identity.json             Entity, addresses, version stamp (single source of truth)
 │   ├── vacancies.json            Source of truth for available suites ({asOf, buildingSqft, suites})
@@ -47,14 +48,18 @@ The site exists for one job: turn prospective tenants into people who fill out t
 │   └── archive/
 │       ├── v2026.05.31/ ... v2026.06.12/   Prior versions (internal record)
 │       └── v2026.06.29/          Current version snapshot (v1.5)
+├── fonts/                        Jost + Libre Baskerville TTFs (PDF build + Lease Builder)
 ├── tools/
 │   ├── build_lease_docs.py       Regenerates all lease PDFs (reportlab + pypdf; byte-reproducible)
 │   ├── check_site.py             Sanity checks: pricing math, version stamps, links (run in CI)
+│   ├── test_builder.py           Lease Builder end-to-end test (playwright + pypdf)
+│   ├── release_lease.py          One-step lease version bump (identity, rebuild, archive, checks)
 │   └── tailwind.src.css          Source for the generated css/tailwind.css
 ├── review/                       Internal only, git-ignored (NOT deployed):
 │                                   the full consolidated review PDF (all parts merged)
 └── .github/workflows/
-    └── checks.yml                Runs tools/check_site.py on every push/PR
+    ├── checks.yml                Runs tools/check_site.py on every push/PR
+    └── builder-e2e.yml           Lease Builder browser test (runs when builder files change)
 ```
 
 ## Rebuilding the stylesheet
@@ -151,10 +156,37 @@ editable), fill in the deal, and click **Generate**. Two PDFs download:
    share (suite ÷ building sq ft), monthly/annual/per-sq-ft cost table, CAM rate detail, and the
    total due at signing (first month + deposit − the $100 Good Faith Deposit credit).
 
-Powered by the vendored `js/vendor/pdf-lib.min.js` + `js/lease-builder.js`. The builder's identity
-constants (entity, version) are cross-checked against `tools/build_lease_docs.py` by
-`tools/check_site.py` in CI, so the two can't silently drift. The **building total rentable square
-footage** used for proportionate-share math lives in `data/vacancies.json` (`buildingSqft`).
+Beyond the basics, the builder also:
+
+- **Imports**: drop a filled Letter of Intent PDF, a previously generated record PDF, or a saved
+  `.json` deal file onto the page and the checklist prefills. Every record PDF carries its deal
+  data as an embedded `deal.json`, so any past deal can be reloaded and regenerated (e.g. after a
+  lease version bump).
+- **Prorates** mid-month starts (per-diem on rent + CAM + shared utilities) and prints the
+  proration math on the record.
+- **Auto-saves** a draft to the browser's localStorage ("Reset form & clear draft" to discard).
+- **Attaches exhibits**: upload PDFs for Exhibit A (Legal Description — or drop one at
+  `lease/exhibits/exhibit-a-legal-description.pdf` to auto-attach), Exhibit B (guaranty rider),
+  and Exhibit D (NNN amendment); each gets a styled cover page in the package.
+- **Handles South-building / unlisted suites** via "Other / manual entry" in the suite dropdown.
+- **Embeds invisible e-sign anchors** (`/sn1/`…`/ds3/`) at the signature lines so DocuSign/Adobe
+  Sign auto-place fields when staff upload the package.
+- **Guarantees the two-page record**: type sizes step down and long free-text clips rather than
+  spilling to a third page.
+- Prints a **projected rent schedule** on the CAM page when the escalation text contains a
+  percentage and the term is 2+ years.
+
+The document design is the midcentury house style — Jost (Futura revival) display type and Libre
+Baskerville text, shared with the Python-built PDFs via the TTFs in `fonts/`. Powered by the
+vendored `js/vendor/pdf-lib.min.js` + `fontkit.umd.min.js` + `js/lease-builder.js`. Identity
+(entity, addresses, version) comes from `data/identity.json` at runtime, with fallback literals
+cross-checked by `tools/check_site.py` in CI. The **building total rentable square footage** used
+for proportionate-share math lives in `data/vacancies.json` (`buildingSqft`).
+
+`tools/test_builder.py` is the end-to-end test (maximal deal, omission matrix, record-import
+round-trip, LOI import); `.github/workflows/builder-e2e.yml` runs it in CI when builder files
+change. `tools/release_lease.py --version "Version 1.6" --date "July 20, 2026"` automates a
+version bump: identity.json, the lease-page version line, rebuild, archive snapshot, checks.
 
 ### Regenerating the lease PDFs
 
