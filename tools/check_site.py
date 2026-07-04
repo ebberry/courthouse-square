@@ -65,31 +65,35 @@ check(isinstance(tenants, list), "tenants.json: top level must be an array")
 for t in tenants if isinstance(tenants, list) else []:
     check(bool(t.get('name')), f"tenants.json: entry missing required 'name': {t}")
 
-# ---------------- version stamps ----------------
-build = read('tools/build_lease_docs.py')
-def const(name):
-    m = re.search(rf"^{name}\s*=\s*'([^']*)'", build, re.M)
-    return m.group(1) if m else None
+# ---------------- identity & version stamps (single source: data/identity.json) ----------------
+ident = json.loads(read('data/identity.json'))
+for fld in ('entity', 'entityLong', 'building', 'buildingAddress', 'noticeAddress',
+            'noticeCareOf', 'email', 'version', 'versionDate'):
+    check(bool(ident.get(fld)), f"identity.json: missing field {fld!r}")
+version, vdate = ident.get('version', ''), ident.get('versionDate', '')
+form_version, form_vdate = version, vdate   # single version track since v1.5
 
-version, vdate = const('VERSION'), const('VDATE')
-form_version, form_vdate = const('FORM_VERSION'), const('FORM_VDATE')
-check(version and vdate, "build script: VERSION/VDATE not found")
-check(form_version and form_vdate, "build script: FORM_VERSION/FORM_VDATE not found")
+build = read('tools/build_lease_docs.py')
+check("data/identity.json" in build,
+      "build script does not load data/identity.json (identity drift risk)")
 
 lease_page = read('lease/index.html')
-if version and vdate:
-    short = version.replace('Version ', 'v')
-    check(short in lease_page and vdate in lease_page,
-          f"lease/index.html: version line does not mention standard lease {short} ({vdate})")
-if form_version and form_vdate:
-    short = form_version.replace('Version ', 'v')
-    check(short in lease_page and form_vdate in lease_page,
-          f"lease/index.html: version line does not mention intake forms {short} ({form_vdate})")
+check(f"{version}, {vdate}" in lease_page or f"{version.replace('Version ', 'v')} ({vdate})" in lease_page,
+      f"lease/index.html: version line does not carry '{version}, {vdate}'")
 
 lease_md = read('lease/lease.md')
-if version and vdate:
-    check(f"{version}, {vdate}" in lease_md,
-          f"lease/lease.md: header does not carry '{version}, {vdate}'")
+check(f"{version}, {vdate}" in lease_md,
+      f"lease/lease.md: header does not carry '{version}, {vdate}'")
+check(ident['entity'] in lease_md,
+      f"lease/lease.md: does not name the entity {ident['entity']!r}")
+
+# The builder's offline fallback identity must match identity.json.
+bjs_src = read('js/lease-builder.js')
+for key, expect in (('version', version), ('versionDate', vdate),
+                    ('entity', ident['entity']), ('noticeAddress', ident['noticeAddress'])):
+    m = re.search(rf"{key}:\s*'([^']*)'", bjs_src)
+    check(m and m.group(1) == expect,
+          f"lease-builder.js fallback {key} ({m.group(1) if m else None!r}) != identity.json ({expect!r})")
 
 # ---------------- download links resolve to real files ----------------
 for m in re.finditer(r'href="(/lease/[^"]+\.pdf)"', lease_page):
@@ -117,14 +121,6 @@ if os.path.exists(os.path.join(ROOT, 'lease/builder.html')):
         check(os.path.exists(os.path.join(ROOT, rel)),
               f"builder.html loads {m.group(1)} but the file does not exist")
     check('noindex' in builder, "builder.html: missing robots noindex meta")
-    # The builder's identity constants must match the build script's.
-    bjs = read('js/lease-builder.js')
-    for name in ('FORM_VERSION', 'FORM_VDATE'):
-        py_val = const(name)
-        m = re.search(rf"{name}\s*=\s*'([^']*)'", bjs)
-        js_val = m.group(1) if m else None
-        check(py_val == js_val,
-              f"lease-builder.js {name} ({js_val!r}) != build script ({py_val!r})")
     tw = read('tailwind.config.js')
     check('lease/builder.html' in tw,
           "tailwind.config.js content[] does not include lease/builder.html")

@@ -1,7 +1,8 @@
 # Standard Lease Terms
 
-**Courthouse Square Vashon LLC**
-**Version 1.5, June 29, 2026**
+**Courthouse Square LLC**
+20704 Vashon Hwy SW, Vashon Island, Washington 98070
+**Version 1.2, June 8, 2026**
 
 > **Applicability.** This document contains the standard operating and legal terms for the Property (these Standard Lease Terms and the Definitions & Glossary). Capitalized terms used herein are defined either in the Definitions & Glossary below or in the Lease Terms Sheet of the Tenant's specific Commercial Lease Agreement. Landlord may amend the Standard Lease Terms and the Definitions & Glossary from time to time as the standard form for the Property; such amendments apply only to Commercial Lease Agreements executed after the effective date of the amendment, and the version incorporated into any specific Lease shall be as stated in the Lease Terms Sheet for that Lease.
 
@@ -21,19 +22,21 @@
 - **Insurance:** Premiums for Landlord's commercial general liability, property, earthquake, and loss of rents insurance.
 - **Maintenance & Common-Area Utilities:** Costs for water, sewer, trash, electricity for common areas, landscaping, snow/ice removal, and parking lot maintenance.
 - **Management:** A property management fee not to exceed five percent (5%) of the gross revenues of the Building, plus the cost of on-site personnel directly involved in operations.
-- **Capital Improvements:** The cost of those capital improvements required by new governmental laws (e.g., Washington Clean Buildings Act) or reasonably intended to reduce CAM Charges, amortized over their useful life per GAAP, with 8% interest on the unamortized balance.
+- **Capital Improvements:** The cost of capital improvements required by new governmental laws (e.g., Washington Clean Buildings Act) or reasonably intended to reduce CAM Charges, amortized over their useful life per GAAP, with 8% interest on the unamortized balance.
 
-**1.4 Exclusions from CAM Charges.** CAM Charges shall not include: leasing commissions or legal fees for procuring tenants; costs of exclusive Tenant Improvements; Landlord's corporate/income taxes; capital improvements (other than those set forth in Section 1.3, above); debt service on the property; costs arising from Landlord's gross negligence; or costs to remediate Hazardous Materials present prior to the Lease Start Date.
+**1.4 Exclusions from CAM Charges.** CAM Charges shall not include: leasing commissions or legal fees for procuring tenants; costs of exclusive Tenant Improvements; Landlord's corporate/income taxes; debt service on the property; costs arising from Landlord's gross negligence; or costs to remediate Hazardous Materials present prior to the Lease Start Date.
 
-**1.5 Estimated Payments and Reconciliation.** Landlord shall provide an annual good-faith estimate of CAM Charges. Tenant shall pay 1/12th of its share monthly. Within 120 days after the calendar year, Landlord shall furnish a reconciliation statement. Tenant shall pay any deficiency within 30 days; Landlord shall credit any overage to future Rent.
+**1.5 Estimated Payments and Reconciliation.** Landlord shall provide an annual good-faith estimate of CAM Charges, and Tenant shall pay 1/12th of its share monthly. These estimated payments are reconciled against actual CAM costs through the annual review and refund described in Section 1.8.
 
 **1.6 Tenant's Audit Rights.** Once per year, provided Tenant is not in default, Tenant may audit the preceding year's CAM records using an independent CPA on an hourly basis. Request must be made within 90 days of the reconciliation statement. If Landlord overcharged by more than 5%, Landlord pays the audit cost and refunds the overage. All findings must remain strictly confidential.
 
 **1.7 NNN Variation.** If the Lease Terms Sheet (Financial Obligations) designates this Lease as Triple Net (NNN), the provisions of the NNN Lease Amendment (Exhibit D of the Lease Terms Sheet) shall modify or supersede this Article 1 to the extent set forth therein.
 
+**1.8 Annual CAM Review and Refund.** At the end of the third quarter of each year, Landlord shall review the preceding twelve-month period and compare the CAM Charges estimated and collected from Tenant against the actual CAM costs incurred, and shall furnish Tenant a written reconciliation statement of that review. If Tenant's payments exceeded its Proportionate Share of the actual CAM costs, Landlord shall refund the overcharge to Tenant. If the actual CAM costs exceeded the amounts collected, Landlord shall absorb the difference; Tenant shall not be billed for, and is not responsible for, the shortfall. This annual review and refund applies to ordinary operating costs and to routine maintenance and repairs included in CAM Charges. Major repairs, capital improvements, and emergency repairs are not covered by this annual true-up and shall be addressed separately on a case-by-case basis (including, where applicable, the capital-improvement amortization described in Section 1.3).
+
 ### Article 2: Delivery and Acceptance of Premises
 
-**2.1 Delivery of Possession.** Landlord shall use commercially reasonable, diligent efforts to deliver possession of the Premises to Tenant on or before the Lease Start Date specified in the Lease Terms Sheet, in the delivery condition (if any) specified in the Lease Terms Sheet. Landlord shall not be liable for any damage or loss arising from a delay in delivering possession, except as expressly set forth in Section 2.2, below.
+**2.1 Delivery of Possession.** Landlord shall use commercially reasonable, diligent efforts to deliver possession of the Premises to Tenant on or before the Lease Start Date specified in the Lease Terms Sheet, in the delivery condition (if any) specified in the Lease Terms Sheet. Landlord shall not be liable for any damage or loss arising from a delay in delivering possession, except as expressly set forth in Section 2.2 below.
 
 **2.2 Delayed Possession; Tenant's Cancellation Right.** If Landlord is unable to deliver possession of the Premises in the required delivery condition within sixty (60) days after the Lease Start Date, then (a) Rent shall abate for the period of the delay until possession is delivered, and (b) Tenant may, at its option, cancel this Lease by written notice to Landlord delivered at any time before possession is tendered. Upon such cancellation, Landlord shall promptly refund to Tenant all prepaid Rent and the Security Deposit, and neither party shall have any further obligation to the other, except for obligations that expressly survive termination. This Section 2.2 states Tenant's sole remedy for delayed delivery, and is subject to extension for Force Majeure and for delays caused by Tenant.
 
@@ -57,17 +60,17 @@
 
 ### Article 4: Maintenance, Repairs, and Alterations
 
-**Tenant's Maintenance Obligations.** Tenant shall, at its sole cost, maintain the interior of the Premises (walls, floors, plumbing fixtures, interior glass, and lighting) in clean, safe condition.
+**4.1 Tenant's Maintenance Obligations.** Tenant shall, at its sole cost, maintain the interior of the Premises (walls, floors, plumbing fixtures, interior glass, and lighting) in clean, safe condition.
 
-**4.1 HVAC.** Landlord arranges routine and preventative maintenance of the HVAC systems serving the Premises through a licensed HVAC contractor, and the cost is included in CAM Charges as part of Tenant's Proportionate Share. If an HVAC unit requires full replacement through no fault of Tenant, Landlord shall replace it and amortize the cost into CAM Charges. Tenant has no separate obligation to contract for or maintain HVAC service.
+**4.2 HVAC.** Landlord arranges routine and preventative maintenance of the HVAC systems serving the Premises through a licensed HVAC contractor, and the cost is included in CAM Charges as part of Tenant's Proportionate Share. If an HVAC unit requires full replacement through no fault of Tenant, Landlord shall replace it and amortize the cost into CAM Charges. Tenant has no separate obligation to contract for or maintain HVAC service.
 
-**4.2 Landlord's Obligations.** Subject to CAM reimbursement, Landlord shall maintain the structural foundation, load-bearing walls, exterior roof membrane, and Common Areas.
+**4.3 Landlord's Obligations.** Subject to CAM reimbursement, Landlord shall maintain the structural foundation, load-bearing walls, exterior roof membrane, and Common Areas.
 
-**4.3 Alterations.** Tenant shall not make Alterations without Landlord's prior written consent, which shall not be unreasonably withheld, conditioned, or delayed for non-structural work under $5,000.
+**4.4 Alterations.** Tenant shall not make Alterations without Landlord's prior written consent, which shall not be unreasonably withheld, conditioned, or delayed for non-structural work under $5,000.
 
-**4.4 Mechanic's Liens and Protection.** Tenant shall pay promptly for all labor and materials. Tenant must give Landlord 10 days' written notice before commencing work. Landlord may post notices to protect the property from lien claims. If a lien is filed, Tenant must discharge or bond it within 15 days.
+**4.5 Mechanic's Liens and Protection.** Tenant shall pay promptly for all labor and materials. Tenant must give Landlord 10 days' written notice before commencing work. Landlord may post notices to protect the property from lien claims. If a lien is filed, Tenant must discharge or bond it within 15 days.
 
-**4.5 Surrender and Abandonment.** Upon expiration or earlier termination, Tenant shall surrender the Premises broom-clean and in good condition, ordinary wear and tear and insured casualty excepted, and shall remove all of Tenant's personal property and Trade Fixtures, repairing any damage caused by removal. Permanent Alterations shall remain Landlord's property unless Landlord, at the time consent was given, conditioned its consent on removal. If Tenant fails to remove its personal property or Trade Fixtures by the end of the Term, such items shall be deemed abandoned, and Landlord may remove, store, sell, or dispose of them at Tenant's expense, without liability and without waiving any other remedy. A final walk-through will be conducted and all keys and access devices returned to Landlord.
+**4.6 Surrender and Abandonment.** Upon expiration or earlier termination, Tenant shall surrender the Premises broom-clean and in good condition, ordinary wear and tear and insured casualty excepted, and shall remove all of Tenant's personal property and Trade Fixtures, repairing any damage caused by removal. Permanent Alterations shall remain Landlord's property unless Landlord, at the time consent was given, conditioned its consent on removal. If Tenant fails to remove its personal property or Trade Fixtures by the end of the Term, such items shall be deemed abandoned, and Landlord may remove, store, sell, or dispose of them at Tenant's expense, without liability and without waiving any other remedy. A final walk-through will be conducted and all keys and access devices returned to Landlord.
 
 ### Article 5: Utilities
 
@@ -89,8 +92,6 @@
 
 **6.4 General Indemnification.** Tenant indemnifies and defends Landlord against claims arising from Tenant's use of the Premises or breach of Lease, except to the extent caused by Landlord's gross negligence.
 
-**6.5 Waiver of Immunity.** Landlord and Tenant each specifically and expressly waive any immunity that each may be granted under the Washington State Industrial Insurance Act, Title 51 RCW. Neither party's indemnity obligations under this Lease shall be limited by any limitation on the amount or type of damages, compensation, or benefits payable to or for any third party under the Worker Compensation Acts, Disability Benefit Acts or other employee benefit acts.
-
 ### Article 7: Casualty and Condemnation
 
 **7.1 Casualty.** If damaged by fire or casualty, Landlord shall estimate repair time. If repairable within 180 days, Landlord shall repair the structure, and Rent abates proportionally. If not repairable within 180 days, Landlord may terminate. Landlord has no duty to repair Tenant's property.
@@ -99,7 +100,7 @@
 
 ### Article 8: Assignment and Subletting
 
-**8.1 Consent.** Tenant shall not assign or sublet without Landlord's prior written consent, which shall not be unreasonably withheld, conditioned, or delayed. Landlord may assign its interest under this Lease without Tenant's consent.
+**8.1 Consent.** Tenant shall not assign or sublet without Landlord's prior written consent, which shall not be unreasonably withheld, conditioned, or delayed.
 
 **8.2 Recapture.** Upon Tenant's request to assign or sublet, Landlord has 30 days to elect to recapture the space and terminate the Lease for that portion.
 
@@ -109,19 +110,7 @@
 
 **9.1 Events of Default.** Defaults include: (a) failure to pay Rent (5 days after notice); (b) failure to perform non-monetary obligations (15 days after notice); (c) abandonment; (d) insolvency.
 
-**9.2 Landlord's Default and Cure.** Landlord shall not be in default unless Landlord fails to perform obligations required of Landlord within 30 days after notice by Tenant to Landlord, provided that, if the nature of such default is that it cannot be cured within such 30 day period, Landlord shall not be in default if Landlord commences such cure within 30 days of notice by Tenant and diligently pursues such cure to completion. If Landlord fails to cure any such default within the allotted time, Tenant's sole remedy shall be to seek actual money damages (but not consequential or punitive damages) for loss arising from Landlord's failure to discharge its obligations under this Lease. Nothing herein contained shall relieve Landlord from its duty to perform any of its obligations to the standard prescribed in this Lease. Any notice periods granted herein shall be deemed to run concurrently with and not in addition to any default notice periods required by law.
-
-**9.3 Remedies.** Landlord shall have the following remedies upon an Event of Default. Landlord's rights and remedies under this Lease shall be cumulative and non-exclusive.
-
-**9.4 Termination of Lease.** Landlord may terminate Tenant's interest under the Lease, but no act by Landlord other than notice of termination from Landlord to Tenant shall terminate this Lease. The Lease shall terminate on the date specified in the notice of termination. Upon termination of this Lease, Tenant will remain liable to Landlord for damages in an amount equal to Rent and other sums that would have been owing by Tenant under this Lease for the balance of the Term, less the net proceeds, if any, of any reletting of the Premises by Landlord subsequent to the termination, after deducting all of Landlord's Reletting Expenses (as defined below). Landlord shall be entitled to either collect damages from Tenant monthly on the days on which Rent or other amounts would have been payable under the Lease, or alternatively, Landlord may accelerate Tenant's obligations under the Lease and recover from Tenant: (i) unpaid Rent which had been earned at the time of termination; (ii) the amount by which the unpaid Rent which would have been earned after termination until the time of award exceeds the amount of Rent loss that Tenant proves could reasonably have been avoided; (iii) the amount by which the unpaid Rent for the balance of the term of the Lease after the time of award exceeds the amount of Rent loss that Tenant proves could reasonably be avoided (discounting such amount by the discount rate of the Federal Reserve Bank of San Francisco at the time of the award, plus 1%); and (iv) any other amount necessary to compensate Landlord for all the detriment proximately caused by Tenant's failure to perform its obligations under the Lease, or which in the ordinary course would be likely to result from the Event of Default, including without limitation Reletting Expenses described below.
-
-**9.5 Re-Entry and Reletting.** Landlord may continue this Lease in full force and effect, and without demand or notice, re-enter and take possession of the Premises or any part thereof, expel the Tenant from the Premises and anyone claiming through or under the Tenant, and remove the personal property of either. Landlord may relet the Premises, or any part of them, in Landlord's or Tenant's name for the account of Tenant, for such period of time and at such other terms and conditions as Landlord, in its discretion, may determine. Landlord may collect and receive the rents for the Premises. To the fullest extent permitted by law, the proceeds of any reletting shall be applied: first, to pay Landlord all Reletting Expenses (defined below); second, to pay any indebtedness of Tenant to Landlord other than Rent; third, to the Rent due and unpaid hereunder; and fourth, the residue, if any, shall be held by Landlord and applied in payment of other or future obligations of Tenant to Landlord as the same may become due and payable, and Tenant shall not be entitled to receive any portion of such revenue. Re-entry or taking possession of the Premises by Landlord under this Section shall not be construed as an election on Landlord's part to terminate this Lease, unless a notice of termination is given to Tenant. Landlord reserves the right following any re-entry or reletting, or both, under this Section to exercise its right to terminate the Lease. Tenant will pay Landlord Rent and other sums which would be payable under this Lease if repossession had not occurred, less the net proceeds, if any, after reletting the Premises and after deducting Landlord's Reletting Expenses. "Reletting Expenses" is defined to include all expenses incurred by Landlord in connection with reletting the Premises, including without limitation, all repossession costs, brokerage commissions and costs for securing new tenants, attorneys' fees, remodeling and repair costs, costs for removing persons or property, costs for storing Tenant's property and equipment, and costs of tenant improvements and rent concessions granted by Landlord to any new Tenant, prorated over the life of the new lease.
-
-**9.6 Waiver of Redemption Rights.** Tenant, for itself, and on behalf of any and all persons claiming through or under Tenant, including creditors of all kinds, hereby waives and surrenders all rights and privileges which they may have under any present or future law, to redeem the Premises or to have a continuance of this Lease for the Term, or any extension thereof.
-
-**9.7 Nonpayment of Additional Rent.** All costs which Tenant is obligated to pay to Landlord pursuant to this Lease shall in the event of nonpayment be treated as if they were payments of Rent, and Landlord shall have the same rights it has with respect to nonpayment of Rent.
-
-**9.8 Failure to Remove Property.** If Tenant fails to remove any of its property from the Premises at Landlord's request following an uncured Event of Default, Landlord may, at its option, remove and store the property at Tenant's expense and risk. If Tenant does not pay the storage cost within five (5) days of Landlord's request, Landlord may, at its option, have any or all of such property sold at public or private sale (and Landlord may become a purchaser at such sale), in such manner as Landlord deems proper, without notice to Tenant. Landlord shall apply the proceeds of such sale: (i) to the expense of such sale, including reasonable attorneys' fees actually incurred; (ii) to the payment of the costs or charges for storing such property; (iii) to the payment of any other sums of money which may then be or thereafter become due Landlord from Tenant under any of the terms hereof; and (iv) the balance, if any, to Tenant. Nothing in this Section shall limit Landlord's right to sell Tenant's personal property as permitted by law or to foreclose Landlord's lien for unpaid Rent, if any.
+**9.2 Remedies (Washington Unlawful Detainer).** Upon an Event of Default, Landlord may pursue all applicable remedies. Notwithstanding any cure period set forth in this Lease, Landlord may serve any notice required or permitted by chapter 59.12 RCW using the statutory form, timing (e.g., 3-day pay-or-vacate), and manner of service, and nothing herein waives or delays Landlord's rights under Applicable Laws. Tenant remains liable for past-due rent, eviction costs, and re-letting expenses.
 
 ### Article 10: Subordination, Attornment, and Estoppel Certificates
 
@@ -139,7 +128,7 @@ Landlord may, upon 60 days' notice, relocate Tenant to another suite within the 
 
 ### Article 13: Holding Over
 
-If Tenant remains in the Premises after expiration of the Lease without Landlord's consent, it constitutes an unlawful detainer, and Base Rent increases to 150%. Landlord's acceptance of holdover rent does not create a periodic (month-to-month) tenancy unless a separate written agreement is signed, and the tenancy shall be a holdover tenancy at sufferance, which may be terminated pursuant to Washington law.
+If Tenant remains after expiration without consent, it constitutes an unlawful detainer. Base Rent increases to 150%. Landlord's acceptance of holdover rent does not create a periodic (month-to-month) tenancy unless a separate written agreement is signed.
 
 ### Article 14: Brokers and Agency
 
@@ -195,8 +184,6 @@ Tenant warrants it has dealt with no brokers other than those explicitly named, 
 
 **18.14 No Light, Air, or View Easement.** No diminution or shutting off of light, air, or view by any structure that may be erected on lands adjacent to the Building shall affect this Lease, abate Rent, or impose any liability on Landlord. Tenant is granted no easement for light, air, or view.
 
-**18.15 Approximate Measurements.** All square footage, dimension, and Proportionate Share figures stated in this Lease are approximate, are mutually agreed and conclusive for all purposes of this Lease, and shall not be subject to remeasurement. No variance between any stated figure and the actual measurement of the Premises or the Building shall change the Rent, the Proportionate Share, or any other obligation under this Lease, or give rise to any claim, offset, or adjustment by either party.
-
 ### Article 19: Site Rules and Regulations
 
 **19.1** Sidewalks and corridors must remain unobstructed.
@@ -245,7 +232,7 @@ Tenant warrants it has dealt with no brokers other than those explicitly named, 
 
 **Lease Start Date.** The specific date the Tenant is legally granted access to and takes possession of the Premises. (This is often earlier than the Rent Commencement Date to allow for Tenant Improvements or setup.)
 
-**Lease Terms Sheet.** The deal-specific portion of the Commercial Lease Agreement, completed and signed for each tenant. It sets out the parties, premises, term, financial terms, permitted use, special conditions, notice addresses, and signatures, together with any attached Exhibits (such as the legal description, guaranty, work letter, or NNN amendment). Where the Lease Terms Sheet is silent, these Standard Lease Terms and the Definitions & Glossary control; in the event of a conflict, the Lease Terms Sheet prevails.
+**Lease Terms Sheet.** The deal-specific portion of the Commercial Lease Agreement, completed and signed for each tenant. It sets out the parties, premises, term, financial terms, permitted use, special conditions, notice addresses, and signatures, together with any attached Exhibits (such as the floor plan, guaranty, work letter, or NNN amendment). Where the Lease Terms Sheet is silent, these Standard Lease Terms and the Definitions & Glossary control; in the event of a conflict, the Lease Terms Sheet prevails.
 
 **NNN Lease (Triple Net Lease).** A lease structure under which Tenant pays Base Rent plus all property-level operating expenses directly, including real property taxes, insurance premiums, and maintenance costs, in lieu of (or as a substitute for) the standard CAM pass-through. Where elected in the Lease Terms Sheet (Financial Obligations), the provisions of Exhibit D of the Lease Terms Sheet apply.
 
@@ -253,9 +240,9 @@ Tenant warrants it has dealt with no brokers other than those explicitly named, 
 
 **Permitted Use.** The strictly defined, specific business activity that the Tenant is allowed to conduct within the Premises, as written in the Lease Terms Sheet.
 
-**Premises.** The specific, exclusive physical footprint of space leased to the Tenant, usually defined by a suite number, address, or floor plan attached to the Lease Terms Sheet. All square footage figures stated for the Premises are approximate.
+**Premises.** The specific, exclusive physical footprint of space leased to the Tenant, usually defined by a suite number, address, or floor plan attached to the Lease Terms Sheet.
 
-**Proportionate Share.** The fraction or percentage of the Building's total rentable square footage that is occupied by the Tenant. This percentage is used to calculate the Tenant's portion of the CAM Charges. Stated Proportionate Share percentages are based on approximate measurements and are conclusive for all purposes of this Lease.
+**Proportionate Share.** The fraction or percentage of the Building's total rentable square footage that is occupied by the Tenant. This percentage is used to calculate the Tenant's portion of the CAM Charges.
 
 **Rent.** A collective term encompassing both Base Rent and Additional Rent.
 
@@ -273,4 +260,4 @@ Tenant warrants it has dealt with no brokers other than those explicitly named, 
 
 ---
 
-*End of the Courthouse Square Vashon LLC Standard Lease Terms and Definitions, Version 1.5.*
+*End of the Courthouse Square LLC Standard Lease Terms and Definitions, Version 1.2.*

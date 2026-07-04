@@ -23,23 +23,27 @@ from reportlab.pdfgen import canvas as canvaslib
 # pypdf is imported lazily inside merge(): only the consolidated review PDF needs
 # it, so generating the fillable forms never depends on it being installed.
 
-import os
+import os, json
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REVIEW = ROOT + '/review'
-# Standard Lease Terms + Definitions stay at v1.2 pending the attorneys' redlines,
-# so lease.pdf keeps the v1.2 identity that matches lease.md's own header text.
-VERSION = 'Version 1.2'
-VDATE = 'June 8, 2026'
-FOOTER = f'Courthouse Square LLC    {VERSION}, {VDATE}'
 
-# The fillable intake forms (Letter of Intent + Lease Terms Sheet) are updated to
-# v1.3 per the assembled package: new entity name, building address, and field
-# labels. Kept separate from VERSION above so the two can move independently.
-FORM_ENTITY  = 'Courthouse Square Vashon LLC'
-FORM_ADDR    = '19001 Vashon Hwy SW, Vashon Island, WA 98070'
-FORM_VERSION = 'Version 1.3'
-FORM_VDATE   = 'June 12, 2026'
-FORM_FOOTER  = f'{FORM_ENTITY}    {FORM_VERSION}, {FORM_VDATE}'
+# Single source of truth for entity/address/version: data/identity.json.
+# The whole document set moved to one version track at v1.5 (JMS redlines,
+# June 29, 2026); the temporary v1.2/v1.3 split is over.
+with open(ROOT + '/data/identity.json') as _f:
+    IDENT = json.load(_f)
+VERSION = IDENT['version']
+VDATE   = IDENT['versionDate']
+FOOTER  = f"{IDENT['entity']}    {VERSION}, {VDATE}"
+
+# Aliases kept so the form-builder code reads naturally.
+FORM_ENTITY  = IDENT['entity']
+FORM_ADDR    = IDENT['buildingAddress']
+NOTICE_ADDR  = IDENT['noticeAddress']
+NOTICE_CO    = IDENT['noticeCareOf']
+FORM_VERSION = VERSION
+FORM_VDATE   = VDATE
+FORM_FOOTER  = FOOTER
 
 INK   = HexColor(0x1e3128)
 INK2  = HexColor(0x243b2f)
@@ -220,6 +224,7 @@ def build_terms_sheet(path):
     st.append(labeled('Property / Building:', TextField('property_name', W-2.05*inch)))
     st.append(labeled('Address / Suite:', TextField('premises_addr', W-2.05*inch)))
     st.append(labeled('Approximate square footage:', TextField('sqft', 1.6*inch)))
+    st.append(labeled('Legal Description:', Paragraph('See Exhibit A, attached', S['body'])))
 
     section('3. The Term')
     st.append(labeled('Lease Start Date:', TextField('start_date', 2.0*inch)))
@@ -250,9 +255,14 @@ def build_terms_sheet(path):
     st.append(TextField('special', W, height=46, multiline=True))
     st.append(Spacer(1,4))
 
-    section('6. Notice Addresses')
-    st.append(Paragraph(f'Landlord: {FORM_ENTITY}, c/o Bangasser &amp; Associates, Inc., {FORM_ADDR}. '
-                        'Courtesy email: leasing@courthousesquarevashon.com', S['body']))
+    section('6. Notices')
+    st.append(Paragraph('All notices under this Lease shall be in writing and effective (i) when delivered in '
+                        'person or via overnight courier to the other party, or (ii) three (3) days after being '
+                        'sent by registered or certified mail to the other party at the address set forth in this '
+                        'Section.', S['body']))
+    st.append(Paragraph(f'Notice to Landlord: {FORM_ENTITY}, {NOTICE_CO.replace("&", "&amp;")}, {NOTICE_ADDR}. '
+                        f'Courtesy email: {IDENT["email"]}', S['body']))
+    st.append(Paragraph('Notice to Tenant:', S['label']))
     st.append(labeled('Tenant notice name:', TextField('tn_name', W-2.05*inch)))
     st.append(labeled('Tenant notice address:', TextField('tn_addr', W-2.05*inch)))
     st.append(labeled('Tenant courtesy email:', TextField('tn_email', W-2.05*inch)))
@@ -282,7 +292,7 @@ def build_terms_sheet(path):
     section('Index of Exhibits')
     st.append(Paragraph('Check each Exhibit attached to this Lease Terms Sheet. Full exhibit text is provided when '
                         'the exhibit applies.', S['small']))
-    st.append(check_row('ex_a', 'Exhibit A: Outline of the Premises (floor plan)'))
+    st.append(check_row('ex_a', 'Exhibit A: Legal Description'))
     st.append(check_row('ex_b', 'Exhibit B: Unconditional Guaranty of Lease (if a Guarantor is named)'))
     st.append(check_row('ex_c', 'Exhibit C: Tenant Work Letter / build-out specs (if applicable)'))
     st.append(check_row('ex_d', 'Exhibit D: NNN Lease Amendment (if Triple Net is elected)'))
@@ -324,8 +334,9 @@ def build_loi_form(path):
         'and Definitions are posted at courthousesquarevashon.com/lease/.', S['small']))
     st.append(Spacer(1,4))
     st.append(Paragraph(
-        '<b>How to apply.</b> Complete this form and email it to leasing@courthousesquarevashon.com, or start with '
-        'the shorter inquiry form at courthousesquarevashon.com and our staff will help you finish it.', S['quote']))
+        '<b>How to apply.</b> Complete this form (and, if requested by Landlord, the Experian Credit Application) '
+        'and email it to leasing@courthousesquarevashon.com, or start with the shorter inquiry form at '
+        'courthousesquarevashon.com and our staff will help you finish it.', S['quote']))
     st.append(Spacer(1,6)); st.append(HRFlowable(width='100%', thickness=0.6, color=LINE)); st.append(Spacer(1,8))
 
     def section(title):
@@ -380,12 +391,17 @@ def build_loi_form(path):
         'the applicant decides the space is not the right fit): the deposit is refunded in full within three (3) '
         'business days.', S['body']))
 
-    section('5. Authorization for Credit &amp; Background Check')
+    section('5. Authorization for Credit &amp; Background Check [If Requested by Landlord]')
     st.append(Paragraph(
         'By signing, the applicant (and the individual primary contact / guarantor) represents that all information '
         'provided is true and accurate, and authorizes Landlord and its agents to obtain commercial and personal '
         'credit reports, verify bank references, contact the references identified in Section 3, and conduct criminal '
-        'and background checks necessary to evaluate the application.', S['body']))
+        'and background checks necessary to evaluate the application. If requested by Landlord, Applicant is also '
+        'completing and submitting a signed Experian Credit Application (attached to this Lease Application), along '
+        f'with a check made payable to {FORM_ENTITY} for the amount below to cover the cost of the Experian Credit '
+        'Report(s). If Applicant is operating as a separate entity, reports will be obtained for both the business '
+        'name and the Applicant, personally.', S['body']))
+    st.append(labeled('Experian Credit Report fee:', TextField('loi_experian_fee', 1.6*inch), label_w=2.05*inch))
 
     section('6. Submission')
     st.append(Paragraph(
@@ -397,8 +413,6 @@ def build_loi_form(path):
     st.append(labeled('Signature:', TextField('loi_sig', W-2.05*inch, underlined=True)))
     st.append(labeled('Printed name / title:', TextField('loi_sig_name', W-2.05*inch, underlined=True)))
     st.append(labeled('Date:', TextField('loi_sig_date', 2.2*inch, underlined=True)))
-    st.append(Spacer(1,6))
-    st.append(Paragraph('End of the Letter of Intent.', S['small']))
 
     doc.build(st, canvasmaker=footer_canvas(FORM_FOOTER))
     print('wrote', path)
@@ -421,8 +435,7 @@ def build_cover(path):
                     'courthousesquarevashon.com/lease/: the Standard Lease Terms and Definitions, the fillable Lease '
                     'Terms Sheet, and the fillable Letter of Intent &amp; Application.', S['small']),
           Spacer(1,6),
-          Paragraph(f'The intake forms (Letter of Intent and Lease Terms Sheet) are at {FORM_VERSION}. The Standard '
-                    f'Lease Terms and Definitions remain at {VERSION} pending attorney review.', S['small'])]
+          Paragraph(f'All parts are stamped {VERSION}, {VDATE} (incorporates the June 28, 2026 attorney redlines).', S['small'])]
     doc.build(st)
     print('wrote', path)
 
@@ -449,5 +462,5 @@ if __name__ == '__main__':
     cover = os.path.join(tempfile.gettempdir(), '_chs_cover.pdf')
     build_cover(cover)
     merge([cover, ROOT+'/lease/letter-of-intent.pdf', ROOT+'/lease/lease-terms-sheet.pdf', ROOT+'/lease/lease.pdf'],
-          REVIEW+'/CourthouseSquare_FullLease_v2026.06.12.pdf')
+          REVIEW+'/CourthouseSquare_FullLease_v2026.06.29.pdf')
     print('DONE')

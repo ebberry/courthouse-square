@@ -29,7 +29,8 @@ The site exists for one job: turn prospective tenants into people who fill out t
 │       ├── marked.min.js         Vendored Markdown renderer for the lease page
 │       └── pdf-lib.min.js        Vendored PDF library for the Lease Builder
 ├── data/
-│   ├── vacancies.json            Source of truth for available suites ({asOf, suites})
+│   ├── identity.json             Entity, addresses, version stamp (single source of truth)
+│   ├── vacancies.json            Source of truth for available suites ({asOf, buildingSqft, suites})
 │   └── tenants.json              Tenant roster for the Your Neighbors wall
 ├── images/
 │   ├── README.md                 What photos go where
@@ -44,8 +45,8 @@ The site exists for one job: turn prospective tenants into people who fill out t
 │   ├── lease-terms-sheet.pdf     Fillable Lease Terms Sheet example (generated)
 │   ├── letter-of-intent.pdf      Fillable Letter of Intent & Application (generated)
 │   └── archive/
-│       ├── v2026.05.31/          Prior version (internal record)
-│       └── v2026.06.08/          Current version: lease.md, lease.pdf, lease-terms-sheet.pdf
+│       ├── v2026.05.31/ ... v2026.06.12/   Prior versions (internal record)
+│       └── v2026.06.29/          Current version snapshot (v1.5)
 ├── tools/
 │   ├── build_lease_docs.py       Regenerates all lease PDFs (reportlab + pypdf; byte-reproducible)
 │   ├── check_site.py             Sanity checks: pricing math, version stamps, links (run in CI)
@@ -124,7 +125,7 @@ The "you'd be next to ..." line on each open card is derived automatically from 
 
 > **To make the wall come alive:** add the real tenant roster to `data/tenants.json`. Each business submits its own content (blurb, optional phone/email/photo, website); the owner places it. Until then the wall shows the open suites only.
 
-## The lease document set (standard terms v1.2 · intake forms v1.3)
+## The lease document set (Version 1.5, June 29, 2026)
 
 The lease is split into plain-named pieces rather than numbered "Parts":
 
@@ -132,7 +133,7 @@ The lease is split into plain-named pieces rather than numbered "Parts":
 - **Lease Terms Sheet** — the deal-specific terms a tenant fills in and signs (this merges what used to be Parts II and III). A blank **fillable PDF** (real AcroForm fields + checkboxes) is published at `lease/lease-terms-sheet.pdf`.
 - **Letter of Intent & Application** — a **fillable PDF** form (applicant intake). Published at `lease/letter-of-intent.pdf` and linked from `/lease/`. Its fields are also offered as optional fields on the homepage inquiry form.
 
-**Two version tracks.** The Standard Lease Terms + Definitions are at **Version 1.2, June 8, 2026** (`VERSION` / `VDATE` in `tools/build_lease_docs.py`), held there pending the attorneys' redlines. The two intake forms (Letter of Intent + Lease Terms Sheet) are at **Version 1.3, June 12, 2026** (`FORM_VERSION` / `FORM_VDATE`), reflecting the assembled package: entity **Courthouse Square Vashon LLC**, building address **19001 Vashon Hwy SW**, and updated field labels. The two stamps move independently so the forms could advance without restamping the un-redlined standard terms.
+**One version track, one identity source.** All documents are at **Version 1.5, June 29, 2026**, which incorporates the June 28, 2026 attorney redlines (J. Sayre): a full commercial remedies article (termination damages with acceleration, re-entry/reletting with defined Reletting Expenses, waiver of redemption, property-removal procedure), landlord default-and-cure with a sole-remedy cap, mutual Industrial Insurance Act immunity waiver, landlord assignment without consent, tightened holdover language, notice-service rules with the landlord notice address at **20704 Vashon Highway SW** (the building itself remains 19001), Exhibit A repurposed as the **Legal Description**, and an Experian credit-application step in the LOI. Entity, addresses, and version stamps live in **`data/identity.json`** — the single source consumed by `tools/build_lease_docs.py` and `js/lease-builder.js` and enforced by `tools/check_site.py`. Prior published versions are snapshotted in `lease/archive/` (v2026.05.31, v2026.06.08, v2026.06.12, v2026.06.29).
 
 ### The Lease Builder (electronic lease preparation)
 
@@ -171,10 +172,10 @@ This writes:
 
 ### Publishing a new version
 
-1. Bump `VERSION` / `VDATE` at the top of `tools/build_lease_docs.py`.
+1. Bump `version` / `versionDate` in `data/identity.json` (single source for all documents and the Lease Builder).
 2. Edit `lease/lease.md` (and the Terms Sheet / LOI content in the script) as needed.
 3. Run `python3 tools/build_lease_docs.py`.
-4. Snapshot the new public docs into `lease/archive/v<YYYY.MM.DD>/` (copy `lease.md`, `lease.pdf`, `lease-terms-sheet.pdf`).
+4. Snapshot the new public docs into `lease/archive/v<YYYY.MM.DD>/` (copy `lease.md`, `lease.pdf`, `lease-terms-sheet.pdf`, `letter-of-intent.pdf`).
 5. Update the small "Version X, date" line in `lease/index.html` near the download buttons.
 6. Commit and push. Netlify redeploys automatically.
 

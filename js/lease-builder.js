@@ -20,15 +20,27 @@
 
   const { PDFDocument, StandardFonts, rgb } = PDFLib;
 
-  // ---------- identity constants (keep in sync with tools/build_lease_docs.py) ----------
-  const ENTITY       = 'Courthouse Square Vashon LLC';
-  const ENTITY_LONG  = ENTITY + ', a Washington Limited Liability Company';
-  const BUILDING     = 'Courthouse Square';
-  const ADDR         = '19001 Vashon Hwy SW, Vashon Island, WA 98070';
-  const FORM_VERSION = 'Version 1.3';
-  const FORM_VDATE   = 'June 12, 2026';
-  const LANDLORD_NOTICE = ENTITY + ', c/o Bangasser & Associates, Inc., ' + ADDR +
-                          '. Courtesy email: leasing@courthousesquarevashon.com';
+  // ---------- identity ----------
+  // Fetched from /data/identity.json at init (single source of truth, shared
+  // with tools/build_lease_docs.py). These literals are the offline fallback
+  // and are cross-checked against identity.json by tools/check_site.py.
+  const IDENT = {
+    entity: 'Courthouse Square Vashon LLC',
+    entityLong: 'Courthouse Square Vashon LLC, a Washington Limited Liability Company',
+    building: 'Courthouse Square',
+    buildingAddress: '19001 Vashon Hwy SW, Vashon Island, WA 98070',
+    noticeAddress: '20704 Vashon Highway SW, Vashon Island, WA 98070',
+    noticeCareOf: 'c/o Bangasser & Associates, Inc.',
+    email: 'leasing@courthousesquarevashon.com',
+    version: 'Version 1.5',
+    versionDate: 'June 29, 2026',
+  };
+  const landlordNotice = () =>
+    `${IDENT.entity}, ${IDENT.noticeCareOf}, ${IDENT.noticeAddress}. Courtesy email: ${IDENT.email}`;
+  const NOTICE_SERVICE =
+    'All notices under this Lease shall be in writing and effective (i) when delivered in person or via ' +
+    'overnight courier to the other party, or (ii) three (3) days after being sent by registered or ' +
+    'certified mail to the other party at the address set forth in this Section.';
 
   // ---------- palette ----------
   const C = h => rgb(((h >> 16) & 255) / 255, ((h >> 8) & 255) / 255, (h & 255) / 255);
@@ -189,7 +201,7 @@
   // ============================================================
   function collect() {
     const unit = val('f-suite');
-    const suiteAddr = unit ? `19001 Vashon Hwy SW, Suite ${unit}, Vashon Island, WA 98070` : ADDR;
+    const suiteAddr = unit ? `19001 Vashon Hwy SW, Suite ${unit}, Vashon Island, WA 98070` : IDENT.buildingAddress;
     const d = {
       tenant: val('f-tenant'),
       tenantAddr: val('f-tenant-addr') || suiteAddr,
@@ -226,7 +238,7 @@
     };
     d.hasTI = !!(d.tiAllowance || d.tiComplete || d.tiScope);
     d.exhibits = [];
-    if (d.exA)      d.exhibits.push('Exhibit A: Outline of the Premises (floor plan), attached separately');
+    if (d.exA)      d.exhibits.push('Exhibit A: Legal Description, attached separately');
     if (d.guarantor) d.exhibits.push('Exhibit B: Unconditional Guaranty of Lease');
     if (d.hasTI)    d.exhibits.push('Exhibit C: Tenant Work Letter (terms below)');
     if (d.nnn)      d.exhibits.push('Exhibit D: NNN Lease Amendment, attached separately');
@@ -251,11 +263,11 @@
   // ============================================================
   async function buildLeasePackage(d) {
     const { doc, fonts } = await makeDoc();
-    const F = new Flow(doc, fonts, `${ENTITY}    ${FORM_VERSION}, ${FORM_VDATE}`);
+    const F = new Flow(doc, fonts, `${IDENT.entity}    ${IDENT.version}, ${IDENT.versionDate}`);
 
     F.title('Lease Terms Sheet');
-    F.sub(`${ENTITY} - ${ADDR}`);
-    F.sub(`${FORM_VERSION} - ${FORM_VDATE}`);
+    F.sub(`${IDENT.entity} - ${IDENT.buildingAddress}`);
+    F.sub(`${IDENT.version} - ${IDENT.versionDate}`);
     F.gap(6);
     F.text('The specific, negotiated terms of this lease. Where this Terms Sheet is silent, the ' +
            'Standard Lease Terms and the Definitions & Glossary (attached, and posted at ' +
@@ -264,15 +276,16 @@
     F.rule();
 
     F.section('1. The Parties');
-    F.labeled('Landlord:', ENTITY_LONG);
+    F.labeled('Landlord:', IDENT.entityLong);
     F.labeled('Tenant (entity):', d.tenant);
     F.labeled('Tenant address:', d.tenantAddr);
     if (d.guarantor) F.labeled('Guarantor(s):', d.guarantor);
 
     F.section('2. The Premises');
-    F.labeled('Property / Building:', BUILDING);
+    F.labeled('Property / Building:', IDENT.building);
     F.labeled('Address / Suite:', d.suiteAddr);
     if (d.sqft)  F.labeled('Approximate square footage:', fmtInt(d.sqft));
+    F.labeled('Legal Description:', 'See Exhibit A, attached');
     if (d.share) F.labeled('Proportionate Share:', d.share.toFixed(2) + '%');
 
     F.section('3. The Term');
@@ -301,8 +314,10 @@
     if (d.exclusive)    F.labeled('Exclusive use:', d.exclusive);
     if (d.stipulations) F.labeled('Special stipulations:', d.stipulations);
 
-    F.section('6. Notice Addresses');
-    F.text('Landlord: ' + LANDLORD_NOTICE, { size: 10 });
+    F.section('6. Notices');
+    F.text(NOTICE_SERVICE, { size: 10 });
+    F.gap(2);
+    F.text('Notice to Landlord: ' + landlordNotice(), { size: 10 });
     F.gap(2);
     F.labeled('Tenant notice name:', d.noticeName);
     F.labeled('Tenant notice address:', d.noticeAddr);
@@ -310,7 +325,7 @@
 
     F.section('7. Incorporation and Merger');
     F.text(`This Lease Terms Sheet, together with its Exhibits, the Standard Lease Terms, and the Definitions & ` +
-           `Glossary (${FORM_VERSION}, ${FORM_VDATE}, posted at courthousesquarevashon.com/lease/), constitutes ` +
+           `Glossary (${IDENT.version}, ${IDENT.versionDate}, posted at courthousesquarevashon.com/lease/), constitutes ` +
            'the entire Commercial Lease Agreement and supersedes the Letter of Intent. In the event of any ' +
            'conflict between this Terms Sheet and the online Standard Lease Terms or Definitions, this Terms ' +
            'Sheet prevails.', { size: 10 });
@@ -333,7 +348,7 @@
     F.ensure(200);
     F.section('Signatures');
     F.gap(4);
-    F.text('LANDLORD: ' + ENTITY, { font: F.f.bold, size: 10 });
+    F.text('LANDLORD: ' + IDENT.entity, { font: F.f.bold, size: 10 });
     F.sigLine('Signature:'); F.sigLine('Printed name / title:'); F.sigLine('Date:', { short: true });
     F.gap(10);
     F.text('TENANT: ' + d.tenant, { font: F.f.bold, size: 10 });
@@ -356,7 +371,7 @@
     const copied = await doc.copyPages(std, std.getPageIndices());
     copied.forEach(p => doc.addPage(p));
 
-    doc.setTitle(`Commercial Lease - ${ENTITY} - ${d.tenant} - Suite ${d.unit}`);
+    doc.setTitle(`Commercial Lease - ${IDENT.entity} - ${d.tenant} - Suite ${d.unit}`);
     return doc.save();
   }
 
@@ -366,7 +381,7 @@
   async function buildRecord(d) {
     const { doc, fonts } = await makeDoc();
     const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    const F = new Flow(doc, fonts, `${ENTITY}    Lease preparation record    Generated ${today}`);
+    const F = new Flow(doc, fonts, `${IDENT.entity}    Lease preparation record    Generated ${today}`);
     const NA = 'Not applicable - omitted from the lease';
     const na = (label, v) => v ? F.labeled(label, v) : F.labeled(label, NA, {});
 
@@ -419,7 +434,7 @@
     // ---------- page 2: CAM & cost calculations ----------
     F.newPage();
     F.title('CAM & Cost Calculations');
-    F.sub(`Suite ${d.unit} - ${BUILDING}, ${ADDR}`);
+    F.sub(`Suite ${d.unit} - ${IDENT.building}, ${IDENT.buildingAddress}`);
     F.gap(2);
     F.text(`Figures from the ${fmtDate(vacData.asOf)} pricing data (data/vacancies.json). CAM and shared-utility ` +
            'amounts are estimates, collected monthly and subject to the annual review and reconciliation ' +
@@ -540,6 +555,10 @@
   }
 
   async function init() {
+    try {
+      const id = await fetch('/data/identity.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null);
+      if (id) Object.assign(IDENT, id);
+    } catch (e) { /* fallback literals above remain in effect */ }
     try {
       const raw = await fetch('/data/vacancies.json', { cache: 'no-cache' }).then(r => r.json());
       vacData = Array.isArray(raw) ? { asOf: '', buildingSqft: 6630, suites: raw } : raw;
