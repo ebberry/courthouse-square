@@ -12,7 +12,7 @@ gets a standalone document rather than the Terms Sheet + Standard Terms stack.
 
 ## Files
 
-- `lease.md` — the full lease draft (source of truth). Draft v0.1, July 11, 2026.
+- `lease.md` — the full lease draft (source of truth). Draft v0.2, July 11, 2026.
 - `lease.pdf` — generated, house document style. Rebuild: `python3 tools/build_burton_lease.py`.
 
 ## How the prospectus maps into the lease
@@ -30,34 +30,41 @@ gets a standalone document rather than the Terms Sheet + Standard Terms stack.
 | Year-10 purchase is a goal, **not** a lease term | Art. 19 |
 | Lease is a single obligation of the operating company (line-of-business rent allocation is illustrative) | Art. 4.6 |
 
-## Drafting decisions to confirm (not in the prospectus)
+## Confirmed deal points (v0.2, answered July 11, 2026)
 
-1. **Term = 10 years.** The prospectus never states a term; it shows a 10-year owner-return arc and
-   a Year-10 purchase goal, so the draft uses ten Lease Years. Renewal options left as a bracket.
-2. **Abatement cap.** Lease Year 1 (and the base-rent clock) starts on the *earlier of* the Opening
-   Date or **120 days** after possession — otherwise a slow fit-out would silently extend the free
-   year. The 120 days is bracketed; adjust to the real construction schedule.
-3. **Operating covenant (Art. 5.7).** Percentage rent is meaningless if the business goes dark, so
-   the draft adds a continuous-operation covenant with up to [6] weeks/year of seasonal closure.
-   Tenant may want this looser; owner may want it tighter.
-4. **Audit threshold.** The prospectus says the tenant bears audit cost if understatement exceeds
-   **10%** — drafted as proposed, but note that 2–5% is the customary market threshold; an owner-side
-   reviewer will likely push this down.
-5. **Percentage rent in default damages** (Art. 14.2): deemed at trailing 36-month average — a
-   standard solution the prospectus doesn't address.
-6. **Security deposit and guaranty**: prospectus is silent; both left bracketed in Art. 20.
-7. **SNDA** (Art. 15.1): future lenders must non-disturb the abatement + percentage structure —
-   protects the tenant's Year-1 economics; owners' lenders sometimes resist.
-8. **Notarization/recording** (Art. 23.2): Washington requires acknowledgment for a lease over two
-   years to be fully effective against third parties — the CS standard lease never needed this
-   (short office terms), but a 10-year lease does.
-9. **Option B loan rate** is drafted as *fixed at funding* (the prospectus's $474/mo math assumes a
-   fixed 9.75%); Option A accrues at floating Prime+3. Confirm intent.
-10. **Placeholders throughout**: party names, premises address, legal description (Exhibit A),
-    commencement date, alteration-consent threshold, deposit, notice addresses.
+1. **Parties**: Landlord **The Burton Landing LLC**; Tenant **eBerry LLC** (both drafted as WA
+   LLCs — confirm The Burton Landing LLC's state/type against its Secretary of State registration).
+2. **Premises**: 24007 Vashon Hwy SW, Vashon, WA 98070; abbreviated legal in Exhibit A
+   (S 100 FT OF N 130 FT OF W 150 FT OF E 180 FT OF GOVT LOT 2 IN NE QTR STR 19-22-03), with the
+   vesting deed controlling if the full legal differs.
+3. **Term**: 10 Lease Years, July 1, 2026 – June 30, 2036, plus **one 5-year option** (same terms,
+   same flat base and breakpoint, notice 9–15 months out) — Art. 3.5.
+4. **Commencement July 1, 2026** (possession already delivered); **NNN + utilities start
+   August 1, 2026**, with July 2026 carried by the landlord; annual costs prorated per diem.
+5. **Lease Years are July 1–June 30**; Year 1 abatement ends June 30, 2027 and base rent starts
+   July 1, 2027 regardless of fit-out pace (no opening-date abatement machinery needed).
+6. **No security deposit, no guaranty** (Art. 20 records the reasoning: the fit-out that attaches
+   to the building + NNN structure serve that function).
+7. **Operating covenant**: 6 weeks/year seasonal-closure allowance, running from the Opening Date.
+8. **Alterations consent threshold**: $5,000 (matches the Courthouse Square standard).
+9. **Audit threshold kept at 10%** as the prospectus proposed (market is 2–5%; owner's counsel may
+   push down — flagged, accepted).
+10. **Exhibit D loan election left open** for the owner to initial at signing.
+11. **No purchase rights** — Art. 19 keeps the Year-10 purchase as a goal only, per the prospectus.
+12. **Notices**: both parties at the property address.
+
+## Standing drafting notes
+
+- **Percentage rent in default damages** (Art. 14.2): deemed at trailing 36-month average — a
+  standard solution the prospectus doesn't address.
+- **SNDA** (Art. 15.1): future lenders must non-disturb the abatement + percentage structure.
+- **Notarization/recording** (Art. 23.2): Washington requires acknowledgment for a lease over two
+  years; signing should happen before a notary, memorandum recordable on request.
+- **Option B loan rate** is drafted as *fixed at funding* (the prospectus's $474/mo math assumes a
+  fixed 9.75%); Option A accrues at floating Prime+3.
 
 ## Publishing / next steps
 
-- Fill brackets → attorney review (both sides) → bump to v1.0 and regenerate the PDF.
+- Attorney review (both sides) → bump to v1.0 and regenerate the PDF.
 - The build script stamps the footer from the version line in `lease.md`, so update the
-  `**Draft v0.1 — …**` line when revising.
+  `**Draft v0.2 — …**` line when revising.

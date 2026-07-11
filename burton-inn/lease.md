@@ -1,10 +1,10 @@
 # The Burton Inn
 
 **Commercial Lease Agreement**
-**[Street Address], Burton, Vashon Island, Washington 98[0__]**
-**Draft v0.1 — July 11, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus — for attorney review**
+**24007 Vashon Highway SW, Vashon (Burton), Washington 98070**
+**Draft v0.2 — July 11, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus — for attorney review**
 
-> **How this document was built.** The economic terms below (triple-net pass-through, fixed base rent with a Year 1 abatement, percentage rent over a natural breakpoint, tenant-funded fit-out, owner-scope capital systems, and the optional capital-systems loan) implement the deal described in "The Burton Inn — Rent Basis & Owner Return" (July 2026). Bracketed items are open deal points to be completed before signature. This draft is not legal advice; both parties should have it reviewed by Washington counsel.
+> **How this document was built.** The economic terms below (triple-net pass-through, fixed base rent with a Year 1 abatement, percentage rent over a natural breakpoint, tenant-funded fit-out, owner-scope capital systems, and the optional capital-systems loan) implement the deal described in "The Burton Inn — Rent Basis & Owner Return" (July 2026). This draft is not legal advice; both parties should have it reviewed by Washington counsel.
 
 ---
 
@@ -12,19 +12,19 @@
 
 This Article 1 is a summary of the principal terms. If this Article conflicts with any other provision of this Lease, the other provision controls.
 
-- **Landlord:** [OWNER LEGAL NAME], [a Washington ____________] ("Landlord").
-- **Tenant:** [OPERATING COMPANY LEGAL NAME], a Washington limited liability company ("Tenant").
-- **Premises:** The entire building commonly known as The Burton Inn, together with the underlying land, parking, and grounds, located at [Street Address], Burton, Vashon Island, Washington, legally described on **Exhibit A** (the "Premises").
-- **Term:** Ten (10) Lease Years from the Commencement Date, unless extended or earlier terminated as provided herein. [Renewal option(s): ____________.]
-- **Commencement Date:** The date Landlord delivers possession of the Premises to Tenant, anticipated to be [____________, 2026].
-- **Base Rent:** $1,650.00 per month ($19,800 per year), fixed for the entire Term with no escalation. Base Rent is fully abated during Lease Year 1 and commences on the first day of Lease Year 2 (the "Rent Commencement Date").
+- **Landlord:** The Burton Landing LLC, a Washington limited liability company ("Landlord").
+- **Tenant:** eBerry LLC, a Washington limited liability company ("Tenant").
+- **Premises:** The entire building commonly known as The Burton Inn, together with the underlying land, parking, and grounds, located at 24007 Vashon Highway SW, Vashon (Burton), Washington 98070, legally described on **Exhibit A** (the "Premises").
+- **Term:** Ten (10) Lease Years — July 1, 2026 through June 30, 2036 — plus one (1) five-year extension option (Section 3.5), unless earlier terminated as provided herein.
+- **Commencement Date:** July 1, 2026 (possession delivered). Tenant's Triple-Net Expense and utility obligations begin August 1, 2026.
+- **Base Rent:** $1,650.00 per month ($19,800 per year), fixed for the entire Term with no escalation. Base Rent is fully abated during Lease Year 1 and commences July 1, 2027, the first day of Lease Year 2 (the "Rent Commencement Date").
 - **Percentage Rent:** Ten percent (10%) of Gross Revenue in excess of the Breakpoint of $198,000 per Lease Year (the natural breakpoint: annual Base Rent divided by the percentage rate). Percentage Rent applies in every Lease Year, including Lease Year 1 during the Base Rent abatement.
-- **Triple-Net Expenses:** From the Commencement Date, including during Lease Year 1, Tenant bears all real property taxes (currently approximately $8,500/yr), Landlord's building insurance premiums (currently approximately $6,500/yr), and all routine maintenance and upkeep (currently estimated at $375/mo), in each case at actual cost as it changes over time, plus all utilities. Approximately $19,500 per year at today's actual costs.
+- **Triple-Net Expenses:** From August 1, 2026, including throughout Lease Year 1, Tenant bears all real property taxes (currently approximately $8,500/yr), Landlord's building insurance premiums (currently approximately $6,500/yr), and all routine maintenance and upkeep (currently estimated at $375/mo), in each case at actual cost as it changes over time, plus all utilities. Approximately $19,500 per year at today's actual costs.
 - **Landlord's Retained Obligations:** Roof and structure, and the capital building systems described on **Exhibit C** (fire suppression and HVAC, approximately $50,000), which are Landlord's scope and are financed separately from the rent structure (optionally per **Exhibit D**).
 - **Tenant's Work:** Tenant-funded interior fit-out of approximately $98,000 (flooring, paint, kitchen retrofit and permits, furnishings) per **Exhibit B**, installed in two phases (guest rooms first; kitchen, bar, and events approximately three months later).
 - **Permitted Use:** Operation of an inn with up to four (4) guest rooms; a cocktail bar and restaurant; ticketed chef's dinners and tasting events; pop-up and takeaway food service; commissary-kitchen rental; private events; and ancillary uses, all as further described in Article 7.
-- **Security Deposit:** [$____________ / None].
-- **Guarantor(s):** [None / ____________].
+- **Security Deposit:** None.
+- **Guarantor(s):** None.
 - **Notice Addresses:** As set forth in Article 21.
 
 ---
@@ -39,13 +39,15 @@ This Article 1 is a summary of the principal terms. If this Article conflicts wi
 
 ## Article 3: Term; Commencement; Phased Opening
 
-**3.1 Term.** The initial term of this Lease (the "Term") begins on the Commencement Date and ends at the close of the last day of Lease Year 10, unless extended or earlier terminated as provided in this Lease.
+**3.1 Term.** The initial term of this Lease (the "Term") begins on the Commencement Date and ends at the close of June 30, 2036 (the last day of Lease Year 10), unless extended under Section 3.5 or earlier terminated as provided in this Lease.
 
-**3.2 Commencement Date; Delivery.** The "Commencement Date" is the date Landlord delivers exclusive possession of the Premises to Tenant in its as-is condition (subject to Landlord's obligations under Exhibit C and Article 9). Triple-Net Expenses and utilities are Tenant's responsibility from the Commencement Date. If Landlord has not delivered possession within sixty (60) days after the anticipated Commencement Date stated in Article 1, Tenant may cancel this Lease by written notice at any time before possession is tendered, whereupon Landlord shall promptly refund all prepaid sums and neither party shall have further obligations except those that expressly survive.
+**3.2 Commencement Date; Delivery.** The "Commencement Date" is July 1, 2026. Landlord delivered exclusive possession of the Premises to Tenant on the Commencement Date in their as-is condition (subject to Landlord's obligations under Exhibit C and Article 9), and Tenant accepted possession. Tenant's Triple-Net Expense and utility obligations under Article 6 begin August 1, 2026; Landlord carries those costs for July 2026.
 
-**3.3 Opening Date; Phased Opening.** Tenant intends to open in two phases: **Phase 1** — completion of guest-room fit-out and opening of the guest rooms to paying guests (the date the guest rooms first open being the "Opening Date"); and **Phase 2** — opening of the kitchen, bar, and events operations, targeted approximately three (3) months after the Opening Date. Tenant shall pursue both phases with commercially reasonable diligence, and shall achieve the Opening Date no later than [one hundred twenty (120)] days after the Commencement Date, subject to extension for Force Majeure and delays caused by Landlord (including completion of the Exhibit C systems to the extent legally required for the applicable phase).
+**3.3 Opening Date; Phased Opening.** Tenant intends to open in two phases: **Phase 1** — completion of guest-room fit-out and opening of the guest rooms to paying guests (the date the guest rooms first open being the "Opening Date"); and **Phase 2** — opening of the kitchen, bar, and events operations, targeted approximately three (3) months after the Opening Date. Tenant shall pursue both phases with commercially reasonable diligence, subject to extension for Force Majeure and delays caused by Landlord (including completion of the Exhibit C systems to the extent legally required for the applicable phase). Because Lease Year 1 runs from the Commencement Date regardless of the pace of Tenant's fit-out (Section 3.4), delay in opening extends neither the Base Rent abatement nor any other Lease Year milestone.
 
-**3.4 Lease Year.** "Lease Year 1" begins on the earlier of (a) the Opening Date and (b) the [one hundred twentieth (120th)] day after the Commencement Date, and ends on the last day of the twelfth (12th) full calendar month thereafter. Each subsequent "Lease Year" is the successive twelve (12) month period, except that the final Lease Year ends on the last day of the Term. Gross Revenue generated between the Commencement Date and the beginning of Lease Year 1, if any, is included in Lease Year 1.
+**3.4 Lease Year.** "Lease Year 1" is the period from July 1, 2026 through June 30, 2027. Each subsequent "Lease Year" is the successive twelve (12) month period beginning on July 1, except that the final Lease Year ends on the last day of the Term. All Gross Revenue from and after the Commencement Date is included in the Lease Year in which it arises.
+
+**3.5 Option to Extend.** Provided no Event of Default exists either when the option is exercised or when the extension begins, Tenant may extend the Term for one (1) additional period of five (5) years (July 1, 2036 through June 30, 2041) on the same terms and conditions — including Base Rent, the Breakpoint, and Percentage Rent, but excluding this Section 3.5 and the Lease Year 1 Base Rent abatement — by written notice to Landlord given no less than nine (9) months and no more than fifteen (15) months before the end of the initial Term. During the extension, "Term" includes the extension period.
 
 ---
 
@@ -53,7 +55,7 @@ This Article 1 is a summary of the principal terms. If this Article conflicts wi
 
 **4.1 Base Rent.** Tenant shall pay Landlord fixed base rent of One Thousand Six Hundred Fifty Dollars ($1,650.00) per month ($19,800 per year) ("Base Rent"), in advance on or before the first (1st) day of each calendar month, by ACH transfer to an account designated by Landlord, without prior demand, deduction, set-off, or counterclaim. Base Rent is prorated per diem for any partial calendar month.
 
-**4.2 Year 1 Abatement.** Base Rent is fully abated from the Commencement Date through the last day of Lease Year 1, in recognition of Tenant's staged opening and Tenant's fit-out investment under Exhibit B. Base Rent commences on the first day of Lease Year 2. The abatement applies to Base Rent only: Percentage Rent, Triple-Net Expenses, and utilities are payable during Lease Year 1 without abatement.
+**4.2 Year 1 Abatement.** Base Rent is fully abated from the Commencement Date through June 30, 2027 (all of Lease Year 1), in recognition of Tenant's staged opening and Tenant's fit-out investment under Exhibit B. Base Rent commences on July 1, 2027, the first day of Lease Year 2 (the "Rent Commencement Date"). The abatement applies to Base Rent only: Percentage Rent, Triple-Net Expenses, and utilities are payable during Lease Year 1 without abatement (per the schedule in Articles 5 and 6).
 
 **4.3 No Escalation.** Base Rent is deliberately flat for the entire Term. The parties intend Percentage Rent (Article 5), computed against a Breakpoint that does not increase, to function as the escalator: as Gross Revenue grows, Landlord's total rent grows faster than the business itself.
 
@@ -79,13 +81,13 @@ This Article 1 is a summary of the principal terms. If this Article conflicts wi
 
 **5.6 Records; Audit.** Tenant shall keep complete point-of-sale (POS) and booking records of all Gross Revenue for at least three (3) years after each Lease Year ends. Not more than once per Lease Year, on fifteen (15) days' written notice, Landlord (or an independent accountant engaged by Landlord) may audit Tenant's Gross Revenue records, including POS records, for any of the preceding two (2) Lease Years. If an audit discloses an understatement, Tenant shall pay the resulting deficiency plus interest at the Article 4.4 rate within thirty (30) days; and if the understatement for the audited Lease Year exceeds ten percent (10%), Tenant shall also reimburse Landlord's reasonable audit cost. Audit results and Tenant's records are confidential per Article 23.6.
 
-**5.7 Operating Covenant.** Because Percentage Rent is a core part of Landlord's return, Tenant shall continuously operate the inn business at the Premises in the ordinary course during the Term, consistent with the Permitted Use, subject to: temporary closures for the Exhibit B fit-out phases, casualty, condemnation, remodeling, repairs, and Force Majeure; and seasonal closures or reduced schedules not exceeding [six (6)] weeks in any Lease Year in the aggregate. Nothing herein requires any particular line of business to meet any revenue level; the percentage structure is self-correcting — if revenue falls, Percentage Rent falls with it.
+**5.7 Operating Covenant.** Because Percentage Rent is a core part of Landlord's return, Tenant shall, from the Opening Date, continuously operate the inn business at the Premises in the ordinary course during the Term, consistent with the Permitted Use, subject to: temporary closures for the Exhibit B fit-out phases, casualty, condemnation, remodeling, repairs, and Force Majeure; and seasonal closures or reduced schedules not exceeding six (6) weeks in any Lease Year in the aggregate. Nothing herein requires any particular line of business to meet any revenue level; the percentage structure is self-correcting — if revenue falls, Percentage Rent falls with it.
 
 ---
 
 ## Article 6: Triple-Net Expenses; Utilities
 
-**6.1 From Day One.** Tenant's obligations under this Article 6 begin on the Commencement Date and apply in every Lease Year, including Lease Year 1, at whatever the actual costs then are. There is no abatement, cap, or base year.
+**6.1 From Day One.** Tenant's obligations under this Article 6 begin on August 1, 2026 (Landlord carries the Premises' costs for July 2026) and apply in every Lease Year thereafter, including the remainder of Lease Year 1, at whatever the actual costs then are. There is no abatement, cap, or base year. Taxes, premiums, and other annual costs spanning August 1, 2026 are prorated per diem.
 
 **6.2 Real Property Taxes.** Tenant shall pay all real property taxes, assessments, surface-water-management fees, and similar governmental charges levied against the Premises for periods within the Term (currently approximately $8,500 per year). Landlord shall deliver each tax statement to Tenant promptly on receipt, and Tenant shall pay Landlord (or, at Landlord's election, the taxing authority directly, with proof of payment to Landlord) at least thirty (30) days before delinquency. Real property taxes exclude Landlord's income, estate, or transfer taxes. Tenant may contest assessments at its own cost with Landlord's reasonable cooperation, provided payment is never delinquent.
 
@@ -119,7 +121,7 @@ This Article 1 is a summary of the principal terms. If this Article conflicts wi
 
 **8.3 Ownership of Improvements.** All of Tenant's Work and all subsequent Alterations that are attached to or incorporated into the building (including flooring, finishes, and the kitchen retrofit, and including built-in furnishings) become part of the building on installation and remain Landlord's property on expiration or earlier termination of this Lease, without compensation — the parties acknowledge this is a bargained-for element of the rent structure. Tenant's movable trade fixtures, equipment, inventory, and unattached personal property remain Tenant's and shall be removed at the end of the Term, with Tenant repairing any damage caused by removal.
 
-**8.4 Alterations After Opening.** After completion of Tenant's Work, Tenant shall not make structural Alterations, or non-structural Alterations exceeding $[10,000] per project, without Landlord's prior written consent, not to be unreasonably withheld, conditioned, or delayed. Interior, non-structural work at or below that threshold requires notice but not consent.
+**8.4 Alterations After Opening.** After completion of Tenant's Work, Tenant shall not make structural Alterations, or non-structural Alterations exceeding Five Thousand Dollars ($5,000) per project, without Landlord's prior written consent, not to be unreasonably withheld, conditioned, or delayed. Interior, non-structural work at or below that threshold requires notice but not consent.
 
 **8.5 Liens.** Tenant shall keep the Premises free of liens arising from Tenant's Work or Alterations, shall give Landlord ten (10) days' notice before commencing any work of improvement so Landlord may post notices of non-responsibility, and shall discharge or bond around any filed lien within fifteen (15) days.
 
@@ -211,15 +213,15 @@ On expiration or earlier termination, Tenant shall surrender the Premises broom-
 
 ## Article 19: No Option to Purchase
 
-Tenant has expressed a goal of being in a position to purchase the building around Lease Year 10 at a price in the vicinity of $1,200,000. The parties acknowledge that this is a financial goal only: **nothing in this Lease grants Tenant an option to purchase, right of first refusal, or right of first offer, and nothing obligates either party to transact.** Any sale would be by separate written agreement negotiated at the time. [If the parties wish to add a right of first offer or option to purchase, it should be documented here or by addendum.]
+Tenant has expressed a goal of being in a position to purchase the building around Lease Year 10 at a price in the vicinity of $1,200,000. The parties acknowledge that this is a financial goal only: **nothing in this Lease grants Tenant an option to purchase, right of first refusal, or right of first offer, and nothing obligates either party to transact.** Any sale would be by separate written agreement negotiated at the time.
 
 ---
 
 ## Article 20: Security Deposit; Guaranty
 
-**20.1 Security Deposit.** [Tenant shall deposit $____________ with Landlord on execution, held (without trust account or interest) as security for Tenant's performance; it may be applied to defaults, must be replenished within ten (10) days after application, and the balance returned within thirty (30) days after surrender. / No security deposit is required.]
+**20.1 Security Deposit.** No security deposit is required under this Lease. The parties acknowledge that Tenant's Exhibit B fit-out, which attaches to the building under Article 8.3, and the triple-net structure together serve the protective function a deposit ordinarily would.
 
-**20.2 Guaranty.** [The obligations of Tenant are guaranteed by ____________ pursuant to the Guaranty attached as Exhibit E. / None.]
+**20.2 Guaranty.** Tenant's obligations are not guaranteed by any person or entity.
 
 ---
 
@@ -227,8 +229,10 @@ Tenant has expressed a goal of being in a position to purchase the building arou
 
 Legal notices must be in writing and delivered by personal delivery, overnight courier, or certified mail (return receipt requested) to the addresses below, effective on delivery or refusal. Any notice under chapter 59.12 RCW shall be served strictly as Washington law requires (including RCW 59.12.040). Email does not constitute legal notice of default.
 
-- **To Landlord:** [Name, address].
-- **To Tenant:** [Name, address], with a copy to the Premises after the Opening Date.
+- **To Landlord:** The Burton Landing LLC, 24007 Vashon Highway SW, Vashon, WA 98070.
+- **To Tenant:** eBerry LLC, 24007 Vashon Highway SW, Vashon, WA 98070.
+
+Either party may change its notice address by written notice given as provided above.
 
 ---
 
@@ -266,11 +270,11 @@ Legal notices must be in writing and delivered by personal delivery, overnight c
 
 ## Signatures
 
-**LANDLORD:** [OWNER LEGAL NAME]
+**LANDLORD:** The Burton Landing LLC, a Washington limited liability company
 
 By: ____________________________  Name: ____________________  Title: ____________________  Date: ____________
 
-**TENANT:** [OPERATING COMPANY LEGAL NAME]
+**TENANT:** eBerry LLC, a Washington limited liability company
 
 By: ____________________________  Name: ____________________  Title: ____________________  Date: ____________
 
@@ -280,7 +284,11 @@ By: ____________________________  Name: ____________________  Title: ___________
 
 ## Exhibit A: Legal Description
 
-[Attach legal description of the Premises — obtain from the statutory warranty deed or a title report.]
+The Premises are legally described as follows (abbreviated legal description, King County records):
+
+**S 100 FT OF N 130 FT OF W 150 FT OF E 180 FT OF GOVT LOT 2 IN NE QTR STR 19-22-03**
+
+(That is: the south 100 feet of the north 130 feet of the west 150 feet of the east 180 feet of Government Lot 2 in the northeast quarter of Section 19, Township 22 North, Range 3 East, W.M., King County, Washington.) If the full legal description in Landlord's vesting deed differs, the vesting deed controls.
 
 ---
 
@@ -322,10 +330,4 @@ The following capital building systems are Landlord's scope and cost (approximat
 
 ---
 
-## Exhibit E: Guaranty of Lease
-
-[Attach guaranty if required under Article 20.2; otherwise strike.]
-
----
-
-*End of draft v0.1 of The Burton Inn Commercial Lease Agreement — July 11, 2026. Prepared from the July 2026 Rent Basis & Owner Return prospectus for review by both parties and their Washington counsel.*
+*End of draft v0.2 of The Burton Inn Commercial Lease Agreement — July 11, 2026. Prepared from the July 2026 Rent Basis & Owner Return prospectus for review by both parties and their Washington counsel.*
