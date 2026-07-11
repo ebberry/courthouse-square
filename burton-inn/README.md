@@ -28,9 +28,14 @@ Two source documents (both Markdown, edit directly), Draft v0.3, July 11, 2026:
   numbers "stated in the Lease Terms Sheet" rather than hardcoding them.
 - `lease.pdf` — the two merged into one signable package (Terms Sheet, then Standard Terms), with
   continuous page numbering. Generated only.
+- `lease.docx` — the same combined document as an **editable Word file for redlining** (real Word
+  heading styles, so Track Changes and the navigation pane work). Generated only; regenerate after
+  any Markdown edit. Round-trip: hand this out → receive the redlined `.docx` back → apply the
+  accepted changes to the Markdown source (the Markdown stays the source of truth).
 
-Rebuild all three: `python3 tools/build_burton_lease.py`. The build script stamps each footer from
-the `**Draft v0.3 — …**` version line in `terms-sheet.md`, so bump that line when revising.
+Rebuild the PDFs: `python3 tools/build_burton_lease.py` (stamps each footer from the
+`**Draft v0.3 — …**` version line in `terms-sheet.md`, so bump that line when revising).
+Rebuild the Word file: `python3 tools/build_burton_docx.py`.
 
 **Terms Sheet controls on conflict.** Both documents carry the applicability note; where they
 disagree, the Terms Sheet governs. To change a deal number, edit only `terms-sheet.md`.
