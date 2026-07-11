@@ -65,6 +65,6 @@ gets a standalone document rather than the Terms Sheet + Standard Terms stack.
 
 ## Publishing / next steps
 
-- Attorney review (both sides) → bump to v1.0 and regenerate the PDF.
+- Both parties review → bump to v1.0 and regenerate the PDF.
 - The build script stamps the footer from the version line in `lease.md`, so update the
   `**Draft v0.2 — …**` line when revising.

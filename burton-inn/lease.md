@@ -2,9 +2,9 @@
 
 **Commercial Lease Agreement**
 **24007 Vashon Highway SW, Vashon (Burton), Washington 98070**
-**Draft v0.2 — July 11, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus — for attorney review**
+**Draft v0.2 — July 11, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
 
-> **How this document was built.** The economic terms below (triple-net pass-through, fixed base rent with a Year 1 abatement, percentage rent over a natural breakpoint, tenant-funded fit-out, owner-scope capital systems, and the optional capital-systems loan) implement the deal described in "The Burton Inn — Rent Basis & Owner Return" (July 2026). This draft is not legal advice; both parties should have it reviewed by Washington counsel.
+> **How this document was built.** The economic terms below (triple-net pass-through, fixed base rent with a Year 1 abatement, percentage rent over a natural breakpoint, tenant-funded fit-out, owner-scope capital systems, and the optional capital-systems loan) implement the deal described in "The Burton Inn — Rent Basis & Owner Return" (July 2026).
 
 ---
 
@@ -330,4 +330,4 @@ The following capital building systems are Landlord's scope and cost (approximat
 
 ---
 
-*End of draft v0.2 of The Burton Inn Commercial Lease Agreement — July 11, 2026. Prepared from the July 2026 Rent Basis & Owner Return prospectus for review by both parties and their Washington counsel.*
+*End of draft v0.2 of The Burton Inn Commercial Lease Agreement — July 11, 2026. Prepared from the July 2026 Rent Basis & Owner Return prospectus.*
