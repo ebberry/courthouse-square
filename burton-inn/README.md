@@ -3,8 +3,13 @@
 Deal-specific lease for **The Burton Inn** (Burton, Vashon Island, WA), drafted from the tenant's
 **"Rent Basis & Owner Return" prospectus (July 2026)**. This folder is intentionally separate from
 `lease/` (the Courthouse Square standard multi-tenant office lease): the Burton Inn deal is a
-whole-building, single-tenant, triple-net lease with percentage rent — a different animal — so it
-gets a standalone document rather than the Terms Sheet + Standard Terms stack.
+whole-building, single-tenant, triple-net lease with percentage rent — a different animal.
+
+It follows the **same two-part shape** as the Courthouse Square documents (a deal-specific Terms
+Sheet incorporating a Standard Terms boilerplate, with the Terms Sheet controlling on conflict) but
+does **not** reuse the `lease/` boilerplate — that form is built for multi-tenant office (CAM,
+proportionate share, common areas, relocation, no percentage rent) and names a different landlord
+entity. So the Burton Inn has its own parametric boilerplate, pruned to what the deal needs.
 
 > **Not public.** `netlify.toml` force-redirects `/burton-inn/*` away from the deployed site, so
 > committing these files does not publish them on courthousesquarevashon.com. (The standard lease
@@ -12,8 +17,23 @@ gets a standalone document rather than the Terms Sheet + Standard Terms stack.
 
 ## Files
 
-- `lease.md` — the full lease draft (source of truth). Draft v0.2, July 11, 2026.
-- `lease.pdf` — generated, house document style. Rebuild: `python3 tools/build_burton_lease.py`.
+Two source documents (both Markdown, edit directly), Draft v0.3, July 11, 2026:
+
+- `terms-sheet.md` → `terms-sheet.pdf` — **Lease Terms Sheet**: the deal page (parties, Premises,
+  Term, all rent/financial numbers, use, thresholds, notice addresses), the four Exhibits (A legal
+  description, B tenant's work, C landlord systems, D optional loan election), and the signature
+  block. Every deal-specific value lives here and nowhere else.
+- `standard-terms.md` → `standard-terms.pdf` — **Standard Lease Terms + Definitions & Glossary**:
+  the operating/legal boilerplate (Articles 2–23), written parametrically so it refers to the
+  numbers "stated in the Lease Terms Sheet" rather than hardcoding them.
+- `lease.pdf` — the two merged into one signable package (Terms Sheet, then Standard Terms), with
+  continuous page numbering. Generated only.
+
+Rebuild all three: `python3 tools/build_burton_lease.py`. The build script stamps each footer from
+the `**Draft v0.3 — …**` version line in `terms-sheet.md`, so bump that line when revising.
+
+**Terms Sheet controls on conflict.** Both documents carry the applicability note; where they
+disagree, the Terms Sheet governs. To change a deal number, edit only `terms-sheet.md`.
 
 ## How the prospectus maps into the lease
 
@@ -65,6 +85,6 @@ gets a standalone document rather than the Terms Sheet + Standard Terms stack.
 
 ## Publishing / next steps
 
-- Both parties review → bump to v1.0 and regenerate the PDF.
-- The build script stamps the footer from the version line in `lease.md`, so update the
-  `**Draft v0.2 — …**` line when revising.
+- Both parties review → bump to v1.0 and regenerate the PDFs.
+- Bump the `**Draft v… — …**` line in `terms-sheet.md` (and match it in `standard-terms.md`) when
+  revising; the build script reads the version from the Terms Sheet.
