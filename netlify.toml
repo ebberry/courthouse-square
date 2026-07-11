@@ -1,6 +1,14 @@
 # Netlify deploy configuration. The site is static — no build step.
 # (The Tailwind stylesheet and lease PDFs are prebuilt, committed artifacts.)
 
+# The Burton Inn lease working folder is a confidential deal draft, not site
+# content. Force-redirect it away so committing it never publishes it.
+[[redirects]]
+  from = "/burton-inn/*"
+  to = "/"
+  status = 301
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]
