@@ -19,6 +19,9 @@
 # Netlify CLI cache
 .netlify/
 
+# Python bytecode (tools/ scripts import each other)
+__pycache__/
+
 # Node (in case a tool ever lands)
 node_modules/
 npm-debug.log*
