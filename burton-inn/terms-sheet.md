@@ -42,7 +42,7 @@
 
 **Percentage Rent Reporting.** Monthly Gross Revenue statements; quarterly remittance on a cumulative basis; annual certified reconciliation; owner audit rights against POS records, with Tenant bearing audit cost only if an understatement exceeds **ten percent (10%)** — per Article 5 of the Standard Lease Terms.
 
-**Triple-Net Expenses.** From **August 1, 2026** (Landlord carries July 2026) and in every Lease Year including Lease Year 1, at actual cost: real property taxes (currently ≈ $8,500/yr), Landlord's building-insurance premiums (currently ≈ $6,500/yr), and routine maintenance and upkeep (currently ≈ $375/mo). Approximately $19,500/yr at today's costs. Tenant also pays all utilities directly.
+**Triple-Net Expenses.** From **August 1, 2026** (Landlord carries July 2026) and in every Lease Year including Lease Year 1, at actual cost: real property taxes (currently about $8,500/yr), Landlord's building-insurance premiums (currently about $6,500/yr), and routine maintenance and upkeep (currently about $375/mo). Approximately $19,500/yr at today's costs. Tenant also pays all utilities directly.
 
 **Security Deposit.** None.
 
@@ -60,7 +60,7 @@
 
 **Tenant's Work.** Tenant-funded interior fit-out of approximately $98,000, in two phases (guest rooms first; kitchen, bar, and events approximately three months later), per **Exhibit B**. Improvements attached to the building remain with the building (Article 8 of the Standard Lease Terms).
 
-**Landlord's Retained Scope.** Roof and structure, and the capital building systems (fire suppression and HVAC, ≈ $50,000) described on **Exhibit C**, financed separately from the rent structure (optionally per **Exhibit D**).
+**Landlord's Retained Scope.** Roof and structure, and the capital building systems (fire suppression and HVAC, about $50,000) described on **Exhibit C**, financed separately from the rent structure (optionally per **Exhibit D**).
 
 **Alterations Consent Threshold.** After completion of Tenant's Work, structural Alterations and non-structural Alterations exceeding **$5,000** per project require Landlord's consent (Article 8.4 of the Standard Lease Terms).
 
@@ -136,9 +136,9 @@ The following capital building systems are Landlord's scope and cost (approximat
 
 **D.1 The Loan.** If Landlord prefers not to fund the Exhibit C systems from its own resources, Tenant shall lend Landlord up to Fifty Thousand Dollars ($50,000) (the "Loan"), advanced as Exhibit C costs come due, at exactly Tenant's cost of funds: the Wall Street Journal Prime Rate plus three percent (3.00%) per annum (9.75% as of July 2026) — no spread, no profit to Tenant on the Loan. The Loan is evidenced by a separate promissory note. This Exhibit is separable: electing or declining it does not change any other term of the Lease, and if Landlord declines, this Exhibit is struck.
 
-**D.2 Option A — Repayment Through Rent Credits.** Landlord's cash rent (Base Rent plus Percentage Rent, but *not* Triple-Net Expenses, which continue to be paid in cash throughout) is credited against the Loan balance as it comes due, until principal and accrued interest are fully retired, after which all rent resumes in cash. Interest accrues on the outstanding balance at the D.1 rate. Illustratively, at the conservative floor the Loan clears during Year 4 (total interest ≈ $13,833); at target performance, early Year 3. Credits are self-adjusting: they scale with actual rent, so there is no fixed payment obligation on Landlord.
+**D.2 Option A — Repayment Through Rent Credits.** Landlord's cash rent (Base Rent plus Percentage Rent, but *not* Triple-Net Expenses, which continue to be paid in cash throughout) is credited against the Loan balance as it comes due, until principal and accrued interest are fully retired, after which all rent resumes in cash. Interest accrues on the outstanding balance at the D.1 rate. Illustratively, at the conservative floor the Loan clears during Year 4 (total interest about $13,833); at target performance, early Year 3. Credits are self-adjusting: they scale with actual rent, so there is no fixed payment obligation on Landlord.
 
-**D.3 Option B — Amortized Note.** Landlord repays the Loan in equal monthly installments fully amortizing over twenty (20) years at the D.1 rate fixed as of the funding date (approximately $474 per month at 9.75%; total interest over the full 20 years ≈ $63,822). Landlord may prepay at any time without penalty, and may instead elect a ten (10) year amortization (approximately $654 per month at 9.75%; total interest ≈ $28,500). Rent flows to Landlord untouched from day one.
+**D.3 Option B — Amortized Note.** Landlord repays the Loan in equal monthly installments fully amortizing over twenty (20) years at the D.1 rate fixed as of the funding date (approximately $474 per month at 9.75%; total interest over the full 20 years about $63,822). Landlord may prepay at any time without penalty, and may instead elect a ten (10) year amortization (approximately $654 per month at 9.75%; total interest about $28,500). Rent flows to Landlord untouched from day one.
 
 **D.4 Election.** Landlord elects: [ ] Option A (rent credits) — [ ] Option B (amortized note, ____-year) — [ ] Decline (Exhibit struck). Landlord initials: ________
 
