@@ -1,9 +1,9 @@
-# The Burton Inn
+# Standard Lease Terms
 
-**Standard Lease Terms**
-**Draft v0.4 — July 14, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
+**The Burton Inn**
+**Draft v0.5 — July 14, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
 
-> **Applicability.** These Standard Lease Terms and the accompanying Definitions & Glossary state the operating and legal terms of the Commercial Lease Agreement for The Burton Inn (the "Lease"). They apply together with the **Lease Terms Sheet**, which states the deal-specific terms (parties, Premises, Term, Base Rent, Percentage Rent, Triple-Net Expenses, Permitted Use, exhibits, and signatures). Capitalized terms are defined in the Glossary or in the Lease Terms Sheet. Where the Lease Terms Sheet is silent, these Standard Lease Terms control; in the event of a conflict, the Lease Terms Sheet prevails.
+> **Applicability.** These Standard Lease Terms are one of the three documents that together form the Commercial Lease Agreement for The Burton Inn (the "Lease"): the **Lease Terms Sheet** (the deal-specific terms and exhibits), these **Standard Lease Terms** (the operating and legal terms), and the **Definitions & Glossary** (the defined terms). Capitalized terms are defined in the Definitions & Glossary or in the Lease Terms Sheet. Where the Lease Terms Sheet is silent, these Standard Lease Terms control; in the event of a conflict, the Lease Terms Sheet prevails.
 
 ---
 
@@ -201,54 +201,4 @@ Legal notices must be in writing and delivered by personal delivery, overnight c
 
 ---
 
-## Definitions & Glossary
-
-*This glossary defines capitalized terms used in the Lease Terms Sheet and these Standard Lease Terms. Terms defined in the Lease Terms Sheet (such as Base Rent, Breakpoint, Commencement Date, Permitted Use, Premises, and Term) have the meanings given there.*
-
-**Additional Rent.** Any sum payable by Tenant under the Lease other than Base Rent, including Percentage Rent, Triple-Net Expenses, late charges, interest, and indemnification payments. All Additional Rent is collectible as Rent.
-
-**Alterations.** Any physical additions, improvements, cosmetic updates, or architectural changes made to the Premises by Tenant after the Commencement Date, other than Tenant's initial Work under Exhibit B.
-
-**Base Rent.** The fixed monthly amount stated in the Lease Terms Sheet, exclusive of Percentage Rent, Triple-Net Expenses, and utilities.
-
-**Breakpoint.** The Gross Revenue threshold stated in the Lease Terms Sheet above which Percentage Rent accrues; the natural breakpoint equal to annual Base Rent divided by the Percentage Rent Rate.
-
-**Commencement Date.** The date stated in the Lease Terms Sheet on which the Term begins and possession is delivered.
-
-**Event of Default.** Any of the events listed in Article 14.1.
-
-**Force Majeure.** The causes of excused delay described in Article 23.1.
-
-**Gross Revenue.** Revenue counted toward Percentage Rent, as defined in Article 5.2 and limited by the exclusions in Article 5.3.
-
-**Hazardous Materials.** Any substance defined as toxic, hazardous, or regulated under federal, state, or local law, including the Washington Model Toxics Control Act (MTCA) and CERCLA.
-
-**Landlord's Retained Obligations.** Landlord's maintenance, repair, and replacement obligations under Article 9.2, together with the Exhibit C capital systems.
-
-**Lease Year.** The twelve-month accounting period defined in the Lease Terms Sheet, used to measure the Breakpoint, Percentage Rent, and Term milestones.
-
-**Opening Date.** The date the guest rooms first open to paying guests (Phase 1), as described in Article 3.3.
-
-**Percentage Rent.** The rent computed under Article 5 as the Percentage Rent Rate applied to Gross Revenue above the Breakpoint.
-
-**Percentage Rent Rate.** The percentage stated in the Lease Terms Sheet (10%).
-
-**Permitted Use.** The business activity Tenant may conduct at the Premises, as stated in the Lease Terms Sheet and elaborated in Article 7.
-
-**Premises.** The entire building, land, and grounds leased to Tenant, as described in the Lease Terms Sheet and Exhibit A.
-
-**Rent.** Collectively, Base Rent, Percentage Rent, Triple-Net Expenses, and all other Additional Rent.
-
-**Rent Commencement Date.** The date stated in the Lease Terms Sheet on which Base Rent begins after the Lease Year 1 abatement.
-
-**Tenant's Work.** The tenant-funded interior fit-out described in Exhibit B.
-
-**Term.** The duration of the Lease, as stated in the Lease Terms Sheet, including any exercised extension.
-
-**Trade Fixtures.** Movable items of personal property or equipment installed by Tenant for its business that remain Tenant's property and must be removed at the end of the Term, repairing any damage from removal.
-
-**Triple-Net Expenses.** The property taxes, building-insurance premiums, and routine maintenance costs Tenant bears at actual cost under Article 6, plus utilities.
-
----
-
-*End of the Standard Lease Terms and Definitions & Glossary for The Burton Inn — Draft v0.4, July 14, 2026. To be read with the Lease Terms Sheet.*
+*End of the Standard Lease Terms for The Burton Inn — Draft v0.5, July 14, 2026. Capitalized terms are defined in the accompanying Definitions & Glossary; to be read with the Lease Terms Sheet.*

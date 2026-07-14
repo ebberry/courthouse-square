@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # Build an editable Word (.docx) of the Burton Inn lease for redlining.
-# Combines burton-inn/terms-sheet.md and standard-terms.md into one document
-# (Terms Sheet, page break, Standard Terms), mirroring the merged lease.pdf.
-# Uses real Word heading styles so the document is navigable and Track Changes
-# works cleanly. Plain python-docx; absolute paths only.
+# Combines the three parts of the Lease (terms-sheet.md, standard-terms.md,
+# definitions.md) into one document, each starting on a fresh page, mirroring
+# the merged lease.pdf. Uses real Word heading styles so the document is
+# navigable and Track Changes works cleanly. Plain python-docx; absolute paths.
 
 import os, re
 from docx import Document
@@ -85,11 +85,14 @@ if __name__ == '__main__':
         ts = f.read()
     with open(BDIR + '/standard-terms.md') as f:
         st = f.read()
+    with open(BDIR + '/definitions.md') as f:
+        df = f.read()
 
     doc = Document()
     style_document(doc)
     first = emit(doc, ts, first=True)
-    emit(doc, st, first=first)
+    first = emit(doc, st, first=first)
+    emit(doc, df, first=first)
 
     out = BDIR + '/lease.docx'
     doc.save(out)

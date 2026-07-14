@@ -1,96 +1,148 @@
-# The Burton Inn
+# Lease Terms Sheet
 
-**Lease Terms Sheet**
-**24007 Vashon Highway SW, Vashon (Burton), Washington 98070**
-**Draft v0.4 — July 14, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
+**The Burton Inn — 24007 Vashon Highway SW, Vashon (Burton), Washington 98070**
+**Draft v0.5 — July 14, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
 
-> **How the Lease fits together.** This Lease Terms Sheet, together with the **Standard Lease Terms** and the **Definitions & Glossary** that accompany it, forms one Commercial Lease Agreement (the "Lease") for the Premises. This Terms Sheet states the deal-specific terms; the Standard Lease Terms state the operating and legal terms that apply to them; the Glossary defines capitalized terms. Where this Terms Sheet is silent, the Standard Lease Terms control; **in the event of any conflict, this Terms Sheet prevails.** The economic structure below implements the deal described in "The Burton Inn — Rent Basis & Owner Return" (July 2026).
-
----
-
-## Parties and Premises
-
-**Landlord.** The Burton Landing LLC, a Washington limited liability company.
-
-**Tenant.** eBerry LLC, a Washington limited liability company.
-
-**Premises.** The entire building commonly known as The Burton Inn, together with the underlying land, parking, and grounds, located at 24007 Vashon Highway SW, Vashon (Burton), Washington 98070, legally described on **Exhibit A**. The Premises comprise the whole building and grounds; there are no common areas, proportionate-share allocations, or landlord relocation rights.
+> *The specific, negotiated terms of this Lease. Where this Terms Sheet is silent, the Standard Lease Terms and the Definitions & Glossary (attached) control; in the event of a conflict, this Terms Sheet prevails. The economic structure implements the deal described in "The Burton Inn — Rent Basis & Owner Return" (July 2026).*
 
 ---
 
-## Term
+## 1 · The Parties
 
-**Initial Term.** Ten (10) Lease Years — **July 1, 2026 through June 30, 2036** — unless extended under Article 3 of the Standard Lease Terms or earlier terminated as provided in the Lease.
+**LANDLORD:** The Burton Landing LLC, a Washington limited liability company.
 
-**Commencement Date.** July 1, 2026. Possession has been delivered to and accepted by Tenant.
+**TENANT (ENTITY):** eBerry LLC, a Washington limited liability company.
 
-**Lease Years.** Each Lease Year runs July 1 through June 30. "Lease Year 1" is July 1, 2026 – June 30, 2027.
-
-**Extension Option.** One (1) option to extend for five (5) years (July 1, 2036 – June 30, 2041), on the same terms except this option and the Lease Year 1 Base Rent abatement, exercisable by written notice given 9–15 months before the end of the Initial Term, per Section 3.5 of the Standard Lease Terms.
+**TENANT ADDRESS:** 9405 SW Gorsuch Road, Vashon, WA 98070.
 
 ---
 
-## Rent and Financial Terms
+## 2 · The Premises
 
-**Base Rent.** $1,650.00 per month ($19,800 per year), fixed for the entire Term with no escalation.
+**PROPERTY / BUILDING:** The Burton Inn.
 
-**Base Rent Abatement.** Base Rent is fully abated for all of Lease Year 1 (July 1, 2026 – June 30, 2027). Base Rent commences **July 1, 2027** (the "Rent Commencement Date"), the first day of Lease Year 2.
+**ADDRESS:** 24007 Vashon Highway SW, Vashon (Burton), WA 98070.
 
-**Percentage Rent.** Ten percent (10%) of Gross Revenue in excess of the Breakpoint, payable in every Lease Year including Lease Year 1.
+**PREMISES:** The entire building, together with the underlying land, parking, and grounds. The Premises comprise the whole building and grounds; there are no common areas, no proportionate-share allocations, and no landlord relocation rights.
 
-**Breakpoint.** $198,000 per Lease Year (the natural breakpoint: annual Base Rent ÷ 10%). Fixed for the Term; prorated only for a partial final Lease Year.
+**APPROXIMATE SQUARE FOOTAGE:** Entire building (single-tenant).
 
-**Percentage Rent Reporting.** Monthly Gross Revenue statements; quarterly remittance on a cumulative basis; annual certified reconciliation; owner audit rights against POS records, with Tenant bearing audit cost only if an understatement exceeds **ten percent (10%)** — per Article 5 of the Standard Lease Terms.
+**LEGAL DESCRIPTION:** See Exhibit A, attached.
 
-**Triple-Net Expenses.** From **August 1, 2026** (Landlord carries July 2026) and in every Lease Year including Lease Year 1, at actual cost: real property taxes (currently about $8,500/yr), Landlord's building-insurance premiums (currently about $6,500/yr), and routine maintenance and upkeep (currently about $375/mo). Approximately $19,500/yr at today's costs. Tenant also pays all utilities directly.
-
-**Security Deposit.** None.
-
-**Guaranty.** None.
+**PROPORTIONATE SHARE:** 100% (single tenant; whole building).
 
 ---
 
-## Use
+## 3 · The Term
 
-**Permitted Use.** Operation of an inn with up to four (4) guest rooms; a cocktail bar and restaurant with beer, wine, and spirits service; ticketed chef's dinners, tastings, and culinary events; pop-up, takeaway, and counter food service; rental of the commercial kitchen as a commissary to licensed food businesses; private events and venue hire; and ancillary uses including retail sale of merchandise and provisions — all as further described in Article 7 of the Standard Lease Terms.
+**LEASE START DATE (COMMENCEMENT):** July 1, 2026. Possession has been delivered to and accepted by Tenant.
+
+**TRIPLE-NET / UTILITIES START DATE:** August 1, 2026 (Landlord carries the Premises' costs for July 2026).
+
+**RENT COMMENCEMENT DATE (BASE RENT):** July 1, 2027. Base Rent is abated in full during Lease Year 1 and begins on the first day of Lease Year 2.
+
+**LEASE EXPIRATION DATE:** June 30, 2036 (ten Lease Years).
+
+**LEASE YEARS:** Each Lease Year runs July 1 – June 30. Lease Year 1 is July 1, 2026 – June 30, 2027.
+
+**EXTENSION OPTION:** One (1) option to extend for five (5) years (July 1, 2036 – June 30, 2041); see Section 6 and Article 3.5 of the Standard Lease Terms.
 
 ---
 
-## Build-Out and Building Systems
+## 4 · Financial Obligations
 
-**Tenant's Work.** Tenant-funded interior fit-out of approximately $98,000, in two phases (guest rooms first; kitchen, bar, and events approximately three months later), per **Exhibit B**. Improvements attached to the building remain with the building (Article 8 of the Standard Lease Terms).
+**LEASE TYPE:** Triple Net (NNN) with Percentage Rent — whole building, single tenant.
 
-**Landlord's Retained Scope.** Roof and structure, and the capital building systems (fire suppression and HVAC, about $50,000) described on **Exhibit C**, financed separately from the rent structure (optionally per **Exhibit D**).
+**BASE RENT:** $1,650.00 per month ($19,800 per year), fixed for the entire Term with no escalation; abated in full during Lease Year 1.
 
-**Alterations Consent Threshold.** After completion of Tenant's Work, structural Alterations and non-structural Alterations exceeding **$5,000** per project require Landlord's consent (Article 8.4 of the Standard Lease Terms).
+**PERCENTAGE RENT:** Ten percent (10%) of Gross Revenue in excess of the Breakpoint, in every Lease Year including Lease Year 1.
+
+**BREAKPOINT:** $198,000 per Lease Year (the natural breakpoint: annual Base Rent ÷ 10%); fixed for the Term, prorated only for a partial final Lease Year.
+
+**TRIPLE-NET EXPENSES (TENANT-PAID, AT ACTUAL COST):** Real property taxes (currently about $8,500/yr), Landlord's building-insurance premiums (currently about $6,500/yr), and routine maintenance and upkeep (currently about $375/mo) — about $19,500/yr today. Begins August 1, 2026 and applies in every Lease Year including Lease Year 1.
+
+**DIRECT UTILITIES (TENANT-PAID):** Electricity, water, sewer/septic, garbage, propane or heating fuel, telephone, internet/data (accounts in Tenant's name).
+
+**SECURITY DEPOSIT:** None.
+
+**GUARANTY:** None.
 
 ---
 
-## Other Deal Terms
+## 5 · Operations & Special Conditions
 
-**Operating Covenant.** Continuous operation from the Opening Date, with up to six (6) weeks of seasonal closure per Lease Year (Article 5.7 of the Standard Lease Terms).
+**PERMITTED USE:** Operation of an inn with up to four (4) guest rooms; a cocktail bar and restaurant with beer, wine, and spirits service; ticketed chef's dinners, tastings, and culinary events; pop-up, takeaway, and counter food service; rental of the commercial kitchen as a commissary to licensed food businesses; private events and venue hire; and ancillary uses including retail sale of merchandise and provisions — as further described in Article 7 of the Standard Lease Terms.
 
-**Purchase Rights.** None. Any future sale of the building is a separate negotiation (Article 19 of the Standard Lease Terms).
+**DELIVERY CONDITION:** As-Is (possession delivered and accepted July 1, 2026), subject to Landlord's Exhibit C capital-systems scope and Article 9.2 retained obligations.
 
-**Notice Addresses (Article 21 of the Standard Lease Terms).**
-- **To Landlord:** The Burton Landing LLC, 24007 Vashon Highway SW, Vashon, WA 98070.
-- **To Tenant:** eBerry LLC, 24007 Vashon Highway SW, Vashon, WA 98070.
+**PHASED OPENING:** Phase 1 — guest rooms open (the "Opening Date"); Phase 2 — kitchen, bar, and events, targeted about three (3) months later. Lease Years run on the fixed calendar above regardless of the pace of Tenant's fit-out.
 
-**Exhibits.** Exhibit A — Legal Description; Exhibit B — Tenant's Work; Exhibit C — Landlord's Capital Systems; Exhibit D — Optional Capital Systems Loan (optional; separately documented).
+---
+
+## 6 · Additional Terms
+
+*The following negotiated terms supplement the Standard Lease Terms. Where a term cites an article of the Standard Lease Terms, that article governs except as expressly modified here.*
+
+**6.1** Base Rent is abated in full for Lease Year 1 (July 1, 2026 – June 30, 2027) and commences July 1, 2027; Percentage Rent, Triple-Net Expenses, and utilities are payable during Lease Year 1 without abatement. (See Article 4.2.)
+
+**6.2** Percentage Rent is reported and paid as follows: monthly Gross Revenue statements; quarterly remittance on a cumulative basis; an annual reconciliation certified by an officer or manager of Tenant; and an owner audit right against POS records, with Tenant bearing the audit cost only if an understatement exceeds ten percent (10%). (See Article 5.)
+
+**6.3** Tenant shall continuously operate the inn business from the Opening Date, with up to six (6) weeks of seasonal closure per Lease Year in the aggregate. (See Article 5.7.)
+
+**6.4** Tenant shall fund and perform the interior fit-out described on Exhibit B (approximately $98,000); all improvements attached to the building remain Landlord's property at the end of the tenancy, without compensation. (See Article 8.2–8.3.)
+
+**6.5** Fire suppression and HVAC (approximately $50,000) are Landlord's scope and cost per Exhibit C; Landlord may finance them through the optional Tenant loan described in Exhibit D. (See Article 9.2.)
+
+**6.6** After completion of Tenant's Work, structural Alterations and non-structural Alterations exceeding $5,000 per project require Landlord's prior written consent. (See Article 8.4.)
+
+**6.7** Tenant has expressed a goal of purchasing the building around Lease Year 10; this is a goal only, and nothing in this Lease grants any option to purchase, right of first refusal, or right of first offer, or obligates either party to transact. (See Article 19.)
+
+---
+
+## 7 · Notices
+
+All notices under this Lease shall be in writing and delivered by personal delivery, overnight courier, or certified mail (return receipt requested), to the addresses below, effective on delivery or refusal. Any notice under chapter 59.12 RCW shall be served strictly as Washington law requires (including RCW 59.12.040). Email does not constitute legal notice of default. Either party may change its notice address by written notice.
+
+**NOTICE TO LANDLORD:** The Burton Landing LLC, 24007 Vashon Highway SW, Vashon, WA 98070.
+
+**NOTICE TO TENANT:** eBerry LLC, 9405 SW Gorsuch Road, Vashon, WA 98070.
+
+---
+
+## 8 · Incorporation and Merger
+
+This Lease Terms Sheet, together with its Exhibits, the Standard Lease Terms, and the Definitions & Glossary (Draft v0.5, July 14, 2026), constitutes the entire Commercial Lease Agreement for the Premises and supersedes all prior discussions, including the July 2026 prospectus (a planning document, not a contract, except as expressly implemented herein) and any letter of intent. In the event of any conflict between this Terms Sheet and the Standard Lease Terms or Definitions & Glossary, this Terms Sheet prevails. Amendments must be in a writing signed by both parties.
+
+---
+
+## 9 · Index of Exhibits
+
+- **Exhibit A** — Legal Description.
+- **Exhibit B** — Tenant's Work (Tenant-Funded Fit-Out).
+- **Exhibit C** — Landlord's Capital Systems (Owner Scope).
+- **Exhibit D** — Optional Capital Systems Loan (optional; separately documented).
 
 ---
 
 ## Signatures
 
-By signing below, Landlord and Tenant agree to this Lease, comprising this Lease Terms Sheet (with its Exhibits), the Standard Lease Terms, and the Definitions & Glossary.
+By signing below, Landlord and Tenant agree to this Lease, comprising all three of its documents: this Lease Terms Sheet (with its Exhibits), the Standard Lease Terms, and the Definitions & Glossary.
 
 **LANDLORD:** The Burton Landing LLC, a Washington limited liability company
 
-By: ____________________________  Name: ____________________  Title: ____________________  Date: ____________
+SIGNATURE: /sn1/
+
+PRINTED NAME / TITLE: ____________________________________
+
+DATE: /ds1/
 
 **TENANT:** eBerry LLC, a Washington limited liability company
 
-By: ____________________________  Name: ____________________  Title: ____________________  Date: ____________
+SIGNATURE: /sn2/
+
+PRINTED NAME / TITLE: ____________________________________
+
+DATE: /ds2/
 
 *Notary acknowledgments to be attached (required for a lease term exceeding two years under Washington law).*
 
@@ -142,4 +194,4 @@ The following capital building systems are Landlord's scope and cost (approximat
 
 ---
 
-*End of the Lease Terms Sheet for The Burton Inn — Draft v0.4, July 14, 2026. To be read with the Standard Lease Terms and the Definitions & Glossary.*
+*End of the Lease Terms Sheet for The Burton Inn — Draft v0.5, July 14, 2026. To be read with the Standard Lease Terms and the Definitions & Glossary.*

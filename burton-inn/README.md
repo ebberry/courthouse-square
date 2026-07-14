@@ -5,11 +5,14 @@ Deal-specific lease for **The Burton Inn** (Burton, Vashon Island, WA), drafted 
 `lease/` (the Courthouse Square standard multi-tenant office lease): the Burton Inn deal is a
 whole-building, single-tenant, triple-net lease with percentage rent — a different animal.
 
-It follows the **same two-part shape** as the Courthouse Square documents (a deal-specific Terms
-Sheet incorporating a Standard Terms boilerplate, with the Terms Sheet controlling on conflict) but
-does **not** reuse the `lease/` boilerplate — that form is built for multi-tenant office (CAM,
-proportionate share, common areas, relocation, no percentage rent) and names a different landlord
-entity. So the Burton Inn has its own parametric boilerplate, pruned to what the deal needs.
+It follows the **same three-part template** as the Courthouse Square documents (see the Bob's
+Bakery lease for the reference format) — a deal-specific Lease Terms Sheet with nine numbered
+sections and a signature page, a Standard Lease Terms boilerplate in numbered Articles, and a
+Definitions & Glossary, executed and read together, with the Terms Sheet controlling on conflict.
+It does **not** reuse the `lease/` boilerplate text — that form is built for multi-tenant office
+(CAM, proportionate share, common areas, relocation, no percentage rent) and names a different
+landlord entity. So the Burton Inn has its own parametric boilerplate, pruned to what the deal
+needs, in the same house format.
 
 > **Not public.** `netlify.toml` force-redirects `/burton-inn/*` away from the deployed site, so
 > committing these files does not publish them on courthousesquarevashon.com. (The standard lease
@@ -17,27 +20,33 @@ entity. So the Burton Inn has its own parametric boilerplate, pruned to what the
 
 ## Files
 
-Two source documents (both Markdown, edit directly), Draft v0.4, July 14, 2026:
+Three source documents — the three parts of the Lease (all Markdown, edit directly), Draft v0.5,
+July 14, 2026:
 
-- `terms-sheet.md` → `terms-sheet.pdf` — **Lease Terms Sheet**: the deal page (parties, Premises,
-  Term, all rent/financial numbers, use, thresholds, notice addresses), the four Exhibits (A legal
-  description, B tenant's work, C landlord systems, D optional loan election), and the signature
-  block. Every deal-specific value lives here and nowhere else.
-- `standard-terms.md` → `standard-terms.pdf` — **Standard Lease Terms + Definitions & Glossary**:
-  the operating/legal boilerplate (Articles 2–23), written parametrically so it refers to the
-  numbers "stated in the Lease Terms Sheet" rather than hardcoding them.
-- `lease.pdf` — the two merged into one signable package (Terms Sheet, then Standard Terms), with
-  continuous page numbering. Generated only.
+- `terms-sheet.md` → `terms-sheet.pdf` — **Part 1, Lease Terms Sheet**: the deal page, laid out in
+  the same nine numbered sections as the Courthouse Square template (1 Parties · 2 Premises · 3 Term
+  · 4 Financial Obligations · 5 Operations & Special Conditions · 6 Additional Terms · 7 Notices ·
+  8 Incorporation & Merger · 9 Index of Exhibits), then a signature block with DocuSign/Adobe
+  e-sign anchors (`/sn1/`, `/ds1/`, `/sn2/`, `/ds2/`), then the four Exhibits (A legal description,
+  B tenant's work, C landlord systems, D optional loan). Every deal-specific value lives here and
+  nowhere else.
+- `standard-terms.md` → `standard-terms.pdf` — **Part 2, Standard Lease Terms**: the operating/legal
+  boilerplate (Articles 2–23), written parametrically so it refers to the numbers "stated in the
+  Lease Terms Sheet" rather than hardcoding them.
+- `definitions.md` → `definitions.pdf` — **Part 3, Definitions & Glossary**: the defined terms used
+  across Parts 1 and 2. Terms defined on the Terms Sheet control where they differ.
+- `lease.pdf` — the three parts merged into one signable package (Terms Sheet, Standard Terms,
+  Definitions), each starting on a fresh page, with continuous page numbering. Generated only.
 - `lease.docx` — the same combined document as an **editable Word file for redlining** (real Word
   heading styles, so Track Changes and the navigation pane work). Generated only; regenerate after
   any Markdown edit. Round-trip: hand this out → receive the redlined `.docx` back → apply the
   accepted changes to the Markdown source (the Markdown stays the source of truth).
 
 Rebuild the PDFs: `python3 tools/build_burton_lease.py` (stamps each footer from the
-`**Draft v0.4 — …**` version line in `terms-sheet.md`, so bump that line when revising).
+`**Draft v0.5 — …**` version line in `terms-sheet.md`, so bump that line when revising).
 Rebuild the Word file: `python3 tools/build_burton_docx.py`.
 
-**Terms Sheet controls on conflict.** Both documents carry the applicability note; where they
+**Terms Sheet controls on conflict.** All three parts carry the applicability note; where they
 disagree, the Terms Sheet governs. To change a deal number, edit only `terms-sheet.md`.
 
 ## How the prospectus maps into the lease
