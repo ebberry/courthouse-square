@@ -2,7 +2,7 @@
 
 **Lease Terms Sheet**
 **24007 Vashon Highway SW, Vashon (Burton), Washington 98070**
-**Draft v0.3 — July 11, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
+**Draft v0.4 — July 14, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
 
 > **How the Lease fits together.** This Lease Terms Sheet, together with the **Standard Lease Terms** and the **Definitions & Glossary** that accompany it, forms one Commercial Lease Agreement (the "Lease") for the Premises. This Terms Sheet states the deal-specific terms; the Standard Lease Terms state the operating and legal terms that apply to them; the Glossary defines capitalized terms. Where this Terms Sheet is silent, the Standard Lease Terms control; **in the event of any conflict, this Terms Sheet prevails.** The economic structure below implements the deal described in "The Burton Inn — Rent Basis & Owner Return" (July 2026).
 
@@ -76,7 +76,7 @@
 - **To Landlord:** The Burton Landing LLC, 24007 Vashon Highway SW, Vashon, WA 98070.
 - **To Tenant:** eBerry LLC, 24007 Vashon Highway SW, Vashon, WA 98070.
 
-**Exhibits.** Exhibit A — Legal Description; Exhibit B — Tenant's Work; Exhibit C — Landlord's Capital Systems; Exhibit D — Optional Capital Systems Loan (election).
+**Exhibits.** Exhibit A — Legal Description; Exhibit B — Tenant's Work; Exhibit C — Landlord's Capital Systems; Exhibit D — Optional Capital Systems Loan (optional; separately documented).
 
 ---
 
@@ -132,16 +132,14 @@ The following capital building systems are Landlord's scope and cost (approximat
 
 ---
 
-## Exhibit D: Optional Capital Systems Loan (Elect One Option or Strike)
+## Exhibit D: Optional Capital Systems Loan (Optional; Separately Documented)
 
-**D.1 The Loan.** If Landlord prefers not to fund the Exhibit C systems from its own resources, Tenant shall lend Landlord up to Fifty Thousand Dollars ($50,000) (the "Loan"), advanced as Exhibit C costs come due, at exactly Tenant's cost of funds: the Wall Street Journal Prime Rate plus three percent (3.00%) per annum (9.75% as of July 2026) — no spread, no profit to Tenant on the Loan. The Loan is evidenced by a separate promissory note. This Exhibit is separable: electing or declining it does not change any other term of the Lease, and if Landlord declines, this Exhibit is struck.
+**D.1 The Loan.** If Landlord prefers not to fund the Exhibit C systems from its own resources, Tenant shall lend Landlord up to Fifty Thousand Dollars ($50,000) (the "Loan"), advanced as Exhibit C costs come due, at exactly Tenant's cost of funds, with no spread or profit to Tenant on the Loan. This Exhibit is separable: electing or declining it does not change any other term of the Lease, and if Landlord declines, this Exhibit is struck.
 
-**D.2 Option A — Repayment Through Rent Credits.** Landlord's cash rent (Base Rent plus Percentage Rent, but *not* Triple-Net Expenses, which continue to be paid in cash throughout) is credited against the Loan balance as it comes due, until principal and accrued interest are fully retired, after which all rent resumes in cash. Interest accrues on the outstanding balance at the D.1 rate. Illustratively, at the conservative floor the Loan clears during Year 4 (total interest about $13,833); at target performance, early Year 3. Credits are self-adjusting: they scale with actual rent, so there is no fixed payment obligation on Landlord.
+**D.2 Separate Documentation.** The Loan's interest rate, repayment structure, prepayment rights, and security (if any) are set out in a separate loan agreement and promissory note between Landlord and Tenant, executed outside this Lease. This Lease neither fixes nor limits those terms; in the event of any conflict between this Exhibit and the separate loan documents, the loan documents control.
 
-**D.3 Option B — Amortized Note.** Landlord repays the Loan in equal monthly installments fully amortizing over twenty (20) years at the D.1 rate fixed as of the funding date (approximately $474 per month at 9.75%; total interest over the full 20 years about $63,822). Landlord may prepay at any time without penalty, and may instead elect a ten (10) year amortization (approximately $654 per month at 9.75%; total interest about $28,500). Rent flows to Landlord untouched from day one.
-
-**D.4 Election.** Landlord elects: [ ] Option A (rent credits) — [ ] Option B (amortized note, ____-year) — [ ] Decline (Exhibit struck). Landlord initials: ________
+**D.3 Election.** Landlord elects: [ ] Elect the Loan (repayment terms per separate loan documents) — [ ] Decline (Exhibit struck). Landlord initials: ________
 
 ---
 
-*End of the Lease Terms Sheet for The Burton Inn — Draft v0.3, July 11, 2026. To be read with the Standard Lease Terms and the Definitions & Glossary.*
+*End of the Lease Terms Sheet for The Burton Inn — Draft v0.4, July 14, 2026. To be read with the Standard Lease Terms and the Definitions & Glossary.*

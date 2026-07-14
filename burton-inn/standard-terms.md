@@ -1,7 +1,7 @@
 # The Burton Inn
 
 **Standard Lease Terms**
-**Draft v0.3 — July 11, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
+**Draft v0.4 — July 14, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
 
 > **Applicability.** These Standard Lease Terms and the accompanying Definitions & Glossary state the operating and legal terms of the Commercial Lease Agreement for The Burton Inn (the "Lease"). They apply together with the **Lease Terms Sheet**, which states the deal-specific terms (parties, Premises, Term, Base Rent, Percentage Rent, Triple-Net Expenses, Permitted Use, exhibits, and signatures). Capitalized terms are defined in the Glossary or in the Lease Terms Sheet. Where the Lease Terms Sheet is silent, these Standard Lease Terms control; in the event of a conflict, the Lease Terms Sheet prevails.
 
@@ -251,4 +251,4 @@ Legal notices must be in writing and delivered by personal delivery, overnight c
 
 ---
 
-*End of the Standard Lease Terms and Definitions & Glossary for The Burton Inn — Draft v0.3, July 11, 2026. To be read with the Lease Terms Sheet.*
+*End of the Standard Lease Terms and Definitions & Glossary for The Burton Inn — Draft v0.4, July 14, 2026. To be read with the Lease Terms Sheet.*
