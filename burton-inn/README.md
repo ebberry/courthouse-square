@@ -20,7 +20,7 @@ needs, in the same house format.
 
 ## Files
 
-Three source documents — the three parts of the Lease (all Markdown, edit directly), Draft v0.5,
+Three source documents — the three parts of the Lease (all Markdown, edit directly), Draft v0.6,
 July 14, 2026:
 
 - `terms-sheet.md` → `terms-sheet.pdf` — **Part 1, Lease Terms Sheet**: the deal page, laid out in
@@ -28,8 +28,7 @@ July 14, 2026:
   · 4 Financial Obligations · 5 Operations & Special Conditions · 6 Additional Terms · 7 Notices ·
   8 Incorporation & Merger · 9 Index of Exhibits), then a signature block with DocuSign/Adobe
   e-sign anchors (`/sn1/`, `/ds1/`, `/sn2/`, `/ds2/`), then the four Exhibits (A legal description,
-  B tenant's work, C landlord systems, D optional loan). Every deal-specific value lives here and
-  nowhere else.
+  B tenant's work, C landlord systems). Every deal-specific value lives here and nowhere else.
 - `standard-terms.md` → `standard-terms.pdf` — **Part 2, Standard Lease Terms**: the operating/legal
   boilerplate (Articles 2–23), written parametrically so it refers to the numbers "stated in the
   Lease Terms Sheet" rather than hardcoding them.
@@ -43,7 +42,7 @@ July 14, 2026:
   accepted changes to the Markdown source (the Markdown stays the source of truth).
 
 Rebuild the PDFs: `python3 tools/build_burton_lease.py` (stamps each footer from the
-`**Draft v0.5 — …**` version line in `terms-sheet.md`, so bump that line when revising).
+`**Draft v0.6 — …**` version line in `terms-sheet.md`, so bump that line when revising).
 Rebuild the Word file: `python3 tools/build_burton_docx.py`.
 
 **Terms Sheet controls on conflict.** All three parts carry the applicability note; where they
@@ -58,7 +57,7 @@ disagree, the Terms Sheet governs. To change a deal number, edit only `terms-she
 | Percentage rent: 10% of gross revenue over $198,000 natural breakpoint, receipts-based; monthly statements, quarterly remittance, annual certified reconciliation, owner audit vs POS (tenant pays audit cost if understatement >10%); live in Year 1 above the breakpoint | Art. 5 |
 | Tenant-funded fit-out ~$98,000 (flooring, paint, kitchen retrofit & permits, furnishings); owner keeps improvements however the tenancy evolves | Art. 8, Exhibit B |
 | Owner scope: fire suppression + HVAC (~$50,000), roof & structure | Art. 9.2, Exhibit C |
-| Optional $50k tenant loan for the owner's capital systems, at cost, separable from the lease (repayment terms handled in a separate loan agreement, not the lease) | Exhibit D |
+| (The prospectus's optional $50k tenant loan for the owner's capital systems is **not** in the lease — removed entirely at v0.6; if the parties want it, it is a standalone loan agreement between them, wholly separate from this Lease) | — |
 | Phased opening: rooms first (Year 1 begins), kitchen/bar ~3 months later; base rent begins Year 2 | Art. 3.3–3.4, 4.2 |
 | Liability & liquor-liability insurance, owner additional insured | Art. 10 |
 | Year-10 purchase is a goal, **not** a lease term | Art. 19 |
@@ -83,11 +82,13 @@ disagree, the Terms Sheet governs. To change a deal number, edit only `terms-she
 8. **Alterations consent threshold**: $5,000 (matches the Courthouse Square standard).
 9. **Audit threshold kept at 10%** as the prospectus proposed (market is 2–5%; owner's counsel may
    push down — flagged, accepted).
-10. **Exhibit D loan**: the optional $50k capital-systems loan is kept in the lease only as an
-    elect/decline with the at-cost principle; its repayment terms (rate, structure, security) are
-    handled in a **separate loan agreement**, not the lease (removed from v0.4 per owner request).
+10. **No capital-systems loan in the lease.** The prospectus's optional $50k tenant→owner loan
+    (former Exhibit D) is removed entirely as of v0.6 per owner request — no Exhibit D, no
+    borrower/lender language. If the parties want it, it lives in a wholly separate loan agreement
+    with no reference in this Lease. Exhibit C still puts the fire-suppression/HVAC scope on the
+    owner; how the owner funds it is off-document.
 11. **No purchase rights** — Art. 19 keeps the Year-10 purchase as a goal only, per the prospectus.
-12. **Notices**: both parties at the property address.
+12. **Notices**: Landlord at the property (24007 Vashon Hwy SW); Tenant at 9405 SW Gorsuch Rd.
 
 ## Standing drafting notes
 
@@ -96,9 +97,9 @@ disagree, the Terms Sheet governs. To change a deal number, edit only `terms-she
 - **SNDA** (Art. 15.1): future lenders must non-disturb the abatement + percentage structure.
 - **Notarization/recording** (Art. 23.2): Washington requires acknowledgment for a lease over two
   years; signing should happen before a notary, memorandum recordable on request.
-- **Capital-systems loan** (Exhibit D): repayment structure is deliberately out of the lease as of
-  v0.4 — to be papered in a standalone loan agreement / promissory note. Keep Exhibit D's
-  elect/decline and the "at cost, no spread" principle in sync with whatever that note says.
+- **Capital-systems loan**: entirely out of the lease as of v0.6 (no Exhibit D). If the owner and
+  tenant paper one, keep it a standalone agreement — do not reintroduce it or any borrower/lender
+  language into these three documents.
 
 ## Publishing / next steps
 

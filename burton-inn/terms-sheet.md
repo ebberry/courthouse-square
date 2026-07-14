@@ -1,7 +1,7 @@
 # Lease Terms Sheet
 
 **The Burton Inn — 24007 Vashon Highway SW, Vashon (Burton), Washington 98070**
-**Draft v0.5 — July 14, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
+**Draft v0.6 — July 14, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
 
 > *The specific, negotiated terms of this Lease. Where this Terms Sheet is silent, the Standard Lease Terms and the Definitions & Glossary (attached) control; in the event of a conflict, this Terms Sheet prevails. The economic structure implements the deal described in "The Burton Inn — Rent Basis & Owner Return" (July 2026).*
 
@@ -91,7 +91,7 @@
 
 **6.4** Tenant shall fund and perform the interior fit-out described on Exhibit B (approximately $98,000); all improvements attached to the building remain Landlord's property at the end of the tenancy, without compensation. (See Article 8.2–8.3.)
 
-**6.5** Fire suppression and HVAC (approximately $50,000) are Landlord's scope and cost per Exhibit C; Landlord may finance them through the optional Tenant loan described in Exhibit D. (See Article 9.2.)
+**6.5** Fire suppression and HVAC (approximately $50,000) are Landlord's scope and cost per Exhibit C. (See Article 9.2.)
 
 **6.6** After completion of Tenant's Work, structural Alterations and non-structural Alterations exceeding $5,000 per project require Landlord's prior written consent. (See Article 8.4.)
 
@@ -111,7 +111,7 @@ All notices under this Lease shall be in writing and delivered by personal deliv
 
 ## 8 · Incorporation and Merger
 
-This Lease Terms Sheet, together with its Exhibits, the Standard Lease Terms, and the Definitions & Glossary (Draft v0.5, July 14, 2026), constitutes the entire Commercial Lease Agreement for the Premises and supersedes all prior discussions, including the July 2026 prospectus (a planning document, not a contract, except as expressly implemented herein) and any letter of intent. In the event of any conflict between this Terms Sheet and the Standard Lease Terms or Definitions & Glossary, this Terms Sheet prevails. Amendments must be in a writing signed by both parties.
+This Lease Terms Sheet, together with its Exhibits, the Standard Lease Terms, and the Definitions & Glossary (Draft v0.6, July 14, 2026), constitutes the entire Commercial Lease Agreement for the Premises and supersedes all prior discussions, including the July 2026 prospectus (a planning document, not a contract, except as expressly implemented herein) and any letter of intent. In the event of any conflict between this Terms Sheet and the Standard Lease Terms or Definitions & Glossary, this Terms Sheet prevails. Amendments must be in a writing signed by both parties.
 
 ---
 
@@ -120,7 +120,6 @@ This Lease Terms Sheet, together with its Exhibits, the Standard Lease Terms, an
 - **Exhibit A** — Legal Description.
 - **Exhibit B** — Tenant's Work (Tenant-Funded Fit-Out).
 - **Exhibit C** — Landlord's Capital Systems (Owner Scope).
-- **Exhibit D** — Optional Capital Systems Loan (optional; separately documented).
 
 ---
 
@@ -180,18 +179,8 @@ The following capital building systems are Landlord's scope and cost (approximat
 - **Fire suppression system** — design, permitting, and installation as required by code for the Permitted Use (including lodging and commercial kitchen operation).
 - **HVAC** — replacement or installation of heating, ventilation, and air-conditioning serving the Premises. (Routine maintenance thereafter is Tenant's under Article 9.1; full replacement remains Landlord's under Article 9.2 of the Standard Lease Terms.)
 
-**Timing.** Landlord shall complete each system as needed to support Tenant's phased opening — at minimum, any component legally required for Phase 1 before the Opening Date, and the remainder before the Phase 2 opening — subject to Force Majeure and Tenant cooperation. Landlord may finance this scope with the Exhibit D loan, or otherwise at Landlord's election.
+**Timing.** Landlord shall complete each system as needed to support Tenant's phased opening — at minimum, any component legally required for Phase 1 before the Opening Date, and the remainder before the Phase 2 opening — subject to Force Majeure and Tenant cooperation.
 
 ---
 
-## Exhibit D: Optional Capital Systems Loan (Optional; Separately Documented)
-
-**D.1 The Loan.** If Landlord prefers not to fund the Exhibit C systems from its own resources, Tenant shall lend Landlord up to Fifty Thousand Dollars ($50,000) (the "Loan"), advanced as Exhibit C costs come due, at exactly Tenant's cost of funds, with no spread or profit to Tenant on the Loan. This Exhibit is separable: electing or declining it does not change any other term of the Lease, and if Landlord declines, this Exhibit is struck.
-
-**D.2 Separate Documentation.** The Loan's interest rate, repayment structure, prepayment rights, and security (if any) are set out in a separate loan agreement and promissory note between Landlord and Tenant, executed outside this Lease. This Lease neither fixes nor limits those terms; in the event of any conflict between this Exhibit and the separate loan documents, the loan documents control.
-
-**D.3 Election.** Landlord elects: [ ] Elect the Loan (repayment terms per separate loan documents) — [ ] Decline (Exhibit struck). Landlord initials: ________
-
----
-
-*End of the Lease Terms Sheet for The Burton Inn — Draft v0.5, July 14, 2026. To be read with the Standard Lease Terms and the Definitions & Glossary.*
+*End of the Lease Terms Sheet for The Burton Inn — Draft v0.6, July 14, 2026. To be read with the Standard Lease Terms and the Definitions & Glossary.*

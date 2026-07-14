@@ -1,7 +1,7 @@
 # Definitions & Glossary
 
 **The Burton Inn**
-**Draft v0.5 — July 14, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
+**Draft v0.6 — July 14, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
 
 > **Applicability.** This Definitions & Glossary is one of the three documents that together form the Commercial Lease Agreement for The Burton Inn (the "Lease"): the **Lease Terms Sheet** (the deal-specific terms and exhibits), the **Standard Lease Terms** (the operating and legal terms), and this **Definitions & Glossary** (the defined terms used across both). It defines the capitalized terms used throughout the Lease. Terms defined in the Lease Terms Sheet control where they differ from the general definitions below.
 
@@ -57,4 +57,4 @@
 
 ---
 
-*End of the Definitions & Glossary for The Burton Inn — Draft v0.5, July 14, 2026. To be read with the Lease Terms Sheet and the Standard Lease Terms.*
+*End of the Definitions & Glossary for The Burton Inn — Draft v0.6, July 14, 2026. To be read with the Lease Terms Sheet and the Standard Lease Terms.*

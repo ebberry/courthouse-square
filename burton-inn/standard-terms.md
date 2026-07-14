@@ -1,7 +1,7 @@
 # Standard Lease Terms
 
 **The Burton Inn**
-**Draft v0.5 — July 14, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
+**Draft v0.6 — July 14, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
 
 > **Applicability.** These Standard Lease Terms are one of the three documents that together form the Commercial Lease Agreement for The Burton Inn (the "Lease"): the **Lease Terms Sheet** (the deal-specific terms and exhibits), these **Standard Lease Terms** (the operating and legal terms), and the **Definitions & Glossary** (the defined terms). Capitalized terms are defined in the Definitions & Glossary or in the Lease Terms Sheet. Where the Lease Terms Sheet is silent, these Standard Lease Terms control; in the event of a conflict, the Lease Terms Sheet prevails.
 
@@ -195,10 +195,10 @@ Legal notices must be in writing and delivered by personal delivery, overnight c
 
 **23.8 Severability; Counterparts; E-Signatures.** Invalid provisions are severed. The Lease may be executed in counterparts, and electronic or PDF signatures are effective except where Washington law requires original or notarized signatures.
 
-**23.9 No Partnership.** Nothing in the Lease — including Percentage Rent and the Exhibit D loan, if elected — creates a partnership, joint venture, or agency between Landlord and Tenant; the relationship is solely that of landlord and tenant (and, if Exhibit D is elected, borrower and lender).
+**23.9 No Partnership.** Nothing in the Lease — including Percentage Rent — creates a partnership, joint venture, or agency between Landlord and Tenant; the relationship is solely that of landlord and tenant.
 
 **23.10 Successors.** The Lease binds and benefits the parties and their permitted successors and assigns.
 
 ---
 
-*End of the Standard Lease Terms for The Burton Inn — Draft v0.5, July 14, 2026. Capitalized terms are defined in the accompanying Definitions & Glossary; to be read with the Lease Terms Sheet.*
+*End of the Standard Lease Terms for The Burton Inn — Draft v0.6, July 14, 2026. Capitalized terms are defined in the accompanying Definitions & Glossary; to be read with the Lease Terms Sheet.*
