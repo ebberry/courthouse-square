@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 # Build an editable Word (.docx) of the Burton Inn lease for redlining.
-# Combines the three parts of the Lease (terms-sheet.md, standard-terms.md,
-# definitions.md) into one document, each starting on a fresh page, mirroring
-# the merged lease.pdf. Uses real Word heading styles so the document is
-# navigable and Track Changes works cleanly. Plain python-docx; absolute paths.
+# Combines Part 1 (burton-inn/terms-sheet.md — Terms Sheet + Exhibits A-D) and
+# the v1.5 Standard Lease Terms + Definitions (lease/lease.md, Parts 2 & 3,
+# reused verbatim) into one document, mirroring the merged lease.pdf. Uses real
+# Word heading styles so the document is navigable and Track Changes works
+# cleanly. Plain python-docx; absolute paths.
+#
+# Note: Parts 2 & 3 are the vetted v1.5 master form — the intent is to redline
+# Part 1 (Terms Sheet + Exhibit D amendment) only and leave the form unchanged.
 
 import os, re
 from docx import Document
@@ -83,16 +87,13 @@ def style_document(doc):
 if __name__ == '__main__':
     with open(BDIR + '/terms-sheet.md') as f:
         ts = f.read()
-    with open(BDIR + '/standard-terms.md') as f:
-        st = f.read()
-    with open(BDIR + '/definitions.md') as f:
-        df = f.read()
+    with open(ROOT + '/lease/lease.md') as f:
+        form = f.read()          # Parts 2 & 3, verbatim v1.5
 
     doc = Document()
     style_document(doc)
     first = emit(doc, ts, first=True)
-    first = emit(doc, st, first=first)
-    emit(doc, df, first=first)
+    emit(doc, form, first=first)
 
     out = BDIR + '/lease.docx'
     doc.save(out)

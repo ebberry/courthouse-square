@@ -1,18 +1,22 @@
 # The Burton Inn — lease working folder
 
 Deal-specific lease for **The Burton Inn** (Burton, Vashon Island, WA), drafted from the tenant's
-**"Rent Basis & Owner Return" prospectus (July 2026)**. This folder is intentionally separate from
-`lease/` (the Courthouse Square standard multi-tenant office lease): the Burton Inn deal is a
-whole-building, single-tenant, triple-net lease with percentage rent — a different animal.
+**"Rent Basis & Owner Return" prospectus (July 2026)**. It is a whole-building, single-tenant,
+triple-net lease with percentage rent.
 
-It follows the **same three-part template** as the Courthouse Square documents (see the Bob's
-Bakery lease for the reference format) — a deal-specific Lease Terms Sheet with nine numbered
-sections and a signature page, a Standard Lease Terms boilerplate in numbered Articles, and a
-Definitions & Glossary, executed and read together, with the Terms Sheet controlling on conflict.
-It does **not** reuse the `lease/` boilerplate text — that form is built for multi-tenant office
-(CAM, proportionate share, common areas, relocation, no percentage rent) and names a different
-landlord entity. So the Burton Inn has its own parametric boilerplate, pruned to what the deal
-needs, in the same house format.
+**It reuses the Courthouse Square standard form — unchanged — as Parts 2 & 3.** The vetted
+**Standard Lease Terms + Definitions & Glossary (Version 1.5)** live in `lease/lease.md`; the Burton
+package attaches that file **verbatim** rather than keeping its own copy, so the boilerplate cannot
+drift and never has to be re-reviewed. Everything deal-specific lives in **Part 1** — the Lease
+Terms Sheet and its Exhibits, chiefly **Exhibit D**, the *Triple-Net, Percentage Rent & Single-Tenant
+Amendment* that modifies and supplements the v1.5 form for this deal. This is exactly the extension
+mechanism the v1.5 form is built for: its Article 1.7 ("NNN Variation") reserves Exhibit D for the
+NNN amendment, and its Article 2.3 reserves Exhibit C for the Tenant Work Letter — so the Burton
+exhibit lettering (A Legal, B Guaranty, C Tenant Work, D Amendment) makes every v1.5 cross-reference
+resolve with zero edits to the form.
+
+> **Why:** the goal is that Parts 2 & 3 stay identical across every lease so they're never
+> relitigated. Deal changes land in Part 1 only.
 
 > **Not public.** `netlify.toml` force-redirects `/burton-inn/*` away from the deployed site, so
 > committing these files does not publish them on courthousesquarevashon.com. (The standard lease
@@ -20,48 +24,52 @@ needs, in the same house format.
 
 ## Files
 
-Three source documents — the three parts of the Lease (all Markdown, edit directly), Draft v0.6,
-July 14, 2026:
+**One** Burton-specific source file (Part 1), plus the shared v1.5 form (Parts 2 & 3):
 
-- `terms-sheet.md` → `terms-sheet.pdf` — **Part 1, Lease Terms Sheet**: the deal page, laid out in
-  the same nine numbered sections as the Courthouse Square template (1 Parties · 2 Premises · 3 Term
-  · 4 Financial Obligations · 5 Operations & Special Conditions · 6 Additional Terms · 7 Notices ·
-  8 Incorporation & Merger · 9 Index of Exhibits), then a signature block with DocuSign/Adobe
-  e-sign anchors (`/sn1/`, `/ds1/`, `/sn2/`, `/ds2/`), then the four Exhibits (A legal description,
-  B tenant's work, C landlord systems). Every deal-specific value lives here and nowhere else.
-- `standard-terms.md` → `standard-terms.pdf` — **Part 2, Standard Lease Terms**: the operating/legal
-  boilerplate (Articles 2–23), written parametrically so it refers to the numbers "stated in the
-  Lease Terms Sheet" rather than hardcoding them.
-- `definitions.md` → `definitions.pdf` — **Part 3, Definitions & Glossary**: the defined terms used
-  across Parts 1 and 2. Terms defined on the Terms Sheet control where they differ.
-- `lease.pdf` — the three parts merged into one signable package (Terms Sheet, Standard Terms,
-  Definitions), each starting on a fresh page, with continuous page numbering. Generated only.
+- `terms-sheet.md` → `terms-sheet.pdf` — **Part 1**: the Lease Terms Sheet in the nine numbered
+  Courthouse Square sections (1 Parties · 2 Premises · 3 Term · 4 Financial Obligations · 5 Operations
+  & Special Conditions · 6 Additional Terms · 7 Notices · 8 Incorporation & Merger · 9 Index of
+  Exhibits), a signature block with DocuSign/Adobe e-sign anchors (`/sn1/`…`/ds2/`), and the four
+  Exhibits: **A** Legal Description, **B** Guaranty (none), **C** Tenant Work Letter (the ~$98k
+  fit-out), **D** Triple-Net, Percentage Rent & Single-Tenant Amendment (the deal engine — NNN,
+  percentage rent, whole-building adaptations, phased opening, capital systems). **Every
+  deal-specific term lives in this one file.** Draft v0.7, July 14, 2026.
+- `lease/lease.md` (not in this folder) — **Parts 2 & 3**, the v1.5 Standard Lease Terms +
+  Definitions & Glossary, attached verbatim. Do **not** copy it here; the build reads it in place.
+- `lease.pdf` — the full signable package: Part 1, then the v1.5 form, continuous page numbering.
+  Generated only.
 - `lease.docx` — the same combined document as an **editable Word file for redlining** (real Word
-  heading styles, so Track Changes and the navigation pane work). Generated only; regenerate after
-  any Markdown edit. Round-trip: hand this out → receive the redlined `.docx` back → apply the
-  accepted changes to the Markdown source (the Markdown stays the source of truth).
+  heading styles). Generated only. **Redline Part 1 only** — the v1.5 form (Parts 2 & 3) is the
+  frozen master and should not be edited here; changing it would defeat the whole point. Round-trip:
+  hand out → receive redlined `.docx` → apply accepted Part-1 changes back to `terms-sheet.md`.
 
-Rebuild the PDFs: `python3 tools/build_burton_lease.py` (stamps each footer from the
-`**Draft v0.6 — …**` version line in `terms-sheet.md`, so bump that line when revising).
-Rebuild the Word file: `python3 tools/build_burton_docx.py`.
+Rebuild the PDFs: `python3 tools/build_burton_lease.py` (stamps the Part-1 footer from the
+`**Draft v0.7 — …**` line in `terms-sheet.md`; Parts 2 & 3 carry their own "Version 1.5" stamp).
+Rebuild the Word file: `python3 tools/build_burton_docx.py`. The standalone v1.5 PDF is
+`lease/lease.pdf` (built by `tools/build_lease_docs.py`); the Burton package doesn't duplicate it.
 
-**Terms Sheet controls on conflict.** All three parts carry the applicability note; where they
-disagree, the Terms Sheet governs. To change a deal number, edit only `terms-sheet.md`.
+**Order of precedence:** Terms Sheet → Exhibits (Exhibit D controls over the other Exhibits and over
+the Standard Lease Terms) → Standard Lease Terms → Definitions. To change a deal term, edit
+`terms-sheet.md` only.
 
 ## How the prospectus maps into the lease
 
-| Prospectus term | Lease provision |
+All deal-specific terms live in Part 1 (Terms Sheet + Exhibit D). Parts 2 & 3 are the unchanged
+v1.5 form; "Art." below refers to that form's articles.
+
+| Prospectus term | Where it lives |
 |---|---|
-| Triple-net from day one: taxes ($8,500) + insurance ($6,500) + routine maintenance ($375/mo) ≈ $19,500/yr, at actuals, incl. Year 1; tenant carries utilities | Art. 6 (and Art. 4.5 net-lease intent) |
-| Fixed base rent $19,800/yr ($1,650/mo), abated Year 1, flat thereafter (no escalators — the % rent is the escalator) | Art. 4 |
-| Percentage rent: 10% of gross revenue over $198,000 natural breakpoint, receipts-based; monthly statements, quarterly remittance, annual certified reconciliation, owner audit vs POS (tenant pays audit cost if understatement >10%); live in Year 1 above the breakpoint | Art. 5 |
-| Tenant-funded fit-out ~$98,000 (flooring, paint, kitchen retrofit & permits, furnishings); owner keeps improvements however the tenancy evolves | Art. 8, Exhibit B |
-| Owner scope: fire suppression + HVAC (~$50,000), roof & structure | Art. 9.2, Exhibit C |
-| (The prospectus's optional $50k tenant loan for the owner's capital systems is **not** in the lease — removed entirely at v0.6; if the parties want it, it is a standalone loan agreement between them, wholly separate from this Lease) | — |
-| Phased opening: rooms first (Year 1 begins), kitchen/bar ~3 months later; base rent begins Year 2 | Art. 3.3–3.4, 4.2 |
-| Liability & liquor-liability insurance, owner additional insured | Art. 10 |
-| Year-10 purchase is a goal, **not** a lease term | Art. 19 |
-| Lease is a single obligation of the operating company (line-of-business rent allocation is illustrative) | Art. 4.6 |
+| Triple-net at actuals incl. Year 1; tenant carries utilities | Terms Sheet §4 + **Exhibit D §D.3** (supersedes v1.5 Art 1 CAM, per Art 1.7) |
+| Fixed base rent $1,650/mo, abated Year 1, flat (% rent is the escalator) | Terms Sheet §4 + **Exhibit D §D.4** |
+| Percentage rent: 10% over $198,000 breakpoint; monthly statements, quarterly remittance, annual certified reconciliation, POS audit (tenant pays audit cost if understatement >10%) | Terms Sheet §4 + **Exhibit D §D.5** |
+| Tenant-funded fit-out ~$98,000; owner keeps improvements | **Exhibit C** (Tenant Work Letter) + v1.5 **Art 4.5** (permanent Alterations remain Landlord's) |
+| Owner scope: fire suppression + HVAC (~$50,000), roof & structure | **Exhibit D §§D.7–D.8** + v1.5 **Art 4.2** |
+| Phased opening; base rent begins Year 2 | **Exhibit D §D.6** |
+| Whole building, single tenant — no CAM / Proportionate Share / relocation | **Exhibit D §D.2** (disapplies v1.5 Art 12 etc.) |
+| Liquor-liability + business-income insurance, owner additional insured | **Exhibit D §D.10** (supplements v1.5 Art 6) |
+| Year-10 purchase is a goal, **not** a lease term | **Exhibit D §D.12** |
+| Alterations consent over $5,000 | v1.5 **Art 4.3** as-is (already $5,000 — no override needed) |
+| (Optional $50k capital-systems loan is **not** in the lease — a standalone agreement if the parties want it) | — |
 
 ## Confirmed deal points (v0.2, answered July 11, 2026)
 
@@ -71,38 +79,37 @@ disagree, the Terms Sheet governs. To change a deal number, edit only `terms-she
    (S 100 FT OF N 130 FT OF W 150 FT OF E 180 FT OF GOVT LOT 2 IN NE QTR STR 19-22-03), with the
    vesting deed controlling if the full legal differs.
 3. **Term**: 10 Lease Years, July 1, 2026 – June 30, 2036, plus **one 5-year option** (same terms,
-   same flat base and breakpoint, notice 9–15 months out) — Art. 3.5.
+   same flat base and breakpoint, notice 9–15 months out) — Exhibit D §D.6.
 4. **Commencement July 1, 2026** (possession already delivered); **NNN + utilities start
    August 1, 2026**, with July 2026 carried by the landlord; annual costs prorated per diem.
 5. **Lease Years are July 1–June 30**; Year 1 abatement ends June 30, 2027 and base rent starts
    July 1, 2027 regardless of fit-out pace (no opening-date abatement machinery needed).
-6. **No security deposit, no guaranty** (Art. 20 records the reasoning: the fit-out that attaches
-   to the building + NNN structure serve that function).
-7. **Operating covenant**: 6 weeks/year seasonal-closure allowance, running from the Opening Date.
-8. **Alterations consent threshold**: $5,000 (matches the Courthouse Square standard).
+6. **No security deposit, no guaranty** (Terms Sheet §4; Exhibit B is "none").
+7. **Operating covenant**: 6 weeks/year seasonal-closure allowance from the Opening Date — Exhibit D §D.5(f).
+8. **Alterations consent threshold**: $5,000 — already the v1.5 standard (Art 4.3), so no override.
 9. **Audit threshold kept at 10%** as the prospectus proposed (market is 2–5%; owner's counsel may
-   push down — flagged, accepted).
-10. **No capital-systems loan in the lease.** The prospectus's optional $50k tenant→owner loan
-    (former Exhibit D) is removed entirely as of v0.6 per owner request — no Exhibit D, no
-    borrower/lender language. If the parties want it, it lives in a wholly separate loan agreement
-    with no reference in this Lease. Exhibit C still puts the fire-suppression/HVAC scope on the
-    owner; how the owner funds it is off-document.
-11. **No purchase rights** — Art. 19 keeps the Year-10 purchase as a goal only, per the prospectus.
+   push down — flagged, accepted) — Exhibit D §D.5(e).
+10. **No capital-systems loan in the lease** — if the parties want it, it's a standalone agreement,
+    not referenced here.
+11. **No purchase rights** — Year-10 purchase is a goal only — Exhibit D §D.12.
 12. **Notices**: Landlord at the property (24007 Vashon Hwy SW); Tenant at 9405 SW Gorsuch Rd.
 
 ## Standing drafting notes
 
-- **Percentage rent in default damages** (Art. 14.2): deemed at trailing 36-month average — a
-  standard solution the prospectus doesn't address.
-- **SNDA** (Art. 15.1): future lenders must non-disturb the abatement + percentage structure.
-- **Notarization/recording** (Art. 23.2): Washington requires acknowledgment for a lease over two
-  years; signing should happen before a notary, memorandum recordable on request.
-- **Capital-systems loan**: entirely out of the lease as of v0.6 (no Exhibit D). If the owner and
-  tenant paper one, keep it a standalone agreement — do not reintroduce it or any borrower/lender
-  language into these three documents.
+- **Parts 2 & 3 are the CS v1.5 form, adopted verbatim** (Option A). The one thing to confirm with
+  counsel: the attached form is stamped **"Courthouse Square Vashon LLC"**, and it is incorporated
+  by reference into a **Burton Landing LLC** lease. That's normal (one master form across a
+  portfolio) and the body is entity-neutral ("Landlord"/"Tenant"/"the Property"), but if a reviewer
+  wants the form itself to read property-neutral, that's a one-time edit to `lease/lease.md` (which
+  also affects the Courthouse Square site) — raise it before doing it.
+- **Deal overrides all live in Exhibit D.** Percentage-rent-in-default-damages (§D.13), SNDA (§D.14),
+  and notarization/recording for a 10-year term (§D.15) are there too — the prospectus didn't
+  address them.
+- **Casualty**: kept the v1.5 form's 180-day repair window (Art 7) rather than overriding to 270;
+  raise it in Exhibit D if the tenant wants longer.
 
 ## Publishing / next steps
 
-- Both parties review → bump to v1.0 and regenerate the PDFs.
-- Bump the `**Draft v… — …**` line in `terms-sheet.md` (and match it in `standard-terms.md`) when
-  revising; the build script reads the version from the Terms Sheet.
+- Both parties review (Part 1 / Exhibit D is what gets negotiated) → bump to v1.0 and regenerate.
+- Bump the `**Draft v… — …**` line in `terms-sheet.md` when revising; the build reads the Part-1
+  version from there. Parts 2 & 3 keep their own "Version 1.5" stamp and don't change per deal.
