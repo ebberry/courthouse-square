@@ -1,9 +1,9 @@
 # Lease Terms Sheet
 
 **The Burton Inn — 24007 Vashon Highway SW, Vashon (Burton), Washington 98070**
-**Draft v0.7 — July 14, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
+**Draft v0.8 — July 23, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
 
-> *The specific, negotiated terms of this Lease. This Terms Sheet, together with its Exhibits, incorporates the **Standard Lease Terms** and the **Definitions & Glossary** (Courthouse Square Vashon LLC standard form, Version 1.5, June 29, 2026), which are attached and apply unchanged. Where this Terms Sheet or an Exhibit is silent, the Standard Lease Terms and Definitions & Glossary control; in the event of a conflict, this Terms Sheet and its Exhibits prevail. The economic structure implements the deal described in "The Burton Inn — Rent Basis & Owner Return" (July 2026).*
+> *The specific, negotiated terms of this Lease. This Terms Sheet, together with its Exhibits, incorporates the **Standard Lease Terms** and the **Definitions & Glossary** (neutral standard form, Version 1.6, July 23, 2026), which are attached and apply unchanged. Where this Terms Sheet or an Exhibit is silent, the Standard Lease Terms and Definitions & Glossary control; in the event of a conflict, this Terms Sheet and its Exhibits prevail. The economic structure implements the deal described in "The Burton Inn — Rent Basis & Owner Return" (July 2026).*
 
 ---
 
@@ -101,7 +101,7 @@ All notices under this Lease shall be in writing and delivered by personal deliv
 
 ## 8 · Incorporation and Merger
 
-This Lease Terms Sheet, together with its Exhibits, the **Standard Lease Terms**, and the **Definitions & Glossary** (Courthouse Square Vashon LLC standard form, Version 1.5, June 29, 2026, attached and applying unchanged), constitutes the entire Commercial Lease Agreement for the Premises and supersedes all prior discussions, including the July 2026 prospectus (a planning document, not a contract, except as expressly implemented herein) and any letter of intent. Order of precedence: (1) this Terms Sheet; (2) the Exhibits, with Exhibit D controlling over the other Exhibits and over the Standard Lease Terms to the extent of any conflict; (3) the Standard Lease Terms; (4) the Definitions & Glossary. Amendments must be in a writing signed by both parties.
+This Lease Terms Sheet, together with its Exhibits, the **Standard Lease Terms**, and the **Definitions & Glossary** (neutral standard form, Version 1.6, July 23, 2026, attached and applying unchanged), constitutes the entire Commercial Lease Agreement for the Premises and supersedes all prior discussions, including the July 2026 prospectus (a planning document, not a contract, except as expressly implemented herein) and any letter of intent. Order of precedence: (1) this Terms Sheet; (2) the Exhibits, with Exhibit D controlling over the other Exhibits and over the Standard Lease Terms to the extent of any conflict; (3) the Standard Lease Terms; (4) the Definitions & Glossary. Amendments must be in a writing signed by both parties.
 
 ---
 
@@ -212,4 +212,4 @@ This is the Tenant Work Letter referenced in Article 2.3 of the Standard Lease T
 
 ---
 
-*End of the Lease Terms Sheet and Exhibits for The Burton Inn — Draft v0.7, July 14, 2026. To be read with the attached Standard Lease Terms and Definitions & Glossary (Courthouse Square Vashon LLC standard form, Version 1.5, June 29, 2026).*
+*End of the Lease Terms Sheet and Exhibits for The Burton Inn — Draft v0.8, July 23, 2026. To be read with the attached Standard Lease Terms and Definitions & Glossary (neutral standard form, Version 1.6, July 23, 2026).*

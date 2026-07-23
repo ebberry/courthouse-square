@@ -4,8 +4,8 @@ Deal-specific lease for **The Burton Inn** (Burton, Vashon Island, WA), drafted 
 **"Rent Basis & Owner Return" prospectus (July 2026)**. It is a whole-building, single-tenant,
 triple-net lease with percentage rent.
 
-**It reuses the Courthouse Square standard form — unchanged — as Parts 2 & 3.** The vetted
-**Standard Lease Terms + Definitions & Glossary (Version 1.5)** live in `lease/lease.md`; the Burton
+**It reuses the shared standard form — unchanged — as Parts 2 & 3.** The vetted
+**Standard Lease Terms + Definitions & Glossary (Version 1.6, neutral)** live in `lease/lease.md`; the Burton
 package attaches that file **verbatim** rather than keeping its own copy, so the boilerplate cannot
 drift and never has to be re-reviewed. Everything deal-specific lives in **Part 1** — the Lease
 Terms Sheet and its Exhibits, chiefly **Exhibit D**, the *Triple-Net, Percentage Rent & Single-Tenant
@@ -33,7 +33,7 @@ resolve with zero edits to the form.
   Exhibits: **A** Legal Description, **B** Guaranty (none), **C** Tenant Work Letter (the ~$98k
   fit-out), **D** Triple-Net, Percentage Rent & Single-Tenant Amendment (the deal engine — NNN,
   percentage rent, whole-building adaptations, phased opening, capital systems). **Every
-  deal-specific term lives in this one file.** Draft v0.7, July 14, 2026.
+  deal-specific term lives in this one file.** Draft v0.8, July 23, 2026.
 - `lease/lease.md` (not in this folder) — **Parts 2 & 3**, the v1.5 Standard Lease Terms +
   Definitions & Glossary, attached verbatim. Do **not** copy it here; the build reads it in place.
 - `lease.pdf` — the full signable package: Part 1, then the v1.5 form, continuous page numbering.
@@ -44,7 +44,7 @@ resolve with zero edits to the form.
   hand out → receive redlined `.docx` → apply accepted Part-1 changes back to `terms-sheet.md`.
 
 Rebuild the PDFs: `python3 tools/build_burton_lease.py` (stamps the Part-1 footer from the
-`**Draft v0.7 — …**` line in `terms-sheet.md`; Parts 2 & 3 carry their own "Version 1.5" stamp).
+`**Draft v0.8 — …**` line in `terms-sheet.md`; Parts 2 & 3 carry their own "Version 1.6" stamp).
 Rebuild the Word file: `python3 tools/build_burton_docx.py`. The standalone v1.5 PDF is
 `lease/lease.pdf` (built by `tools/build_lease_docs.py`); the Burton package doesn't duplicate it.
 
@@ -96,12 +96,12 @@ v1.5 form; "Art." below refers to that form's articles.
 
 ## Standing drafting notes
 
-- **Parts 2 & 3 are the CS v1.5 form, adopted verbatim** (Option A). The one thing to confirm with
-  counsel: the attached form is stamped **"Courthouse Square Vashon LLC"**, and it is incorporated
-  by reference into a **Burton Landing LLC** lease. That's normal (one master form across a
-  portfolio) and the body is entity-neutral ("Landlord"/"Tenant"/"the Property"), but if a reviewer
-  wants the form itself to read property-neutral, that's a one-time edit to `lease/lease.md` (which
-  also affects the Courthouse Square site) — raise it before doing it.
+- **Parts 2 & 3 are the shared standard form, adopted verbatim** (Option A). As of **Version 1.6
+  (July 23, 2026)** the form is fully **neutral** — it names no entity or property; the header says
+  the Landlord, Tenant, and Property are identified in the Lease Terms Sheet. `check_site.py` now
+  *enforces* neutrality (fails CI if any identity.json entity/address string appears in the form),
+  so the only variables in any lease built on it are in Part 1. The Courthouse Square suite-lease
+  documents incorporate the same v1.6 form.
 - **Deal overrides all live in Exhibit D.** Percentage-rent-in-default-damages (§D.13), SNDA (§D.14),
   and notarization/recording for a 10-year term (§D.15) are there too — the prospectus didn't
   address them.
@@ -112,4 +112,4 @@ v1.5 form; "Art." below refers to that form's articles.
 
 - Both parties review (Part 1 / Exhibit D is what gets negotiated) → bump to v1.0 and regenerate.
 - Bump the `**Draft v… — …**` line in `terms-sheet.md` when revising; the build reads the Part-1
-  version from there. Parts 2 & 3 keep their own "Version 1.5" stamp and don't change per deal.
+  version from there. Parts 2 & 3 keep their own "Version 1.6" stamp and don't change per deal.

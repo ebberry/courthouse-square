@@ -84,8 +84,14 @@ check(f"{version}, {vdate}" in lease_page or f"{version.replace('Version ', 'v')
 lease_md = read('lease/lease.md')
 check(f"{version}, {vdate}" in lease_md,
       f"lease/lease.md: header does not carry '{version}, {vdate}'")
-check(ident['entity'] in lease_md,
-      f"lease/lease.md: does not name the entity {ident['entity']!r}")
+# Since v1.6 the Standard Lease Terms are a NEUTRAL form: every party- and
+# property-specific term lives in each deal's Lease Terms Sheet (this lets other
+# properties, e.g. the Burton Inn, incorporate the same form verbatim). Guard
+# against entity/property names creeping back into the form text.
+for leak in (ident['entity'], ident['building'], ident['buildingAddress'],
+             ident['noticeAddress'], ident['noticeCareOf'], ident['email']):
+    check(leak not in lease_md,
+          f"lease/lease.md: form is no longer neutral — contains {leak!r}")
 
 # The builder's offline fallback identity must match identity.json.
 bjs_src = read('js/lease-builder.js')

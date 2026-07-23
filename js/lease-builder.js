@@ -37,8 +37,8 @@
     noticeAddress: '20704 Vashon Highway SW, Vashon Island, WA 98070',
     noticeCareOf: 'c/o Bangasser & Associates, Inc.',
     email: 'leasing@courthousesquarevashon.com',
-    version: 'Version 1.5',
-    versionDate: 'June 29, 2026',
+    version: 'Version 1.6',
+    versionDate: 'July 23, 2026',
   };
   const landlordNotice = () =>
     `${IDENT.entity}, ${IDENT.noticeCareOf}, ${IDENT.noticeAddress}. Courtesy email: ${IDENT.email}`;

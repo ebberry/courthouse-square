@@ -552,6 +552,8 @@ if __name__ == '__main__':
     # 4. consolidated review package (internal)
     cover = os.path.join(tempfile.gettempdir(), '_chs_cover.pdf')
     build_cover(cover)
+    import datetime
+    vtag = datetime.datetime.strptime(VDATE, '%B %d, %Y').strftime('v%Y.%m.%d')
     merge([cover, ROOT+'/lease/letter-of-intent.pdf', ROOT+'/lease/lease-terms-sheet.pdf', ROOT+'/lease/lease.pdf'],
-          REVIEW+'/CourthouseSquare_FullLease_v2026.06.29.pdf')
+          REVIEW+f'/CourthouseSquare_FullLease_{vtag}.pdf')
     print('DONE')
