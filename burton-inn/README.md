@@ -33,7 +33,7 @@ resolve with zero edits to the form.
   Exhibits: **A** Legal Description, **B** Guaranty (none), **C** Tenant Work Letter (the ~$98k
   fit-out), **D** Triple-Net, Percentage Rent & Single-Tenant Amendment (the deal engine — NNN,
   percentage rent, whole-building adaptations, phased opening, capital systems). **Every
-  deal-specific term lives in this one file.** Draft v0.9, July 24, 2026.
+  deal-specific term lives in this one file.** Draft v0.10, July 25, 2026.
 - `lease/lease.md` (not in this folder) — **Parts 2 & 3**, the v1.5 Standard Lease Terms +
   Definitions & Glossary, attached verbatim. Do **not** copy it here; the build reads it in place.
 - `lease.pdf` — the full signable package: Part 1, then the v1.5 form, continuous page numbering.
@@ -44,7 +44,7 @@ resolve with zero edits to the form.
   hand out → receive redlined `.docx` → apply accepted Part-1 changes back to `terms-sheet.md`.
 
 Rebuild the PDFs: `python3 tools/build_burton_lease.py` (stamps the Part-1 footer from the
-`**Draft v0.9 — …**` line in `terms-sheet.md`; Parts 2 & 3 carry their own "Version 1.6" stamp).
+`**Draft v0.10 — …**` line in `terms-sheet.md`; Parts 2 & 3 carry their own "Version 1.6" stamp).
 Rebuild the Word file: `python3 tools/build_burton_docx.py`. The standalone v1.5 PDF is
 `lease/lease.pdf` (built by `tools/build_lease_docs.py`); the Burton package doesn't duplicate it.
 
@@ -78,14 +78,24 @@ v1.5 form; "Art." below refers to that form's articles.
 2. **Premises**: 24007 Vashon Hwy SW, Vashon, WA 98070; abbreviated legal in Exhibit A
    (S 100 FT OF N 130 FT OF W 150 FT OF E 180 FT OF GOVT LOT 2 IN NE QTR STR 19-22-03), with the
    vesting deed controlling if the full legal differs.
-3. **Term**: **5-year Initial Term**, July 1, 2026 – June 30, 2031, so the parties can assess
+3. **Term**: **5-year Initial Term**, September 1, 2026 – August 31, 2031, so the parties can assess
    performance on the first term before committing further, plus **one 5-year extension option**
-   (Lease Years 6–10, same flat base and breakpoint, notice 9–15 months out) — Exhibit D §D.6. The
-   Year-10 purchase goal (D.12) is unaffected: reachable if the option is exercised.
-4. **Commencement July 1, 2026** (possession already delivered); **NNN + utilities start
-   August 1, 2026**, with July 2026 carried by the landlord; annual costs prorated per diem.
-5. **Lease Years are July 1–June 30**; Year 1 abatement ends June 30, 2027 and base rent starts
-   July 1, 2027 regardless of fit-out pace (no opening-date abatement machinery needed).
+   (Lease Years 6–10, September 1, 2031 – August 31, 2036, same flat base and breakpoint, notice
+   9–15 months out) — Exhibit D §D.6. The Year-10 purchase goal (D.12) is unaffected: reachable if
+   the option is exercised.
+4. **Commencement September 1, 2026** (possession already delivered); **NNN + utilities start
+   October 1, 2026**, with September 2026 carried by the landlord; annual costs prorated per diem.
+5. **Lease Years are September 1–August 31**; Year 1 abatement ends August 31, 2027 and base rent
+   starts September 1, 2027 regardless of fit-out pace (no opening-date abatement machinery needed).
+   - *Consequence worth flagging:* a Sept-anchored Lease Year no longer aligns to calendar-quarter
+     boundaries the way the original July-anchored one did (July–June breaks into exactly four
+     calendar quarters; September–August does not — Lease Year 1 starts and ends mid-quarter).
+     Percentage-rent quarters were **kept calendar-based** (Jan–Mar/Apr–Jun/Jul–Sep/Oct–Dec)
+     rather than redefined around the Lease Year, since that was the tenant's explicit instruction.
+     Exhibit D §D.5(d) now says plainly that the Lease Year doesn't align to quarter boundaries,
+     rather than falsely claiming it does; the cumulative-Lease-Year-to-date true-up absorbs the
+     misalignment without a separate partial-quarter calculation. The four payment deadlines
+     (Apr 30 / Jul 31 / Oct 31 / Jan 31) are unchanged.
 6. **No security deposit, no guaranty** (Terms Sheet §4; Exhibit B is "none").
 7. **Operating covenant**: 6 weeks/year seasonal-closure allowance from the Opening Date — Exhibit D §D.5(f).
 8. **Alterations consent threshold**: $5,000 — already the v1.5 standard (Art 4.3), so no override.
