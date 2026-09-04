@@ -33,7 +33,7 @@ resolve with zero edits to the form.
   Exhibits: **A** Legal Description, **B** Guaranty (none), **C** Tenant Work Letter (the ~$98k
   fit-out), **D** Triple-Net, Percentage Rent & Single-Tenant Amendment (the deal engine — NNN,
   percentage rent, whole-building adaptations, phased opening, capital systems). **Every
-  deal-specific term lives in this one file.** Draft v0.8, July 23, 2026.
+  deal-specific term lives in this one file.** Draft v0.9, July 24, 2026.
 - `lease/lease.md` (not in this folder) — **Parts 2 & 3**, the v1.5 Standard Lease Terms +
   Definitions & Glossary, attached verbatim. Do **not** copy it here; the build reads it in place.
 - `lease.pdf` — the full signable package: Part 1, then the v1.5 form, continuous page numbering.
@@ -44,7 +44,7 @@ resolve with zero edits to the form.
   hand out → receive redlined `.docx` → apply accepted Part-1 changes back to `terms-sheet.md`.
 
 Rebuild the PDFs: `python3 tools/build_burton_lease.py` (stamps the Part-1 footer from the
-`**Draft v0.8 — …**` line in `terms-sheet.md`; Parts 2 & 3 carry their own "Version 1.6" stamp).
+`**Draft v0.9 — …**` line in `terms-sheet.md`; Parts 2 & 3 carry their own "Version 1.6" stamp).
 Rebuild the Word file: `python3 tools/build_burton_docx.py`. The standalone v1.5 PDF is
 `lease/lease.pdf` (built by `tools/build_lease_docs.py`); the Burton package doesn't duplicate it.
 
@@ -61,7 +61,7 @@ v1.5 form; "Art." below refers to that form's articles.
 |---|---|
 | Triple-net at actuals incl. Year 1; tenant carries utilities | Terms Sheet §4 + **Exhibit D §D.3** (supersedes v1.5 Art 1 CAM, per Art 1.7) |
 | Fixed base rent $1,650/mo, abated Year 1, flat (% rent is the escalator) | Terms Sheet §4 + **Exhibit D §D.4** |
-| Percentage rent: 10% over $198,000 breakpoint; monthly statements, quarterly remittance, annual certified reconciliation, POS audit (tenant pays audit cost if understatement >10%) | Terms Sheet §4 + **Exhibit D §D.5** |
+| Percentage rent: 10% over $198,000 breakpoint; monthly Gross Revenue statements, paid/reconciled quarterly on a **calendar-quarter** basis with a **1-month payment window** (Q1 Jan–Mar due Apr 30; Q2 Apr–Jun due Jul 31; Q3 Jul–Sep due Oct 31; Q4 Oct–Dec due Jan 31), annual certified reconciliation, POS audit (tenant pays audit cost if understatement >10%) | Terms Sheet §4 + **Exhibit D §D.5(d)** |
 | Tenant-funded fit-out ~$98,000; owner keeps improvements | **Exhibit C** (Tenant Work Letter) + v1.5 **Art 4.5** (permanent Alterations remain Landlord's) |
 | Owner scope: fire suppression + HVAC (~$50,000), roof & structure | **Exhibit D §§D.7–D.8** + v1.5 **Art 4.2** |
 | Phased opening; base rent begins Year 2 | **Exhibit D §D.6** |
@@ -78,8 +78,10 @@ v1.5 form; "Art." below refers to that form's articles.
 2. **Premises**: 24007 Vashon Hwy SW, Vashon, WA 98070; abbreviated legal in Exhibit A
    (S 100 FT OF N 130 FT OF W 150 FT OF E 180 FT OF GOVT LOT 2 IN NE QTR STR 19-22-03), with the
    vesting deed controlling if the full legal differs.
-3. **Term**: 10 Lease Years, July 1, 2026 – June 30, 2036, plus **one 5-year option** (same terms,
-   same flat base and breakpoint, notice 9–15 months out) — Exhibit D §D.6.
+3. **Term**: **5-year Initial Term**, July 1, 2026 – June 30, 2031, so the parties can assess
+   performance on the first term before committing further, plus **one 5-year extension option**
+   (Lease Years 6–10, same flat base and breakpoint, notice 9–15 months out) — Exhibit D §D.6. The
+   Year-10 purchase goal (D.12) is unaffected: reachable if the option is exercised.
 4. **Commencement July 1, 2026** (possession already delivered); **NNN + utilities start
    August 1, 2026**, with July 2026 carried by the landlord; annual costs prorated per diem.
 5. **Lease Years are July 1–June 30**; Year 1 abatement ends June 30, 2027 and base rent starts
