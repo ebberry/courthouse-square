@@ -157,6 +157,100 @@ try:
 except ImportError:
     print("note: pypdf not installed; skipping PDF content checks")
 
+# =====================================================================
+# E. Berry listings site (Phase 1): feed, buildings, cross-checks, build config
+# =====================================================================
+FEED_KEYS = ('id', 'type', 'title', 'address', 'lat', 'lng', 'rent', 'beds', 'baths',
+             'sqft', 'available', 'photos', 'summary', 'features')
+OPTIONAL_KEYS = ('buildingId',)
+BUILDING_FIELD_COLORS = {'berry', 'tangerine', 'sky', 'mustard', 'sage', 'sand'}
+BUILDING_REQUIRED = ('id', 'name', 'shortName', 'address', 'lat', 'lng', 'fieldColor',
+                     'tagline', 'description', 'featureBullets', 'gallery', 'leaseUrl',
+                     'neighborWall', 'addressMatch')
+
+def is_num(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+# ---------------- data/listings.json ----------------
+listings_doc = json.loads(read('data/listings.json'))
+check(isinstance(listings_doc, dict) and set(listings_doc) == {'updated', 'listings'},
+      "listings.json: envelope must be exactly {updated, listings}")
+listings = listings_doc.get('listings', []) if isinstance(listings_doc, dict) else []
+check(re.fullmatch(r'\d{4}-\d{2}-\d{2}', str(listings_doc.get('updated', ''))) is not None,
+      f"listings.json: updated {listings_doc.get('updated')!r} is not YYYY-MM-DD")
+check(isinstance(listings, list) and len(listings) > 0, "listings.json: no listings")
+
+seen_ids = set()
+for L in listings:
+    lid = L.get('id', '<missing>')
+    keys = set(L)
+    check(set(FEED_KEYS) <= keys and keys <= set(FEED_KEYS) | set(OPTIONAL_KEYS),
+          f"listings.json {lid}: keys must be the 14 feed keys (+ optional buildingId); "
+          f"missing={sorted(set(FEED_KEYS) - keys)} extra={sorted(keys - set(FEED_KEYS) - set(OPTIONAL_KEYS))}")
+    check(isinstance(lid, str) and re.fullmatch(r'[a-z0-9-]+', lid) is not None,
+          f"listings.json {lid}: id must match ^[a-z0-9-]+$")
+    check(lid not in seen_ids, f"listings.json {lid}: duplicate id")
+    seen_ids.add(lid)
+    check(L.get('type') in ('residential', 'commercial'),
+          f"listings.json {lid}: type {L.get('type')!r} not residential/commercial")
+    check(is_num(L.get('rent')) and L['rent'] > 0,
+          f"listings.json {lid}: rent {L.get('rent')!r} must be > 0")
+    lat, lng = L.get('lat'), L.get('lng')
+    if lat is None or lng is None:
+        check(lat is None and lng is None,
+              f"listings.json {lid}: lat and lng must both be null or both be numbers")
+    else:
+        check(isinstance(lat, float) and isinstance(lng, float)
+              and 47.2 <= lat <= 47.6 and -122.6 <= lng <= -122.3,
+              f"listings.json {lid}: lat/lng ({lat!r}, {lng!r}) not floats within 47.2-47.6 / -122.6--122.3")
+    av = L.get('available')
+    check(av is None or (isinstance(av, str) and re.fullmatch(r'\d{4}-\d{2}-\d{2}', av) is not None),
+          f"listings.json {lid}: available {av!r} must be null or YYYY-MM-DD")
+    photos = L.get('photos')
+    check(isinstance(photos, list), f"listings.json {lid}: photos must be an array")
+    for ph in photos if isinstance(photos, list) else []:
+        check(isinstance(ph, str) and os.path.exists(os.path.join(ROOT, ph.lstrip('/'))),
+              f"listings.json {lid}: photo {ph!r} does not exist in the repo")
+
+# ---------------- data/buildings.json ----------------
+buildings_doc = json.loads(read('data/buildings.json'))
+buildings = buildings_doc.get('buildings', []) if isinstance(buildings_doc, dict) else []
+check(isinstance(buildings, list) and len(buildings) > 0, "buildings.json: no buildings")
+building_ids = set()
+for B in buildings:
+    bid = B.get('id', '<missing>')
+    building_ids.add(bid)
+    for fld in BUILDING_REQUIRED:
+        check(fld in B, f"buildings.json {bid}: missing field {fld!r}")
+    check(B.get('fieldColor') in BUILDING_FIELD_COLORS,
+          f"buildings.json {bid}: fieldColor {B.get('fieldColor')!r} not in {sorted(BUILDING_FIELD_COLORS)}")
+for L in listings:
+    if 'buildingId' in L:
+        check(L['buildingId'] in building_ids,
+              f"listings.json {L.get('id')}: buildingId {L['buildingId']!r} not found in buildings.json")
+
+# ---------------- cross-check: vacancies.json <-> listings.json ----------------
+listing_by_id = {L.get('id'): L for L in listings}
+suite_ids = set()
+for s in suites:
+    lid = 'chs-' + str(s.get('unit', '')).lower()
+    suite_ids.add(lid)
+    L = listing_by_id.get(lid)
+    check(L is not None, f"listings.json: no listing {lid!r} for vacancies.json suite {s.get('unit')}")
+    if L is not None:
+        check(L.get('sqft') == s.get('sqft'),
+              f"listings.json {lid}: sqft {L.get('sqft')!r} != vacancies.json {s.get('sqft')!r}")
+        check(is_num(L.get('rent')) and is_num(s.get('allIn')) and abs(L['rent'] - s['allIn']) <= 0.01,
+              f"listings.json {lid}: rent {L.get('rent')!r} != vacancies.json allIn {s.get('allIn')!r}")
+for lid in listing_by_id:
+    if isinstance(lid, str) and lid.startswith('chs-'):
+        check(lid in suite_ids, f"listings.json {lid}: no matching suite in vacancies.json")
+
+# ---------------- tailwind content globs for the listings pages ----------------
+tw_cfg = read('tailwind.config.js')
+for glob_ in ('./listings/**/*.html', './js/listings.js'):
+    check(glob_ in tw_cfg, f"tailwind.config.js content[] does not include {glob_}")
+
 # ---------------- verdict ----------------
 if problems:
     print(f"FAIL: {len(problems)} problem(s) out of {checks} checks")

@@ -1,0 +1,181 @@
+{
+  "updated": "2026-10-04",
+  "listings": [
+    {
+      "id": "chs-n101",
+      "type": "commercial",
+      "title": "Suite N101 — Courthouse Square",
+      "address": "19001 Vashon Hwy SW, Suite N101, Vashon, WA 98070",
+      "lat": 47.4471,
+      "lng": -122.46,
+      "rent": 1181,
+      "beds": null,
+      "baths": null,
+      "sqft": 259,
+      "available": null,
+      "photos": [],
+      "summary": "Room for a small practice with a waiting area, such as therapy, counseling, or bodywork. All-in $1,181/mo covers rent, CAM, and shared utilities.",
+      "features": [
+        "All-in pricing — rent, CAM & shared utilities",
+        "Free on-site parking",
+        "Ferry-friendly location on Vashon Hwy SW",
+        "Room for a small practice with a waiting area"
+      ],
+      "buildingId": "courthouse-square"
+    },
+    {
+      "id": "chs-n102",
+      "type": "commercial",
+      "title": "Suite N102 — Courthouse Square",
+      "address": "19001 Vashon Hwy SW, Suite N102, Vashon, WA 98070",
+      "lat": 47.4471,
+      "lng": -122.46,
+      "rent": 456,
+      "beds": null,
+      "baths": null,
+      "sqft": 100,
+      "available": null,
+      "photos": [],
+      "summary": "A compact single-room office, ideal for a solo practitioner or consultant. All-in $456/mo covers rent, CAM, and shared utilities.",
+      "features": [
+        "All-in pricing — rent, CAM & shared utilities",
+        "Free on-site parking",
+        "Ferry-friendly location on Vashon Hwy SW",
+        "Compact single-room office for a solo practitioner or consultant"
+      ],
+      "buildingId": "courthouse-square"
+    },
+    {
+      "id": "chs-n103",
+      "type": "commercial",
+      "title": "Suite N103 — Courthouse Square",
+      "address": "19001 Vashon Hwy SW, Suite N103, Vashon, WA 98070",
+      "lat": 47.4471,
+      "lng": -122.46,
+      "rent": 730,
+      "beds": null,
+      "baths": null,
+      "sqft": 160,
+      "available": null,
+      "photos": [],
+      "summary": "A quiet one-room suite suited to coaching, tutoring, or a satellite office. All-in $730/mo covers rent, CAM, and shared utilities.",
+      "features": [
+        "All-in pricing — rent, CAM & shared utilities",
+        "Free on-site parking",
+        "Ferry-friendly location on Vashon Hwy SW",
+        "Quiet one-room suite for coaching, tutoring, or a satellite office"
+      ],
+      "buildingId": "courthouse-square"
+    },
+    {
+      "id": "chs-n108",
+      "type": "commercial",
+      "title": "Suite N108 — Courthouse Square",
+      "address": "19001 Vashon Hwy SW, Suite N108, Vashon, WA 98070",
+      "lat": 47.4471,
+      "lng": -122.46,
+      "rent": 1158,
+      "beds": null,
+      "baths": null,
+      "sqft": 254,
+      "available": null,
+      "photos": [],
+      "summary": "A roomy ground-floor suite for a professional practice that sees clients by appointment. All-in $1,158/mo covers rent, CAM, and shared utilities.",
+      "features": [
+        "All-in pricing — rent, CAM & shared utilities",
+        "Free on-site parking",
+        "Ferry-friendly location on Vashon Hwy SW",
+        "Roomy ground-floor suite for client appointments"
+      ],
+      "buildingId": "courthouse-square"
+    },
+    {
+      "id": "chs-n110",
+      "type": "commercial",
+      "title": "Suite N110 — Courthouse Square",
+      "address": "19001 Vashon Hwy SW, Suite N110, Vashon, WA 98070",
+      "lat": 47.4471,
+      "lng": -122.46,
+      "rent": 684,
+      "beds": null,
+      "baths": null,
+      "sqft": 150,
+      "available": null,
+      "photos": [],
+      "summary": "A right-sized office for an accountant, attorney, or independent advisor. All-in $684/mo covers rent, CAM, and shared utilities.",
+      "features": [
+        "All-in pricing — rent, CAM & shared utilities",
+        "Free on-site parking",
+        "Ferry-friendly location on Vashon Hwy SW",
+        "Right-sized office for an accountant, attorney, or advisor"
+      ],
+      "buildingId": "courthouse-square"
+    },
+    {
+      "id": "chs-n203",
+      "type": "commercial",
+      "title": "Suite N203 — Courthouse Square",
+      "address": "19001 Vashon Hwy SW, Suite N203, Vashon, WA 98070",
+      "lat": 47.4471,
+      "lng": -122.46,
+      "rent": 912,
+      "beds": null,
+      "baths": null,
+      "sqft": 200,
+      "available": null,
+      "photos": [],
+      "summary": "An upstairs office with good light, well suited to a designer, planner, or small agency. All-in $912/mo covers rent, CAM, and shared utilities.",
+      "features": [
+        "All-in pricing — rent, CAM & shared utilities",
+        "Free on-site parking",
+        "Ferry-friendly location on Vashon Hwy SW",
+        "Upstairs office with good light"
+      ],
+      "buildingId": "courthouse-square"
+    },
+    {
+      "id": "chs-n204",
+      "type": "commercial",
+      "title": "Suite N204 — Courthouse Square",
+      "address": "19001 Vashon Hwy SW, Suite N204, Vashon, WA 98070",
+      "lat": 47.4471,
+      "lng": -122.46,
+      "rent": 912,
+      "beds": null,
+      "baths": null,
+      "sqft": 200,
+      "available": null,
+      "photos": [],
+      "summary": "An upstairs suite for a therapist or wellness practitioner who values quiet. All-in $912/mo covers rent, CAM, and shared utilities.",
+      "features": [
+        "All-in pricing — rent, CAM & shared utilities",
+        "Free on-site parking",
+        "Ferry-friendly location on Vashon Hwy SW",
+        "Quiet upstairs suite for a therapist or wellness practitioner"
+      ],
+      "buildingId": "courthouse-square"
+    },
+    {
+      "id": "chs-n206",
+      "type": "commercial",
+      "title": "Suite N206 — Courthouse Square",
+      "address": "19001 Vashon Hwy SW, Suite N206, Vashon, WA 98070",
+      "lat": 47.4471,
+      "lng": -122.46,
+      "rent": 1368,
+      "beds": null,
+      "baths": null,
+      "sqft": 300,
+      "available": null,
+      "photos": [],
+      "summary": "The largest open suite, with room for a multi-room practice or a small team. All-in $1,368/mo covers rent, CAM, and shared utilities.",
+      "features": [
+        "All-in pricing — rent, CAM & shared utilities",
+        "Free on-site parking",
+        "Ferry-friendly location on Vashon Hwy SW",
+        "Largest open suite, with room for a multi-room practice or small team"
+      ],
+      "buildingId": "courthouse-square"
+    }
+  ]
+}
