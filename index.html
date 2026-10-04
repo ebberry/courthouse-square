@@ -65,6 +65,13 @@
     :is(a, button, summary, input, select, textarea):focus-visible { outline: 2px solid var(--eb-berry); outline-offset: 2px; }
     .eb-field-berry :is(a, button, summary, input, select, textarea):focus-visible,
     .bg-eb-berry :is(a, button, summary, input, select, textarea):focus-visible { outline-color: var(--eb-cream); }
+    /* …but back to Berry inside a Cream card that sits on a Berry field. */
+    .bg-eb-berry .eb-card :is(a, button, summary, input, select, textarea):focus-visible,
+    .eb-field-berry .eb-card :is(a, button, summary, input, select, textarea):focus-visible { outline-color: var(--eb-berry); }
+
+    /* Berry-on-Tangerine is 4.26:1 — AA only as large text, so every pill
+       label renders at >=19px bold. Do not shrink pill type below this. */
+    .eb-btn { font-size: 1.1875rem; font-weight: 700; }
 
     /* Highlighted-word blocks stay tight to the words when a phrase wraps. */
     .eb-hl { -webkit-box-decoration-break: clone; box-decoration-break: clone; }
