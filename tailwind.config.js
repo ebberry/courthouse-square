@@ -66,7 +66,9 @@ module.exports = {
       },
       fontFamily: {
         sans:  ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        serif: ['Fraunces', 'ui-serif', 'Georgia', 'serif']
+        serif: ['Fraunces', 'ui-serif', 'Georgia', 'serif'],
+        // Wordmark-scale display moments only (E. Berry style guide 4.3).
+        display: ['Anton', 'Impact', 'sans-serif']
       }
     }
   }

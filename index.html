@@ -3,940 +3,452 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Professional Office Space at Courthouse Square, Vashon Island</title>
-  <meta name="description" content="Quiet, professional office suites on Vashon Island, WA. Abundant free parking, a shared patio, and an easy in-and-out location near the Athletic Center, schools, and Metro transit." />
-  <link rel="canonical" href="https://courthousesquarevashon.com/" />
-  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml" />
-  <meta name="theme-color" content="#1e3128" />
+  <title>E. Berry Property Management — Vashon Island homes &amp; commercial rentals</title>
+  <meta name="description" content="I'm Elijah Berry, and I look after homes and commercial spaces on Vashon Island, WA. See what's open, or let's chat about Vashon sometime." />
+  <link rel="canonical" href="https://eberryvashon.com/" />
+  <link rel="icon" href="/images/brand/monogram-tangerine-badge.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#670A2F" />
 
   <!-- Open Graph / social. Absolute image URL: most scrapers reject relative paths. -->
-  <meta property="og:title" content="Professional Office Space at Courthouse Square, Vashon Island" />
-  <meta property="og:description" content="A quiet, well-kept office building on Vashon Island, with free parking, a shared patio, and room for all sorts of small businesses to settle in and grow." />
+  <meta property="og:title" content="E. Berry Property Management — Vashon Island homes &amp; commercial rentals" />
+  <meta property="og:description" content="I look after homes and storefronts on Vashon Island. See what's open, or let's chat about Vashon sometime." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://courthousesquarevashon.com/" />
-  <meta property="og:site_name" content="Courthouse Square" />
-  <meta property="og:image" content="https://courthousesquarevashon.com/images/og-card.png" />
+  <meta property="og:url" content="https://eberryvashon.com/" />
+  <meta property="og:site_name" content="E. Berry Property Management" />
+  <meta property="og:image" content="https://eberryvashon.com/images/og-card-eberry.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="E. Berry Property Management, a part of Windermere Vashon, Vashon Island, WA" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Professional Office Space at Courthouse Square, Vashon Island" />
-  <meta name="twitter:description" content="Quiet, professional office suites on Vashon Island, WA, with free parking and a shared patio." />
-  <meta name="twitter:image" content="https://courthousesquarevashon.com/images/og-card.png" />
+  <meta name="twitter:title" content="E. Berry Property Management — Vashon Island homes &amp; commercial rentals" />
+  <meta name="twitter:description" content="I look after homes and storefronts on Vashon Island. See what's open, or let's chat about Vashon sometime." />
+  <meta name="twitter:image" content="https://eberryvashon.com/images/og-card-eberry.png" />
 
   <!-- Structured data for local search. -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "name": "Courthouse Square",
-    "description": "Professional office suites for lease on Vashon Island, Washington, with free on-site parking and a shared patio.",
-    "url": "https://courthousesquarevashon.com/",
-    "email": "leasing@courthousesquarevashon.com",
-    "image": "https://courthousesquarevashon.com/images/og-card.png",
+    "@type": "RealEstateAgent",
+    "name": "E. Berry Property Management",
+    "description": "Property management for homes and commercial spaces on Vashon Island, Washington.",
+    "url": "https://eberryvashon.com/",
+    "email": "me@ebberry.com",
+    "image": "https://eberryvashon.com/images/og-card-eberry.png",
+    "areaServed": "Vashon Island, WA",
+    "parentOrganization": { "@type": "Organization", "name": "Windermere Vashon" },
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "19001 Vashon Hwy SW",
       "addressLocality": "Vashon",
       "addressRegion": "WA",
-      "postalCode": "98070",
       "addressCountry": "US"
     }
   }
   </script>
 
-  <!-- Prebuilt Tailwind stylesheet (generated from tailwind.config.js — the
-       shared theme source; see "Rebuilding the stylesheet" in README.md).
-       Replaces the former Play-CDN runtime compiler: faster first paint, no
-       flash of unstyled content, no third-party script. -->
+  <!-- Prebuilt Tailwind stylesheet (generated from tailwind.config.js + tools/tailwind.src.css;
+       see "Rebuilding the stylesheet" in README.md). -->
   <link rel="stylesheet" href="/css/tailwind.css" />
 
-  <!-- Fonts: Inter for body, Fraunces for headings. -->
+  <!-- Fonts: Fraunces (serif body + headings), Inter (small labels), Anton (wordmark-scale display). -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&family=Anton&display=swap" rel="stylesheet" />
 
+  <!-- EB:SHELL-STYLES (canonical — copy to all pages with the header/footer) -->
   <style>
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', system-ui, sans-serif; }
-    h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; letter-spacing: -0.01em; }
+    html { scroll-behavior: smooth; scroll-padding-top: 5.5rem; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
-    /* Visible keyboard-focus indicator for elements without their own focus styles. */
-    :is(a, button, summary):focus-visible { outline: 2px solid #b4521f; outline-offset: 2px; }
+    ::selection { background: var(--eb-tangerine); color: var(--eb-berry); }
 
-    /* Image fallback: muted block if a real photo hasn't been dropped in yet. */
-    .photo-placeholder {
-      background: linear-gradient(135deg, #2c4a39 0%, #4b755c 50%, #92b29c 100%);
-      color: #f3ece0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Fraunces', serif;
-      font-style: italic;
-      font-size: 0.95rem;
-      text-align: center;
-      padding: 1rem;
-    }
-    img.with-fallback { background: #2c4a39; }
+    /* Visible keyboard-focus indicator. */
+    :is(a, button, summary, input, select, textarea):focus-visible { outline: 2px solid var(--eb-berry); outline-offset: 2px; }
+    .eb-field-berry :is(a, button, summary, input, select, textarea):focus-visible,
+    .bg-eb-berry :is(a, button, summary, input, select, textarea):focus-visible { outline-color: var(--eb-cream); }
 
-    /* ============================================================
-       YOUR NEIGHBORS card wall
-       Masonry via CSS multi-column. Cards avoid breaking across
-       columns. Occupied and open cards share one frame; open cards
-       get a warm tint, a slow breathing glow, and an OPEN ribbon.
-    ============================================================ */
-    .neighbor-wall { columns: 3; column-gap: 1.25rem; }
-    @media (max-width: 880px) { .neighbor-wall { columns: 2; } }
-    @media (max-width: 560px) { .neighbor-wall { columns: 1; } }
+    /* Highlighted-word blocks stay tight to the words when a phrase wraps. */
+    .eb-hl { -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 
-    .neighbor-card {
-      break-inside: avoid;
-      margin-bottom: 1.25rem;
-      position: relative;
-      overflow: hidden;
-      border-radius: 14px;
-      transition: transform 0.4s cubic-bezier(0.2,0.8,0.2,1),
-                  opacity 0.4s ease, box-shadow 0.4s ease, filter 0.4s ease;
-    }
-    .neighbor-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 18px 40px -18px rgba(40,30,18,0.30);
-    }
-    /* Left accent stripe, color set inline per category. */
-    .neighbor-card::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 4px;
-      background: var(--accent, #bcd0c2);
-      opacity: 0.9;
-    }
+    /* Tangerine pill sitting on a Berry field: invert to Cream on hover (Berry-on-Berry would vanish). */
+    .eb-btn--inv:hover, .eb-btn--inv:focus-visible { background: var(--eb-cream); border-color: var(--eb-cream); color: var(--eb-berry); }
 
-    /* Open (available) card treatment. */
-    .neighbor-card.is-open {
-      border: 1px solid #d98a52;
-      background: linear-gradient(135deg, rgba(217,138,82,0.12), rgba(201,138,43,0.05));
-    }
-    .neighbor-card.is-open::after {
-      content: 'OPEN';
-      position: absolute;
-      top: 16px; right: -30px;
-      transform: rotate(45deg);
-      background: #b4521f;
-      color: #faf7f2;
-      font-family: 'Fraunces', serif;
-      font-size: 0.62rem;
-      font-weight: 600;
-      letter-spacing: 0.2em;
-      padding: 4px 36px;
-      z-index: 2;
-    }
-    .neighbor-card .glow {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 70% 20%, rgba(217,138,82,0.22), transparent 60%);
-      opacity: 0.3;
-      animation: breathe 4.5s ease-in-out infinite;
-      pointer-events: none;
-    }
-    @keyframes breathe { 0%,100% { opacity: 0.3; } 50% { opacity: 0.8; } }
-    @media (prefers-reduced-motion: reduce) {
-      .neighbor-card .glow { animation: none; }
-      .neighbor-card:hover { transform: none; }
-    }
+    /* Native option list stays on-palette (default is Canvas/white). */
+    select option { background: var(--eb-cream); color: var(--eb-berry); }
 
-    /* Filter states, toggled by JS. */
-    .neighbor-card.dim   { opacity: 0.32; filter: saturate(0.5); transform: scale(0.985); }
-    .neighbor-card.recede { opacity: 0.42; filter: saturate(0.6); }
-
-    /* Open toggle (driven by aria-pressed, so it doesn't depend on the CDN
-       JIT-generating a class that's only toggled at runtime). */
-    #open-toggle .toggle-track { transition: background-color 0.3s ease; }
-    #open-toggle .toggle-knob  { transition: transform 0.3s cubic-bezier(0.4,1.4,0.5,1); }
-    #open-toggle[aria-pressed="true"] .toggle-track { background-color: #b4521f; }
-    #open-toggle[aria-pressed="true"] .toggle-knob  { transform: translateX(20px); }
-
-    /* Active category tag. */
-    .neighbor-tag.tag-active {
-      background-color: #1e3128;
-      color: #faf7f2;
-      border-color: #1e3128;
-    }
-
-    /* Background swirl behind the section, brand-tinted. */
-    .neighbor-swirl {
-      background-image:
-        radial-gradient(ellipse 80% 50% at 12% -5%, rgba(180,82,31,0.08), transparent 60%),
-        radial-gradient(ellipse 70% 50% at 90% 8%, rgba(44,74,57,0.10), transparent 55%),
-        radial-gradient(ellipse 90% 60% at 50% 108%, rgba(75,117,92,0.08), transparent 60%);
+    /* Select arrow in Berry (native arrow is system gray). */
+    select.eb-select {
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23670A2F' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6l5 5 5-5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 1rem center; background-size: 1rem;
+      padding-right: 2.75rem;
     }
   </style>
+  <!-- No-JS fallbacks: keep the mobile menu open, and show the Available now section (its noscript link). -->
+  <noscript><style>
+    @media (max-width: 1023px) { #site-nav { display: flex; } #nav-toggle { display: none; } }
+    #available[hidden] { display: block; }
+  </style></noscript>
 </head>
 
-<body class="bg-sand-50 text-evergreen-950 antialiased">
+<body class="bg-eb-cream font-serif text-lg leading-[1.4] text-eb-berry antialiased">
 
-<!-- ============================================================
-     NAV
-     Minimal sticky nav. Anchors to landing page sections.
-============================================================ -->
-<header class="sticky top-0 z-40 bg-sand-50/90 backdrop-blur border-b border-evergreen-100">
-  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-3 flex items-center justify-between">
-    <a href="/" class="flex items-baseline gap-2">
-      <span class="font-serif font-semibold text-lg sm:text-xl text-evergreen-900">Courthouse Square</span>
-      <span class="hidden sm:inline text-xs text-evergreen-700">Vashon Island, WA</span>
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-[4px] focus:bg-eb-tangerine focus:px-4 focus:py-2 focus:text-eb-berry">Skip to content</a>
+
+<!-- EB:HEADER (canonical — copy to all pages) -->
+<!-- Licensed firm name: confirm exact wording with Windermere designated broker -->
+<header class="sticky top-0 z-40 border-b border-eb-berry bg-eb-cream">
+  <div class="relative mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-6 py-3 sm:px-[var(--eb-space-margin)]">
+
+    <a href="/" class="flex min-w-0 items-center gap-3 sm:gap-4">
+      <img src="/images/brand/wordmark-berry.svg" alt="E. Berry" class="h-7 w-auto shrink-0 sm:h-8" />
+      <span class="flex min-w-0 flex-col items-start gap-1 leading-none">
+        <span class="whitespace-nowrap text-[0.95rem] leading-tight sm:text-base"><span class="eb-hl eb-hl-mustard">Property Management</span></span>
+        <span class="text-balance font-sans text-[0.65rem] font-medium leading-tight tracking-widest text-eb-berry/80">A PART OF WINDERMERE VASHON</span>
+      </span>
     </a>
-    <nav class="flex items-center gap-4 sm:gap-6 text-sm">
-      <a href="#suites"   class="hover:text-evergreen-700">Suites &amp; neighbors</a>
-      <a href="#location" class="hover:text-evergreen-700">Location</a>
-      <a href="/lease/"   class="hover:text-evergreen-700">Lease</a>
-      <a href="#inquire"
-         class="inline-flex items-center rounded-md bg-evergreen-800 text-sand-50 px-3 py-1.5 hover:bg-evergreen-700 transition">
-        Inquire
-      </a>
+
+    <button id="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu"
+            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-[1.5px] border-eb-berry text-eb-berry hover:bg-eb-berry hover:text-eb-cream lg:hidden">
+      <svg viewBox="0 0 20 20" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M3 6h14M3 10h14M3 14h14" />
+      </svg>
+    </button>
+
+    <nav id="site-nav" aria-label="Main"
+         class="absolute left-0 right-0 top-full hidden flex-col items-start gap-1 whitespace-nowrap border-b border-eb-berry bg-eb-cream py-5 pl-4 pr-6 lg:static lg:flex lg:flex-row lg:items-center lg:gap-2 lg:border-0 lg:bg-transparent lg:p-0">
+      <a href="/listings/?type=residential" class="rounded-[4px] px-2 py-1 hover:bg-eb-tangerine">Homes</a>
+      <a href="/listings/?type=commercial" class="rounded-[4px] px-2 py-1 hover:bg-eb-tangerine">Commercial</a>
+      <a href="/buildings/courthouse-square/" class="rounded-[4px] px-2 py-1 hover:bg-eb-tangerine">Courthouse Square</a>
+      <a href="/#inquire" class="eb-btn ml-2 mt-3 text-base lg:ml-3 lg:mt-0">Inquire</a>
     </nav>
   </div>
 </header>
+<!-- /EB:HEADER -->
+
+<main id="main">
 
 <!-- ============================================================
-     1. HERO  (split layout: text panel + brand-anchor photo)
-     Left: the pitch on a deep evergreen panel. Right: the Julie
-     Spidel sculpture at the entrance (placeholder until the
-     building refresh photos are ready; drops in at
-     /images/sculpture.jpg). Stacks to a single column on mobile.
+     1. HERO — Berry field, one huge Cream serif statement
 ============================================================ -->
-<section class="bg-evergreen-950">
-  <div class="mx-auto max-w-6xl grid lg:grid-cols-2 items-stretch">
-
-    <!-- Text panel -->
-    <div class="px-4 sm:px-6 lg:pr-10 py-20 sm:py-28 lg:py-32 text-sand-50 order-1">
-      <!-- Courthouse Square wordmark. Inline SVG inherits the current text
-           color via fill="currentColor". Standalone copy at /images/logo.svg. -->
-      <svg viewBox="0 0 340 160" role="img" aria-label="Courthouse Square, Vashon"
-           class="h-24 sm:h-32 w-auto mb-8 text-sand-50" fill="currentColor"
-           xmlns="http://www.w3.org/2000/svg">
-        <g font-family="Fraunces, Georgia, 'Times New Roman', serif" text-anchor="middle">
-          <circle cx="170" cy="14" r="3" />
-          <text x="170" y="60" font-size="38" font-weight="600" letter-spacing="2">COURTHOUSE</text>
-          <text x="170" y="100" font-size="38" font-weight="600" letter-spacing="2">SQUARE</text>
-          <line x1="80" y1="118" x2="260" y2="118" stroke="currentColor" stroke-width="1.5" />
-          <text x="170" y="142" font-size="18" font-weight="500" letter-spacing="6">VASHON</text>
-        </g>
-      </svg>
-      <p class="uppercase tracking-widest text-xs sm:text-sm text-sand-200 mb-4">Vashon Island, Washington</p>
-      <h1 class="text-4xl sm:text-5xl font-serif font-semibold leading-tight">
-        A calm, professional home for your business.
-      </h1>
-      <p class="mt-6 max-w-xl text-lg text-sand-100">
-        CHS is a quiet, well-kept office building with free parking, a shared patio, and an easy in-and-out for you and your visitors, the kind of setup downtown storefronts simply can't offer. There's room here for all sorts of small businesses to settle in and grow.
-      </p>
-      <div class="mt-8 flex flex-wrap gap-3">
-        <a href="#suites"
-           class="inline-flex items-center rounded-md bg-sand-50 text-evergreen-900 px-5 py-3 font-medium hover:bg-sand-100 transition">
-          View available suites
-        </a>
-        <a href="#inquire"
-           class="inline-flex items-center rounded-md border border-sand-50/60 text-sand-50 px-5 py-3 font-medium hover:bg-sand-50/10 transition">
-          Get in touch
-        </a>
+<section class="bg-eb-berry text-eb-cream">
+  <div class="mx-auto max-w-[1440px] px-[var(--eb-space-margin)] py-[max(4.5rem,calc(var(--eb-space-margin)*1.5))]">
+    <div class="grid gap-12 md:grid-cols-[1fr_auto] md:items-end">
+      <div>
+        <h1 class="max-w-[17ch] text-balance font-serif text-[length:var(--eb-h1-size)] font-medium leading-[1.08] tracking-[-0.01em]">
+          I look after <span class="eb-hl eb-hl-mustard" style="color:var(--eb-berry)">homes</span> and <span class="eb-hl eb-hl-mustard" style="color:var(--eb-berry)">storefronts</span> on Vashon Island.
+        </h1>
+        <p class="mt-8 max-w-[34rem] text-xl leading-[1.4] sm:mt-10">
+          I'm Elijah Berry, and E. Berry Property Management is how I care for Vashon rentals, as part of Windermere Vashon. If you're looking for a place to land, I'd love to hear what you have in mind.
+        </p>
+        <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-5">
+          <a href="/listings/" class="eb-btn eb-btn--inv px-7 py-3 text-lg">See what's open &rarr;</a>
+          <a href="#inquire" class="text-lg underline decoration-2 underline-offset-[6px] hover:text-eb-tangerine">Let's chat about Vashon sometime</a>
+        </div>
       </div>
-    </div>
-
-    <!-- Brand-anchor photo: the Julie Spidel sculpture at the entrance. -->
-    <div class="relative min-h-[300px] lg:min-h-full order-2">
-      <img src="/images/sculpture.jpg"
-           alt="The Julie Spidel sculpture at the Courthouse Square entrance"
-           class="absolute inset-0 w-full h-full object-cover"
-           onerror="this.style.display='none'; this.parentElement.classList.add('photo-placeholder');" />
+      <!-- Monogram seal, anchored bottom-right (style guide 4.4 corner anchoring). -->
+      <img src="/images/brand/monogram-tangerine-bare.svg" alt="" aria-hidden="true" class="h-16 w-auto justify-self-end sm:h-20" />
     </div>
   </div>
 </section>
 
 <!-- ============================================================
-     2. WHO IT'S FOR
+     2. AVAILABLE NOW — up to 3 cheapest listings, rendered from the feed.
+     Hidden until the feed loads; quietly stays hidden if it can't.
 ============================================================ -->
-<section class="bg-sand-50">
-  <div class="mx-auto max-w-4xl px-4 sm:px-6 py-16 sm:py-20 text-center">
-    <h2 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900">Room for all kinds of good work.</h2>
-    <p class="mt-6 text-lg text-evergreen-800/90 leading-relaxed">
-      Medical and dental offices, attorneys and accountants, therapists and bodyworkers, tutors and consultants, designers and small studios. If your work calls for a calm, professional space where people can park easily, find the door, and get on with their day, you'll feel right at home.
+<section id="available" hidden class="bg-eb-cream" aria-labelledby="available-label">
+  <span id="suites" class="block"></span><!-- legacy anchor: lease pages link to /#suites -->
+  <div class="mx-auto max-w-[1440px] px-[var(--eb-space-margin)] py-[max(4rem,var(--eb-space-margin))]">
+    <p id="available-label" class="font-serif text-sm font-medium uppercase tracking-[0.08em]">Available now</p>
+    <p class="mt-3 max-w-[34rem]">A few of the places I'm looking after that are open right now.</p>
+
+    <div id="available-grid" class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"></div>
+
+    <noscript>
+      <p class="mt-10"><a href="/listings/" class="text-xl font-semibold underline decoration-2 underline-offset-4">See everything that's open &rarr;</a></p>
+    </noscript>
+
+    <p class="mt-10">
+      <a href="/listings/" class="text-xl font-semibold text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-[6px] hover:decoration-eb-berry">Everything that's open &rarr;</a>
     </p>
   </div>
 </section>
 
 <!-- ============================================================
-     3. WHY THIS LOCATION
-     Four-up feature grid hitting the core advantages.
+     3. HOMES / COMMERCIAL — two color fields, each carrying a Cream card
 ============================================================ -->
-<section class="bg-evergreen-50 border-y border-evergreen-100">
-  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-20">
-    <div class="text-center mb-12">
-      <h2 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900">Why Courthouse Square</h2>
-      <p class="mt-3 text-evergreen-800/80">The advantages that come from being on the right side of the highway.</p>
+<section class="grid md:grid-cols-2" aria-label="Homes and commercial space">
+  <div class="bg-eb-sand p-[clamp(1.5rem,4vw,3.5rem)]">
+    <div class="eb-card flex h-full flex-col justify-between gap-8 md:min-h-[20rem]">
+      <div>
+        <h2 class="font-serif text-[length:var(--eb-h2-size)] font-medium leading-[1.1]">Homes</h2>
+        <p class="mt-4 max-w-[26rem]">I look after houses and apartments around the island, and I'd rather know my neighbors by name than by number.</p>
+      </div>
+      <p><a href="/listings/?type=residential" class="text-xl font-semibold text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-[6px] hover:decoration-eb-berry">See the homes &rarr;</a></p>
     </div>
+  </div>
+  <div class="bg-eb-mustard p-[clamp(1.5rem,4vw,3.5rem)]">
+    <div class="eb-card flex h-full flex-col justify-between gap-8 md:min-h-[20rem]">
+      <div>
+        <h2 class="font-serif text-[length:var(--eb-h2-size)] font-medium leading-[1.1]">Commercial</h2>
+        <p class="mt-4 max-w-[26rem]">Storefronts and offices for the people who keep Vashon running, from a one-room practice to a place with a front window.</p>
+      </div>
+      <p><a href="/listings/?type=commercial" class="text-xl font-semibold text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-[6px] hover:decoration-eb-berry">See commercial spaces &rarr;</a></p>
+    </div>
+  </div>
+</section>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-      <!-- Parking -->
-      <div class="bg-sand-50 rounded-lg p-6 border border-evergreen-100">
-        <div class="w-10 h-10 rounded-md bg-evergreen-800 text-sand-50 flex items-center justify-center mb-4" aria-hidden="true">
-          <!-- car icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 17h14M5 17a2 2 0 1 1-4 0M5 17V10l2-5h10l2 5v7M19 17a2 2 0 1 0 4 0M7 13h10"/></svg>
-        </div>
-        <h3 class="font-serif text-xl text-evergreen-900">Free on-site parking</h3>
-        <p class="mt-2 text-sm text-evergreen-800/80">Plenty of it. Your clients won't circle the block, and your team won't fight for a spot at 9 a.m.</p>
+<!-- ============================================================
+     4. BUILDINGS TEASER — Berry field; the row scales to more buildings
+     Content mirrors data/buildings.json (courthouse-square). To add a
+     building, add another <article> to #buildings-row.
+============================================================ -->
+<section id="buildings" class="bg-eb-berry text-eb-cream" aria-labelledby="buildings-heading">
+  <span id="location" class="block"></span><!-- legacy anchor: lease pages link to /#location -->
+  <div class="mx-auto max-w-[1440px] px-[var(--eb-space-margin)] py-[max(4.5rem,calc(var(--eb-space-margin)*1.25))]">
+    <div class="grid gap-10 lg:grid-cols-[5fr_7fr] lg:gap-16">
+      <div>
+        <h2 id="buildings-heading" class="max-w-[14ch] text-balance font-serif text-[length:var(--eb-h2-size)] font-medium leading-[1.1]">The buildings I look after</h2>
+        <p class="mt-4 max-w-[26rem]">Each one has its own feel, and I'm always glad to walk you around.</p>
       </div>
 
-      <!-- Patio -->
-      <div class="bg-sand-50 rounded-lg p-6 border border-evergreen-100">
-        <div class="w-10 h-10 rounded-md bg-evergreen-800 text-sand-50 flex items-center justify-center mb-4" aria-hidden="true">
-          <!-- tree icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3 6 12h4l-3 5h10l-3-5h4z M12 17v4"/></svg>
-        </div>
-        <h3 class="font-serif text-xl text-evergreen-900">Shared outdoor patio</h3>
-        <p class="mt-2 text-sm text-evergreen-800/80">A real spot to eat lunch, take a call, or step out between clients. Open to all tenants.</p>
-      </div>
-
-      <!-- Neighborhood -->
-      <div class="bg-sand-50 rounded-lg p-6 border border-evergreen-100">
-        <div class="w-10 h-10 rounded-md bg-evergreen-800 text-sand-50 flex items-center justify-center mb-4" aria-hidden="true">
-          <!-- map-pin icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-7-7.5-7-12a7 7 0 1 1 14 0c0 4.5-7 12-7 12Z M12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>
-        </div>
-        <h3 class="font-serif text-xl text-evergreen-900">Right in the middle of things</h3>
-        <p class="mt-2 text-sm text-evergreen-800/80">Walking distance to the Vashon Athletic Center, the schools, and a King County Metro bus stop.</p>
-      </div>
-
-      <!-- Quiet professional -->
-      <div class="bg-sand-50 rounded-lg p-6 border border-evergreen-100">
-        <div class="w-10 h-10 rounded-md bg-evergreen-800 text-sand-50 flex items-center justify-center mb-4" aria-hidden="true">
-          <!-- waveform-low icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12h2m4 0h2m4 0h2m4 0h2"/></svg>
-        </div>
-        <h3 class="font-serif text-xl text-evergreen-900">Quiet, low-traffic setting</h3>
-        <p class="mt-2 text-sm text-evergreen-800/80">A professional environment where your clients can think, talk, and breathe.</p>
+      <div id="buildings-row" class="grid grid-cols-[repeat(auto-fit,minmax(17rem,1fr))] gap-6">
+        <article class="eb-card flex flex-col">
+          <span class="self-start rounded-[4px] bg-eb-mustard px-2 py-0.5 font-serif text-xs font-medium uppercase tracking-[0.08em]">Commercial</span>
+          <h3 class="mt-4 font-serif text-3xl font-medium leading-[1.1] sm:text-[2rem]">Courthouse Square</h3>
+          <p class="mt-2 italic">A calm, professional home for your business.</p>
+          <ul class="mt-6 space-y-2">
+            <li class="flex gap-3"><span class="mt-[0.55em] h-2 w-2 shrink-0 rounded-full bg-eb-tangerine" aria-hidden="true"></span>Free on-site parking, with plenty to go around</li>
+            <li class="flex gap-3"><span class="mt-[0.55em] h-2 w-2 shrink-0 rounded-full bg-eb-tangerine" aria-hidden="true"></span>A shared outdoor patio, open to all tenants</li>
+          </ul>
+          <p class="mt-8"><a href="/buildings/courthouse-square/" class="text-xl font-semibold text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-[6px] hover:decoration-eb-berry">Visit Courthouse Square &rarr;</a></p>
+        </article>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ============================================================
-     4. YOUR NEIGHBORS (merged tenants + available suites)
-     One unified card wall, rendered client-side from BOTH
-     /data/tenants.json (occupied) and /data/vacancies.json (open).
-     See buildNeighborWall() in the script block below.
-
-     The section is ADAPTIVE:
-       - With occupied tenants present, it reads as "the neighbors
-         you'd be keeping": tally, category filters, a "See what's
-         open" toggle, and "you'd be next to X and Y" lines.
-       - With no tenants yet (roster still being collected), it
-         gracefully presents as a polished available-suites wall:
-         no empty tally, no filters, just the open cards. It blooms
-         into the full treatment the moment tenants are added.
-
-     id="suites" is kept so existing anchors (hero button, nav,
-     inquiry prefill) keep working.
+     5. ABOUT — the canonical short bio, set large, with highlighted roles
 ============================================================ -->
-<section id="suites" class="bg-sand-50 neighbor-swirl">
-  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-20">
-
-    <!-- Header. Eyebrow + heading + lede are filled by JS so copy can
-         adapt to whether there are neighbors yet. -->
-    <header class="max-w-3xl">
-      <p class="uppercase tracking-[0.3em] text-xs font-medium text-rust-500 mb-4">CHS &middot; Vashon Island</p>
-      <h2 id="neighbors-heading" class="text-3xl sm:text-5xl font-serif font-semibold text-evergreen-900 leading-tight">
-        Available suites
-      </h2>
-      <p id="neighbors-lede" class="mt-5 text-lg text-evergreen-800/90 leading-relaxed"></p>
-
-      <!-- Pricing framing (spec section 5). -->
-      <p class="mt-4 text-base text-evergreen-800/80 leading-relaxed">
-        Standard prices are below, but we're looking for long-term tenants we can support and help grow. If these numbers feel out of reach, let's have a conversation regardless. All-in monthly figures include Rent, CAM, and Utilities, so there are no surprises.
-      </p>
-    </header>
-
-    <!-- Tally (hidden until there are neighbors to count). -->
-    <div id="neighbors-tally" class="hidden mt-8 flex-wrap gap-x-8 gap-y-2 font-serif text-evergreen-900">
-      <span class="flex items-baseline gap-2"><b id="tally-suites" class="text-2xl font-semibold">0</b><span class="text-sm text-evergreen-700">suites</span></span>
-      <span class="flex items-baseline gap-2"><b id="tally-neighbors" class="text-2xl font-semibold">0</b><span class="text-sm text-evergreen-700">neighbors</span></span>
-      <span class="flex items-baseline gap-2"><b id="tally-open" class="text-2xl font-semibold">0</b><span class="text-sm text-evergreen-700">open</span></span>
+<section class="bg-eb-cream" aria-label="About Elijah">
+  <div class="mx-auto max-w-[1440px] px-[var(--eb-space-margin)] py-[max(4.5rem,calc(var(--eb-space-margin)*1.25))]">
+    <div class="grid gap-10 md:grid-cols-[1fr_auto]">
+      <div class="max-w-[46rem] font-serif text-2xl leading-[1.35] sm:text-[1.75rem] md:text-[2rem]">
+        <p>Hello! I'm Elijah Berry &ndash; a friend to Vashon.</p>
+        <p class="mt-6">Sometimes that means business consulting and sometimes that means a ride uptown. Under my hospitality hat, I own a <span class="eb-hl eb-hl-tangerine">bakery</span> and an <span class="eb-hl eb-hl-sky">inn</span>. I also manage Vashon <span class="eb-hl eb-hl-mustard">properties</span> and <span class="eb-hl eb-hl-sage">volunteer</span> in the community.</p>
+        <p class="mt-6">In between, I like meeting my neighbors and helping them solve problems.</p>
+        <p class="mt-6"><a href="#inquire" class="underline decoration-eb-tangerine decoration-4 underline-offset-[6px] hover:bg-eb-tangerine">Let's chat about Vashon sometime.</a></p>
+      </div>
+      <img src="/images/brand/monogram-tangerine-bare.svg" alt="" aria-hidden="true" class="hidden h-16 w-auto justify-self-end self-start md:block" />
     </div>
-
-    <!-- Controls (category filters + open toggle). Hidden until there
-         are occupied tenants to filter. -->
-    <div id="neighbors-controls" class="hidden mt-8 mb-2 items-center gap-3 flex-wrap border-t border-evergreen-100 pt-6">
-      <div id="neighbor-tags" class="flex gap-2 flex-wrap"></div>
-      <div class="flex-1"></div>
-      <button id="open-toggle" type="button" aria-pressed="false"
-              class="inline-flex items-center gap-3 cursor-pointer select-none font-medium text-evergreen-900">
-        <span>See what's open</span>
-        <span class="toggle-track relative w-11 h-6 rounded-full bg-evergreen-200 transition-colors">
-          <span class="toggle-knob absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"></span>
-        </span>
-      </button>
-    </div>
-
-    <!-- The wall mounts here. -->
-    <div id="neighbor-wall" class="neighbor-wall mt-8">
-      <p class="text-evergreen-800/70 text-sm">Loading suites…</p>
-    </div>
-
-    <!-- The "as of" date comes from the asOf field in data/vacancies.json,
-         so it updates together with the prices. -->
-    <p id="pricing-snapshot" class="mt-6 text-xs text-evergreen-700/80">Figures are a starting point for conversation.</p>
+    <p class="mt-12 max-w-[34rem]">Our property management work is part of Windermere Vashon.</p>
   </div>
 </section>
 
 <!-- ============================================================
-     5. LEASE TERMS
+     6. INQUIRY FORM — Netlify Forms (statically declared so Netlify detects it).
+     id="inquire" is deep-linked from the lease pages (/#inquire).
 ============================================================ -->
-<section class="bg-evergreen-900 text-sand-50">
-  <div class="mx-auto max-w-4xl px-4 sm:px-6 py-16 sm:py-20 text-center">
-    <h2 class="text-3xl sm:text-4xl font-serif font-semibold">No hidden fine print.</h2>
-    <p class="mt-6 text-lg text-sand-100 leading-relaxed">
-      We post our standard lease publicly so you can read it, and share it with your attorney, before you commit. When you're ready to move forward, reach out and we'll walk you through the next steps.
-    </p>
-    <div class="mt-8 flex flex-wrap gap-3 justify-center">
-      <a href="/lease/"
-         class="inline-flex items-center rounded-md bg-sand-50 text-evergreen-900 px-5 py-3 font-medium hover:bg-sand-100 transition">
-        View lease terms
-      </a>
-      <a href="#inquire"
-         class="inline-flex items-center rounded-md border border-sand-50/60 text-sand-50 px-5 py-3 font-medium hover:bg-sand-50/10 transition">
-        Get in touch
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-     6. GALLERY
-     Responsive photo grid. Owner replaces files in /images/.
-============================================================ -->
-<section class="bg-sand-50">
-  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-20">
-    <h2 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900 mb-2">A look around</h2>
-    <p class="text-evergreen-800/80 mb-10">Building exterior, patio, and typical suite interiors.</p>
-
-    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-      <!-- Each tile has an onerror fallback to a styled placeholder block. -->
-      <figure class="aspect-[4/3] overflow-hidden rounded-md">
-        <img loading="lazy" decoding="async" width="1200" height="900" src="/images/gallery-1.jpg" alt="Courthouse Square exterior, north building"
-             class="w-full h-full object-cover with-fallback"
-             onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Exterior photo<br/>(/images/gallery-1.jpg)</div>'" />
-      </figure>
-      <figure class="aspect-[4/3] overflow-hidden rounded-md">
-        <img loading="lazy" decoding="async" width="1200" height="900" src="/images/gallery-2.jpg" alt="Shared outdoor patio at Courthouse Square"
-             class="w-full h-full object-cover with-fallback"
-             onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Patio photo<br/>(/images/gallery-2.jpg)</div>'" />
-      </figure>
-      <figure class="aspect-[4/3] overflow-hidden rounded-md">
-        <img loading="lazy" decoding="async" width="1200" height="900" src="/images/gallery-3.jpg" alt="Typical suite interior with natural light"
-             class="w-full h-full object-cover with-fallback"
-             onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Typical suite<br/>(/images/gallery-3.jpg)</div>'" />
-      </figure>
-      <figure class="aspect-[4/3] overflow-hidden rounded-md">
-        <img loading="lazy" decoding="async" width="1200" height="900" src="/images/gallery-4.jpg" alt="Reception or common area"
-             class="w-full h-full object-cover with-fallback"
-             onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Common area<br/>(/images/gallery-4.jpg)</div>'" />
-      </figure>
-      <figure class="aspect-[4/3] overflow-hidden rounded-md">
-        <img loading="lazy" decoding="async" width="1200" height="900" src="/images/gallery-5.jpg" alt="Parking lot view"
-             class="w-full h-full object-cover with-fallback"
-             onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Parking lot<br/>(/images/gallery-5.jpg)</div>'" />
-      </figure>
-      <figure class="aspect-[4/3] overflow-hidden rounded-md">
-        <img loading="lazy" decoding="async" width="1200" height="900" src="/images/gallery-6.jpg" alt="Building entrance"
-             class="w-full h-full object-cover with-fallback"
-             onerror="this.outerHTML='<div class=&quot;photo-placeholder w-full h-full&quot;>Entrance<br/>(/images/gallery-6.jpg)</div>'" />
-      </figure>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-     7. LOCATION
-============================================================ -->
-<section id="location" class="bg-evergreen-50 border-y border-evergreen-100">
-  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-16 sm:py-20 grid lg:grid-cols-2 gap-10 items-start">
-    <div>
-      <h2 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900">Find us</h2>
-      <address class="not-italic mt-4 text-lg text-evergreen-800">
-        19001 Vashon Hwy SW<br/>
-        Vashon, WA 98070
-      </address>
-
-      <h3 class="mt-8 font-serif text-xl text-evergreen-900">From the ferries</h3>
-      <ul class="mt-3 space-y-2 text-evergreen-800/90">
-        <li><strong>Fauntleroy (West Seattle):</strong> About 15 minutes south on Vashon Hwy SW. You'll come straight up the island and find us on the right.</li>
-        <li><strong>Point Defiance (Tacoma):</strong> About 20 minutes north on Vashon Hwy SW from the south-end dock.</li>
-      </ul>
-
-      <h3 class="mt-8 font-serif text-xl text-evergreen-900">Nearby</h3>
-      <ul class="mt-3 space-y-2 text-evergreen-800/90">
-        <li>Vashon Athletic Center, across the street.</li>
-        <li>Vashon schools, walking distance.</li>
-        <li>King County Metro bus stop, at the corner.</li>
-      </ul>
-    </div>
-
-    <div class="rounded-lg overflow-hidden border border-evergreen-200 shadow-sm">
-      <!-- Google Maps embed pointing at the building address. -->
-      <iframe
-        title="Map showing 19001 Vashon Hwy SW, Vashon, WA 98070"
-        src="https://www.google.com/maps?q=19001+Vashon+Hwy+SW,+Vashon,+WA+98070&output=embed"
-        width="100%" height="420" style="border:0;"
-        loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-     8. INQUIRY FORM
-     Netlify Forms. Form is statically declared so Netlify can
-     detect it at build time. Suite dropdown gets dynamically
-     populated from vacancies.json, plus the "Any" option.
-============================================================ -->
-<section id="inquire" class="bg-sand-50">
-  <div class="mx-auto max-w-3xl px-4 sm:px-6 py-16 sm:py-20">
-    <h2 class="text-3xl sm:text-4xl font-serif font-semibold text-evergreen-900">Tell us a little about your business.</h2>
-    <p class="mt-3 text-evergreen-800/80">We'll get back to you within a few business days. Name and email are all we need to start — the rest is optional, and helps us respond faster.</p>
-
-    <!-- Netlify form. The hidden form-name field is required. -->
-    <form id="inquiry-form"
-          name="inquiry"
-          method="POST"
-          data-netlify="true"
-          netlify-honeypot="bot-field"
-          class="mt-8 grid sm:grid-cols-2 gap-5">
-
-      <input type="hidden" name="form-name" value="inquiry" />
-      <!-- Honeypot field. Hidden from real users; bots fill it and get rejected. -->
-      <p class="hidden">
-        <label>Don't fill this out: <input name="bot-field" /></label>
-      </p>
-
-      <label class="sm:col-span-1">
-        <span class="block text-sm font-medium text-evergreen-900">Name <span class="text-evergreen-700">*</span></span>
-        <input name="name" required autocomplete="name"
-               class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600" />
-      </label>
-
-      <label class="sm:col-span-1">
-        <span class="block text-sm font-medium text-evergreen-900">Email <span class="text-evergreen-700">*</span></span>
-        <input type="email" name="email" required autocomplete="email"
-               class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600" />
-      </label>
-
-      <label class="sm:col-span-1">
-        <span class="block text-sm font-medium text-evergreen-900">Phone (optional)</span>
-        <input type="tel" name="phone" autocomplete="tel"
-               class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600" />
-      </label>
-
-      <label class="sm:col-span-1">
-        <span class="block text-sm font-medium text-evergreen-900">Suite of interest</span>
-        <select name="suite" id="suite-select"
-                class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600">
-          <option value="">Any / not sure</option>
-          <!-- More options injected by JS from vacancies.json. -->
-        </select>
-      </label>
-
-      <!-- Optional application details — the v1.3 Letter of Intent fields. All
-           optional: a quick inquiry still works with just name + email, while a
-           serious applicant can complete the full intake here instead of (or in
-           addition to) the fillable PDF. All are static so Netlify captures them. -->
-      <div class="sm:col-span-2 mt-2 border-t border-evergreen-100 pt-5">
-        <h3 class="font-serif text-lg text-evergreen-900">About your business
-          <span class="font-sans text-sm font-normal text-evergreen-700/80">— optional</span>
-        </h3>
+<section id="inquire" class="bg-eb-berry text-eb-cream" aria-labelledby="inquire-heading">
+  <div class="mx-auto max-w-[1440px] px-[var(--eb-space-margin)] py-[max(4.5rem,calc(var(--eb-space-margin)*1.25))]">
+    <div class="grid gap-10 lg:grid-cols-[5fr_7fr] lg:gap-16">
+      <div>
+        <h2 id="inquire-heading" class="max-w-[14ch] text-balance font-serif text-[length:var(--eb-h2-size)] font-medium leading-[1.1]">Let's chat about Vashon sometime.</h2>
+        <p class="mt-4 max-w-[26rem]">Tell me a little about what you're looking for. A line or two is plenty. I read every note myself and will write back within a few business days.</p>
       </div>
 
-      <label class="sm:col-span-1">
-        <span class="block text-sm font-medium text-evergreen-900">Legal business name</span>
-        <input name="business_name" autocomplete="organization"
-               class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600" />
-      </label>
+      <div class="eb-card">
+        <!-- The hidden form-name field and data-netlify attribute are required by Netlify. -->
+        <form id="inquiry-form" name="inquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="grid gap-5 sm:grid-cols-2">
+          <input type="hidden" name="form-name" value="inquiry" />
+          <!-- Honeypot field. Hidden from real users; bots fill it and get rejected. -->
+          <p class="hidden">
+            <label>Don't fill this out: <input name="bot-field" class="bg-eb-cream" /></label>
+          </p>
 
-      <label class="sm:col-span-1">
-        <span class="block text-sm font-medium text-evergreen-900">Entity type &amp; state of formation</span>
-        <input name="entity_type" placeholder="e.g. Washington LLC"
-               class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600" />
-      </label>
+          <label>
+            <span class="mb-1.5 block text-base font-medium">Name <span aria-hidden="true">*</span></span>
+            <input name="name" required autocomplete="name"
+                   class="block w-full rounded-[12px] border-[1.5px] border-eb-berry bg-eb-cream px-4 py-3 font-serif text-lg text-eb-berry" />
+          </label>
 
-      <label class="sm:col-span-1">
-        <span class="block text-sm font-medium text-evergreen-900">Proposed use</span>
-        <input name="proposed_use" placeholder="e.g. Law office, therapy practice"
-               class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600" />
-      </label>
+          <label>
+            <span class="mb-1.5 block text-base font-medium">Email <span aria-hidden="true">*</span></span>
+            <input type="email" name="email" required autocomplete="email"
+                   class="block w-full rounded-[12px] border-[1.5px] border-eb-berry bg-eb-cream px-4 py-3 font-serif text-lg text-eb-berry" />
+          </label>
 
-      <label class="sm:col-span-1">
-        <span class="block text-sm font-medium text-evergreen-900">Target start date</span>
-        <input type="date" name="start_date"
-               class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600" />
-      </label>
+          <label>
+            <span class="mb-1.5 block text-base font-medium">Phone <span class="font-normal">(optional)</span></span>
+            <input type="tel" name="phone" autocomplete="tel"
+                   class="block w-full rounded-[12px] border-[1.5px] border-eb-berry bg-eb-cream px-4 py-3 font-serif text-lg text-eb-berry" />
+          </label>
 
-      <label class="sm:col-span-1">
-        <span class="block text-sm font-medium text-evergreen-900">Proposed term</span>
-        <input name="lease_term" placeholder="e.g. 2 years"
-               class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600" />
-      </label>
+          <label>
+            <span class="mb-1.5 block text-base font-medium">I'm interested in</span>
+            <select name="interest"
+                    class="eb-select block w-full rounded-[12px] border-[1.5px] border-eb-berry bg-eb-cream px-4 py-3 font-serif text-lg text-eb-berry">
+              <option value="">Choose one</option>
+              <option value="A home">A home</option>
+              <option value="Commercial space">Commercial space</option>
+              <option value="Courthouse Square">Courthouse Square</option>
+              <option value="Something else">Something else</option>
+            </select>
+          </label>
 
-      <label class="sm:col-span-1">
-        <span class="block text-sm font-medium text-evergreen-900">Proposed base rent / month</span>
-        <input name="base_rent" inputmode="numeric" placeholder="$ / month"
-               class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600" />
-      </label>
+          <label class="sm:col-span-2">
+            <span class="mb-1.5 block text-base font-medium">What are you looking for?</span>
+            <textarea name="message" rows="5" placeholder="A home, a storefront, an office. Tell me a little about what you have in mind."
+                      class="block w-full rounded-[12px] border-[1.5px] border-eb-berry bg-eb-cream px-4 py-3 font-serif text-lg text-eb-berry placeholder:text-eb-berry/70"></textarea>
+          </label>
 
-      <label class="sm:col-span-2">
-        <span class="block text-sm font-medium text-evergreen-900">References
-          <span class="font-normal text-evergreen-700/80">(prior landlords and a bank reference — name &amp; contact)</span>
-        </span>
-        <textarea name="references" rows="3"
-                  placeholder="Prior commercial landlord(s) and a banking reference, with contact info. First-time tenants may list two business or professional references instead."
-                  class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600"></textarea>
-      </label>
+          <div class="sm:col-span-2 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <button type="submit" class="eb-btn cursor-pointer px-8 py-3 text-lg">Say hello</button>
+            <p class="text-base">I don't share your contact information. Ever.</p>
+          </div>
+        </form>
 
-      <label class="sm:col-span-2">
-        <span class="block text-sm font-medium text-evergreen-900">Message</span>
-        <textarea name="message" rows="5"
-                  placeholder="Tell us what kind of business you run and what you're looking for."
-                  class="mt-1 block w-full rounded-md border border-evergreen-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-evergreen-600"></textarea>
-      </label>
-
-      <div class="sm:col-span-2 flex items-center justify-between">
-        <p class="text-xs text-evergreen-700/80">We don't share your contact information. Ever.</p>
-        <button type="submit"
-                class="inline-flex items-center rounded-md bg-evergreen-800 text-sand-50 px-6 py-3 font-medium hover:bg-evergreen-700 transition">
-          Send inquiry
-        </button>
+        <p class="mt-8 text-base">Or just email me &mdash; <a href="mailto:me@ebberry.com" class="underline decoration-eb-tangerine decoration-2 underline-offset-4 hover:bg-eb-tangerine">me@ebberry.com</a>.</p>
       </div>
-    </form>
+    </div>
   </div>
 </section>
 
-<!-- ============================================================
-     FOOTER
-============================================================ -->
-<footer class="bg-evergreen-950 text-sand-100">
-  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-10 grid sm:grid-cols-3 gap-6 text-sm">
-    <div>
-      <svg viewBox="0 0 340 160" role="img" aria-label="Courthouse Square, Vashon"
-           class="h-20 w-auto text-sand-50" fill="currentColor"
-           xmlns="http://www.w3.org/2000/svg">
-        <g font-family="Fraunces, Georgia, 'Times New Roman', serif" text-anchor="middle">
-          <circle cx="170" cy="14" r="3" />
-          <text x="170" y="60" font-size="38" font-weight="600" letter-spacing="2">COURTHOUSE</text>
-          <text x="170" y="100" font-size="38" font-weight="600" letter-spacing="2">SQUARE</text>
-          <line x1="80" y1="118" x2="260" y2="118" stroke="currentColor" stroke-width="1.5" />
-          <text x="170" y="142" font-size="18" font-weight="500" letter-spacing="6">VASHON</text>
-        </g>
-      </svg>
-      <address class="not-italic mt-3 text-sand-200">
-        19001 Vashon Hwy SW<br/>
-        Vashon, WA 98070
-      </address>
+</main>
+
+<!-- EB:FOOTER (canonical — copy to all pages) -->
+<!-- Licensed firm name: confirm exact wording with Windermere designated broker -->
+<footer class="border-t border-eb-cream/30 bg-eb-berry text-eb-cream">
+  <div class="mx-auto max-w-[1440px] px-[var(--eb-space-margin)] py-12 sm:py-14">
+    <div class="grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
+      <div>
+        <img src="/images/brand/wordmark-cream.svg" alt="E. Berry" class="h-6 w-auto" />
+        <p class="mt-5 text-base">E. Berry Property Management &mdash; A Part of Windermere Vashon</p>
+      </div>
+      <nav aria-label="Footer">
+        <ul class="flex flex-wrap gap-x-7 gap-y-2 text-base">
+          <li><a href="/listings/" class="underline underline-offset-4 hover:text-eb-tangerine">Listings</a></li>
+          <li><a href="/buildings/courthouse-square/" class="underline underline-offset-4 hover:text-eb-tangerine">Courthouse Square</a></li>
+          <li><a href="https://courthousesquarevashon.com/lease/" class="underline underline-offset-4 hover:text-eb-tangerine">Lease documents</a></li>
+          <li><a href="mailto:me@ebberry.com" class="underline underline-offset-4 hover:text-eb-tangerine">Email</a></li>
+        </ul>
+      </nav>
     </div>
-    <div>
-      <p class="text-sand-200">Owned by Courthouse Square LLC.</p>
-      <p class="text-sand-200 mt-1">Managed by <a href="https://bangasser.com" target="_blank" rel="noopener" class="underline hover:text-sand-50">Bangasser &amp; Associates</a>.</p>
-      <p class="mt-3">
-        Contact: <a href="mailto:leasing@courthousesquarevashon.com" class="underline hover:text-sand-50">leasing@courthousesquarevashon.com</a>
-      </p>
-    </div>
-    <div class="sm:text-right">
-      <ul class="space-y-1">
-        <li><a href="/lease/" class="hover:text-sand-50">Lease &amp; process</a></li>
-        <li><a href="#inquire" class="hover:text-sand-50">Inquire</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="border-t border-evergreen-800">
-    <div class="mx-auto max-w-6xl px-4 sm:px-6 py-4 text-xs text-sand-200/80 flex flex-wrap justify-between gap-2">
-      <span>&copy; <span id="copyright-year">2026</span> Courthouse Square LLC. All rights reserved.</span>
-      <a href="https://bangasser.com" target="_blank" rel="noopener" class="underline hover:text-sand-50">View other available properties &rarr;</a>
+    <div class="mt-12 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3">
+      <p class="font-serif text-xl italic">A friend to Vashon.</p>
+      <p class="text-sm">&copy; <span id="copyright-year">2026</span> E. Berry Property Management. All rights reserved.</p>
     </div>
   </div>
 </footer>
+<!-- /EB:FOOTER -->
 
 <!-- ============================================================
-     SCRIPTS
-     - Render suite cards from /data/vacancies.json
-     - Populate suite dropdown
-     - Wire "Inquire about this suite" buttons to prefill + scroll
+     SCRIPT (vanilla, no dependencies)
+     - esc() / fmtMoney() helpers
+     - Available-now renderer (reads window.EB.LISTINGS_URL from /js/site-config.js)
+     - Mobile nav toggle
+     - Dynamic copyright year
 ============================================================ -->
+<script src="/js/site-config.js"></script>
 <script>
   // Format a number as USD without cents.
-  const fmtMoney = n => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
-  const fmtMoneyCents = n => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const fmtMoney = n => Number(n).toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
   // Minimal HTML escape so any data-supplied string can't break out of markup.
   function esc(s) {
     return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
-  // Category → left-stripe accent color. Lowercased category keys; falls back
-  // to a neutral line color. Tune freely as the tenant mix evolves.
-  const CATEGORY_ACCENTS = {
-    professional: '#3f5e6b',
-    medical:      '#4b755c',
-    dental:       '#4b755c',
-    wellness:     '#5c6e4a',
-    therapy:      '#7d4a5c',
-    bodywork:     '#7d4a5c',
-    legal:        '#2c4a39',
-    accounting:   '#385c47',
-    tutoring:     '#3f5e6b',
-    creative:     '#8a5a2b',
-    retail:       '#b4521f',
-    food:         '#c98a2b'
-  };
-  const accentFor = cat => CATEGORY_ACCENTS[String(cat || '').toLowerCase()] || '#bcd0c2';
-  const titleCase = s => String(s || '').replace(/\b\w/g, c => c.toUpperCase());
-
-  // Join an array of names into "A", "A and B", or "A, B and C".
-  function listText(arr) {
-    if (!arr || !arr.length) return '';
-    if (arr.length === 1) return arr[0];
-    return arr.slice(0, -1).join(', ') + ' and ' + arr.slice(-1);
-  }
-
-  // Pick up to two occupied neighbors nearest an open suite (same building
-  // letter prefix, closest suite number). Returns an array of names.
-  function neighborsFor(openUnit, tenants) {
-    const prefix = (String(openUnit).match(/^[A-Za-z]+/) || [''])[0];
-    const num = parseInt(String(openUnit).replace(/\D/g, ''), 10);
-    return tenants
-      .filter(t => t.suite && (String(t.suite).match(/^[A-Za-z]+/) || [''])[0] === prefix)
-      .map(t => ({ name: t.name, d: Math.abs(parseInt(String(t.suite).replace(/\D/g, ''), 10) - num) }))
-      .sort((a, b) => a.d - b.d)
-      .slice(0, 2)
-      .map(t => t.name);
-  }
-
-  // State for filtering.
-  let activeCat = null;
-  let openOnly = false;
-
-  // Fetch both data sources and build the unified wall.
-  async function buildNeighborWall() {
-    const wall = document.getElementById('neighbor-wall');
-
-    const [vacData, tenants] = await Promise.all([
-      fetch('/data/vacancies.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : []).catch(() => []),
-      fetch('/data/tenants.json',   { cache: 'no-cache' }).then(r => r.ok ? r.json() : []).catch(() => [])
-    ]);
-    // vacancies.json is {asOf, suites}; tolerate the older bare-array shape too.
-    const vacancies = Array.isArray(vacData) ? vacData : (vacData.suites || []);
-    renderSnapshotDate(Array.isArray(vacData) ? '' : vacData.asOf);
-
-    // Always keep the inquiry-form dropdown populated from real vacancies.
-    populateSuiteDropdown(vacancies);
-
-    if (!vacancies.length && !tenants.length) {
-      wall.innerHTML = '<p class="text-evergreen-800/80">Suite information is being updated. Please <a href="#inquire" class="underline">contact us</a> for the latest availability.</p>';
-      return;
-    }
-
-    const occupiedCount = tenants.length;
-    const isAlive = occupiedCount > 0;   // do we have neighbors to show?
-
-    // Adapt the header copy to whether the roster is populated yet.
-    const heading = document.getElementById('neighbors-heading');
-    const lede = document.getElementById('neighbors-lede');
-    if (isAlive) {
-      heading.innerHTML = 'Meet the <em class="italic text-rust-500">neighbors</em> you’d be keeping.';
-      lede.textContent = 'Courthouse Square is a working building of professionals, practitioners, and small firms, with a few doors open for whoever comes next. Here is who you would share the block with.';
-    } else {
-      heading.textContent = 'Find your place at CHS.';
-      lede.textContent = 'A few quiet, welcoming suites are open right now, with free on-site parking, a shared outdoor patio, and an easy in-and-out for you, your team, and your visitors.';
-    }
-
-    // Build a unified, suite-ordered list so open and occupied interleave.
-    const items = [
-      ...tenants.map(t => ({ mode: 'occupied', sortKey: String(t.suite || '~'), data: t })),
-      ...vacancies.map(v => ({ mode: 'open', sortKey: String(v.unit || '~'), data: v }))
-    ].sort((a, b) => a.sortKey.localeCompare(b.sortKey, undefined, { numeric: true }));
-
-    wall.innerHTML = items.map(it =>
-      it.mode === 'occupied' ? occupiedCardHTML(it.data) : openCardHTML(it.data, tenants, isAlive)
-    ).join('');
-
-    // Wire the "Curious? Let's talk" / inquire CTAs on open cards.
-    wall.querySelectorAll('[data-inquire-suite]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        prefillInquiry(btn.dataset.inquireSuite);
-      });
-    });
-
-    // Tally + controls only make sense once there are neighbors.
-    if (isAlive) {
-      setupTally(items.length, occupiedCount, vacancies.length);
-      setupControls(tenants);
-    }
-  }
-
-  function occupiedCardHTML(t) {
-    const accent = accentFor(t.category);
-    return `
-      <article class="neighbor-card bg-white border border-evergreen-100 p-6"
-               data-mode="occupied" data-cat="${esc(String(t.category || '').toLowerCase())}"
-               style="--accent:${accent}">
-        ${t.logo ? `<img src="${esc(t.logo)}" alt="${esc(t.name)} logo" class="h-10 w-auto mb-4 object-contain" onerror="this.style.display='none'" />` : ''}
-        <div class="flex items-start justify-between gap-3">
-          ${t.category ? `<span class="text-[0.66rem] font-semibold uppercase tracking-[0.18em] text-evergreen-700/80">${esc(titleCase(t.category))}</span>` : '<span></span>'}
-          ${t.suite ? `<span class="text-xs text-evergreen-700/70">Suite ${esc(t.suite)}</span>` : ''}
-        </div>
-        <h3 class="font-serif text-2xl text-evergreen-900 mt-2 leading-tight">${esc(t.name)}</h3>
-        ${t.blurb ? `<p class="mt-2 text-sm text-evergreen-800/90 leading-relaxed">${esc(t.blurb)}</p>` : ''}
-        ${t.phone || t.email ? `<p class="mt-3 text-xs text-evergreen-700/80">${[t.phone ? esc(t.phone) : '', t.email ? `<a href="mailto:${esc(t.email)}" class="underline hover:text-evergreen-900">${esc(t.email)}</a>` : ''].filter(Boolean).join(' &middot; ')}</p>` : ''}
-        ${t.website ? `<p class="mt-4"><a href="${esc(t.website)}" target="_blank" rel="noopener" class="text-sm font-medium text-rust-500 hover:text-rust-600">Visit website &rarr;</a></p>` : ''}
-      </article>`;
-  }
-
-  function openCardHTML(v, tenants, isAlive) {
-    const neighbors = isAlive ? neighborsFor(v.unit, tenants) : [];
-    const neighborLine = neighbors.length
-      ? `<p class="mt-3 pt-3 border-t border-dashed border-evergreen-200 text-sm italic text-evergreen-700/90">You'd be next to <span class="not-italic font-medium text-evergreen-800">${esc(listText(neighbors))}</span>.</p>`
-      : '';
-    return `
-      <article class="neighbor-card is-open p-6" data-mode="open" data-cat="open" style="--accent:#b4521f">
-        <div class="glow"></div>
-        <div class="relative flex items-start justify-between gap-3">
-          <span class="text-[0.66rem] font-semibold uppercase tracking-[0.18em] text-rust-600">Available</span>
-          <span class="text-xs text-evergreen-700/70">Suite ${esc(v.unit)}</span>
-        </div>
-        <h3 class="relative font-serif text-2xl text-rust-600 mt-2 leading-tight">Your name here</h3>
-        <div class="relative flex gap-6 mt-4 font-serif">
-          <div><b class="block text-xl font-semibold text-evergreen-900">${Number(v.sqft).toLocaleString()}</b><span class="text-[0.7rem] uppercase tracking-wide text-evergreen-700/70">sq ft</span></div>
-          <div><b class="block text-xl font-semibold text-evergreen-900">${fmtMoney(v.allIn)}</b><span class="text-[0.7rem] uppercase tracking-wide text-evergreen-700/70">/ mo all-in, to start</span></div>
-        </div>
-        ${v.fit ? `<p class="relative mt-3 text-sm text-evergreen-800/90 leading-relaxed">${esc(v.fit)}</p>` : ''}
-        <details class="relative mt-3 text-sm">
-          <summary class="cursor-pointer text-evergreen-700 hover:text-evergreen-900 select-none">See cost breakdown</summary>
-          <dl class="mt-2 grid grid-cols-2 gap-y-1 text-evergreen-800">
-            <dt>Rent</dt>      <dd class="text-right">${fmtMoneyCents(v.rent)}</dd>
-            <dt>CAM</dt>       <dd class="text-right">${fmtMoneyCents(v.cam)}</dd>
-            <dt>Utilities</dt> <dd class="text-right">${fmtMoneyCents(v.utilities)}</dd>
-            <dt class="border-t border-evergreen-100 pt-1 font-medium">Total</dt>
-            <dd class="border-t border-evergreen-100 pt-1 text-right font-medium">${fmtMoney(v.allIn)}</dd>
-          </dl>
-        </details>
-        ${neighborLine}
-        <button type="button" data-inquire-suite="${esc(v.unit)}"
-                class="relative mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-rust-500 hover:text-rust-600">
-          Curious? Let's talk &rarr;
-        </button>
-      </article>`;
-  }
-
-  // Prefix the snapshot note with the asOf date from vacancies.json.
+  // ---- Available now ----
+  // "2026-11-01" -> "available Nov 1", or "available now" when null / today / past.
   // Parsed by parts (not new Date(string)) to avoid UTC off-by-one-day shifts.
-  function renderSnapshotDate(asOf) {
-    const el = document.getElementById('pricing-snapshot');
-    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(asOf || '');
-    if (!el || !m) return;
+  function availableText(iso) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+    if (!m) return 'available now';
     const d = new Date(+m[1], +m[2] - 1, +m[3]);
-    const nice = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    el.textContent = `Pricing snapshot as of ${nice}. ` + el.textContent;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    if (d <= today) return 'available now';
+    return 'available ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
-  // Scroll to the inquiry form with a suite preselected.
-  function prefillInquiry(unit) {
-    const select = document.getElementById('suite-select');
-    if (select && unit) {
-      if (![...select.options].some(o => o.value === unit)) {
-        const opt = document.createElement('option');
-        opt.value = unit; opt.textContent = `Suite ${unit}`;
-        select.appendChild(opt);
-      }
-      select.value = unit;
+  function factsLine(L) {
+    const bits = [];
+    if (L.beds != null) bits.push(esc(L.beds) + ' bed');
+    if (L.baths != null) bits.push(esc(L.baths) + ' bath');
+    if (L.sqft != null) bits.push(Number(L.sqft).toLocaleString('en-US') + ' sq ft');
+    bits.push(availableText(L.available));
+    return bits.join(' &middot; ');
+  }
+
+  function listingCardHTML(L) {
+    const isCommercial = L.type === 'commercial';
+    const badge = isCommercial
+      ? '<span class="self-start rounded-[4px] bg-eb-mustard px-2 py-0.5 font-serif text-xs font-medium uppercase tracking-[0.08em]">Commercial</span>'
+      : '<span class="self-start rounded-[4px] bg-eb-sand px-2 py-0.5 font-serif text-xs font-medium uppercase tracking-[0.08em]">Home</span>';
+    const photo = (L.photos && L.photos[0])
+      ? `<img src="${esc(L.photos[0])}" alt="" loading="lazy" class="h-full w-full object-cover" />`
+      : `<div class="flex h-full w-full flex-col items-center justify-center gap-2 text-eb-cream">
+           <img src="/images/brand/monogram-tangerine-bare.svg" alt="" class="h-10 w-auto" />
+           <span class="font-serif text-sm italic">photos soon</span>
+         </div>`;
+    return `
+      <article class="group relative flex flex-col rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-3 hover:border-eb-tangerine focus-within:border-eb-tangerine">
+        <div class="aspect-[4/3] overflow-hidden rounded-[12px] bg-eb-berry">${photo}</div>
+        <div class="flex flex-1 flex-col px-3 pb-3 pt-5 sm:px-4 sm:pb-4">
+          ${badge}
+          <p class="mt-4 font-serif text-3xl font-medium leading-none sm:text-4xl">${fmtMoney(L.rent)}<span class="text-lg font-normal">/mo</span></p>
+          <p class="mt-2 text-base">${factsLine(L)}</p>
+          <h3 class="mt-3 font-serif text-lg font-medium leading-snug">
+            <a href="/listings/${encodeURIComponent(L.id)}/" class="after:absolute after:inset-0 after:rounded-card">${esc(L.title)}</a>
+          </h3>
+          <span class="mt-auto pt-5 text-lg font-semibold text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-[6px] group-hover:decoration-eb-berry">Curious? Let's talk &rarr;</span>
+        </div>
+      </article>`;
+  }
+
+  async function renderAvailable() {
+    const section = document.getElementById('available');
+    const grid = document.getElementById('available-grid');
+    try {
+      const url = (window.EB && window.EB.LISTINGS_URL) || '/data/listings.json';
+      const res = await fetch(url, { cache: 'no-cache' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      // Feed is {updated, listings}; tolerate a bare array too.
+      const all = Array.isArray(data) ? data : (data.listings || []);
+      const picks = all
+        .filter(L => L && L.id && typeof L.rent === 'number')
+        .sort((a, b) => a.rent - b.rent)
+        .slice(0, 3);
+      if (!picks.length) return;                 // nothing open: stay hidden
+      grid.innerHTML = picks.map(listingCardHTML).join('');
+      section.hidden = false;
+    } catch (err) {
+      section.hidden = true;                     // fail quietly
     }
-    document.getElementById('inquire').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  function populateSuiteDropdown(suites) {
-    const select = document.getElementById('suite-select');
-    if (!select) return;
-    suites.forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s.unit;
-      opt.textContent = `Suite ${s.unit}, ${Number(s.sqft).toLocaleString()} sq ft (${fmtMoney(s.allIn)}/mo)`;
-      select.appendChild(opt);
+  // ---- Mobile nav toggle ----
+  (function () {
+    const btn = document.getElementById('nav-toggle');
+    const nav = document.getElementById('site-nav');
+    if (!btn || !nav) return;
+    function setOpen(open) {
+      nav.classList.toggle('hidden', !open);
+      nav.classList.toggle('flex', open);
+      btn.setAttribute('aria-expanded', String(open));
+    }
+    btn.addEventListener('click', () => setOpen(btn.getAttribute('aria-expanded') !== 'true'));
+    nav.addEventListener('click', e => { if (e.target.closest('a')) setOpen(false); });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') { setOpen(false); btn.focus(); }
     });
-  }
-
-  // ---- Tally count-up ----
-  function setupTally(suites, neighbors, open) {
-    const box = document.getElementById('neighbors-tally');
-    box.classList.remove('hidden');
-    box.classList.add('flex');
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    countUp('tally-suites', suites, reduce);
-    countUp('tally-neighbors', neighbors, reduce);
-    countUp('tally-open', open, reduce);
-  }
-  function countUp(id, target, reduce) {
-    const el = document.getElementById(id);
-    if (reduce || target <= 0) { el.textContent = target; return; }
-    let n = 0;
-    const step = Math.max(1, Math.round(target / 20));
-    const iv = setInterval(() => {
-      n += step;
-      if (n >= target) { n = target; clearInterval(iv); }
-      el.textContent = n;
-    }, 30);
-  }
-
-  // ---- Filter controls ----
-  function setupControls(tenants) {
-    const controls = document.getElementById('neighbors-controls');
-    controls.classList.remove('hidden');
-    controls.classList.add('flex');
-
-    // Build a tag button per distinct occupied category.
-    const cats = [...new Set(tenants.map(t => String(t.category || '').toLowerCase()).filter(Boolean))].sort();
-    const tagWrap = document.getElementById('neighbor-tags');
-    tagWrap.innerHTML = cats.map(c =>
-      `<button type="button" data-cat="${esc(c)}"
-               class="neighbor-tag font-serif text-sm px-3.5 py-1.5 rounded-full border border-evergreen-200 text-evergreen-800 hover:border-rust-400 hover:text-rust-500 transition">
-         ${esc(titleCase(c))}
-       </button>`
-    ).join('');
-
-    tagWrap.querySelectorAll('.neighbor-tag').forEach(btn => {
-      btn.addEventListener('click', () => {
-        activeCat = (activeCat === btn.dataset.cat) ? null : btn.dataset.cat;
-        tagWrap.querySelectorAll('.neighbor-tag').forEach(b => {
-          b.classList.toggle('tag-active', b.dataset.cat === activeCat);
-        });
-        applyFilterStates();
-      });
-    });
-
-    const toggle = document.getElementById('open-toggle');
-    toggle.addEventListener('click', () => {
-      openOnly = !openOnly;
-      toggle.setAttribute('aria-pressed', String(openOnly));   // CSS reacts to this
-      applyFilterStates();
-    });
-  }
-
-  // Occupied cards dim (category filter) or recede (open-only toggle).
-  // Open cards always stay lit, so "what's available" is never hidden.
-  function applyFilterStates() {
-    document.querySelectorAll('#neighbor-wall .neighbor-card').forEach(card => {
-      card.classList.remove('dim', 'recede');
-      if (card.dataset.mode === 'open') return;
-      if (openOnly) { card.classList.add('recede'); return; }
-      if (activeCat && card.dataset.cat !== activeCat) card.classList.add('dim');
-    });
-  }
+  })();
 
   // Copyright year.
   document.getElementById('copyright-year').textContent = new Date().getFullYear();
 
-  buildNeighborWall();
+  renderAvailable();
 </script>
 
 </body>

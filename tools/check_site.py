@@ -108,7 +108,7 @@ for pat in (r'rel="icon"[^>]*href="(/[^"]+)"',):
         rel = m.group(1).lstrip('/')
         check(os.path.exists(os.path.join(ROOT, rel)),
               f"index.html references {m.group(1)} but the file does not exist")
-m = re.search(r'property="og:image" content="https://courthousesquarevashon\.com(/[^"]+)"', index)
+m = re.search(r'property="og:image" content="https://(?:eberryvashon|courthousesquarevashon)\.com(/[^"]+)"', index)
 if m:
     check(os.path.exists(os.path.join(ROOT, m.group(1).lstrip('/'))),
           f"index.html og:image points at {m.group(1)} but the file does not exist")
@@ -250,6 +250,30 @@ for lid in listing_by_id:
 tw_cfg = read('tailwind.config.js')
 for glob_ in ('./listings/**/*.html', './js/listings.js'):
     check(glob_ in tw_cfg, f"tailwind.config.js content[] does not include {glob_}")
+
+# =====================================================================
+# E. Berry homepage (Phase 2): social card, firm-ID line, inquiry form, flat brand
+# =====================================================================
+og_path = os.path.join(ROOT, 'images/og-card-eberry.png')
+check(os.path.exists(og_path), "images/og-card-eberry.png is missing (homepage og:image)")
+if os.path.exists(og_path):
+    check(os.path.getsize(og_path) <= 300 * 1024,
+          f"images/og-card-eberry.png is {os.path.getsize(og_path)} bytes; keep it under 300KB")
+check(re.search(r'property="og:image" content="https://eberryvashon\.com/images/og-card-eberry\.png"', index) is not None,
+      "index.html: og:image must be https://eberryvashon.com/images/og-card-eberry.png")
+# Washington firm-identification rule: the co-brand line must be on the page.
+check('A PART OF WINDERMERE VASHON' in index,
+      "index.html: header is missing the 'A PART OF WINDERMERE VASHON' firm-ID line")
+check('name="inquiry"' in index, 'index.html: Netlify form name="inquiry" is missing')
+check('id="inquire"' in index, 'index.html: id="inquire" anchor is missing (lease pages deep-link to /#inquire)')
+# Flat brand: no gradients, shadows, pure white or pure black on the homepage.
+for label, pat in (('gradient', r'gradient'), ('shadow', r'shadow'),
+                   ('pure white', r'#fff\b|#ffffff\b|\bbg-white\b|\btext-white\b'),
+                   ('pure black', r'#000\b|#000000\b|\bbg-black\b|\btext-black\b')):
+    check(re.search(pat, index, re.I) is None, f"index.html: contains {label} (E. Berry brand is flat, Berry/Cream only)")
+robots = read('robots.txt')
+check('Sitemap: https://eberryvashon.com/sitemap.xml' in robots,
+      "robots.txt: Sitemap line must point at https://eberryvashon.com/sitemap.xml")
 
 # ---------------- verdict ----------------
 if problems:

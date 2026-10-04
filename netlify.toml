@@ -25,3 +25,36 @@
   for = "/images/*"
   [headers.values]
     Cache-Control = "public, max-age=86400"
+
+# ── Dual-domain plumbing (E. Berry site) ──────────────────────────────
+# The old Courthouse Square domain now forwards to the building page on the
+# E. Berry site; the lease documents stay reachable at their historical URL.
+[[redirects]]
+  from = "https://courthousesquarevashon.com/"
+  to = "https://eberryvashon.com/buildings/courthouse-square/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.courthousesquarevashon.com/"
+  to = "https://eberryvashon.com/buildings/courthouse-square/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://eberryvashon.com/lease/*"
+  to = "https://courthousesquarevashon.com/lease/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.eberryvashon.com/*"
+  to = "https://eberryvashon.com/:splat"
+  status = 301
+  force = true
+
+# Listing feed: short cache so rent/availability edits show up quickly.
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300"
