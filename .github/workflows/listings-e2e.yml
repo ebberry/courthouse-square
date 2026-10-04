@@ -1,29 +1,40 @@
-# End-to-end test of the listings index (/listings/) in headless Chromium: cards, filters, URL state,
-# the Leaflet map and its popup, and the mobile Map/List pill. The network is sealed inside the test
-# (map tiles and fonts are answered locally). Runs only when listings-related files change.
+# End-to-end test of the listings index (/listings/) and the listing detail pages (/listings/<id>/ and the
+# /listing.html fallback) in headless Chromium: cards, filters, URL state, the Leaflet map and its popup, the
+# mobile Map/List pill, the inquiry form, structured data and generated-vs-fallback parity. The network is
+# sealed inside the test (map tiles and fonts are answered locally). Runs only when listings-related files change.
 name: Listings E2E
 
 on:
   push:
     paths:
       - 'listings/**'
+      - 'listing.html'
       - 'js/listings.js'
+      - 'js/listing-detail.js'
       - 'js/eb-map.js'
       - 'js/vendor/leaflet.js'
       - 'css/eb-map.css'
       - 'css/vendor/**'
       - 'data/listings.json'
+      - 'data/buildings.json'
+      - 'tools/build_pages.py'
+      - 'tools/templates/**'
       - 'tools/test_listings.py'
       - '.github/workflows/listings-e2e.yml'
   pull_request:
     paths:
       - 'listings/**'
+      - 'listing.html'
       - 'js/listings.js'
+      - 'js/listing-detail.js'
       - 'js/eb-map.js'
       - 'js/vendor/leaflet.js'
       - 'css/eb-map.css'
       - 'css/vendor/**'
       - 'data/listings.json'
+      - 'data/buildings.json'
+      - 'tools/build_pages.py'
+      - 'tools/templates/**'
       - 'tools/test_listings.py'
       - '.github/workflows/listings-e2e.yml'
 

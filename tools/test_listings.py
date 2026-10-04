@@ -17,11 +17,23 @@ are answered locally, so the test is the same on a laptop, in CI and behind a pr
   J. Details        — sticky bar and map, whole-card focus ring, empty/over-filtered/failed-feed states, zero page errors
   K. No Leaflet     — if the map library fails to load, the page is still a working filterable list
 
+Part 2 drives the listing detail pages (/listings/<id>/, generated) and their client-side fallback (/listing.html):
+
+  L. Static page    — a card click on /listings/ lands on /listings/chs-n101/; rent, facts, features, gallery
+                      placeholder, location map and the no-JS / no-Leaflet cases, all computed from data/listings.json;
+                      the page never loads the fallback script or the feed
+  M. Inquiry form   — form name, hidden form-name / listing / building, honeypot, and the POST body a submission sends
+  N. Fallback       — /listing.html?id=<id>, /listings/<id>/ through a simulated Netlify rewrite, unknown ids, a feed-only
+                      listing, a failed feed, and DOM parity with the generated page (real and synthetic listings)
+  O. Structured data— the RealEstateListing JSON-LD parses, carries the right price/address/geo, and escapes hostile text
+  P. Flat brand     — computed-style audit of the detail page, one huge element, 390px layout, zero console errors
+
 Requirements: pip install playwright; playwright install chromium (or set CHROME=/path/to/chrome).
 Run: python3 tools/test_listings.py
 """
 
-import base64, copy, glob, http.server, json, os, re, socketserver, sys, threading
+import base64, copy, datetime, glob, http.server, json, os, re, socketserver, sys, threading
+from urllib.parse import parse_qs, urlsplit
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PORT = 8190
@@ -77,6 +89,14 @@ class Quiet(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *a):
         pass
 
+    def translate_path(self, path):
+        """netlify.toml: /listings/*  ->  /listing.html (status 200, not forced). A file or folder that exists
+        (/listings/, /listings/chs-n101/) is served as itself; only an unknown /listings/<slug>/ falls through."""
+        real = super().translate_path(path)
+        if urlsplit(path).path.startswith('/listings/') and not os.path.exists(real):
+            return os.path.join(ROOT, 'listing.html')
+        return real
+
 
 def launch(p):
     chrome = os.environ.get('CHROME')
@@ -95,6 +115,7 @@ class Session:
         self.errors = []        # page errors and console errors
         self.bad_local = []     # local requests answered 4xx/5xx
         self.tiles = []         # tile URLs requested
+        self.requests = []      # every URL the page asked for
         self.ctx = browser.new_context(**ctx_kw)
         self.ctx.route(re.compile(r'^https://tile\.openstreetmap\.org/'), self._tile)
         self.ctx.route(re.compile(r'^https://fonts\.googleapis\.com/'),
@@ -111,6 +132,7 @@ class Session:
         self.pg.on('pageerror', lambda e: self.errors.append(f'{tag} pageerror: {e}'))
         self.pg.on('console', self._console)
         self.pg.on('response', self._response)
+        self.pg.on('request', lambda r: self.requests.append(r.url))
 
     def _tile(self, route):
         self.tiles.append(route.request.url)
@@ -127,6 +149,13 @@ class Session:
     def open(self, path='/listings/'):
         self.pg.goto(BASE + path, wait_until='networkidle')
         self.settle()
+        return self.pg
+
+    def open_detail(self, path):
+        """A listing detail page (generated or fallback): ready once its h1 exists and the network is quiet."""
+        self.pg.goto(BASE + path, wait_until='networkidle')
+        self.pg.wait_for_selector('#listing-title', timeout=10000)
+        self.pg.wait_for_timeout(150)
         return self.pg
 
     def settle(self):
@@ -217,6 +246,468 @@ def synthetic_feed():
         home('test-studio', 'Studio above the Shop', 1200, 1, 1, None, None, None, None),
     ]
     return doc
+
+
+# ---------------------------------------------------------------- part 2: listing detail pages (L-P)
+
+BY_ID = {L['id']: L for L in LISTINGS}
+UPDATED = DOC['updated']
+BUILDINGS = {b['id']: b for b in json.load(open(os.path.join(ROOT, 'data/buildings.json'), encoding='utf-8'))['buildings']}
+BERRY, CREAM, MUSTARD, SAND = 'rgb(103, 10, 47)', 'rgb(241, 236, 233)', 'rgb(232, 196, 80)', 'rgb(241, 221, 183)'
+PHOTOS = ['/images/og-card-eberry.png', '/images/og-card.png', '/images/favicon.svg']   # real files the server can serve
+
+
+def ws(text):
+    return re.sub(r'\s+', ' ', text or '').strip()
+
+
+def plain(n):
+    return int(n) if float(n).is_integer() else n
+
+
+def human_date(iso):
+    d = datetime.date.fromisoformat(iso)
+    return f'{d.strftime("%b")} {d.day}, {d.year}'
+
+
+def expected_facts(L):
+    """The fact tiles a listing should show, computed from its data (not from the page code)."""
+    out = []
+    if L['sqft'] is not None: out.append(f"{plain(L['sqft']):,} sq ft")
+    if L['beds'] is not None: out.append(f"{plain(L['beds']):,} bed")
+    if L['baths'] is not None: out.append(f"{plain(L['baths']):,} bath")
+    out.append('Available now' if L['available'] is None or L['available'] <= datetime.date.today().isoformat()
+               else f"Available {human_date(L['available'])}")
+    allin = next((f for f in L['features'] if f.lower().startswith('all-in pricing')), None)
+    if allin:
+        note = allin.split(' — ', 1)[1].strip() if ' — ' in allin else ''
+        out.append('All-in pricing' + (' ' + note[:1].upper() + note[1:] if note else ''))
+    return out
+
+
+def facts_of(pg):
+    return [ws(t) for t in pg.locator('#listing-facts li').all_inner_texts()]
+
+
+# A compact signature of everything inside <main>: the same listing must give the same one on the generated page and on
+# the fallback. Attributes that carry the layout and the behaviour are kept; the live map's own DOM is left out.
+SIG_JS = r"""
+() => {
+  const KEEP = ['class', 'id', 'href', 'src', 'alt', 'name', 'value', 'type', 'for', 'role', 'rows', 'loading', 'method',
+                'required', 'autocomplete', 'netlify-honeypot', 'data-netlify', 'aria-label', 'aria-labelledby', 'aria-hidden'];
+  const out = [];
+  const walk = (el, depth) => {
+    const attrs = KEEP.filter(a => el.hasAttribute(a)).map(a => {
+      let v = el.getAttribute(a);
+      if (a === 'class' && el.id === 'listing-map-wrap') v = v.split(/\s+/).filter(c => c !== 'hidden').join(' ');
+      if (a === 'class' && el.id === 'listing-map') return null;      // Leaflet adds its own classes
+      return a + '=' + v;
+    }).filter(Boolean);
+    if (el.id === 'listing-map') attrs.push(...[...el.attributes].filter(a => a.name.startsWith('data-')).map(a => a.name + '=' + a.value));
+    const own = [...el.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('').replace(/\s+/g, ' ').trim();
+    out.push(depth + ' <' + el.tagName.toLowerCase() + '> ' + attrs.join(' ') + (own ? ' :: ' + own : ''));
+    if (el.id === 'listing-map') return;
+    [...el.children].forEach(c => walk(c, depth + 1));
+  };
+  [...document.getElementById('main').children].forEach(c => walk(c, 0));
+  return out;
+}
+"""
+
+# The biggest type on the page, with where it sits.
+SIZES_JS = r"""
+() => {
+  const sizes = [];
+  const walker = document.createTreeWalker(document.getElementById('main'), NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) {
+    const n = walker.currentNode;
+    if (!n.textContent.trim()) continue;
+    const el = n.parentElement, cs = getComputedStyle(el);
+    if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+    sizes.push({ size: parseFloat(cs.fontSize), inRent: !!el.closest('#listing-rent'), text: n.textContent.trim().slice(0, 30) });
+  }
+  sizes.sort((a, b) => b.size - a.size);
+  return sizes;
+}
+"""
+
+
+def assert_detail(pg, L, tag, building=None, photos=None):
+    """Everything a detail page shows for listing L, checked against L itself. `building` is the buildings.json entry
+    the "Part of" link should name (or None); `photos` the photo paths that should be in the grid."""
+    commercial = L['type'] == 'commercial'
+    check(ws(pg.inner_text('#listing-title')) == L['title'], f'{tag}: h1 is {pg.inner_text("#listing-title")!r}, expected {L["title"]!r}')
+    check(pg.locator('h1').count() == 1, f'{tag}: exactly one h1')
+    badge = pg.evaluate("document.getElementById('listing-title').previousElementSibling.textContent.trim()")
+    check(badge == ('Commercial' if commercial else 'Home'), f'{tag}: type badge reads {badge!r}')
+    bg = pg.evaluate("getComputedStyle(document.getElementById('listing-title').previousElementSibling).backgroundColor")
+    check(bg == (MUSTARD if commercial else SAND), f'{tag}: badge is {"Mustard" if commercial else "Sand"} (got {bg})')
+    check(ws(pg.inner_text('main address >> nth=0')) == L['address'], f'{tag}: address line')
+    check(ws(pg.inner_text('#listing-rent')) == f"{money(L['rent'])} /month", f'{tag}: rent reads {ws(pg.inner_text("#listing-rent"))!r}')
+    check(facts_of(pg) == expected_facts(L), f'{tag}: fact tiles {facts_of(pg)}, expected {expected_facts(L)}')
+    summary = ws(L['summary'])
+    if summary:
+        check(ws(pg.inner_text('#listing-summary')) == summary, f'{tag}: summary text')
+    else:
+        check(pg.locator('#listing-summary').count() == 0, f'{tag}: no empty summary paragraph')
+    feats = [f for f in L['features'] if f.strip()]
+    got = [ws(t) for t in pg.locator('#listing-features li').all_inner_texts()]
+    check(got == feats, f'{tag}: feature tags {got}, expected {feats}')
+    if feats:
+        look = pg.evaluate("""() => { const cs = getComputedStyle(document.querySelector('#listing-features li'));
+                                      return { bg: cs.backgroundColor, color: cs.color, radius: cs.borderTopLeftRadius }; }""")
+        check(look == {'bg': MUSTARD if commercial else SAND, 'color': BERRY, 'radius': '4px'}, f'{tag}: feature tags are flat {look}')
+    else:
+        check(pg.locator('#listing-features').count() == 0, f'{tag}: no empty tag list')
+    # gallery
+    if photos:
+        srcs = pg.eval_on_selector_all('#listing-photos img', 'els => els.map(e => e.getAttribute("src"))')
+        alts = pg.eval_on_selector_all('#listing-photos img', 'els => els.map(e => e.getAttribute("alt"))')
+        check(srcs == photos and alts == [f"{L['title']}, photo {i}" for i in range(1, len(photos) + 1)], f'{tag}: photo grid {srcs} {alts}')
+        check(pg.locator('#listing-photos-placeholder').count() == 0, f'{tag}: no placeholder when there are photos')
+        wide = pg.eval_on_selector_all('#listing-photos li', 'els => els.map(e => e.classList.contains("sm:col-span-2"))')
+        check(wide == [len(photos) % 2 == 1] + [False] * (len(photos) - 1), f'{tag}: first photo spans two columns only for an odd count ({wide})')
+        radius = pg.evaluate("getComputedStyle(document.querySelector('#listing-photos li')).borderTopLeftRadius")
+        check(radius == '24px', f'{tag}: photo tiles have a 24px radius ({radius})')
+    else:
+        check(pg.locator('#listing-photos').count() == 0 and pg.locator('#listing-photos-placeholder').count() == 1,
+              f'{tag}: ONE placeholder band and no grid')
+        check(ws(pg.inner_text('#listing-photos-placeholder')) == "Photos are coming — ask me and I'll walk you through in person.",
+              f'{tag}: placeholder copy')
+        look = pg.evaluate("""() => { const el = document.getElementById('listing-photos-placeholder'), cs = getComputedStyle(el), p = getComputedStyle(el.querySelector('p'));
+                                      return { bg: cs.backgroundColor, color: p.color, italic: p.fontStyle, mono: el.querySelector('img').getAttribute('src') }; }""")
+        check(look == {'bg': BERRY, 'color': CREAM, 'italic': 'italic', 'mono': '/images/brand/monogram-tangerine-bare.svg'},
+              f'{tag}: placeholder is a Berry block with the bare monogram and Cream italic type {look}')
+    # breadcrumb
+    crumbs = pg.eval_on_selector_all('nav[aria-label="Breadcrumb"] a', 'els => els.map(e => [e.getAttribute("href"), e.textContent.trim()])')
+    want = [['/listings/', "← Everything that's open"]]
+    if building:
+        want.append([f"/buildings/{building['id']}/", f"Part of {building['name']} →"])
+    check(crumbs == want, f'{tag}: breadcrumb {crumbs}, expected {want}')
+    # inquiry form
+    hidden = pg.eval_on_selector_all('#inquire input[type=hidden]', 'els => Object.fromEntries(els.map(e => [e.name, e.value]))')
+    check(hidden == {'form-name': 'listing-inquiry', 'listing': L['id'], 'building': building['id'] if building else ''},
+          f'{tag}: hidden inputs {hidden}')
+    # location
+    field = pg.evaluate("document.getElementById('location').className")
+    check(('eb-field-mustard' if commercial else 'eb-field-sand') in field, f'{tag}: location field color ({field})')
+    has_coords = L['lat'] is not None and L['lng'] is not None
+    osm = pg.get_attribute('#location a[href^="https://www.openstreetmap.org/"]', 'href')
+    if has_coords:
+        check(pg.locator('#listing-map').count() == 1, f'{tag}: location has the map div')
+        check((pg.get_attribute('#listing-map', 'data-lat'), pg.get_attribute('#listing-map', 'data-lng'))
+              == (str(L['lat']), str(L['lng'])), f'{tag}: map data-lat/data-lng')
+        check(osm == f"https://www.openstreetmap.org/?mlat={L['lat']}&mlon={L['lng']}#map=17/{L['lat']}/{L['lng']}", f'{tag}: OSM link {osm}')
+    else:
+        check(pg.locator('#listing-map').count() == 0 and pg.locator('#listing-map-wrap').count() == 0, f'{tag}: no map block without coordinates')
+        check(osm and osm.startswith('https://www.openstreetmap.org/search?query='), f'{tag}: OSM search link {osm}')
+
+
+def synthetic_listings():
+    """Listings the feed could carry that the committed pages do not cover: homes, photos (odd and even), a future date,
+    no coordinates, no building, an empty summary, hostile characters."""
+    base = copy.deepcopy(LISTINGS[0])
+    def mk(id, **kw):
+        h = dict(base)
+        h.update(id=id, type='residential', photos=[], features=[], summary='', lat=47.4000, lng=-122.4600, available=None,
+                 beds=None, baths=None, sqft=None)
+        h.update(kw)
+        h.pop('buildingId', None)
+        return h
+    out = [
+        mk('test-cottage', title='Cottage on Bank Road', address='21500 Bank Rd SW, Vashon, WA 98070', rent=2100, beds=2, baths=1, sqft=800,
+           available='2099-01-01', photos=PHOTOS, features=['Wood stove', 'Fenced garden'],
+           summary='A warm   little place\n with a view.'),
+        mk('test-farmhouse', title='Farmhouse near the Pond', address='9 Pond Ln, Vashon, WA 98070', rent=2900, beds=3, baths=1.5, sqft=1400,
+           lat=47.3800, lng=-122.4900, photos=PHOTOS[:2], features=['Room for chickens'], summary='Quiet, with room to roam.'),
+        mk('test-studio', title='Studio above the Shop', address='Somewhere near the ferry', rent=1200, beds=1, baths=1,
+           lat=None, lng=None, features=['All-in pricing'], summary=''),
+        mk('test-hostile', title='Suite <img src=x onerror=alert(1)> & "Co" — Test', address='1 <b>Main</b> St, Vashon, WA 98070', rent=950,
+           type='commercial', sqft=120, features=['5 < 6 & "quoted" </script>'], summary='Nothing </script><script>alert(1)</script> here.',
+           buildingId='courthouse-square'),
+    ]
+    return out
+
+
+def part2(browser, sessions):
+    import importlib.util
+    sys.dont_write_bytecode = True                  # importing the generator must not leave a __pycache__ in tools/
+    spec = importlib.util.spec_from_file_location('build_pages', os.path.join(ROOT, 'tools', 'build_pages.py'))
+    bp = importlib.util.module_from_spec(spec); spec.loader.exec_module(bp)
+    ctx_pages = bp.load_context()
+    L1 = BY_ID['chs-n101']
+    cs = BUILDINGS['courthouse-square']
+
+    # ---------- L: the generated page, reached the way a visitor reaches it ----------
+    s = Session(browser, 'L', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    pg = s.open('/listings/')
+    mark = len(s.requests)                                 # everything after this belongs to the detail page
+    pg.click('#listing-grid [data-id="chs-n101"] .listing-card-link')
+    pg.wait_for_url(BASE + '/listings/chs-n101/')
+    pg.wait_for_selector('#listing-rent'); pg.wait_for_load_state('networkidle')
+    check(pg.url == BASE + '/listings/chs-n101/', f'L: card click lands on {pg.url}')
+    check(pg.title() == f"{L1['title']} — {money(L1['rent'])}/mo on Vashon — E. Berry Property Management", f'L: title is {pg.title()!r}')
+    check(pg.get_attribute('link[rel=canonical]', 'href') == 'https://eberryvashon.com/listings/chs-n101/', 'L: canonical URL')
+    check(pg.get_attribute('meta[name=description]', 'content') == ' '.join(L1['summary'].split()), 'L: meta description is the summary')
+    check(pg.get_attribute('meta[property="og:image"]', 'content') == 'https://eberryvashon.com/images/og-card-eberry.png', 'L: og:image falls back to the brand card')
+    check(pg.get_attribute('meta[property="og:type"]', 'content') == 'website', 'L: og:type website')
+    check(pg.locator('meta[name="robots"]').count() == 0, 'L: the generated page is indexable (no robots meta)')
+    check(money(L1['rent']) == '$1,181', 'L: the data still says $1,181 (update this test if the rent changed)')
+    assert_detail(pg, L1, 'L chs-n101', building=cs, photos=None)
+    check(facts_of(pg) == ['259 sq ft', 'Available now', 'All-in pricing Rent, CAM & shared utilities'], f'L: chs-n101 facts {facts_of(pg)}')
+    check('A PART OF WINDERMERE VASHON' in pg.inner_text('header'), 'L: the firm-ID line is in the header')
+    flat = pg.evaluate("""() => { const cs = getComputedStyle(document.querySelector('#listing-facts li'));
+                                  return { bg: cs.backgroundColor, border: cs.borderTopColor, w: cs.borderTopWidth, r: cs.borderTopLeftRadius }; }""")
+    flat['w'] = '1.5px' if flat['w'] in ('1px', '1.5px') else flat['w']      # Chromium rounds a 1.5px border to 1px at 1x
+    check(flat == {'bg': CREAM, 'border': BERRY, 'w': '1.5px', 'r': '12px'}, f'L: fact tiles are flat Cream with a thin Berry border {flat}')
+    # the static page is just HTML: no fallback script, no feed
+    later = s.requests[mark:]
+    check(not any('listing-detail.js' in u or u.endswith('/data/listings.json') for u in later),
+          f'L: the generated page must not load the fallback script or the feed ({[u for u in later if "listing-detail" in u or "listings.json" in u]})')
+    # the map: lazy, one marker, OSM tiles, attribution, no popup back to itself
+    check(pg.locator('.leaflet-container').count() == 0, 'L: the map is not built until it is near the screen')
+    pg.locator('#listing-map').scroll_into_view_if_needed()
+    pg.wait_for_selector('#listing-map .leaflet-marker-icon', timeout=10000)
+    pg.wait_for_selector('#listing-map .leaflet-tile-loaded', timeout=10000)
+    check(pg.locator('#listing-map .leaflet-marker-icon').count() == 1, 'L: one marker on the single-listing map')
+    check(len(s.tiles) > 0 and all(TILE_RE.match(u) for u in s.tiles), f'L: tile requests {s.tiles[:2]}')
+    attr = ws(pg.text_content('#listing-map .leaflet-control-attribution'))
+    check('© OpenStreetMap contributors' in attr and pg.is_visible('#listing-map .leaflet-control-attribution'), f'L: attribution reads {attr!r}')
+    check(pg.get_attribute('#listing-map', 'role') == 'region' and 'Suite N101' in (pg.get_attribute('#listing-map', 'aria-label') or ''),
+          'L: map is a labelled region')
+    pg.locator('#listing-map .leaflet-marker-icon').click(); pg.wait_for_timeout(400)
+    check(pg.locator('.leaflet-popup').count() == 0, 'L: no popup that links back to the same page')
+    # the whole page works without JS: everything is in the HTML
+    ctx_nojs = browser.new_context(java_script_enabled=False, viewport={'width': 1440, 'height': 900})
+    ctx_nojs.route(re.compile(r'^https://fonts\.'), lambda r: r.abort())
+    npg = ctx_nojs.new_page(); npg.goto(BASE + '/listings/chs-n101/', wait_until='load')
+    check(ws(npg.inner_text('#listing-rent')) == '$1,181 /month' and facts_of(npg) == expected_facts(L1), 'L: rent and facts are in the HTML, no JS needed')
+    check(npg.is_visible('#inquire form') and not npg.is_visible('#listing-map-wrap'), 'L: without JS the form is there and the empty map box is not')
+    check(npg.is_visible('#location a[href^="https://www.openstreetmap.org/"]'), 'L: without JS the OpenStreetMap link remains')
+    ctx_nojs.close()
+    s.ctx.close()
+
+    # every generated page matches its listing
+    for L in LISTINGS:
+        s2 = Session(browser, f'L-{L["id"]}', viewport={'width': 1440, 'height': 900}); sessions.append(s2)
+        pg = s2.open_detail(f'/listings/{L["id"]}/')
+        b = BUILDINGS.get(L.get('buildingId'))
+        assert_detail(pg, L, f'L {L["id"]}', building=b, photos=None)
+        check(pg.title() == f"{L['title']} — {money(L['rent'])}/mo on Vashon — E. Berry Property Management", f'L {L["id"]}: title')
+        s2.ctx.close()
+
+    # Leaflet will not load: the address and the OpenStreetMap link carry the location
+    s = Session(browser, 'L-noleaflet', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    s.ctx.route('**/js/vendor/leaflet.js', lambda r: r.abort())
+    pg = s.open_detail('/listings/chs-n101/')
+    check(not pg.is_visible('#listing-map-wrap') and pg.is_visible('#location address') and pg.is_visible('#location a[href^="https://www.openstreetmap.org/"]'),
+          'L: without Leaflet the map box stays hidden and the address + OpenStreetMap link stand')
+    s.errors = [e for e in s.errors if 'Failed to load resource' not in e]
+    s.ctx.close()
+
+    # ---------- M: the inquiry form ----------
+    s = Session(browser, 'M', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    pg = s.pg
+    posts = []
+    def catch(route):
+        req = route.request
+        if req.method == 'POST':
+            posts.append(req.post_data or '')
+            route.fulfill(status=200, content_type='text/html', body='<p>thanks</p>')
+        else:
+            route.continue_()
+    pg.route('**/listings/chs-n101/', catch)
+    s.open_detail('/listings/chs-n101/')
+    form = pg.locator('form[name="listing-inquiry"]')
+    check(form.count() == 1 and pg.locator('#inquire').count() == 1, 'M: one form named listing-inquiry inside #inquire')
+    check(form.get_attribute('data-netlify') == 'true' and form.get_attribute('netlify-honeypot') == 'bot-field' and form.get_attribute('method').lower() == 'post',
+          'M: Netlify form attributes (data-netlify, honeypot, POST)')
+    hidden = pg.eval_on_selector_all('#inquire input[type=hidden]', 'els => els.map(e => [e.name, e.value])')
+    check(hidden == [['form-name', 'listing-inquiry'], ['listing', 'chs-n101'], ['building', 'courthouse-square']], f'M: hidden inputs {hidden}')
+    check(pg.locator('#inquire input[name="bot-field"]').count() == 1 and not pg.is_visible('#inquire input[name="bot-field"]'), 'M: the honeypot exists and is hidden')
+    check(pg.get_attribute('#inquire input[name=name]', 'required') is not None and pg.get_attribute('#inquire input[name=email]', 'required') is not None
+          and pg.get_attribute('#inquire input[name=email]', 'type') == 'email', 'M: name and email are required, email is typed')
+    check(pg.get_attribute('#inquire input[name=phone]', 'required') is None, 'M: phone is optional')
+    opts = pg.eval_on_selector_all('#inquire select[name=timeframe] option', 'els => els.map(e => e.textContent.trim())')
+    check(opts == ['Choose one', 'Soon as possible', '1–3 months', 'Later', 'Just curious'], f'M: timeframe options {opts}')
+    check(ws(pg.inner_text('#inquire label:has(textarea)')) == 'Anything I should know?', 'M: message label')
+    btn = pg.locator('#inquire button[type=submit]')
+    check(ws(btn.inner_text()) == 'Ask about this space' and 'eb-btn' in btn.get_attribute('class'), 'M: the submit pill reads "Ask about this space"')
+    fs = pg.evaluate("parseFloat(getComputedStyle(document.querySelector('#inquire button[type=submit]')).fontSize)")
+    fw = pg.evaluate("parseInt(getComputedStyle(document.querySelector('#inquire button[type=submit]')).fontWeight)")
+    check(fs >= 19 and fw >= 700, f'M: pill label is >=19px bold ({fs}px / {fw})')
+    # an empty submit is stopped by the browser; a filled one POSTs every field, including the hidden ones
+    btn.click(); pg.wait_for_timeout(200)
+    check(not posts, 'M: an empty form does not submit')
+    pg.fill('#inquire input[name=name]', 'Pat Example'); pg.fill('#inquire input[name=email]', 'pat@example.com')
+    pg.fill('#inquire input[name=phone]', '206-555-0100'); pg.select_option('#inquire select[name=timeframe]', '1–3 months')
+    pg.fill('#inquire textarea[name=message]', 'Is there room for a second chair?')
+    btn.click(); pg.wait_for_timeout(600)
+    sent = {k: v[0] for k, v in parse_qs(posts[0] if posts else '').items()}      # blank fields (the honeypot) are dropped
+    check(sent == {'form-name': 'listing-inquiry', 'listing': 'chs-n101', 'building': 'courthouse-square', 'name': 'Pat Example',
+                   'email': 'pat@example.com', 'phone': '206-555-0100', 'timeframe': '1–3 months',
+                   'message': 'Is there room for a second chair?'}, f'M: POST body {sent}')
+    s.ctx.close()
+
+    # ---------- N: the client-side fallback ----------
+    L4 = BY_ID['chs-n204']
+    s = Session(browser, 'N', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    pg = s.open_detail('/listing.html?id=chs-n204')
+    check(pg.get_attribute('meta[name=robots]', 'content') == 'noindex', 'N: listing.html is noindex')
+    check(pg.title() == f"{L4['title']} — {money(L4['rent'])}/mo on Vashon — E. Berry Property Management", f'N: the tab title follows the listing ({pg.title()!r})')
+    assert_detail(pg, L4, 'N ?id=chs-n204', building=cs, photos=None)
+    check(ws(pg.inner_text('#listing-rent')) == f"{money(L4['rent'])} /month" and 'N204' in pg.inner_text('#listing-title'), 'N: ?id=chs-n204 renders N204')
+    check(pg.locator('link[rel=canonical]').count() == 0, 'N: the fallback has no canonical (it is noindex)')
+    check(pg.locator('script[type="application/ld+json"]').count() == 0, 'N: no structured data on the fallback')
+    check('A PART OF WINDERMERE VASHON' in pg.inner_text('header'), 'N: the shell is there')
+    pg.locator('#listing-map').scroll_into_view_if_needed()
+    pg.wait_for_selector('#listing-map .leaflet-marker-icon', timeout=10000)
+    check(pg.locator('#listing-map .leaflet-marker-icon').count() == 1, 'N: the fallback builds the same single-marker map')
+    # unknown id and no id: the brand's not-found page
+    for path, label in (('/listing.html?id=bogus', '?id=bogus'), ('/listing.html', 'no id'), ('/listings/not-a-real-slug/', 'rewrite /listings/not-a-real-slug/')):
+        pg = s.open_detail(path)
+        check(ws(pg.inner_text('#listing-title')) == "That one isn't on my list just now.", f'N {label}: not-found heading')
+        check(pg.get_attribute('main a[href="/listings/"]', 'href') == '/listings/' and pg.is_visible('main a[href="/listings/"]'), f'N {label}: links back to /listings/')
+        check(pg.locator('#listing-rent').count() == 0 and pg.locator('#inquire').count() == 0, f'N {label}: no listing is drawn')
+        check(pg.get_attribute('meta[name=robots]', 'content') == 'noindex', f'N {label}: still noindex')
+    # the rewrite is not forced: real pages are served as files, not as the fallback
+    pg.goto(BASE + '/listings/chs-n101/', wait_until='networkidle')
+    check(pg.locator('meta[name=robots]').count() == 0 and pg.locator('script[src="/js/listing-detail.js"]').count() == 0,
+          'N: /listings/chs-n101/ is its own generated file, not the rewrite')
+    pg.goto(BASE + '/listings/', wait_until='networkidle')
+    check(pg.locator('#filter-bar').count() == 1, 'N: /listings/ is the index, not the rewrite')
+    s.ctx.close()
+
+    # the fallback page's noscript message
+    ctx_nojs = browser.new_context(java_script_enabled=False)
+    ctx_nojs.route(re.compile(r'^https://fonts\.'), lambda r: r.abort())
+    npg = ctx_nojs.new_page(); npg.goto(BASE + '/listing.html?id=chs-n101', wait_until='load')
+    check(npg.is_visible('main a[href="/listings/"]'), 'N: without JS the fallback still points at /listings/')
+    ctx_nojs.close()
+
+    # a listing that is in the feed but has no generated page: homes, photos, future date, no coordinates, hostile text
+    synth = synthetic_listings()
+    feed = copy.deepcopy(DOC); feed['listings'] += synth
+    s = Session(browser, 'N-feed', feed=feed, viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    for L in synth:
+        pg = s.open_detail(f'/listings/{L["id"]}/')            # served through the simulated rewrite
+        check(pg.get_attribute('meta[name=robots]', 'content') == 'noindex' and pg.locator('#listing-rent').count() == 1,
+              f'N {L["id"]}: a feed-only listing is drawn by the fallback')
+        b = BUILDINGS.get(L.get('buildingId'))
+        assert_detail(pg, L, f'N {L["id"]}', building=b, photos=L['photos'] or None)
+    pg = s.open_detail('/listings/test-cottage/')
+    check('Available Jan 1, 2099' in facts_of(pg) and '2 bed' in facts_of(pg) and '1 bath' in facts_of(pg) and '800 sq ft' in facts_of(pg), f'N: cottage facts {facts_of(pg)}')
+    check(pg.title().startswith('Cottage on Bank Road — $2,100/mo on Vashon'), 'N: cottage tab title')
+    check(pg.locator('#listing-map').count() == 1, 'N: the cottage has coordinates, so a map')
+    pg = s.open_detail('/listings/test-studio/')
+    check(pg.locator('#listing-map-wrap').count() == 0 and 'Find it on OpenStreetMap' in pg.inner_text('#location'), 'N: the studio has no coordinates, so no map')
+    check(facts_of(pg) == ['1 bed', '1 bath', 'Available now', 'All-in pricing'], f'N: studio facts {facts_of(pg)}')
+    pg = s.open_detail('/listings/test-hostile/')
+    check(pg.locator('#listing-title img').count() == 0 and pg.evaluate('window.__pwned === undefined'), 'N: hostile markup in the feed stays text')
+    check(ws(pg.inner_text('#listing-title')) == synth[3]['title'], 'N: hostile title is shown literally')
+    s.ctx.close()
+
+    # the feed will not load
+    s = Session(browser, 'N-fail', feed_status=500, viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    s.bad_local = None
+    pg = s.open_detail('/listing.html?id=chs-n101')
+    check(ws(pg.inner_text('#listing-title')) == "I couldn't load this just now." and pg.locator('main a[href="mailto:me@ebberry.com"]').count() == 1
+          and pg.locator('main a[href="/listings/"]').count() == 1, 'N: failed-feed page offers email and /listings/')
+    s.errors = [e for e in s.errors if 'status of 500' not in e]
+    s.ctx.close()
+
+    # DOM parity: the fallback draws exactly what the generator writes, for real and synthetic listings
+    feed = copy.deepcopy(DOC); feed['listings'] += synth
+    ctx_pages['listings'] = synth
+    ctx_pages['updated'] = UPDATED
+    static_html = {L['id']: bp.render_listing_page(L, ctx_pages) for L in synth}
+    check('leaflet' not in static_html['test-studio'].lower() and 'listing-map' not in static_html['test-studio'],
+          'N: a page with no coordinates ships no map markup and no Leaflet')
+    check('leaflet.js' in static_html['test-cottage'] and 'leaflet.css' in static_html['test-cottage'], 'N: a page with coordinates loads Leaflet and its skin')
+    sp = Session(browser, 'N-parity-static', viewport={'width': 1440, 'height': 900}); sessions.append(sp)
+    sf = Session(browser, 'N-parity-fallback', feed=feed, viewport={'width': 1440, 'height': 900}); sessions.append(sf)
+    def serve_static(route):
+        sid = route.request.url.rstrip('/').rsplit('/', 1)[1]
+        route.fulfill(status=200, content_type='text/html', body=static_html[sid])
+    for sid in static_html:
+        sp.ctx.route(f'**/listings/{sid}/', serve_static)
+    pairs = [(L['id'], f'/listings/{L["id"]}/') for L in LISTINGS] + [(L['id'], f'/listings/{L["id"]}/') for L in synth]
+    for lid, path in pairs:
+        a = sp.open_detail(path).evaluate(SIG_JS)
+        b = sf.open_detail(path.replace('/listings/', '/listing.html?id=').rstrip('/')).evaluate(SIG_JS)
+        diff = next(((i, x, y) for i, (x, y) in enumerate(zip(a, b)) if x != y), None)
+        check(a == b and len(a) > 40, f'N parity {lid}: static and fallback DOMs differ at {diff} (lengths {len(a)} / {len(b)})')
+    sp.ctx.close(); sf.ctx.close()
+
+    # ---------- O: structured data ----------
+    for L in LISTINGS:
+        html = open(os.path.join(ROOT, 'listings', L['id'], 'index.html'), encoding='utf-8').read()
+        m = re.search(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
+        try:
+            ld = json.loads(m.group(1))
+        except Exception as e:
+            check(False, f'O {L["id"]}: JSON-LD does not parse ({e})'); continue
+        street = L['address'].rsplit(', Vashon, WA 98070', 1)[0]
+        want = {'@context': 'https://schema.org', '@type': 'RealEstateListing', 'url': f'https://eberryvashon.com/listings/{L["id"]}/',
+                'name': L['title'], 'datePosted': UPDATED}
+        check(all(ld.get(k) == v for k, v in want.items()), f'O {L["id"]}: JSON-LD head fields {ld}')
+        check(ld['description'] == ' '.join(L['summary'].split()), f'O {L["id"]}: JSON-LD description is the summary')
+        check(ld['offers'] == {'@type': 'Offer', 'price': L['rent'], 'priceCurrency': 'USD', 'availability': 'https://schema.org/InStock',
+                               'businessFunction': 'http://purl.org/goodrelations/v1#LeaseOut'}, f'O {L["id"]}: offers {ld["offers"]}')
+        about = ld['about']
+        check(about['@type'] == ('Place' if L['type'] == 'commercial' else 'Residence')
+              and about['address'] == {'@type': 'PostalAddress', 'streetAddress': street, 'addressLocality': 'Vashon', 'addressRegion': 'WA',
+                                       'postalCode': '98070', 'addressCountry': 'US'}, f'O {L["id"]}: about.address {about}')
+        check(about.get('geo') == {'@type': 'GeoCoordinates', 'latitude': L['lat'], 'longitude': L['lng']}, f'O {L["id"]}: about.geo')
+    s = Session(browser, 'O', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    pg = s.open_detail('/listings/chs-n101/')
+    ld = pg.evaluate("JSON.parse(document.querySelector('script[type=\"application/ld+json\"]').textContent)")
+    check(ld['@type'] == 'RealEstateListing' and ld['offers']['price'] == L1['rent'] and isinstance(ld['offers']['price'], (int, float)),
+          f'O: the browser parses the JSON-LD and offers.price is the rent ({ld["offers"]["price"]!r})')
+    s.ctx.close()
+    # hostile text cannot break out of the JSON-LD script, and null coordinates leave out geo
+    hostile = static_html['test-hostile']
+    m = re.search(r'<script type="application/ld\+json">(.*?)</script>', hostile, re.S)
+    ld = json.loads(m.group(1))
+    check(ld['name'] == synth[3]['title'] and '<' not in m.group(1) and ld['about']['@type'] == 'Place', 'O: hostile title survives JSON-LD intact with "<" escaped')
+    check('<img src=x onerror' not in hostile and '</script><script>alert' not in hostile, 'O: hostile text is escaped in the HTML')
+    m = re.search(r'<script type="application/ld\+json">(.*?)</script>', static_html['test-studio'], re.S)
+    ld = json.loads(m.group(1))
+    check('geo' not in ld['about'] and ld['about']['@type'] == 'Residence', 'O: no coordinates, no geo; a home is a Residence')
+    m = re.search(r'<script type="application/ld\+json">(.*?)</script>', static_html['test-cottage'], re.S)
+    ld = json.loads(m.group(1))
+    check(ld['image'] == 'https://eberryvashon.com' + PHOTOS[0], 'O: with a photo on disk, image and og:image are the first photo')
+    check(f'<meta property="og:image" content="https://eberryvashon.com{PHOTOS[0]}" />' in static_html['test-cottage'], 'O: og:image is the first photo (absolute URL)')
+
+    # ---------- P: flat brand, one huge element, phone layout, console ----------
+    s = Session(browser, 'P', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    pg = s.open_detail('/listings/chs-n101/')
+    audit(pg, 'body', 'P detail page')
+    sizes = pg.evaluate(SIZES_JS)
+    check(sizes[0]['inRent'] and sizes[0]['size'] >= 160, f'P: the rent is the huge element ({sizes[0]})')
+    nxt = next(x for x in sizes if not x['inRent'])
+    check(sizes[0]['size'] >= 2 * nxt['size'], f'P: the rent is at least twice the next-biggest type ({sizes[0]["size"]} vs {nxt})')
+    check(nxt['size'] <= 56, f'P: nothing else is huge (next {nxt})')
+    check(pg.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), 'P: no sideways scroll on desktop')
+    s.ctx.close()
+    s = Session(browser, 'P-fallback', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    pg = s.open_detail('/listing.html?id=chs-n101')
+    audit(pg, 'body', 'P fallback page')
+    s.ctx.close()
+    s = Session(browser, 'P-mobile', viewport={'width': 390, 'height': 844}, is_mobile=True, has_touch=True); sessions.append(s)
+    pg = s.open_detail('/listings/chs-n101/')
+    check(pg.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), 'P: no sideways page scroll at 390px')
+    r = pg.evaluate("(() => { const b = document.querySelector('#listing-rent span').getBoundingClientRect(); return { right: b.right, left: b.left, h: b.height }; })()")
+    check(r['left'] >= 0 and r['right'] <= 390 and r['h'] < 100, f'P: the rent fits on one line at 390px ({r})')
+    mono = pg.evaluate(SIZES_JS)
+    check(mono[0]['inRent'] and mono[0]['size'] >= 60, f'P: the rent is still the huge element on a phone ({mono[0]})')
+    check(pg.locator('.leaflet-container').count() == 0, 'P: the map is not built until it is near the screen on a phone')
+    pg.locator('#listing-map').scroll_into_view_if_needed()
+    pg.wait_for_selector('#listing-map .leaflet-marker-icon', timeout=10000)
+    mb = pg.locator('#listing-map').bounding_box()
+    check(mb['width'] <= 390 and mb['height'] >= 300, f'P: the map fits a phone ({mb})')
+    pg.click('#nav-toggle'); check(pg.is_visible('#site-nav'), 'P: the mobile menu opens on the detail page')
+    s.ctx.close()
 
 
 # ---------------------------------------------------------------- the test
@@ -539,6 +1030,8 @@ def main():
         check(len(popup_items(pg)) == len(expected(LISTINGS, price=750)), 'H: the mobile map shows the filtered set')
         s.ctx.close()
 
+        part2(browser, sessions)
+
         browser.close()
 
     # ---------- zero page errors, everywhere ----------
@@ -552,7 +1045,8 @@ def main():
         for f in failures: print('  -', f)
         sys.exit(1)
     print(f'OK: listings E2E — {passed} checks passed (A cards, B type, C beds, D price, E map, F URL state, '
-          f'G flat brand, H mobile, I synthetic feed, J details, K no Leaflet)')
+          f'G flat brand, H mobile, I synthetic feed, J details, K no Leaflet; '
+          f'L static page, M inquiry form, N fallback, O structured data, P flat brand + mobile)')
 
 
 if __name__ == '__main__':

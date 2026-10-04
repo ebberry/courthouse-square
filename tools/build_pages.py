@@ -7,6 +7,9 @@ Stdlib only, so it runs anywhere Python 3 does.
 Reads   data/buildings.json, data/listings.json, and the canonical page shell in index.html
         (the EB:HEADER / EB:FOOTER / EB:SHELL-STYLES blocks), plus tools/templates/*.
 Writes  buildings/<id>/index.html   one landing page per building   (tools/templates/building.tmpl.html)
+        listings/<id>/index.html    one detail page per listing     (tools/templates/listing.tmpl.html)
+        listing.html                the noindex client-side fallback for feed listings with no page yet
+                                    (tools/templates/listing-fallback.tmpl.html; js/listing-detail.js draws it)
         sitemap.xml                 home, /listings/, every listing and every building page
 
 Run:    python3 tools/build_pages.py           regenerate the committed pages
@@ -22,6 +25,7 @@ import argparse
 import difflib
 import html
 import json
+import math
 import os
 import re
 import shutil
@@ -119,22 +123,31 @@ def load_context():
     listings_doc = load_json('data/listings.json')
     return {
         'buildings': buildings_doc['buildings'],
+        'buildings_by_id': {b['id']: b for b in buildings_doc['buildings']},
         'listings': listings_doc['listings'],
         'updated': listings_doc['updated'],
         'shell': extract_shell(read_text(os.path.join(ROOT, 'index.html'))),
         'building_template': load_template('building.tmpl.html'),
         'building_parts': load_parts('building.parts.tmpl.html'),
+        'listing_template': load_template('listing.tmpl.html'),
+        'listing_parts': load_parts('listing.parts.tmpl.html'),
+        'listing_fallback_template': load_template('listing-fallback.tmpl.html'),
     }
 
 
 # ---------------------------------------------------------------- building pages
 
-def og_image_for(building):
-    """First gallery photo if the file exists right now, else the shared social card. Absolute URL."""
-    for path in building.get('gallery', []):
+def first_existing_image(paths):
+    """First of these site paths whose file exists right now, else the shared social card. Absolute URL."""
+    for path in paths:
         if os.path.exists(os.path.join(ROOT, path.lstrip('/'))):
             return SITE + path, False
     return SITE + FALLBACK_OG_IMAGE, True
+
+
+def og_image_for(building):
+    """First gallery photo if the file exists right now, else the shared social card. Absolute URL."""
+    return first_existing_image(building.get('gallery', []))
 
 
 def json_ld_for(building, canonical, meta_description, og_image, addr):
@@ -252,11 +265,272 @@ def render_building_pages(ctx):
 
 # ---------------------------------------------------------------- listing pages (Phase 5)
 
+LISTING_ID_RE = re.compile(r'^[a-z0-9-]+$')
+LISTING_TYPES = ('commercial', 'residential')
+MONTHS = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+ISO_DATE_RE = re.compile(r'^(\d{4})-(\d{2})-(\d{2})$')
+# "19001 Vashon Hwy SW, Suite N101, Vashon, WA 98070": everything before the last three parts is the street line.
+LISTING_ADDRESS_RE = re.compile(r'^(?P<street>.+),\s*(?P<city>[^,]+),\s*(?P<region>[A-Z]{2})\s+(?P<zip>\d{5})(?:-\d{4})?$')
+DEFAULT_LOCALITY = {'city': 'Vashon', 'region': 'WA', 'zip': '98070'}      # when an address does not parse
+META_DESCRIPTION_MAX = 200
+# js/listing-detail.js mirrors every helper below (money, num, date_fmt, split_address, ...); keep them in step.
+
+
+def money(n):
+    """1181 -> '$1,181' (whole dollars, rounded half up like Intl.NumberFormat)."""
+    return f'${int(math.floor(n + 0.5)):,}'
+
+
+def num(n):
+    """1200 -> '1,200'; 1.5 -> '1.5'."""
+    if isinstance(n, float) and n.is_integer():
+        n = int(n)
+    return f'{n:,}'
+
+
+def date_fmt(iso):
+    """'2026-11-01' -> 'Nov 1, 2026'."""
+    m = ISO_DATE_RE.match(iso)
+    if not m:
+        fail(f'date {iso!r} is not YYYY-MM-DD')
+    return f'{MONTHS[int(m.group(2)) - 1]} {int(m.group(3))}, {m.group(1)}'
+
+
+def split_address(address):
+    """{'street', 'city', 'region', 'zip'}; an address that does not parse is all street, in the default locality."""
+    m = LISTING_ADDRESS_RE.match(address)
+    if m:
+        return m.groupdict()
+    return dict(street=address, **DEFAULT_LOCALITY)
+
+
+def clip_text(text, limit=META_DESCRIPTION_MAX):
+    """Collapse whitespace; past `limit` characters cut at a word and add an ellipsis."""
+    text = ' '.join(str(text).split())
+    if len(text) <= limit:
+        return text
+    return text[:limit - 1].rsplit(' ', 1)[0].rstrip(',;:.—-') + '…'
+
+
+PHOTO_URL_RE = re.compile(r'^(https?://|/(?!/))', re.I)
+
+
+def is_photo_url(p):
+    """Only web and site-relative URLs become images (the same rule as safeUrl() in the page scripts)."""
+    return isinstance(p, str) and PHOTO_URL_RE.match(p.strip()) is not None
+
+
+def all_in_feature(L):
+    """The 'All-in pricing — rent, CAM & shared utilities' feature, or None."""
+    for f in L['features']:
+        if str(f).lower().startswith('all-in pricing'):
+            return str(f)
+    return None
+
+
+def listing_fact_tiles(L, as_of, parts):
+    """Flat fact tiles: size, beds, baths, availability, all-in pricing. `as_of` (the feed's `updated`) stands in
+    for 'today' so a regenerated page is reproducible; a date on or before it reads as available now."""
+    tiles = []
+
+    def tile(value):
+        tiles.append(parts['fact_tile'].substitute(value=esc(value)))
+
+    if L['sqft'] is not None:
+        tile(f"{num(L['sqft'])} sq ft")
+    if L['beds'] is not None:
+        tile(f"{num(L['beds'])} bed")
+    if L['baths'] is not None:
+        tile(f"{num(L['baths'])} bath")
+    tile('Available now' if L['available'] is None or L['available'] <= as_of
+         else f"Available {date_fmt(L['available'])}")
+    feat = all_in_feature(L)
+    if feat:
+        note = feat.split(' — ', 1)[1].strip() if ' — ' in feat else ''
+        note = note[:1].upper() + note[1:]
+        if note:
+            tiles.append(parts['fact_tile_note'].substitute(value='All-in pricing', note=esc(note)))
+        else:
+            tile('All-in pricing')
+    return '\n'.join(tiles)
+
+
+def listing_json_ld(L, canonical, description, og_image, updated, addr):
+    about = {
+        '@type': 'Residence' if L['type'] == 'residential' else 'Place',
+        'address': {
+            '@type': 'PostalAddress',
+            'streetAddress': addr['street'],
+            'addressLocality': addr['city'],
+            'addressRegion': addr['region'],
+            'postalCode': addr['zip'],
+            'addressCountry': 'US',
+        },
+    }
+    if L['lat'] is not None and L['lng'] is not None:
+        about['geo'] = {'@type': 'GeoCoordinates', 'latitude': L['lat'], 'longitude': L['lng']}
+    data = {
+        '@context': 'https://schema.org',
+        '@type': 'RealEstateListing',
+        'url': canonical,
+        'name': L['title'],
+        'description': description,
+        'datePosted': updated,
+        'image': og_image,
+        'about': about,
+        'offers': {
+            '@type': 'Offer',
+            'price': L['rent'],
+            'priceCurrency': 'USD',
+            'availability': 'https://schema.org/InStock',
+            'businessFunction': 'http://purl.org/goodrelations/v1#LeaseOut',
+        },
+    }
+    # '<' escaped so no data value can ever close the <script> element.
+    return json.dumps(data, indent=2, ensure_ascii=False).replace('<', '\\u003c')
+
+
+def validate_listing(L):
+    lid = L.get('id')
+    if not isinstance(lid, str) or not LISTING_ID_RE.match(lid):
+        fail(f'listings.json: id {lid!r} must match ^[a-z0-9-]+$ (it becomes a folder name)')
+    if L.get('type') not in LISTING_TYPES:
+        fail(f"listings.json {lid}: type {L.get('type')!r} not in {LISTING_TYPES}")
+    if isinstance(L.get('rent'), bool) or not isinstance(L.get('rent'), (int, float)) or L['rent'] <= 0:
+        fail(f"listings.json {lid}: rent {L.get('rent')!r} must be a number > 0")
+    for key in ('title', 'address'):
+        if not isinstance(L.get(key), str) or not L[key].strip():
+            fail(f'listings.json {lid}: {key} is missing')
+    for key in ('beds', 'baths', 'sqft', 'available', 'lat', 'lng', 'summary', 'photos', 'features'):
+        if key not in L:
+            fail(f'listings.json {lid}: missing {key!r}')
+    if (L['lat'] is None) != (L['lng'] is None):
+        fail(f'listings.json {lid}: lat and lng must both be null or both be numbers')
+    if L['available'] is not None and not ISO_DATE_RE.match(str(L['available'])):
+        fail(f"listings.json {lid}: available {L['available']!r} must be null or YYYY-MM-DD")
+
+
+def render_listing_page(L, ctx):
+    validate_listing(L)
+    parts = ctx['listing_parts']
+    lid = L['id']
+    commercial = L['type'] == 'commercial'
+    addr = split_address(L['address'])
+    has_map = L['lat'] is not None and L['lng'] is not None
+    updated = ctx['updated']
+
+    canonical = f'{SITE}/listings/{lid}/'
+    page_title = f"{L['title']} — {money(L['rent'])}/mo on Vashon — E. Berry Property Management"
+    summary = ' '.join(str(L['summary'] or '').split())
+    meta_description = clip_text(summary) if summary else (
+        f"{L['title']} on Vashon Island for {money(L['rent'])} a month. Let's chat about Vashon sometime.")
+
+    photos = [p.strip() for p in L['photos'] if is_photo_url(p)]
+    og_image, og_is_fallback = first_existing_image(photos)
+    og_extra = ''
+    if og_is_fallback:
+        og_extra = ('\n  <meta property="og:image:width" content="1200" />'
+                    '\n  <meta property="og:image:height" content="630" />')
+    og_alt = (f"{L['title']}, photo 1" if not og_is_fallback else
+              'E. Berry Property Management, a part of Windermere Vashon, Vashon Island, WA')
+    og_extra += f'\n  <meta property="og:image:alt" content="{esc(og_alt)}" />'
+
+    # Breadcrumb: "Part of <building>" only when buildingId resolves against buildings.json.
+    building = ctx['buildings_by_id'].get(L.get('buildingId'))
+    building_crumb = ''
+    if building:
+        building_crumb = parts['building_crumb'].substitute(
+            href=esc(f"/buildings/{building['id']}/"), name=esc(building['name']))
+
+    badge = parts['badge_commercial' if commercial else 'badge_home'].substitute()
+
+    tag_part = parts['feature_tag_commercial' if commercial else 'feature_tag_home']
+    summary_block = parts['summary_paragraph'].substitute(text=esc(summary)) if summary else ''
+    features = [str(f) for f in L['features'] if str(f).strip()]
+    features_block = ''
+    if features:
+        tags = '\n'.join(tag_part.substitute(text=esc(f)) for f in features)
+        features_block = parts['features_list'].substitute(tags=indent_block(tags, 2))
+
+    if photos:
+        tiles = []
+        for i, src in enumerate(photos, 1):
+            part = 'photo_tile_wide' if i == 1 and len(photos) % 2 == 1 else 'photo_tile'
+            tiles.append(parts[part].substitute(src=esc(src), alt=esc(f"{L['title']}, photo {i}"),
+                                                loading='eager' if i == 1 else 'lazy'))
+        gallery = parts['photo_grid'].substitute(tiles=indent_block('\n'.join(tiles), 2))
+    else:
+        gallery = parts['gallery_placeholder'].substitute()
+
+    # Location: the street line and the city line; the map only when there are coordinates.
+    city_line = f"{addr['city']}, {addr['region']} {addr['zip']}"
+    address_lines = f"{esc(addr['street'])}<br />{esc(city_line)}" if addr['street'] != L['address'] else esc(L['address'])
+    if has_map:
+        osm_url = (f"https://www.openstreetmap.org/?mlat={L['lat']}&mlon={L['lng']}"
+                   f"#map=17/{L['lat']}/{L['lng']}")
+        osm_label = 'Open in OpenStreetMap'
+        map_block = parts['map_block'].substitute(
+            lat=esc(L['lat']), lng=esc(L['lng']), id=esc(lid), title=esc(L['title']), rent=esc(L['rent']))
+        map_css = parts['map_css'].substitute()
+        map_scripts = parts['map_scripts'].substitute()
+        location_layout = parts['location_layout_map'].substitute()
+    else:
+        osm_url = f"https://www.openstreetmap.org/search?query={quote(L['address'], safe='')}"
+        osm_label = 'Find it on OpenStreetMap'
+        map_block = map_css = map_scripts = ''
+        location_layout = parts['location_layout_plain'].substitute()
+
+    values = {
+        'id': esc(lid),
+        'building_id': esc(L['buildingId']) if building else '',
+        'page_title': esc(page_title),
+        'listing_title': esc(L['title']),
+        'meta_description': esc(meta_description),
+        'canonical': esc(canonical),
+        'og_image': esc(og_image),
+        'og_image_extra': og_extra,
+        'json_ld': indent_block(listing_json_ld(L, canonical, meta_description, og_image, updated, addr), 2),
+        'map_css': indent_block(map_css, 2),
+        'map_scripts': map_scripts,
+        'building_crumb': indent_block(building_crumb, 8),
+        'badge': badge,
+        'address': esc(L['address']),
+        'rent_fmt': esc(money(L['rent'])),
+        'fact_tiles': indent_block(listing_fact_tiles(L, updated, parts), 6),
+        'gallery': indent_block(gallery, 4),
+        'about_label': 'About this space' if commercial else 'About this home',
+        'summary_block': indent_block(summary_block, 4),
+        'features_block': indent_block(features_block, 4),
+        'field_class': 'eb-field-mustard' if commercial else 'eb-field-sand',
+        'location_layout': location_layout,
+        'address_lines': address_lines,
+        'osm_url': esc(osm_url),
+        'osm_label': osm_label,
+        'map_block': indent_block(map_block, 6),
+        'shell_styles': ctx['shell']['shell_styles'],
+        'header': ctx['shell']['header'],
+        'footer': ctx['shell']['footer'],
+    }
+    return ctx['listing_template'].substitute(values)
+
+
+def render_listing_fallback(ctx):
+    """/listing.html: the shell plus a loading line; js/listing-detail.js does the rest in the browser."""
+    return ctx['listing_fallback_template'].substitute(
+        shell_styles=ctx['shell']['shell_styles'], header=ctx['shell']['header'], footer=ctx['shell']['footer'])
+
+
 def render_listing_pages(ctx):
-    """Phase 5 fills this in: one listings/<slug>/index.html per listings.json entry, rendered from a new
-    tools/templates/listing.tmpl.html the same way render_building_pages() works. Returns {path: text}.
-    sitemap.xml already lists /listings/<slug>/ for every listing, so nothing else needs to change."""
-    return {}
+    """{relative output path: file text}: listings/<id>/index.html for every listings.json entry, plus the
+    client-side fallback page listing.html. sitemap.xml already lists /listings/<id>/ for every listing."""
+    pages = {}
+    for L in ctx['listings']:
+        rel = f"listings/{L.get('id')}/index.html"
+        if rel in pages:
+            fail(f"listings.json: duplicate id {L.get('id')!r}")
+        pages[rel] = render_listing_page(L, ctx)
+    pages['listing.html'] = render_listing_fallback(ctx)
+    return pages
 
 
 # ---------------------------------------------------------------- sitemap
@@ -304,13 +578,15 @@ def write_files(files, out_root):
 
 
 def generated_pages_on_disk():
-    """buildings/<id>/index.html files that exist in the repo (to spot orphans of removed buildings)."""
-    base = os.path.join(ROOT, 'buildings')
+    """buildings/<id>/index.html and listings/<id>/index.html files that exist in the repo (to spot orphans of
+    removed buildings and listings). listings/index.html is the hand-maintained index, not generated."""
     found = set()
-    if os.path.isdir(base):
-        for name in sorted(os.listdir(base)):
-            if os.path.isfile(os.path.join(base, name, 'index.html')):
-                found.add(f'buildings/{name}/index.html')
+    for top in ('buildings', 'listings'):
+        base = os.path.join(ROOT, top)
+        if os.path.isdir(base):
+            for name in sorted(os.listdir(base)):
+                if os.path.isfile(os.path.join(base, name, 'index.html')):
+                    found.add(f'{top}/{name}/index.html')
     return found
 
 
@@ -344,7 +620,7 @@ def check_files(files):
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     for rel in sorted(generated_pages_on_disk() - set(files)):
-        problems.append(f'{rel}: committed but no longer generated (its building left buildings.json; delete it)')
+        problems.append(f'{rel}: committed but no longer generated (its entry left data/; delete it)')
 
     if problems:
         print(f'FAIL: {len(problems)} problem(s) out of {len(files)} generated file(s)')
@@ -356,7 +632,7 @@ def check_files(files):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description='Generate the E. Berry building pages and sitemap.xml.')
+    ap = argparse.ArgumentParser(description='Generate the E. Berry building and listing pages and sitemap.xml.')
     ap.add_argument('--check', action='store_true',
                     help='regenerate to a temp dir and compare with the committed files; exit 1 if stale')
     args = ap.parse_args(argv)
@@ -367,6 +643,8 @@ def main(argv=None):
     changed = write_files(files, ROOT)
     for rel in sorted(files):
         print(f"{'wrote    ' if rel in changed else 'unchanged'} {rel}")
+    for rel in sorted(generated_pages_on_disk() - set(files)):
+        print(f'orphan    {rel}  (no longer generated; delete it)')
     return 0
 
 

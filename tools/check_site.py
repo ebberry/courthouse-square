@@ -497,6 +497,169 @@ if exists('.github/workflows/listings-e2e.yml'):
                   "'tools/test_listings.py'", 'python3 tools/test_listings.py'):
         check(token in wf, f".github/workflows/listings-e2e.yml: expected {token}")
 
+# =====================================================================
+# E. Berry listing detail pages (Phase 5): generated /listings/<id>/ pages, the /listing.html fallback, the rewrite
+#   The pages are written by tools/build_pages.py (listing.tmpl.html); `python3 tools/build_pages.py --check`
+#   (separate CI step) proves they are not stale. These checks assert what must be true of the committed output.
+# =====================================================================
+import html as _html
+
+def money_fmt(n):
+    return f'${n:,.0f}'
+
+LISTING_PAGE_FILES = ('tools/templates/listing.tmpl.html', 'tools/templates/listing.parts.tmpl.html',
+                      'tools/templates/listing-fallback.tmpl.html', 'js/listing-detail.js', 'listing.html')
+for rel in LISTING_PAGE_FILES:
+    check(exists(rel), f"{rel} is missing")
+for glob_ in ('./listings/**/*.html', './listing.html', './js/listing-detail.js'):
+    check(glob_ in tw_cfg, f"tailwind.config.js content[] does not include {glob_}")
+
+# The set of generated pages is exactly the set of listings: none missing, none left over from a removed listing.
+listing_ids = {str(L.get('id')) for L in listings}
+folders = sorted(d for d in os.listdir(os.path.join(ROOT, 'listings')) if os.path.isdir(os.path.join(ROOT, 'listings', d)))
+with_page = {d for d in folders if exists(f'listings/{d}/index.html')}
+for lid in sorted(listing_ids - with_page):
+    check(False, f"listings/{lid}/index.html: not generated for listings.json entry {lid!r} ({RERUN})")
+for d in sorted(with_page - listing_ids):
+    check(False, f"listings/{d}/index.html: orphan, no listing {d!r} in listings.json (delete the folder, or restore the listing)")
+for d in sorted(set(folders) - with_page):
+    check(False, f"listings/{d}/: folder has no index.html (every folder under listings/ is a listing slug)")
+check(listing_ids == with_page, "listings/<id>/ pages do not match listings.json ids exactly")
+
+MAP_SCRIPTS = ('/js/vendor/leaflet.js', '/js/eb-map.js')
+for L in listings:
+    lid = str(L.get('id'))
+    rel = f'listings/{lid}/index.html'
+    if not exists(rel):
+        continue
+    page = read(rel)
+    canonical = f'{SITE_URL}/listings/{lid}/'
+    rent = L.get('rent')
+    title = f"{L.get('title')} — {money_fmt(rent)}/mo on Vashon — E. Berry Property Management"
+    check('A PART OF WINDERMERE VASHON' in page, f"{rel}: header is missing the 'A PART OF WINDERMERE VASHON' firm-ID line")
+    check_shell(rel, page, RERUN)
+    check(f'<title>{_html.escape(title, quote=True)}</title>' in page, f"{rel}: <title> is not {title!r}")
+    check(f'<link rel="canonical" href="{canonical}" />' in page, f"{rel}: canonical URL is not {canonical}")
+    check('name="description"' in page and f'property="og:url" content="{canonical}"' in page and 'property="og:title"' in page
+          and 'name="twitter:card"' in page, f"{rel}: missing meta description or Open Graph / Twitter tags")
+    m = re.search(r'property="og:image" content="https://eberryvashon\.com(/[^"]+)"', page)
+    check(m is not None and exists(m.group(1).lstrip('/')), f"{rel}: og:image must be an absolute eberryvashon.com URL of a file that exists")
+    check('name="robots"' not in page, f"{rel}: generated listing pages are indexable (no robots meta)")
+    check(len(re.findall(r'<h1[ >]', page)) == 1 and 'id="listing-title"' in page, f"{rel}: needs exactly one h1 (id=listing-title)")
+    check(f'data-listing="{lid}"' in page, f'{rel}: <body> is missing data-listing="{lid}"')
+    # The rent is the page's one huge figure.
+    check(re.search(r'id="listing-rent"[^>]*>\s*<span[^>]*>' + re.escape(money_fmt(rent)) + r'</span>', page) is not None,
+          f"{rel}: #listing-rent does not show {money_fmt(rent)}")
+    # Structured data parses and says the right things.
+    m = re.search(r'<script type="application/ld\+json">(.*?)</script>', page, re.S)
+    try:
+        ld = json.loads(m.group(1)) if m else None
+    except ValueError:
+        ld = None
+    ok = isinstance(ld, dict) and ld.get('@type') == 'RealEstateListing' and '"RealEstateListing"' in page
+    ok = ok and ld.get('url') == canonical and ld.get('name') == L.get('title') and ld.get('datePosted') == listings_doc.get('updated')
+    offers = ld.get('offers', {}) if ok else {}
+    ok = ok and offers.get('@type') == 'Offer' and offers.get('price') == rent and offers.get('priceCurrency') == 'USD'
+    ok = ok and offers.get('availability') == 'https://schema.org/InStock' \
+        and offers.get('businessFunction') == 'http://purl.org/goodrelations/v1#LeaseOut'
+    about = ld.get('about', {}) if ok else {}
+    ok = ok and about.get('@type') == ('Residence' if L.get('type') == 'residential' else 'Place')
+    ok = ok and about.get('address', {}).get('@type') == 'PostalAddress' and bool(about.get('address', {}).get('streetAddress')) \
+        and about['address'].get('addressRegion') == 'WA'
+    if L.get('lat') is None or L.get('lng') is None:
+        ok = ok and 'geo' not in about
+    else:
+        ok = ok and about.get('geo', {}).get('latitude') == L.get('lat') and about['geo'].get('longitude') == L.get('lng')
+    check(ok, f"{rel}: JSON-LD is missing/invalid, or its type/url/name/datePosted/price/address/geo do not match listings.json")
+    # The inquiry form: this listing, this building (empty when it has none).
+    check('name="listing-inquiry"' in page and 'data-netlify="true"' in page and 'netlify-honeypot="bot-field"' in page and 'id="inquire"' in page,
+          f"{rel}: missing the Netlify form name=\"listing-inquiry\" in #inquire")
+    check('<input type="hidden" name="form-name" value="listing-inquiry" />' in page, f"{rel}: missing the hidden form-name field")
+    check(f'<input type="hidden" name="listing" value="{lid}" />' in page, f"{rel}: hidden listing input is not {lid!r}")
+    bid = L.get('buildingId') or ''
+    check(f'<input type="hidden" name="building" value="{bid}" />' in page, f"{rel}: hidden building input is not {bid!r}")
+    check('name="timeframe"' in page and 'Ask about this space' in page and 'Anything I should know?' in page, f"{rel}: form fields are incomplete")
+    # Gallery: photos or the one placeholder band, never both.
+    if L.get('photos'):
+        check('id="listing-photos"' in page and 'id="listing-photos-placeholder"' not in page, f"{rel}: has photos, so a photo grid and no placeholder")
+    else:
+        check('id="listing-photos-placeholder"' in page and 'id="listing-photos"' not in page, f"{rel}: no photos, so exactly the placeholder band")
+    # Map: only when there are coordinates, and then with Leaflet loaded in order.
+    has_map = L.get('lat') is not None and L.get('lng') is not None
+    if has_map:
+        order = [page.find(f'src="{u}"') for u in MAP_SCRIPTS]
+        check(all(i >= 0 for i in order) and order == sorted(order), f"{rel}: has coordinates, so it must load leaflet.js then eb-map.js")
+        css_order = [page.find(f'href="{u}"') for u in ('/css/tailwind.css', '/css/vendor/leaflet.css', '/css/eb-map.css')]
+        check(all(i >= 0 for i in css_order) and css_order == sorted(css_order), f"{rel}: stylesheets must load tailwind.css, vendor/leaflet.css, eb-map.css in that order")
+        check('id="listing-map"' in page and f'data-lat="{L.get("lat")}"' in page and f'data-lng="{L.get("lng")}"' in page and 'EBMap.create' in page,
+              f"{rel}: the #listing-map div (with data-lat/data-lng) or its init script is missing")
+    else:
+        check('id="listing-map"' not in page and 'leaflet' not in page.lower() and 'eb-map' not in page,
+              f"{rel}: no coordinates, so it must carry no map markup and load no Leaflet")
+        check('openstreetmap.org/search?query=' in page, f"{rel}: no coordinates, so the OpenStreetMap search link must remain")
+    check('listing-detail.js' not in page and 'LISTINGS_URL' not in page, f"{rel}: generated pages are static and must not use the fallback script or the feed")
+    check(re.search(r'cdn', page, re.I) is None, f"{rel}: mentions a CDN; vendor it instead")
+    for label, pat in FLAT_BRAND:
+        check(re.search(pat, page, re.I) is None, f"{rel}: contains {label} (E. Berry brand is flat, Berry/Cream only)")
+
+# The client-side fallback (the safety net behind the rewrite).
+FB_REL = 'listing.html'
+if exists(FB_REL):
+    fb = read(FB_REL)
+    check('A PART OF WINDERMERE VASHON' in fb, f"{FB_REL}: header is missing the 'A PART OF WINDERMERE VASHON' firm-ID line")
+    check_shell(FB_REL, fb, RERUN)
+    check('<meta name="robots" content="noindex" />' in fb, f"{FB_REL}: missing the robots noindex meta")
+    check('rel="canonical"' not in fb and 'application/ld+json' not in fb, f"{FB_REL}: a noindex fallback has no canonical and no structured data")
+    order = [fb.find(f'src="{u}"') for u in ('/js/vendor/leaflet.js', '/js/eb-map.js', '/js/site-config.js', '/js/listing-detail.js')]
+    check(all(i >= 0 for i in order) and order == sorted(order),
+          f"{FB_REL}: scripts must load leaflet.js, eb-map.js, site-config.js, listing-detail.js in that order")
+    css_order = [fb.find(f'href="{u}"') for u in ('/css/tailwind.css', '/css/vendor/leaflet.css', '/css/eb-map.css')]
+    check(all(i >= 0 for i in css_order) and css_order == sorted(css_order), f"{FB_REL}: stylesheets must load tailwind.css, vendor/leaflet.css, eb-map.css in that order")
+    check('id="main"' in fb and 'id="listing-loading"' in fb, f"{FB_REL}: needs <main id=\"main\"> with the loading line the script replaces")
+    check(re.search(r'cdn', fb, re.I) is None, f"{FB_REL}: mentions a CDN; vendor it instead")
+    for label, pat in FLAT_BRAND:
+        check(re.search(pat, fb, re.I) is None, f"{FB_REL}: contains {label} (E. Berry brand is flat, Berry/Cream only)")
+if exists('js/listing-detail.js'):
+    ldjs = read('js/listing-detail.js')
+    for token in ('LISTINGS_URL', '/data/buildings.json', 'location.pathname', 'URLSearchParams', 'listing-inquiry', 'name="listing"',
+                  'name="building"', 'EBMap.create', 'IntersectionObserver', "That one isn't on my list just now.", 'href="/listings/"'):
+        check(token in ldjs, f"js/listing-detail.js: expected {token!r}")
+    for label, pat in FLAT_BRAND:
+        check(re.search(pat, ldjs, re.I) is None, f"js/listing-detail.js: contains {label} (E. Berry brand is flat)")
+
+# netlify.toml: the non-forced /listings/* -> /listing.html rewrite, AFTER every host-scoped redirect.
+nt = read('netlify.toml')
+redirects = []
+for blk in re.split(r'^\[\[redirects\]\]\s*$', nt, flags=re.M)[1:]:
+    blk = re.split(r'^\[\[', blk, flags=re.M)[0]                     # up to the next table
+    f = lambda key: (re.search(rf'^\s*{key}\s*=\s*"?([^"\n#]+?)"?\s*(?:#.*)?$', blk, re.M) or [None, None])[1]
+    redirects.append({'from': f('from'), 'to': f('to'), 'status': f('status'), 'force': (f('force') or 'false').lower() == 'true'})
+rw = [i for i, r in enumerate(redirects) if r['from'] == '/listings/*']
+check(len(rw) == 1 and redirects[rw[0]]['to'] == '/listing.html' and redirects[rw[0]]['status'] == '200',
+      'netlify.toml: needs exactly one [[redirects]] /listings/* -> /listing.html with status = 200')
+check(rw and not redirects[rw[0]]['force'], 'netlify.toml: the /listings/* rewrite must NOT be forced (generated pages must win)')
+hosts = [i for i, r in enumerate(redirects) if str(r['from']).startswith(('http://', 'https://'))]
+check(len(hosts) >= 4 and rw and rw[0] > max(hosts, default=-1),
+      'netlify.toml: the /listings/* rewrite must come AFTER the host-scoped redirects (first match wins)')
+check(rw and rw[0] == len(redirects) - 1, 'netlify.toml: the /listings/* rewrite should be the last [[redirects]] block')
+
+# sitemap: the fallback is noindex and must not be listed.
+if sm_urls is not None:
+    check(not any(u.rstrip('/').endswith('listing.html') for u in sm_urls), 'sitemap.xml: /listing.html is noindex and must not be listed')
+    check(len([u for u in sm_urls if u.startswith(f'{SITE_URL}/listings/') and u != f'{SITE_URL}/listings/']) == len(listings),
+          'sitemap.xml: it must list exactly one /listings/<id>/ URL per listing')
+
+# css/tailwind.css must have been rebuilt for the classes the detail pages and the fallback script use.
+tw_css = read('css/tailwind.css')
+for cls in (r'sm\:col-span-2', r'sm\:aspect-\[16\/9\]', r'lg\:min-h-\[26rem\]', r'min-h-\[60vh\]', r'min-h-\[15rem\]', r'md\:min-h-\[20rem\]',
+            r'bg-eb-sand', r'bg-eb-mustard', r'rounded-card', r'sm\:h-\[24rem\]', r'lg\:grid-cols-\[6fr_7fr\]'):
+    check(cls in tw_css, f"css/tailwind.css has no .{cls}; rebuild it (see README, 'Rebuilding the stylesheet')")
+
+if exists('.github/workflows/listings-e2e.yml'):
+    wf = read('.github/workflows/listings-e2e.yml')
+    for token in ("'listing.html'", "'js/listing-detail.js'", "'tools/build_pages.py'", "'tools/templates/**'"):
+        check(token in wf, f".github/workflows/listings-e2e.yml: expected {token} (the detail pages are covered by the same E2E)")
+
 # ---------------- verdict ----------------
 if problems:
     print(f"FAIL: {len(problems)} problem(s) out of {checks} checks")
