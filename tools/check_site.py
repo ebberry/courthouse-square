@@ -660,6 +660,192 @@ if exists('.github/workflows/listings-e2e.yml'):
     for token in ("'listing.html'", "'js/listing-detail.js'", "'tools/build_pages.py'", "'tools/templates/**'"):
         check(token in wf, f".github/workflows/listings-e2e.yml: expected {token} (the detail pages are covered by the same E2E)")
 
+# =====================================================================
+# E. Berry polish (Phase 6): the 404 page, per-building location copy, listing feature tags, and the accessibility
+#   basics every page type must keep. (The computed-style half, contrast and focus rings included, is part Q of
+#   tools/test_listings.py.)
+# =====================================================================
+import difflib
+from html.parser import HTMLParser
+
+# ---------------- data/buildings.json: optional per-building location copy ----------------
+BUILDING_OPTIONAL = ('directions', 'nearby')
+for B in buildings:
+    bid = B.get('id', '<missing>')
+    rel = f'buildings/{bid}/index.html'
+    extra = sorted(set(B) - set(BUILDING_REQUIRED) - set(BUILDING_OPTIONAL))
+    check(not extra, f"buildings.json {bid}: unknown field(s) {extra} (required: {list(BUILDING_REQUIRED)}; optional: {list(BUILDING_OPTIONAL)})")
+    directions, nearby = B.get('directions'), B.get('nearby')
+    if 'directions' in B:
+        check(isinstance(directions, list) and len(directions) > 0
+              and all(isinstance(d, dict) and set(d) == {'name', 'note'}
+                      and all(isinstance(d[k], str) and d[k].strip() for k in d) for d in directions),
+              f"buildings.json {bid}: directions must be a non-empty list of {{name, note}} objects with non-empty text")
+    if 'nearby' in B:
+        check(isinstance(nearby, list) and len(nearby) > 0 and all(isinstance(t, str) and t.strip() for t in nearby),
+              f"buildings.json {bid}: nearby must be a non-empty list of non-empty strings")
+    # The page shows exactly what the data says: the block when the field is there, every line escaped, nothing when it is not.
+    if os.path.exists(os.path.join(ROOT, rel)):
+        bpage = read(rel)
+        check(('From the ferries' in bpage) == bool(directions),
+              f"{rel}: the 'From the ferries' block must appear exactly when buildings.json has directions ({RERUN})")
+        check(('<h3 class="font-serif text-2xl font-medium leading-[1.2]">Nearby</h3>' in bpage) == bool(nearby),
+              f"{rel}: the 'Nearby' block must appear exactly when buildings.json has nearby ({RERUN})")
+        for d in (directions if isinstance(directions, list) else []):
+            if isinstance(d, dict) and {'name', 'note'} <= set(d):
+                check(f"<strong class=\"font-semibold\">{_html.escape(str(d['name']), quote=True)}:</strong> {_html.escape(str(d['note']), quote=True)}" in bpage,
+                      f"{rel}: direction {d.get('name')!r} is not on the page as written in buildings.json ({RERUN})")
+        for t in (nearby if isinstance(nearby, list) else []):
+            check(f'<li>{_html.escape(str(t), quote=True)}</li>' in bpage, f"{rel}: nearby line {t!r} is not on the page as written in buildings.json ({RERUN})")
+check('LOCATION_COPY' not in read('tools/build_pages.py'), "tools/build_pages.py: location copy lives in data/buildings.json now; no LOCATION_COPY table")
+
+# ---------------- data/listings.json: a feature tag must add something to the summary ----------------
+_STOP = {'a', 'an', 'the', 'for', 'of', 'with', 'to', 'and', 'or', 'in', 'on', 'by', 'that', 'such', 'as', 'at', 'who', 'is'}
+
+def _tokens(text):
+    text = re.sub(r'[^a-z0-9 ]+', '', str(text).lower().replace('-', '').replace('—', ' '))
+    return [w[:-1] if len(w) > 3 and w.endswith('s') else w for w in text.split() if w not in _STOP]
+
+def repeats_summary(feature, summary):
+    """True when the tag just restates the summary's first sentence (a prefix of it, or nearly every content word is in it)."""
+    first = re.split(r'(?<=[.!?])\s+', ' '.join(str(summary or '').split()))[0]
+    f, s_ = _tokens(feature), set(_tokens(first))
+    if not f:
+        return False
+    return ' '.join(_tokens(first)).startswith(' '.join(f)) or sum(w in s_ for w in f) / len(f) >= 0.8
+
+for L in listings:
+    for f in L.get('features', []):
+        check(not repeats_summary(f, L.get('summary')),
+              f"listings.json {L.get('id')}: feature {f!r} just repeats the summary's first sentence; drop it")
+    check(any(str(f).lower().startswith('all-in pricing') for f in L.get('features', [])) or L.get('type') != 'commercial',
+          f"listings.json {L.get('id')}: a commercial listing keeps its 'All-in pricing' feature (it feeds the fact tile)")
+
+# ---------------- accessibility basics on every page type ----------------
+class Facts(HTMLParser):
+    """What a static page promises before any script runs: landmarks, headings, names, ids, the skip link."""
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.h1 = self.main = self.footer = self.header = 0
+        self.navs_unnamed = 0
+        self.imgs_no_alt = []
+        self.ids = []
+        self.unlabeled = []
+        self.first_body_anchor = None
+        self.in_body = False
+        self.label_depth = 0
+        self.html_attrs = {}
+        self.metas = []
+        self.links = []
+        self.title = ''
+        self._in_title = False
+        self.headings = []
+    def handle_starttag(self, tag, attrs):
+        a = dict(attrs)
+        if tag == 'html': self.html_attrs = a
+        if tag == 'meta': self.metas.append(a)
+        if tag == 'link': self.links.append(a)
+        if tag == 'title': self._in_title = True
+        if tag == 'body': self.in_body = True
+        if a.get('id'): self.ids.append(a['id'])
+        if tag == 'h1': self.h1 += 1
+        if tag in ('h1', 'h2', 'h3', 'h4'): self.headings.append(int(tag[1]))
+        if tag == 'main': self.main += 1
+        if tag == 'footer': self.footer += 1
+        if tag == 'header': self.header += 1
+        if tag == 'nav' and not (a.get('aria-label') or a.get('aria-labelledby')): self.navs_unnamed += 1
+        if tag == 'img' and 'alt' not in a: self.imgs_no_alt.append(a.get('src'))
+        if tag == 'label': self.label_depth += 1
+        if tag in ('input', 'select', 'textarea') and a.get('type') != 'hidden':
+            if not (self.label_depth or a.get('aria-label') or a.get('aria-labelledby')):
+                self.unlabeled.append(f"<{tag} name={a.get('name')!r}>")
+        if tag == 'a' and self.in_body and self.first_body_anchor is None: self.first_body_anchor = a
+    def handle_endtag(self, tag):
+        if tag == 'label': self.label_depth -= 1
+        if tag == 'title': self._in_title = False
+    def handle_data(self, data):
+        if self._in_title: self.title += data
+
+def facts_of(rel):
+    f = Facts()
+    f.feed(read(rel))
+    return f
+
+SKIP_LINK_CLASSES = ('sr-only', 'focus:not-sr-only', 'focus:font-bold', 'focus:text-[1.1875rem]')   # Berry on Tangerine is 4.26:1: large text only
+A11Y_PAGES = (['index.html', LIST_REL, 'listing.html', '404.html']
+              + [f'buildings/{B.get("id")}/index.html' for B in buildings]
+              + [f'listings/{L.get("id")}/index.html' for L in listings])
+for rel in A11Y_PAGES:
+    if not exists(rel):
+        continue
+    f = facts_of(rel)
+    check(f.html_attrs.get('lang') == 'en', f'{rel}: <html lang="en"> is missing')
+    check(any(m.get('name') == 'theme-color' and m.get('content') == '#670A2F' for m in f.metas), f'{rel}: <meta name="theme-color" content="#670A2F"> is missing')
+    check(any(m.get('name') == 'viewport' for m in f.metas) and f.title.strip(), f'{rel}: needs a viewport meta and a non-empty <title>')
+    check(any(l.get('rel') == 'icon' and l.get('href') == '/images/brand/monogram-tangerine-badge.svg' for l in f.links),
+          f'{rel}: favicon must be /images/brand/monogram-tangerine-badge.svg (every page the same)')
+    check(f.h1 == 1, f'{rel}: needs exactly one <h1> (found {f.h1})')
+    check(f.main == 1 and 'id="main"' in read(rel) and f.footer == 1 and f.header >= 1, f'{rel}: needs one <main id="main">, one <footer> and a <header>')
+    check(f.navs_unnamed == 0, f'{rel}: every <nav> needs an aria-label')
+    skip = f.first_body_anchor or {}
+    check(skip.get('href') == '#main' and all(c in str(skip.get('class')).split() for c in SKIP_LINK_CLASSES),
+          f'{rel}: the first link in <body> must be the skip link to #main, with classes {SKIP_LINK_CLASSES}')
+    check(not f.imgs_no_alt, f'{rel}: <img> without an alt attribute: {f.imgs_no_alt}')
+    check(not f.unlabeled, f'{rel}: form control(s) without a label: {f.unlabeled}')
+    check(len(f.ids) == len(set(f.ids)), f'{rel}: duplicate id(s): {sorted({i for i in f.ids if f.ids.count(i) > 1})}')
+    jumps = [(a, b) for a, b in zip(f.headings, f.headings[1:]) if b - a > 1]
+    check(not jumps, f'{rel}: heading levels skip ({jumps})')
+
+# ---------------- hover/focus states: no small text on Tangerine, no Tangerine small text on Berry (both 4.26:1, AA only for large text) ----------------
+for rel in A11Y_PAGES[1:] + ['tools/templates/building.tmpl.html', 'tools/templates/building.parts.tmpl.html', 'tools/templates/listing.tmpl.html',
+                              'tools/templates/listing.parts.tmpl.html', 'tools/templates/listing-fallback.tmpl.html', 'tools/templates/404.tmpl.html',
+                              'js/building.js', 'js/listings.js', 'js/listing-detail.js']:
+    if exists(rel):
+        t = read(rel)
+        check('hover:text-eb-tangerine' not in t and 'hover:bg-eb-tangerine' not in t,
+              f'{rel}: hover:text-eb-tangerine / hover:bg-eb-tangerine make small text 4.26:1; swap the underline colour (hover:decoration-*) or fill Berry instead')
+for blk in ('HEADER', 'FOOTER'):
+    sh = shell_block(index, blk) or ''
+    check('hover:text-eb-tangerine' not in sh and 'hover:bg-eb-tangerine' not in sh, f'index.html EB:{blk}: small text must not turn Tangerine, or sit on Tangerine, on hover')
+
+# ---------------- motion: the shell opts out of smooth scrolling, and the scripts follow ----------------
+check('@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }' in (shell_block(index, 'SHELL-STYLES', r'</style>') or ''),
+      'index.html EB:SHELL-STYLES: must switch scroll-behavior back to auto under prefers-reduced-motion')
+for rel in ('js/building.js', 'js/listings.js', 'js/listing-detail.js', 'js/eb-map.js'):
+    for line in read(rel).splitlines():
+        if re.search(r'smooth|\banimate:\s*true', line):
+            check('reduce' in line, f'{rel}: smooth/animated motion must be guarded by prefers-reduced-motion: {line.strip()[:80]}')
+ebm = read('js/eb-map.js')
+check('prefers-reduced-motion: reduce' in ebm and all(t in ebm for t in ('zoomAnimation: !calm', 'fadeAnimation: !calm', 'markerZoomAnimation: !calm', 'inertia: !calm')),
+      'js/eb-map.js: the map must drop its zoom/fade/inertia animation under prefers-reduced-motion')
+check('reduce || target <= 0' in read('js/building.js'), 'js/building.js: countUp must render the final number at once under prefers-reduced-motion')
+
+# ---------------- /404.html ----------------
+NF_REL = '404.html'
+for rel in ('tools/templates/404.tmpl.html', NF_REL):
+    check(exists(rel), f'{rel} is missing ({RERUN})')
+if exists(NF_REL):
+    nf = read(NF_REL)
+    check_shell(NF_REL, nf, RERUN)
+    check('A PART OF WINDERMERE VASHON' in nf, f"{NF_REL}: header is missing the 'A PART OF WINDERMERE VASHON' firm-ID line")
+    check('<meta name="robots" content="noindex" />' in nf, f'{NF_REL}: missing the robots noindex meta')
+    check('rel="canonical"' not in nf and 'application/ld+json' not in nf, f'{NF_REL}: a not-found page has no canonical and no structured data')
+    check('Well, this is a dead end.' in nf and "The page you're after isn't here" in nf and "we'll find it." in nf, f'{NF_REL}: the headline or the warm line is missing')
+    for href in ('/', '/listings/', '/buildings/courthouse-square/'):
+        check(f'href="{href}"' in re.sub(r'<header.*?</header>|<footer.*?</footer>', '', nf, flags=re.S), f'{NF_REL}: the page body must link to {href}')
+    check('monogram-tangerine-bare.svg' in nf, f'{NF_REL}: missing the monogram seal')
+    check(not re.search(r'(?:src|href)="(?!https?:|mailto:|#|/)', nf), f'{NF_REL}: Netlify serves it at any depth, so every src/href must be absolute (/...)')
+    check(re.search(r'cdn', nf, re.I) is None, f'{NF_REL}: mentions a CDN; vendor it instead')
+    for label, pat in FLAT_BRAND:
+        check(re.search(pat, nf, re.I) is None, f'{NF_REL}: contains {label} (E. Berry brand is flat, Berry/Cream only)')
+if sm_urls is not None:
+    check(not any(u.rstrip('/').endswith('404.html') or u.rstrip('/').endswith('/404') for u in sm_urls), 'sitemap.xml: the 404 page must not be listed')
+check('./404.html' in tw_cfg, 'tailwind.config.js content[] does not include ./404.html')
+tw_css = read('css/tailwind.css')
+for cls in (r'focus\:font-bold', r'focus\:text-\[1\.1875rem\]', r'hover\:bg-eb-berry', r'hover\:text-eb-cream', r'hover\:decoration-eb-tangerine',
+            r'hover\:decoration-2', r'max-w-\[10ch\]', r'text-\[length\:clamp\(3\.25rem\2c 13vw\2c 9rem\)\]'):
+    check(cls in tw_css, f"css/tailwind.css has no .{cls}; rebuild it (see README, 'Rebuilding the stylesheet')")
+
 # ---------------- verdict ----------------
 if problems:
     print(f"FAIL: {len(problems)} problem(s) out of {checks} checks")

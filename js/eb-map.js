@@ -112,13 +112,24 @@
     el.setAttribute('role', 'region');
     el.setAttribute('aria-label', opts.label || 'Map of the places that are open');
 
+    // Reduced motion: no zoom/fade/inertia animation, and no animated pan when a popup nudges the map into view.
+    const calm = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
     const map = L.map(el, {
       center: ISLAND,
       zoom: ISLAND_ZOOM,
       minZoom: 9,
       maxZoom: 18,
-      scrollWheelZoom: false           // the page scrolls; the wheel only zooms once the map is clicked or focused
+      scrollWheelZoom: false,          // the page scrolls; the wheel only zooms once the map is clicked or focused
+      zoomAnimation: !calm,
+      fadeAnimation: !calm,
+      markerZoomAnimation: !calm,
+      inertia: !calm
     });
+    if (calm) {
+      const panBy = map.panBy;
+      map.panBy = function (offset, o) { return panBy.call(this, offset, Object.assign({}, o, { animate: false })); };
+    }
 
     L.tileLayer(TILE_URL, { maxZoom: 18, attribution: ATTRIBUTION, className: 'eb-map-tiles' }).addTo(map);
     // Leaflet's default prefix carries a flag graphic; keep the credit, drop the artwork.

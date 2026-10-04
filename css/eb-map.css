@@ -81,6 +81,10 @@
 .eb-map.leaflet-container .leaflet-bar a.leaflet-disabled { background-color: var(--ebm-cream); color: var(--ebm-berry); opacity: .45; }
 .eb-map.leaflet-container .leaflet-bar a.leaflet-disabled:hover { background-color: var(--ebm-cream); color: var(--ebm-berry); }
 .eb-map .leaflet-top.leaflet-left .leaflet-control { margin: 12px 0 0 12px; }
+/* On a phone a popup is nearly as wide as the map and would sit under the zoom buttons: park them bottom-left instead. */
+@media (max-width: 639px) {
+  .eb-map .leaflet-top.leaflet-left { top: auto; bottom: 34px; }
+}
 
 /* ---- pins: flat Tangerine teardrop, Berry outline and center dot ---- */
 .eb-pin { background: none; border: 0; }
@@ -101,7 +105,8 @@
 /* Hover and keyboard focus swap to Berry fill (style guide section 5). */
 .eb-pin:hover .eb-pin__body, .eb-pin:focus-visible .eb-pin__body { fill: var(--ebm-berry); }
 .eb-pin:hover .eb-pin__dot, .eb-pin:focus-visible .eb-pin__dot { fill: var(--ebm-cream); }
-.eb-pin:hover .eb-pin__count, .eb-pin:focus-visible .eb-pin__count { background: var(--ebm-tangerine); color: var(--ebm-berry); }
+/* The count is 13px, so Berry-on-Tangerine (4.26:1) would miss AA: Cream with a Berry ring instead. */
+.eb-pin:hover .eb-pin__count, .eb-pin:focus-visible .eb-pin__count { background: var(--ebm-cream); color: var(--ebm-berry); outline: 1.5px solid var(--ebm-berry); }
 .eb-pin:focus-visible { outline: 2px solid var(--ebm-berry); outline-offset: 2px; border-radius: 12px; }
 
 /* ---- popups: Cream, Berry hairline border, nothing floating ---- */

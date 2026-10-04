@@ -1,19 +1,26 @@
 # End-to-end test of the listings index (/listings/) and the listing detail pages (/listings/<id>/ and the
 # /listing.html fallback) in headless Chromium: cards, filters, URL state, the Leaflet map and its popup, the
-# mobile Map/List pill, the inquiry form, structured data and generated-vs-fallback parity. The network is
-# sealed inside the test (map tiles and fonts are answered locally). Runs only when listings-related files change.
+# mobile Map/List pill, the inquiry form, structured data and generated-vs-fallback parity, plus the
+# accessibility sweep (landmarks, skip link, AA contrast, focus rings, reduced motion) over the homepage, the
+# listings pages, the building page and 404.html. The network is sealed inside the test (map tiles and fonts are
+# answered locally). Runs only when listings-related or shared page files change.
 name: Listings E2E
 
 on:
   push:
     paths:
+      - 'index.html'
+      - '404.html'
+      - 'buildings/**'
       - 'listings/**'
       - 'listing.html'
       - 'js/listings.js'
       - 'js/listing-detail.js'
+      - 'js/building.js'
       - 'js/eb-map.js'
       - 'js/vendor/leaflet.js'
       - 'css/eb-map.css'
+      - 'css/tailwind.css'
       - 'css/vendor/**'
       - 'data/listings.json'
       - 'data/buildings.json'
@@ -23,13 +30,18 @@ on:
       - '.github/workflows/listings-e2e.yml'
   pull_request:
     paths:
+      - 'index.html'
+      - '404.html'
+      - 'buildings/**'
       - 'listings/**'
       - 'listing.html'
       - 'js/listings.js'
       - 'js/listing-detail.js'
+      - 'js/building.js'
       - 'js/eb-map.js'
       - 'js/vendor/leaflet.js'
       - 'css/eb-map.css'
+      - 'css/tailwind.css'
       - 'css/vendor/**'
       - 'data/listings.json'
       - 'data/buildings.json'

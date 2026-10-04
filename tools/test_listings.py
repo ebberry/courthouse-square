@@ -28,6 +28,16 @@ Part 2 drives the listing detail pages (/listings/<id>/, generated) and their cl
   O. Structured data— the RealEstateListing JSON-LD parses, carries the right price/address/geo, and escapes hostile text
   P. Flat brand     — computed-style audit of the detail page, one huge element, 390px layout, zero console errors
 
+Part 3 is the accessibility sweep over every page type (homepage, /listings/, a detail page, the building page,
+/404.html and the /listing.html fallback), at 1440px and 390px:
+
+  Q. Accessibility  — one h1, banner / main / contentinfo landmarks, an accessible name on every link, button and
+                      field, no skipped heading levels, a skip link that is the first Tab stop, shows itself, jumps to
+                      <main> and passes AA; every visible text at AA (4.5:1, or 3:1 for large text) at rest and on
+                      hover, including an open map popup, the empty states and a populated tenant wall; a visible
+                      focus ring of at least 3:1 on every Tab stop; and prefers-reduced-motion honoured (no smooth
+                      scrolling, no map animation, the tally counts up instantly)
+
 Requirements: pip install playwright; playwright install chromium (or set CHROME=/path/to/chrome).
 Run: python3 tools/test_listings.py
 """
@@ -529,7 +539,7 @@ def part2(browser, sessions):
           and pg.get_attribute('#inquire input[name=email]', 'type') == 'email', 'M: name and email are required, email is typed')
     check(pg.get_attribute('#inquire input[name=phone]', 'required') is None, 'M: phone is optional')
     opts = pg.eval_on_selector_all('#inquire select[name=timeframe] option', 'els => els.map(e => e.textContent.trim())')
-    check(opts == ['Choose one', 'Soon as possible', '1–3 months', 'Later', 'Just curious'], f'M: timeframe options {opts}')
+    check(opts == ['Choose one', 'As soon as possible', '1–3 months', 'Later', 'Just curious'], f'M: timeframe options {opts}')
     check(ws(pg.inner_text('#inquire label:has(textarea)')) == 'Anything I should know?', 'M: message label')
     btn = pg.locator('#inquire button[type=submit]')
     check(ws(btn.inner_text()) == 'Ask about this space' and 'eb-btn' in btn.get_attribute('class'), 'M: the submit pill reads "Ask about this space"')
@@ -707,6 +717,309 @@ def part2(browser, sessions):
     mb = pg.locator('#listing-map').bounding_box()
     check(mb['width'] <= 390 and mb['height'] >= 300, f'P: the map fits a phone ({mb})')
     pg.click('#nav-toggle'); check(pg.is_visible('#site-nav'), 'P: the mobile menu opens on the detail page')
+    s.ctx.close()
+
+
+# ---------------------------------------------------------------- part 3: accessibility sweep (Q)
+
+# Computed-style contrast audit (WCAG 2.x). Installs window.__a11y.{measure, describe} and returns every visible text
+# element that falls short: 4.5:1, or 3:1 for large text (>=24px, or >=18.66px and bold). Foreground alpha and element
+# opacity are composited over the stacked backgrounds. Text over an image would be unknowable, so it is reported too.
+CONTRAST_JS = r"""
+() => {
+  const parse = c => { const m = c.match(/rgba?\(([^)]+)\)/); const p = m[1].split(/[ ,\/]+/).filter(Boolean).map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; };
+  const over = (f, b) => ({ r: f.r * f.a + b.r * (1 - f.a), g: f.g * f.a + b.g * (1 - f.a), b: f.b * f.a + b.b * (1 - f.a), a: 1 });
+  const lin = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+  const lum = c => 0.2126 * lin(c.r) + 0.7152 * lin(c.g) + 0.0722 * lin(c.b);
+  const ratio = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+  const hex = c => '#' + [c.r, c.g, c.b].map(v => Math.round(v).toString(16).padStart(2, '0')).join('').toUpperCase();
+  function background(el) {
+    const chain = [];
+    for (let e = el; e; e = e.parentElement) chain.push(e);
+    let bg = { r: 255, g: 255, b: 255, a: 1 }, image = false;
+    for (let i = chain.length - 1; i >= 0; i--) {
+      const cs = getComputedStyle(chain[i]);
+      if (cs.backgroundImage !== 'none' && !/^url\("data:image\/svg/.test(cs.backgroundImage)) image = true;
+      const c = parse(cs.backgroundColor);
+      if (c.a > 0) bg = over(c, bg);
+    }
+    return { bg, image };
+  }
+  const opacity = el => { let o = 1; for (let e = el; e; e = e.parentElement) o *= parseFloat(getComputedStyle(e).opacity); return o; };
+  function describe(el) {
+    const cls = (el.getAttribute('class') || '').split(/\s+/).filter(Boolean).slice(0, 3).join('.');
+    return el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') + (cls ? '.' + cls : '') + ' "' + (el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 28) + '"';
+  }
+  function shown(el) {
+    for (let e = el; e; e = e.parentElement) {
+      const cs = getComputedStyle(e);
+      if (cs.display === 'none' || cs.visibility === 'hidden' || e.tagName === 'NOSCRIPT') return false;
+    }
+    const r = el.getBoundingClientRect();
+    return r.width >= 2 && r.height >= 2;
+  }
+  function measure(el, pseudo) {
+    const cs = getComputedStyle(el, pseudo || null);
+    const fs = parseFloat(cs.fontSize), fw = parseInt(cs.fontWeight, 10) || 400;
+    const large = fs >= 24 || (fs >= 18.66 && fw >= 700);
+    const { bg, image } = background(el);
+    const fg0 = parse(cs.color);
+    const fg = over({ r: fg0.r, g: fg0.g, b: fg0.b, a: fg0.a * opacity(el) * (pseudo ? parseFloat(cs.opacity || 1) : 1) }, bg);
+    return { ratio: ratio(fg, bg), need: large ? 3 : 4.5, fs, fw, fg: hex(fg), bg: hex(bg), image };
+  }
+  window.__a11y = { measure, describe };
+  const bad = [];
+  let n = 0;
+  const judge = (el, label, m) => {
+    n++;
+    if (m.image) bad.push(label + ': text over an image');
+    else if (m.ratio < m.need) bad.push(`${label}: ${m.ratio.toFixed(2)} < ${m.need} (${m.fg} on ${m.bg}, ${m.fs}px/${m.fw})`);
+  };
+  document.querySelectorAll('body *').forEach(el => {
+    if (el instanceof SVGElement || ['SCRIPT', 'STYLE', 'NOSCRIPT', 'OPTION', 'IMG'].includes(el.tagName) || !shown(el)) return;
+    if (el.matches('input, select, textarea')) {
+      if (el.type === 'hidden' || el.disabled) return;                       // inactive controls are exempt
+      judge(el, describe(el) + ' (value)', measure(el));
+      if (el.placeholder) judge(el, describe(el) + ' (placeholder)', measure(el, '::placeholder'));
+      return;
+    }
+    if ([...el.childNodes].some(x => x.nodeType === 3 && x.textContent.trim())) judge(el, describe(el), measure(el));
+  });
+  return { n, bad };
+}
+"""
+
+# The element in focus: is there a ring, and is it >=3:1 against what is behind it? (The ring sits outside the element,
+# so the parent's background counts; a .listing-card-link draws its ring on ::after.)
+FOCUS_JS = r"""
+() => {
+  const a = document.activeElement;
+  if (!a || a === document.body) return null;
+  const parse = c => { const m = c.match(/rgba?\(([^)]+)\)/); const p = m[1].split(/[ ,\/]+/).filter(Boolean).map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; };
+  const over = (f, b) => ({ r: f.r * f.a + b.r * (1 - f.a), g: f.g * f.a + b.g * (1 - f.a), b: f.b * f.a + b.b * (1 - f.a), a: 1 });
+  const lin = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+  const lum = c => 0.2126 * lin(c.r) + 0.7152 * lin(c.g) + 0.0722 * lin(c.b);
+  let bg = { r: 255, g: 255, b: 255, a: 1 };
+  const chain = []; for (let e = a.parentElement; e; e = e.parentElement) chain.push(e);
+  for (let i = chain.length - 1; i >= 0; i--) { const c = parse(getComputedStyle(chain[i]).backgroundColor); if (c.a > 0) bg = over(c, bg); }
+  const ring = [getComputedStyle(a), getComputedStyle(a, '::after')].find(cs => cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) > 0);
+  let cr = null;
+  if (ring) { const f = parse(ring.outlineColor), x = lum(f), y = lum(bg); cr = (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+  window.__tabbed = window.__tabbed || new WeakSet();
+  const again = window.__tabbed.has(a);                                       // the Tab order has come full circle
+  window.__tabbed.add(a);
+  return { again, name: a.tagName.toLowerCase() + ' ' + JSON.stringify(((a.textContent || '').trim() || a.getAttribute('aria-label') || '').slice(0, 26)),
+           ring: !!ring, cr, filled: a.classList.contains('eb-btn'), map: !!a.closest('.leaflet-container') };
+}
+"""
+
+A11Y_PAGES = [
+    ('home', '/', '#available-grid article'),
+    ('listings', '/listings/', '#listing-grid article'),
+    ('detail', '/listings/chs-n101/', '#listing-title'),
+    ('building', '/buildings/courthouse-square/', '#neighbor-wall article'),
+    ('404', '/404.html', '#not-found-title'),
+    ('fallback', '/listing.html?id=chs-n101', '#listing-title'),
+]
+TENANTS = [{'name': 'Lantern Counseling', 'suite': 'N105', 'category': 'therapy', 'blurb': 'Talk therapy for adults.',
+            'website': 'https://example.com', 'phone': '(206) 555-0100', 'email': 'hi@example.com'},
+           {'name': 'Sayre & Co', 'suite': 'N107', 'category': 'legal', 'blurb': 'Wills and contracts.'}]
+
+
+def ax_tree(s):
+    return s.ctx.new_cdp_session(s.pg).send('Accessibility.getFullAXTree')['nodes']
+
+
+def a11y_structure(s, tag):
+    """Landmarks, headings and accessible names from the browser's own accessibility tree."""
+    nodes = [n for n in ax_tree(s) if not n.get('ignored')]
+    role = lambda n: (n.get('role') or {}).get('value')
+    name = lambda n: ((n.get('name') or {}).get('value') or '').strip()
+    for lm in ('banner', 'main', 'contentinfo'):
+        check(sum(1 for n in nodes if role(n) == lm) == 1, f'{tag}: exactly one {lm} landmark')
+    navs = [name(n) for n in nodes if role(n) == 'navigation']
+    check(all(navs) and len(navs) == len(set(navs)), f'{tag}: every navigation landmark has its own name ({navs})')
+    unnamed = [role(n) for n in nodes if role(n) in ('link', 'button', 'textbox', 'combobox', 'checkbox', 'img') and not name(n)]
+    check(not unnamed, f'{tag}: controls/images with no accessible name: {unnamed}')
+    levels = [int(p['value']['value']) for n in nodes if role(n) == 'heading' for p in n.get('properties', []) if p['name'] == 'level']
+    check(levels[:1] == [1] and levels.count(1) == 1, f'{tag}: exactly one h1, and it comes first ({levels[:6]})')
+    check(all(b - a <= 1 for a, b in zip(levels, levels[1:])), f'{tag}: heading levels never skip ({levels})')
+
+
+def a11y_page(s, name, path, ready, wide):
+    """Everything Q checks on one page at one width."""
+    tag = f'Q {name}@{1440 if wide else 390}'
+    pg = s.pg
+    pg.goto(BASE + path, wait_until='networkidle')
+    pg.wait_for_selector(ready, timeout=10000)
+    pg.wait_for_timeout(250)
+    doc = pg.evaluate("""() => ({
+      lang: document.documentElement.lang,
+      theme: (document.querySelector('meta[name=theme-color]') || {}).content,
+      icon: (document.querySelector('link[rel=icon]') || {}).getAttribute('href'),
+      h1: document.querySelectorAll('h1').length,
+      noAlt: [...document.querySelectorAll('img:not([alt])')].length,
+      unlabeled: [...document.querySelectorAll('input:not([type=hidden]), select, textarea')].filter(e => !e.closest('.hidden') && !(e.labels && e.labels.length) && !e.getAttribute('aria-label')).length,
+      dupIds: [...document.querySelectorAll('[id]')].map(e => e.id).filter((id, i, all) => all.indexOf(id) !== i),
+      hscroll: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1 })""")
+    check(doc['lang'] == 'en', f'{tag}: <html lang="en">')
+    check(doc['theme'] == '#670A2F', f'{tag}: theme-color is Berry ({doc["theme"]})')
+    check(doc['icon'] == '/images/brand/monogram-tangerine-badge.svg', f'{tag}: favicon ({doc["icon"]})')
+    check(doc['h1'] == 1, f'{tag}: one h1 in the rendered page ({doc["h1"]})')
+    check(doc['noAlt'] == 0, f'{tag}: {doc["noAlt"]} <img> without alt')
+    check(doc['unlabeled'] == 0, f'{tag}: {doc["unlabeled"]} form control(s) without a label')
+    check(not doc['dupIds'], f'{tag}: duplicate ids {doc["dupIds"]}')
+    check(not doc['hscroll'], f'{tag}: sideways scroll')
+    a11y_structure(s, tag)
+
+    # contrast at rest
+    r = pg.evaluate(CONTRAST_JS)
+    check(r['n'] >= 10, f'{tag}: the contrast audit looked at {r["n"]} text elements')
+    check(not r['bad'], f'{tag}: contrast: {r["bad"][:4]}')
+
+    # the skip link: first Tab stop, appears, passes AA while focused, lands in <main>
+    pg.evaluate("window.scrollTo(0, 0); document.activeElement && document.activeElement.blur()")
+    pg.keyboard.press('Tab')
+    sk = pg.evaluate("""() => { const a = document.activeElement, r = a.getBoundingClientRect();
+        return { href: a.getAttribute('href'), text: a.textContent.trim(), w: r.width, h: r.height, x: r.x, y: r.y,
+                 m: window.__a11y.measure(a) } }""")
+    check(sk['href'] == '#main' and sk['text'] == 'Skip to content', f'{tag}: the first Tab stop is the skip link ({sk["href"]!r} {sk["text"]!r})')
+    check(sk['w'] > 60 and sk['h'] > 20 and sk['x'] >= 0 and sk['y'] >= 0, f'{tag}: the skip link shows itself on focus ({sk["w"]}x{sk["h"]})')
+    check(sk['m']['ratio'] >= sk['m']['need'], f'{tag}: the skip link passes AA on focus ({sk["m"]})')
+    pg.keyboard.press('Enter')
+    check(pg.evaluate('location.hash') == '#main', f'{tag}: the skip link jumps to #main')
+    pg.keyboard.press('Tab')
+    check(pg.evaluate("!!(document.activeElement && document.activeElement.closest('main'))"), f'{tag}: after the skip link, Tab lands inside <main>')
+
+    # every Tab stop has a ring of at least 3:1 (a filled .eb-btn swaps its fill instead). The skip link moved the
+    # keyboard's starting point into <main>, so start over from a fresh page.
+    pg.goto(BASE + path, wait_until='networkidle')
+    pg.wait_for_selector(ready, timeout=10000)
+    pg.wait_for_timeout(250)
+    pg.evaluate(CONTRAST_JS)        # (re)installs window.__a11y for the hover pass below
+    stops, bad_ring = 0, []
+    for _ in range(120):
+        pg.keyboard.press('Tab')
+        f = pg.evaluate(FOCUS_JS)
+        if f is None or f['again']:
+            break
+        stops += 1
+        if f['map']:                        # the map, its pins, zoom buttons and credits: a ring is enough (tiles vary behind them)
+            if not f['ring']:
+                bad_ring.append(f'{f["name"]}: no focus ring')
+            continue
+        if not f['ring'] and not f['filled']:
+            bad_ring.append(f'{f["name"]}: no focus ring')
+        elif f['ring'] and f['cr'] < 3:
+            bad_ring.append(f'{f["name"]}: ring {f["cr"]:.2f}:1')
+    check(stops >= 8, f'{tag}: tabbed through {stops} stops')
+    check(not bad_ring, f'{tag}: focus rings: {bad_ring[:4]}')
+
+    # hover (pointer devices only): one of each look of link or button must stay AA while hovered
+    if wide:
+        done, bad_hover = set(), []
+        for h in pg.query_selector_all('a[href], button'):
+            box = h.bounding_box()
+            if not h.is_visible() or not box or box['width'] < 8 or box['height'] < 8:
+                continue                    # not on screen: display:none, or the skip link before it is focused
+            sig = pg.evaluate("""e => { const f = e.parentElement && e.parentElement.closest('[class*=bg-eb], [class*=eb-field], .eb-card');
+                                        return e.tagName + '|' + e.className + '|' + (f ? f.className : '') }""", h)
+            if sig in done:
+                continue
+            done.add(sig)
+            h.scroll_into_view_if_needed(timeout=3000)
+            h.hover(timeout=3000)
+            for m in pg.evaluate("""e => [e, ...e.querySelectorAll('*')].filter(n => [...n.childNodes].some(x => x.nodeType === 3 && x.textContent.trim()))
+                                         .map(n => ({ el: window.__a11y.describe(n), ...window.__a11y.measure(n) }))""", h):
+                if m['ratio'] < m['need']:
+                    bad_hover.append(f'{m["el"]} {m["ratio"]:.2f}<{m["need"]}')
+            pg.mouse.move(0, 0)
+        check(len(done) >= 5, f'{tag}: hovered {len(done)} kinds of link/button')
+        check(not bad_hover, f'{tag}: hover contrast: {bad_hover[:4]}')
+
+
+def part3(browser, sessions):
+    # ---------- Q: every page type, desktop and phone ----------
+    for wide, vp in ((True, {'width': 1440, 'height': 900}), (False, {'width': 390, 'height': 844})):
+        s = Session(browser, f'Q{vp["width"]}', viewport=vp); sessions.append(s)
+        # the gallery photos are not in the repo yet (the page shows its flat placeholders): answer them so no 404 is logged
+        s.ctx.route(re.compile(r'/images/buildings/'), lambda r: r.fulfill(status=200, content_type='image/png', body=TILE_PNG))
+        for name, path, ready in A11Y_PAGES:
+            a11y_page(s, name, path, ready, wide)
+        s.ctx.close()
+
+    # ---------- Q: states that only exist after a click or a failure ----------
+    for vp in ({'width': 1440, 'height': 900}, {'width': 390, 'height': 844}):
+        w = vp['width']
+        s = Session(browser, f'Qstates{w}', viewport=vp); sessions.append(s)
+        pg = s.open('/listings/')
+        pg.evaluate(CONTRAST_JS)
+        if w < 1024:
+            pg.click('#mobile-toggle')
+        pg.wait_for_selector('.leaflet-marker-icon', timeout=10000)
+        pg.locator('.leaflet-marker-icon').first.click()
+        pg.wait_for_selector('.leaflet-popup', timeout=5000)
+        pg.wait_for_function("getComputedStyle(document.querySelector('.leaflet-popup')).opacity === '1'")   # past its fade-in
+        r = pg.evaluate(CONTRAST_JS)
+        check(r['n'] > 20 and not r['bad'], f'Q {w}: open map popup + attribution + zoom buttons: {r["bad"][:3]} ({r["n"]} looked at)')
+        s.open('/listings/?type=residential')
+        r = pg.evaluate(CONTRAST_JS)
+        check(not r['bad'], f'Q {w}: the residential empty state: {r["bad"][:3]}')
+        s.open('/listings/?type=commercial&price=750&sqft=1000')      # nothing is both under $750 and over 1,000 sq ft
+        check(cards(pg).count() == 0, f'Q {w}: price<=750 with 1,000+ sq ft matches nothing')
+        r = pg.evaluate(CONTRAST_JS)
+        check(not r['bad'], f'Q {w}: the over-filtered empty state (a disabled beds select is exempt): {r["bad"][:3]}')
+        s.ctx.close()
+
+        s = Session(browser, f'Qwall{w}', viewport=vp); sessions.append(s)
+        s.ctx.route('**/data/tenants.json', lambda r: r.fulfill(status=200, content_type='application/json', body=json.dumps(TENANTS)))
+        pg = s.pg
+        pg.goto(BASE + '/buildings/courthouse-square/', wait_until='networkidle')
+        pg.wait_for_selector('#neighbor-wall article[data-mode=occupied]')
+        pg.wait_for_timeout(700)
+        r = pg.evaluate(CONTRAST_JS)
+        check(r['n'] > 60 and not r['bad'], f'Q {w}: the building page with a tenant roster (cards, tally, filter pills): {r["bad"][:3]}')
+        s.ctx.close()
+
+        s = Session(browser, f'Qdown{w}', feed_status=500, viewport=vp); sessions.append(s)
+        s.bad_local = None      # the 500 is the point
+        pg = s.pg
+        pg.goto(BASE + '/listings/', wait_until='networkidle'); pg.wait_for_timeout(500)
+        r = pg.evaluate(CONTRAST_JS)
+        check(not r['bad'], f'Q {w}: /listings/ when the feed will not load: {r["bad"][:3]}')
+        pg.goto(BASE + '/listing.html?id=chs-n101', wait_until='networkidle'); pg.wait_for_selector('#listing-title')
+        r = pg.evaluate(CONTRAST_JS)
+        check(not r['bad'], f'Q {w}: the fallback page when the feed will not load: {r["bad"][:3]}')
+        s.errors = []           # failed-feed console noise is expected here
+        s.ctx.close()
+
+    # ---------- Q: prefers-reduced-motion ----------
+    s = Session(browser, 'Qmotion', viewport={'width': 1440, 'height': 900}, reduced_motion='reduce'); sessions.append(s)
+    s.ctx.route('**/data/tenants.json', lambda r: r.fulfill(status=200, content_type='application/json', body=json.dumps(TENANTS)))
+    pg = s.pg
+    for name, path, ready in A11Y_PAGES:
+        pg.goto(BASE + path, wait_until='networkidle'); pg.wait_for_selector(ready, timeout=10000)
+        m = pg.evaluate("""() => ({ scroll: getComputedStyle(document.documentElement).scrollBehavior,
+            moving: [...document.querySelectorAll('body *')].filter(e => !e.closest('.leaflet-container') &&
+              ((getComputedStyle(e).animationName !== 'none' && parseFloat(getComputedStyle(e).animationDuration) > 0) ||
+               (getComputedStyle(e).transitionProperty !== 'none' && parseFloat(getComputedStyle(e).transitionDuration) > 0))).length })""")
+        check(m['scroll'] == 'auto', f'Q motion {name}: scroll-behavior is {m["scroll"]!r} under reduced motion')
+        check(m['moving'] == 0, f'Q motion {name}: {m["moving"]} element(s) animate or transition under reduced motion')
+        if name == 'listings':
+            lm = pg.evaluate("""() => ({ fade: !!document.querySelector('.leaflet-container.leaflet-fade-anim'),
+                                        zoom: !!document.querySelector('.leaflet-marker-icon.leaflet-zoom-animated') })""")
+            check(not lm['fade'] and not lm['zoom'], f'Q motion: the map has no fade or zoom animation under reduced motion ({lm})')
+        if name == 'building':
+            # the tally shows its final numbers the moment the wall is drawn (the open suites + 2 tenants)
+            want = str(len(LISTINGS) + len(TENANTS))
+            got = pg.evaluate("document.getElementById('tally-suites').textContent")
+            check(got == want, f'Q motion: the suites tally is {got!r}, expected {want!r} at once')
+    s.ctx.close()
+    s = Session(browser, 'Qmotion-off', viewport={'width': 1440, 'height': 900}, reduced_motion='no-preference'); sessions.append(s)
+    pg = s.open('/listings/')
+    pg.wait_for_selector('.leaflet-marker-icon')
+    check(pg.evaluate("!!document.querySelector('.leaflet-container.leaflet-fade-anim') && !!document.querySelector('.leaflet-marker-icon.leaflet-zoom-animated')"),
+          'Q motion: with no preference the map keeps its animations (so the reduced-motion check above can fail)')
     s.ctx.close()
 
 
@@ -1031,6 +1344,7 @@ def main():
         s.ctx.close()
 
         part2(browser, sessions)
+        part3(browser, sessions)
 
         browser.close()
 
@@ -1046,7 +1360,8 @@ def main():
         sys.exit(1)
     print(f'OK: listings E2E — {passed} checks passed (A cards, B type, C beds, D price, E map, F URL state, '
           f'G flat brand, H mobile, I synthetic feed, J details, K no Leaflet; '
-          f'L static page, M inquiry form, N fallback, O structured data, P flat brand + mobile)')
+          f'L static page, M inquiry form, N fallback, O structured data, P flat brand + mobile; '
+          f'Q accessibility sweep)')
 
 
 if __name__ == '__main__':

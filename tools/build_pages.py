@@ -10,7 +10,8 @@ Writes  buildings/<id>/index.html   one landing page per building   (tools/templ
         listings/<id>/index.html    one detail page per listing     (tools/templates/listing.tmpl.html)
         listing.html                the noindex client-side fallback for feed listings with no page yet
                                     (tools/templates/listing-fallback.tmpl.html; js/listing-detail.js draws it)
-        sitemap.xml                 home, /listings/, every listing and every building page
+        404.html                    the not-found page Netlify serves for any unknown URL (tools/templates/404.tmpl.html)
+        sitemap.xml                 home, /listings/, every listing and every building page (not the 404)
 
 Run:    python3 tools/build_pages.py           regenerate the committed pages
         python3 tools/build_pages.py --check   regenerate into a temp dir and byte-compare against the
@@ -45,26 +46,6 @@ FIELD_COLORS = ('berry', 'tangerine', 'sky', 'mustard', 'sage', 'sand')   # .eb-
 LEASE_DOWNLOADS_ANCHOR = 'lease-pdf-link'
 
 ADDRESS_RE = re.compile(r'^(?P<street>[^,]+),\s*(?P<city>[^,]+),\s*(?P<region>[A-Z]{2})\s+(?P<zip>\d{5})(?:-\d{4})?$')
-
-# Per-building location copy (ferry directions and nearby landmarks). It lives here, not in the template,
-# so the template stays building-agnostic; a building with no entry simply omits those two blocks.
-# TODO: move into data/buildings.json (optional `directions` / `nearby` fields) when the owner is ready.
-LOCATION_COPY = {
-    'courthouse-square': {
-        'directions': [
-            ('Fauntleroy (West Seattle)',
-             "About 15 minutes south on Vashon Hwy SW. You'll come straight up the island and find us on the right."),
-            ('Point Defiance (Tacoma)',
-             'About 20 minutes north on Vashon Hwy SW from the south-end dock.'),
-        ],
-        'nearby': [
-            'Vashon Athletic Center, across the street.',
-            'Vashon schools, walking distance.',
-            'King County Metro bus stop, at the corner.',
-        ],
-    },
-}
-
 
 # ---------------------------------------------------------------- helpers
 
@@ -132,6 +113,7 @@ def load_context():
         'listing_template': load_template('listing.tmpl.html'),
         'listing_parts': load_parts('listing.parts.tmpl.html'),
         'listing_fallback_template': load_template('listing-fallback.tmpl.html'),
+        'not_found_template': load_template('404.tmpl.html'),
     }
 
 
@@ -182,6 +164,20 @@ def json_ld_for(building, canonical, meta_description, og_image, addr):
     return json.dumps(data, indent=2, ensure_ascii=False).replace('<', '\\u003c')
 
 
+def location_copy(b):
+    """(directions, nearby) from a buildings.json entry: [{name, note}, ...] and [str, ...]; both optional."""
+    bid = b['id']
+    directions = b.get('directions') or []
+    nearby = b.get('nearby') or []
+    if not isinstance(directions, list) or not all(
+            isinstance(d, dict) and set(d) == {'name', 'note'}
+            and all(isinstance(d[k], str) and d[k].strip() for k in d) for d in directions):
+        fail(f"buildings.json {bid}: directions must be a list of {{name, note}} objects with non-empty text")
+    if not isinstance(nearby, list) or not all(isinstance(t, str) and t.strip() for t in nearby):
+        fail(f'buildings.json {bid}: nearby must be a list of non-empty strings')
+    return directions, nearby
+
+
 def render_building_page(b, ctx):
     parts = ctx['building_parts']
     bid = b['id']
@@ -210,14 +206,15 @@ def render_building_page(b, ctx):
         parts['gallery_tile'].substitute(src=esc(p), alt=esc(f"{b['name']}, photo {i}"))
         for i, p in enumerate(b['gallery'], 1))
 
-    copy = LOCATION_COPY.get(bid, {})
+    # Ferry directions and "nearby" lines are optional per-building data; a building without them omits the blocks.
+    directions, nearby = location_copy(b)
     directions_block = nearby_block = ''
-    if copy.get('directions'):
-        items = '\n'.join(parts['direction_item'].substitute(label=esc(l), text=esc(t))
-                          for l, t in copy['directions'])
+    if directions:
+        items = '\n'.join(parts['direction_item'].substitute(label=esc(d['name']), text=esc(d['note']))
+                          for d in directions)
         directions_block = parts['directions_block'].substitute(items=indent_block(items, 4))
-    if copy.get('nearby'):
-        items = '\n'.join(parts['nearby_item'].substitute(text=esc(t)) for t in copy['nearby'])
+    if nearby:
+        items = '\n'.join(parts['nearby_item'].substitute(text=esc(t)) for t in nearby)
         nearby_block = parts['nearby_block'].substitute(items=indent_block(items, 4))
 
     suites_section = ''
@@ -520,6 +517,12 @@ def render_listing_fallback(ctx):
         shell_styles=ctx['shell']['shell_styles'], header=ctx['shell']['header'], footer=ctx['shell']['footer'])
 
 
+def render_not_found(ctx):
+    """/404.html: the shell plus a warm dead end. Netlify serves it, with a 404 status, for any URL that matches nothing."""
+    return {'404.html': ctx['not_found_template'].substitute(
+        shell_styles=ctx['shell']['shell_styles'], header=ctx['shell']['header'], footer=ctx['shell']['footer'])}
+
+
 def render_listing_pages(ctx):
     """{relative output path: file text}: listings/<id>/index.html for every listings.json entry, plus the
     client-side fallback page listing.html. sitemap.xml already lists /listings/<id>/ for every listing."""
@@ -554,8 +557,8 @@ def build_files():
     ctx = load_context()
     files = {}
     files.update(render_building_pages(ctx))
-    # Phase 5: listing pages render here
     files.update(render_listing_pages(ctx))
+    files.update(render_not_found(ctx))
     files.update(render_sitemap(ctx))
     return files
 

@@ -26,7 +26,22 @@
       ],
       "leaseUrl": "/lease/",
       "neighborWall": true,
-      "addressMatch": "19001 Vashon Hwy SW"
+      "addressMatch": "19001 Vashon Hwy SW",
+      "directions": [
+        {
+          "name": "Fauntleroy (West Seattle)",
+          "note": "About 15 minutes south on Vashon Hwy SW. You'll come straight up the island and find us on the right."
+        },
+        {
+          "name": "Point Defiance (Tacoma)",
+          "note": "About 20 minutes north on Vashon Hwy SW from the south-end dock."
+        }
+      ],
+      "nearby": [
+        "Vashon Athletic Center, across the street.",
+        "Vashon schools, walking distance.",
+        "King County Metro bus stop, at the corner."
+      ]
     }
   ]
 }

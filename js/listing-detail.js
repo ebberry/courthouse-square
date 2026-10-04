@@ -241,7 +241,7 @@
             <select name="timeframe"
                     class="eb-select block w-full rounded-[12px] border-[1.5px] border-eb-berry bg-eb-cream px-4 py-3 font-serif text-lg text-eb-berry">
               <option value="">Choose one</option>
-              <option value="Soon as possible">Soon as possible</option>
+              <option value="As soon as possible">As soon as possible</option>
               <option value="1–3 months">1–3 months</option>
               <option value="Later">Later</option>
               <option value="Just curious">Just curious</option>
@@ -260,7 +260,7 @@
           </div>
         </form>
 
-        <p class="mt-8 text-base">Or just email me &mdash; <a href="mailto:me@ebberry.com" class="underline decoration-eb-tangerine decoration-2 underline-offset-4 hover:bg-eb-tangerine">me@ebberry.com</a>.</p>
+        <p class="mt-8 text-base">Or just email me &mdash; <a href="mailto:me@ebberry.com" class="underline decoration-eb-tangerine decoration-2 underline-offset-4 hover:decoration-eb-berry">me@ebberry.com</a>.</p>
       </div>
     </div>
   </div>

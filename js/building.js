@@ -291,7 +291,7 @@
     populateSuiteDropdown(open);
 
     if (!open.length && !tenants.length) {
-      wall.innerHTML = '<p class="col-span-full">Suite information is being updated. Please <a href="#inquire" class="underline decoration-2 underline-offset-[6px] hover:text-eb-tangerine">reach out</a> for the latest availability.</p>';
+      wall.innerHTML = '<p class="col-span-full">Suite information is being updated. Please <a href="#inquire" class="underline decoration-2 underline-offset-[6px] hover:decoration-eb-tangerine">reach out</a> for the latest availability.</p>';
       return;
     }
 
