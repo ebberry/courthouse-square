@@ -1,0 +1,43 @@
+# End-to-end test of the listings index (/listings/) in headless Chromium: cards, filters, URL state,
+# the Leaflet map and its popup, and the mobile Map/List pill. The network is sealed inside the test
+# (map tiles and fonts are answered locally). Runs only when listings-related files change.
+name: Listings E2E
+
+on:
+  push:
+    paths:
+      - 'listings/**'
+      - 'js/listings.js'
+      - 'js/eb-map.js'
+      - 'js/vendor/leaflet.js'
+      - 'css/eb-map.css'
+      - 'css/vendor/**'
+      - 'data/listings.json'
+      - 'tools/test_listings.py'
+      - '.github/workflows/listings-e2e.yml'
+  pull_request:
+    paths:
+      - 'listings/**'
+      - 'js/listings.js'
+      - 'js/eb-map.js'
+      - 'js/vendor/leaflet.js'
+      - 'css/eb-map.css'
+      - 'css/vendor/**'
+      - 'data/listings.json'
+      - 'tools/test_listings.py'
+      - '.github/workflows/listings-e2e.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install playwright pypdf
+      - run: playwright install --with-deps chromium
+      - run: python3 tools/test_listings.py

@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>What's open — E. Berry Property Management</title>
+  <meta name="description" content="See the homes and commercial spaces I'm looking after on Vashon Island, WA. Filter by type, price and size, and see where each one sits on the map." />
+  <link rel="canonical" href="https://eberryvashon.com/listings/" />
+  <link rel="icon" href="/images/brand/monogram-tangerine-badge.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#670A2F" />
+
+  <!-- Open Graph / social. Absolute image URL: most scrapers reject relative paths. -->
+  <meta property="og:title" content="What's open — E. Berry Property Management" />
+  <meta property="og:description" content="Homes and commercial spaces I'm looking after on Vashon Island. Filter by type, price and size, and see where each one is on the map." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://eberryvashon.com/listings/" />
+  <meta property="og:site_name" content="E. Berry Property Management" />
+  <meta property="og:image" content="https://eberryvashon.com/images/og-card-eberry.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="E. Berry Property Management, a part of Windermere Vashon, Vashon Island, WA" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="What's open — E. Berry Property Management" />
+  <meta name="twitter:description" content="Homes and commercial spaces I'm looking after on Vashon Island. Filter by type, price and size, and see where each one is on the map." />
+  <meta name="twitter:image" content="https://eberryvashon.com/images/og-card-eberry.png" />
+
+  <!-- Prebuilt Tailwind stylesheet (generated from tailwind.config.js + tools/tailwind.src.css;
+       see "Rebuilding the stylesheet" in README.md). -->
+  <link rel="stylesheet" href="/css/tailwind.css" />
+  <!-- Vendored Leaflet 1.9.4, then the E. Berry skin for it. Both local; only the map tiles come from OpenStreetMap. -->
+  <link rel="stylesheet" href="/css/vendor/leaflet.css" />
+  <link rel="stylesheet" href="/css/eb-map.css" />
+
+  <!-- Fonts: Fraunces (serif body + headings), Inter (small labels), Anton (wordmark-scale display). -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&family=Anton&display=swap" rel="stylesheet" />
+
+  <!-- EB:SHELL-STYLES (canonical — copy to all pages with the header/footer) -->
+  <style>
+    html { scroll-behavior: smooth; scroll-padding-top: 5.5rem; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+    ::selection { background: var(--eb-tangerine); color: var(--eb-berry); }
+
+    /* Visible keyboard-focus indicator. */
+    :is(a, button, summary, input, select, textarea):focus-visible { outline: 2px solid var(--eb-berry); outline-offset: 2px; }
+    .eb-field-berry :is(a, button, summary, input, select, textarea):focus-visible,
+    .bg-eb-berry :is(a, button, summary, input, select, textarea):focus-visible { outline-color: var(--eb-cream); }
+    /* …but back to Berry inside a Cream card that sits on a Berry field. */
+    .bg-eb-berry .eb-card :is(a, button, summary, input, select, textarea):focus-visible,
+    .eb-field-berry .eb-card :is(a, button, summary, input, select, textarea):focus-visible { outline-color: var(--eb-berry); }
+
+    /* Berry-on-Tangerine is 4.26:1 — AA only as large text, so every pill
+       label renders at >=19px bold. Do not shrink pill type below this. */
+    .eb-btn { font-size: 1.1875rem; font-weight: 700; }
+
+    /* Highlighted-word blocks stay tight to the words when a phrase wraps. */
+    .eb-hl { -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+
+    /* Tangerine pill sitting on a Berry field: invert to Cream on hover (Berry-on-Berry would vanish). */
+    .eb-btn--inv:hover, .eb-btn--inv:focus-visible { background: var(--eb-cream); border-color: var(--eb-cream); color: var(--eb-berry); }
+
+    /* Native option list stays on-palette (default is Canvas/white). */
+    select option { background: var(--eb-cream); color: var(--eb-berry); }
+
+    /* Select arrow in Berry (native arrow is system gray). */
+    select.eb-select {
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23670A2F' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6l5 5 5-5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 1rem center; background-size: 1rem;
+      padding-right: 2.75rem;
+    }
+  </style>
+  <style>
+    /* Fallback sticky offsets; js/listings.js measures the real header and filter-bar heights and overrides these. */
+    :root { --eb-header-h: 3.9rem; --eb-filter-h: 4.5rem; }
+
+    #filter-bar { top: var(--eb-header-h); }
+    .filter-scroll { scrollbar-width: none; scroll-padding-inline: var(--eb-space-margin); }
+    .filter-scroll::-webkit-scrollbar { display: none; }
+
+    /* A listing card is one big link (stretched ::after), so its focus ring goes around the whole card. */
+    .listing-card-link:focus-visible { outline: none; }
+    .listing-card-link:focus-visible::after { outline: 2px solid var(--eb-berry); outline-offset: 4px; }
+
+    /* Desktop: the map stays put on the right while the cards scroll past. */
+    @media (min-width: 1024px) {
+      #map-sticky {
+        position: sticky;
+        top: calc(var(--eb-header-h) + var(--eb-filter-h) + 1.5rem);
+        height: calc(100vh - var(--eb-header-h) - var(--eb-filter-h) - 3rem);
+        height: calc(100dvh - var(--eb-header-h) - var(--eb-filter-h) - 3rem);
+      }
+    }
+
+    /* Phones and tablets: one pane at a time, swapped by the Map / List pill. */
+    @media (max-width: 1023.98px) {
+      #split[data-view="list"] #map-pane { display: none; }
+      #split[data-view="map"] #list-pane { display: none; }
+      /* The map fills the screen under the filter bar, leaving a Cream band at the bottom for the pill
+         (so it never sits on the map's OpenStreetMap attribution). */
+      #split[data-view="map"] { padding-bottom: 5.5rem; }
+      #map-sticky {
+        height: calc(100vh - var(--eb-header-h) - var(--eb-filter-h) - 6.5rem);
+        height: calc(100dvh - var(--eb-header-h) - var(--eb-filter-h) - 6.5rem);
+      }
+    }
+
+    /* Leaflet failed to load: the page is still a perfectly good list. */
+    #split[data-nomap] #map-pane { display: none; }
+    #split[data-nomap] ~ #mobile-toggle-wrap { display: none; }
+    @media (min-width: 1024px) {
+      #split[data-nomap] #listing-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+  </style>
+  <!-- No-JS fallbacks: keep the mobile menu open, and swap the interactive parts for the plain link list below. -->
+  <noscript><style>
+    @media (max-width: 1023px) { #site-nav { display: flex; } #nav-toggle { display: none; } }
+    #filter-bar, #map-pane, #mobile-toggle-wrap, #result-count, #listing-grid { display: none; }
+    #list-pane { grid-column: 1 / -1; }
+  </style></noscript>
+</head>
+
+<body class="bg-eb-cream font-serif text-lg leading-[1.4] text-eb-berry antialiased">
+
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-[4px] focus:bg-eb-tangerine focus:px-4 focus:py-2 focus:text-eb-berry">Skip to content</a>
+
+<!-- EB:HEADER (canonical — copy to all pages) -->
+<!-- Licensed firm name: confirm exact wording with Windermere designated broker -->
+<header class="sticky top-0 z-40 border-b border-eb-berry bg-eb-cream">
+  <div class="relative mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-6 py-3 sm:px-[var(--eb-space-margin)]">
+
+    <a href="/" class="flex min-w-0 items-center gap-3 sm:gap-4">
+      <img src="/images/brand/wordmark-berry.svg" alt="E. Berry" class="h-7 w-auto shrink-0 sm:h-8" />
+      <span class="flex min-w-0 flex-col items-start gap-1 leading-none">
+        <span class="whitespace-nowrap text-[0.95rem] leading-tight sm:text-base"><span class="eb-hl eb-hl-mustard">Property Management</span></span>
+        <span class="text-balance font-sans text-[0.65rem] font-medium leading-tight tracking-widest text-eb-berry/80">A PART OF WINDERMERE VASHON</span>
+      </span>
+    </a>
+
+    <button id="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu"
+            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-[1.5px] border-eb-berry text-eb-berry hover:bg-eb-berry hover:text-eb-cream lg:hidden">
+      <svg viewBox="0 0 20 20" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M3 6h14M3 10h14M3 14h14" />
+      </svg>
+    </button>
+
+    <nav id="site-nav" aria-label="Main"
+         class="absolute left-0 right-0 top-full hidden flex-col items-start gap-1 whitespace-nowrap border-b border-eb-berry bg-eb-cream py-5 pl-4 pr-6 lg:static lg:flex lg:flex-row lg:items-center lg:gap-2 lg:border-0 lg:bg-transparent lg:p-0">
+      <a href="/listings/?type=residential" class="rounded-[4px] px-2 py-1 hover:bg-eb-tangerine">Homes</a>
+      <a href="/listings/?type=commercial" class="rounded-[4px] px-2 py-1 hover:bg-eb-tangerine">Commercial</a>
+      <a href="/buildings/courthouse-square/" class="rounded-[4px] px-2 py-1 hover:bg-eb-tangerine">Courthouse Square</a>
+      <a href="/#inquire" class="eb-btn ml-2 mt-3 text-base lg:ml-3 lg:mt-0">Inquire</a>
+    </nav>
+  </div>
+</header>
+<!-- /EB:HEADER -->
+
+<main id="main">
+
+<!-- ============================================================
+     1. INTRO — compact; the h1 is the page's one big element
+============================================================ -->
+<section class="bg-eb-cream" aria-labelledby="listings-heading">
+  <div class="mx-auto max-w-[1440px] px-[var(--eb-space-margin)] pb-6 pt-[max(1.75rem,calc(var(--eb-space-margin)*0.45))]">
+    <div class="flex items-start justify-between gap-6">
+      <div>
+        <h1 id="listings-heading" class="text-balance font-serif text-[length:var(--eb-h1-size)] font-medium leading-[1.08] tracking-[-0.01em]">What's open on Vashon</h1>
+        <p class="mt-3 max-w-[34rem] text-xl leading-[1.4]">Here's what I'm looking after that's open right now. Take your time, and if something catches your eye, let's talk.</p>
+        <p id="result-count" role="status" aria-live="polite" class="mt-3 text-lg font-medium">Checking what's open&hellip;</p>
+      </div>
+      <!-- Monogram seal, anchored top-right (style guide 4.4 corner anchoring). -->
+      <img src="/images/brand/monogram-tangerine-bare.svg" alt="" aria-hidden="true" class="h-14 w-auto shrink-0 sm:h-16" />
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     2. FILTER BAR — sticky under the header. State lives in the URL (see js/listings.js).
+============================================================ -->
+<div id="filter-bar" role="group" aria-label="Filter what's open" class="sticky z-30 border-b border-eb-berry bg-eb-cream">
+  <!-- Below lg this is one swipeable row (the bar stays short while it sticks); from lg up it wraps. -->
+  <div class="filter-scroll mx-auto flex max-w-[1440px] items-center gap-x-3 overflow-x-auto px-[var(--eb-space-margin)] py-3 lg:flex-wrap lg:gap-y-3 lg:overflow-visible">
+    <div id="type-group" role="group" aria-label="Type" class="flex shrink-0 gap-2">
+      <button type="button" data-type="all" aria-pressed="true"
+              class="h-11 cursor-pointer rounded-[12px] border-[1.5px] border-eb-berry bg-eb-cream px-4 font-serif text-lg font-medium text-eb-berry hover:bg-eb-sand aria-pressed:bg-eb-mustard aria-pressed:hover:bg-eb-mustard">All</button>
+      <button type="button" data-type="residential" aria-pressed="false"
+              class="h-11 cursor-pointer rounded-[12px] border-[1.5px] border-eb-berry bg-eb-cream px-4 font-serif text-lg font-medium text-eb-berry hover:bg-eb-sand aria-pressed:bg-eb-mustard aria-pressed:hover:bg-eb-mustard">Homes</button>
+      <button type="button" data-type="commercial" aria-pressed="false"
+              class="h-11 cursor-pointer rounded-[12px] border-[1.5px] border-eb-berry bg-eb-cream px-4 font-serif text-lg font-medium text-eb-berry hover:bg-eb-sand aria-pressed:bg-eb-mustard aria-pressed:hover:bg-eb-mustard">Commercial</button>
+    </div>
+
+    <div class="flex shrink-0 items-center gap-3">
+      <select id="f-beds" aria-label="Minimum bedrooms"
+              class="eb-select h-11 cursor-pointer rounded-[12px] border-[1.5px] border-eb-berry bg-eb-cream pl-4 font-serif text-lg text-eb-berry disabled:cursor-not-allowed disabled:opacity-50">
+        <option value="">Any beds</option>
+        <option value="1">1+ beds</option>
+        <option value="2">2+ beds</option>
+        <option value="3">3+ beds</option>
+      </select>
+      <select id="f-price" aria-label="Maximum monthly rent"
+              class="eb-select h-11 cursor-pointer rounded-[12px] border-[1.5px] border-eb-berry bg-eb-cream pl-4 font-serif text-lg text-eb-berry">
+        <option value="">Any price</option>
+        <option value="750">Up to $750</option>
+        <option value="1000">Up to $1,000</option>
+        <option value="1500">Up to $1,500</option>
+        <option value="2000">Up to $2,000</option>
+        <option value="3000">Up to $3,000</option>
+      </select>
+      <select id="f-sqft" aria-label="Minimum square feet"
+              class="eb-select h-11 cursor-pointer rounded-[12px] border-[1.5px] border-eb-berry bg-eb-cream pl-4 font-serif text-lg text-eb-berry">
+        <option value="">Any size</option>
+        <option value="150">150+ sq ft</option>
+        <option value="300">300+ sq ft</option>
+        <option value="600">600+ sq ft</option>
+        <option value="1000">1,000+ sq ft</option>
+      </select>
+    </div>
+
+    <!-- Quiet text link; JS reveals it whenever any filter is active. -->
+    <a id="clear-filters" href="/listings/" hidden
+       class="shrink-0 whitespace-nowrap px-1 py-2 text-base text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-4 hover:decoration-eb-berry">Clear</a>
+  </div>
+</div>
+
+<!-- ============================================================
+     3. SPLIT VIEW — cards on the left (3/5), sticky map on the right (2/5).
+     Below lg only one pane shows at a time (data-view), swapped by the pill at the bottom.
+============================================================ -->
+<div id="split" data-view="list" class="mx-auto max-w-[1440px] px-[var(--eb-space-margin)] py-4 lg:py-6">
+  <div class="lg:grid lg:grid-cols-5 lg:gap-8">
+
+    <section id="list-pane" aria-labelledby="places-heading" class="pb-24 lg:col-span-3 lg:pb-6">
+      <h2 id="places-heading" class="sr-only">Places that are open</h2>
+      <ul id="listing-grid" role="list" class="grid gap-6 sm:grid-cols-2"></ul>
+
+      <!-- Empty states (and the can't-load message) are rendered here by JS. -->
+      <div id="empty-state" hidden class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-8"></div>
+
+      <noscript>
+        <div class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-8">
+          <p class="font-serif text-2xl leading-[1.25] sm:text-3xl">Filtering and the map need JavaScript, but you can still see everything I'm looking after.</p>
+          <p class="mt-4">Here is each place that's open right now:</p>
+          <ul class="mt-4 grid gap-x-8 gap-y-2 sm:grid-cols-2">
+            <li><a href="/listings/chs-n101/" class="text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-4">Suite N101, Courthouse Square</a></li>
+            <li><a href="/listings/chs-n102/" class="text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-4">Suite N102, Courthouse Square</a></li>
+            <li><a href="/listings/chs-n103/" class="text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-4">Suite N103, Courthouse Square</a></li>
+            <li><a href="/listings/chs-n108/" class="text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-4">Suite N108, Courthouse Square</a></li>
+            <li><a href="/listings/chs-n110/" class="text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-4">Suite N110, Courthouse Square</a></li>
+            <li><a href="/listings/chs-n203/" class="text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-4">Suite N203, Courthouse Square</a></li>
+            <li><a href="/listings/chs-n204/" class="text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-4">Suite N204, Courthouse Square</a></li>
+            <li><a href="/listings/chs-n206/" class="text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-4">Suite N206, Courthouse Square</a></li>
+          </ul>
+          <p class="mt-6"><a href="/buildings/courthouse-square/" class="text-xl font-semibold text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-[6px]">About Courthouse Square &rarr;</a></p>
+        </div>
+      </noscript>
+    </section>
+
+    <div id="map-pane" class="lg:col-span-2">
+      <div id="map-sticky">
+        <div id="map" class="h-full w-full"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Phones and tablets: bottom-center pill that swaps the list and the map. Labelled with the view it switches TO. -->
+<div id="mobile-toggle-wrap" class="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 lg:hidden">
+  <button id="mobile-toggle" type="button" aria-controls="list-pane map-pane" class="eb-btn min-w-[7.5rem] cursor-pointer px-7 py-3 text-center">Map</button>
+</div>
+
+</main>
+
+<!-- EB:FOOTER (canonical — copy to all pages) -->
+<!-- Licensed firm name: confirm exact wording with Windermere designated broker -->
+<footer class="border-t border-eb-cream/30 bg-eb-berry text-eb-cream">
+  <div class="mx-auto max-w-[1440px] px-[var(--eb-space-margin)] py-12 sm:py-14">
+    <div class="grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
+      <div>
+        <img src="/images/brand/wordmark-cream.svg" alt="E. Berry" class="h-6 w-auto" />
+        <p class="mt-5 text-base">E. Berry Property Management &mdash; A Part of Windermere Vashon</p>
+      </div>
+      <nav aria-label="Footer">
+        <ul class="flex flex-wrap gap-x-7 gap-y-2 text-base">
+          <li><a href="/listings/" class="underline underline-offset-4 hover:text-eb-tangerine">Listings</a></li>
+          <li><a href="/buildings/courthouse-square/" class="underline underline-offset-4 hover:text-eb-tangerine">Courthouse Square</a></li>
+          <li><a href="https://courthousesquarevashon.com/lease/" class="underline underline-offset-4 hover:text-eb-tangerine">Lease documents</a></li>
+          <li><a href="mailto:me@ebberry.com" class="underline underline-offset-4 hover:text-eb-tangerine">Email</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="mt-12 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3">
+      <p class="font-serif text-xl italic">A friend to Vashon.</p>
+      <p class="text-sm">&copy; <span id="copyright-year">2026</span> E. Berry Property Management. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+<!-- /EB:FOOTER -->
+
+<!-- ============================================================
+     SCRIPT (vanilla; Leaflet is vendored)
+     - Leaflet 1.9.4 and the E. Berry map wrapper
+     - window.EB.LISTINGS_URL from /js/site-config.js
+     - listings.js: filters, cards, map markers
+     - Mobile nav toggle and dynamic copyright year (same as the homepage)
+============================================================ -->
+<script src="/js/vendor/leaflet.js"></script>
+<script src="/js/eb-map.js"></script>
+<script src="/js/site-config.js"></script>
+<script src="/js/listings.js"></script>
+<script>
+  // ---- Mobile nav toggle ----
+  (function () {
+    const btn = document.getElementById('nav-toggle');
+    const nav = document.getElementById('site-nav');
+    if (!btn || !nav) return;
+    function setOpen(open) {
+      nav.classList.toggle('hidden', !open);
+      nav.classList.toggle('flex', open);
+      btn.setAttribute('aria-expanded', String(open));
+    }
+    btn.addEventListener('click', () => setOpen(btn.getAttribute('aria-expanded') !== 'true'));
+    nav.addEventListener('click', e => { if (e.target.closest('a')) setOpen(false); });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') { setOpen(false); btn.focus(); }
+    });
+  })();
+
+  // Copyright year.
+  document.getElementById('copyright-year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

@@ -296,6 +296,12 @@ def shell_block(text, name, end=None):
     m = re.search(rf'<!-- EB:{name}[^>]*-->.*?{end}', text, re.S)
     return m.group(0) if m else None
 
+def check_shell(rel, page, fix):
+    """The page's EB:HEADER, EB:FOOTER and EB:SHELL-STYLES blocks must equal index.html's, byte for byte."""
+    for name, end in (('HEADER', None), ('FOOTER', None), ('SHELL-STYLES', r'</style>')):
+        a, b = shell_block(index, name, end), shell_block(page, name, end)
+        check(a is not None and a == b, f"{rel}: EB:{name} block differs from index.html ({fix})")
+
 FLAT_BRAND = (('gradient', r'gradient'), ('shadow', r'shadow'),
               ('pure white', r'#fff\b|#ffffff\b|\bbg-white\b|\btext-white\b'),
               ('pure black', r'#000\b|#000000\b|\bbg-black\b|\btext-black\b'))
@@ -348,9 +354,7 @@ for B in buildings:
           and ld.get('geo', {}).get('latitude') == B.get('lat') and ld.get('geo', {}).get('longitude') == B.get('lng'),
           f"{rel}: JSON-LD is missing/invalid or its address/geo do not match buildings.json")
     # The shell must be the homepage's, byte for byte (header, footer, shell styles).
-    for name, end in (('HEADER', None), ('FOOTER', None), ('SHELL-STYLES', r'</style>')):
-        a, b = shell_block(index, name, end), shell_block(page, name, end)
-        check(a is not None and a == b, f"{rel}: EB:{name} block differs from index.html ({RERUN})")
+    check_shell(rel, page, RERUN)
     for label, pat in FLAT_BRAND:
         check(re.search(pat, page, re.I) is None, f"{rel}: contains {label} (E. Berry brand is flat, Berry/Cream only)")
 
@@ -374,6 +378,124 @@ if sm_urls is not None:
         check(sm_urls.get(u) == listings_doc.get('updated'),
               f"sitemap.xml: {u} lastmod {sm_urls.get(u)!r} != listings.json updated {listings_doc.get('updated')!r}")
     check(all(u.startswith(SITE_URL + '/') for u in sm_urls), "sitemap.xml: every URL must be on https://eberryvashon.com")
+
+# =====================================================================
+# E. Berry listings index (Phase 4): /listings/, the filter bar, and the brand Leaflet map
+#   listings/index.html is hand-maintained (not generated): its shell is copied from index.html, and the
+#   byte-identity check below is what tells you to copy it again when the shell changes.
+# =====================================================================
+LIST_REL = 'listings/index.html'
+LEAFLET_VERSION = '1.9.4'
+
+def exists(rel):
+    return os.path.exists(os.path.join(ROOT, rel))
+
+for rel in (LIST_REL, 'js/listings.js', 'js/eb-map.js', 'css/eb-map.css',
+            'js/vendor/leaflet.js', 'js/vendor/leaflet-LICENSE.md', 'css/vendor/leaflet.css',
+            'tools/test_listings.py', '.github/workflows/listings-e2e.yml'):
+    check(exists(rel), f"{rel} is missing")
+
+# Vendored Leaflet: exact version, its license, and every image its stylesheet points at.
+if exists('js/vendor/leaflet.js'):
+    leaflet_js = read('js/vendor/leaflet.js')
+    check(f'Leaflet {LEAFLET_VERSION}' in leaflet_js[:200] and f't.version="{LEAFLET_VERSION}"' in leaflet_js,
+          f"js/vendor/leaflet.js is not Leaflet {LEAFLET_VERSION}")
+if exists('js/vendor/leaflet-LICENSE.md'):
+    lic = read('js/vendor/leaflet-LICENSE.md')
+    check(f'Leaflet {LEAFLET_VERSION}' in lic.splitlines()[0] and 'BSD 2-Clause' in lic and 'Volodymyr Agafonkin' in lic,
+          "js/vendor/leaflet-LICENSE.md: header must name the exact version and carry the BSD-2-Clause text")
+if exists('css/vendor/leaflet.css'):
+    for img in sorted(set(re.findall(r'url\((images/[^)]+)\)', read('css/vendor/leaflet.css')))):
+        check(exists('css/vendor/' + img), f"css/vendor/{img} is missing (referenced by css/vendor/leaflet.css)")
+
+# The brand map wrapper and its skin.
+if exists('js/eb-map.js'):
+    ebmap = read('js/eb-map.js')
+    for token in ('https://tile.openstreetmap.org/{z}/{x}/{y}.png', 'OpenStreetMap</a> contributors', 'scrollWheelZoom: false',
+                  'maxZoom: 18', "setAttribute('role', 'region')", "setAttribute('aria-label'", 'L.divIcon', 'eb-pin--muted',
+                  'window.EBMap', 'groupPoints', 'fmtMoney', "'/listings/'"):
+        check(token in ebmap, f"js/eb-map.js: expected {token!r}")
+    for label, pat in FLAT_BRAND:
+        check(re.search(pat, ebmap, re.I) is None, f"js/eb-map.js: contains {label} (E. Berry brand is flat)")
+if exists('css/eb-map.css'):
+    mapcss = read('css/eb-map.css')
+    for token in ('.leaflet-popup-content-wrapper', '.leaflet-popup-tip', '.eb-map-tiles', '.eb-pin--muted', 'border-radius: 24px',
+                  'border: 1.5px solid', 'sepia(.18) saturate(.85)'):
+        check(token in mapcss, f"css/eb-map.css: expected {token!r}")
+    check(re.search(r'gradient|#fff\b|#ffffff\b|#000\b|#000000\b|(?<![-\w])(?:white|black)(?![-\w])', mapcss, re.I) is None,
+          "css/eb-map.css: contains a gradient, pure white or pure black (E. Berry brand is flat)")
+    shadows = re.findall(r'(?:box|text|drop)-shadow\s*:\s*([^;}]+)', mapcss)
+    check(all(v.strip() == 'none' for v in shadows),
+          f"css/eb-map.css: the only shadow value allowed is none (found {[v for v in shadows if v.strip() != 'none']})")
+
+# The listings script.
+if exists('js/listings.js'):
+    ljs = read('js/listings.js')
+    for token in ('LISTINGS_URL', 'history.replaceState', 'URLSearchParams', "'residential'", "'commercial'", 'aria-pressed',
+                  'hasCoords', 'IntersectionObserver', 'data-clear', '/#inquire', 'listing-card-link'):
+        check(token in ljs, f"js/listings.js: expected {token!r}")
+    for label, pat in FLAT_BRAND:
+        check(re.search(pat, ljs, re.I) is None, f"js/listings.js: contains {label} (E. Berry brand is flat)")
+
+# The page.
+if exists(LIST_REL):
+    lp = read(LIST_REL)
+    check('A PART OF WINDERMERE VASHON' in lp, f"{LIST_REL}: header is missing the 'A PART OF WINDERMERE VASHON' firm-ID line")
+    check_shell(LIST_REL, lp, "copy the EB:HEADER / EB:FOOTER / EB:SHELL-STYLES blocks from index.html")
+    check("<title>What's open — E. Berry Property Management</title>" in lp, f"{LIST_REL}: <title> is not \"What's open — E. Berry Property Management\"")
+    check(f'<link rel="canonical" href="{SITE_URL}/listings/" />' in lp, f"{LIST_REL}: canonical URL is not {SITE_URL}/listings/")
+    check('name="description"' in lp and 'property="og:title"' in lp and f'property="og:url" content="{SITE_URL}/listings/"' in lp,
+          f"{LIST_REL}: missing meta description or Open Graph tags")
+    m = re.search(r'property="og:image" content="https://eberryvashon\.com(/[^"]+)"', lp)
+    check(m is not None and exists(m.group(1).lstrip('/')), f"{LIST_REL}: og:image must be an absolute eberryvashon.com URL of a file that exists")
+    check('application/ld+json' not in lp, f"{LIST_REL}: no JSON-LD here (listing detail pages carry it)")
+    check(len(re.findall(r'<h1[ >]', lp)) == 1 and "What's open on Vashon" in lp, f"{LIST_REL}: needs exactly one h1, \"What's open on Vashon\"")
+    # Everything local except OSM tiles (fetched by eb-map.js) and Google Fonts.
+    check(re.search(r'cdn', lp, re.I) is None, f"{LIST_REL}: mentions a CDN; vendor it instead")
+    hosts = set()
+    for tag in re.findall(r'<(?:script|link)\b[^>]*>', lp):
+        mh = re.search(r'\b(?:src|href)="https?://([^/"]+)', tag)
+        if mh and 'rel="canonical"' not in tag:
+            hosts.add(mh.group(1))
+    check(hosts <= {'fonts.googleapis.com', 'fonts.gstatic.com'}, f"{LIST_REL}: external script/stylesheet hosts {sorted(hosts)}; only Google Fonts allowed")
+    # Load order: Leaflet before the wrapper before the page script; Leaflet's CSS before the skin.
+    order = [lp.find(f'src="{u}"') for u in ('/js/vendor/leaflet.js', '/js/eb-map.js', '/js/site-config.js', '/js/listings.js')]
+    check(all(i >= 0 for i in order) and order == sorted(order),
+          f"{LIST_REL}: scripts must load leaflet.js, eb-map.js, site-config.js, listings.js in that order")
+    css_order = [lp.find(f'href="{u}"') for u in ('/css/tailwind.css', '/css/vendor/leaflet.css', '/css/eb-map.css')]
+    check(all(i >= 0 for i in css_order) and css_order == sorted(css_order),
+          f"{LIST_REL}: stylesheets must load tailwind.css, vendor/leaflet.css, eb-map.css in that order")
+    for label, pat in FLAT_BRAND:
+        check(re.search(pat, lp, re.I) is None, f"{LIST_REL}: contains {label} (E. Berry brand is flat, Berry/Cream only)")
+    # The controls the script and the test drive.
+    for anchor in ('id="filter-bar"', 'id="type-group"', 'id="f-beds"', 'id="f-price"', 'id="f-sqft"', 'id="clear-filters"',
+                   'id="result-count"', 'id="split"', 'id="listing-grid"', 'id="empty-state"', 'id="map-pane"', 'id="map"',
+                   'id="mobile-toggle"', 'data-type="all"', 'data-type="residential"', 'data-type="commercial"'):
+        check(anchor in lp, f"{LIST_REL}: missing {anchor}")
+    for sel_id, values in (('f-beds', ['', '1', '2', '3']), ('f-price', ['', '750', '1000', '1500', '2000', '3000']),
+                           ('f-sqft', ['', '150', '300', '600', '1000'])):
+        m = re.search(rf'<select id="{sel_id}".*?</select>', lp, re.S)
+        got = re.findall(r'<option value="([^"]*)"', m.group(0)) if m else None
+        check(got == values, f"{LIST_REL}: #{sel_id} options are {got}, expected {values}")
+    check('class="eb-btn ' in lp and 'id="mobile-toggle"' in lp, f"{LIST_REL}: the Map/List pill must be an .eb-btn (>=19px bold)")
+    # <noscript>: a plain link to every listing and to the building.
+    noscript_text = ' '.join(re.findall(r'<noscript>(.*?)</noscript>', lp, re.S))
+    for L in listings:
+        check(f'href="/listings/{L.get("id")}/"' in noscript_text, f"{LIST_REL}: <noscript> has no link to /listings/{L.get('id')}/")
+    check('href="/buildings/courthouse-square/"' in noscript_text, f"{LIST_REL}: <noscript> has no link to /buildings/courthouse-square/")
+    # The homepage and header deep-link here; both filters must be understood.
+    for q in ('/listings/?type=residential', '/listings/?type=commercial'):
+        check(f'href="{q}"' in index and f'href="{q}"' in lp, f"{q} must be linked from the homepage and from the listings header")
+    # css/tailwind.css must have been rebuilt for the classes this page and script use.
+    tw_css = read('css/tailwind.css')
+    for cls in ('line-clamp-2', r'aria-pressed\:bg-eb-mustard', r'lg\:col-span-3', r'lg\:col-span-2', r'lg\:grid-cols-5', r'disabled\:opacity-50'):
+        check(cls in tw_css, f"css/tailwind.css has no .{cls}; rebuild it (see README, 'Rebuilding the stylesheet')")
+
+if exists('.github/workflows/listings-e2e.yml'):
+    wf = read('.github/workflows/listings-e2e.yml')
+    for token in ("'listings/**'", "'js/listings.js'", "'js/eb-map.js'", "'js/vendor/leaflet.js'", "'data/listings.json'",
+                  "'tools/test_listings.py'", 'python3 tools/test_listings.py'):
+        check(token in wf, f".github/workflows/listings-e2e.yml: expected {token}")
 
 # ---------------- verdict ----------------
 if problems:

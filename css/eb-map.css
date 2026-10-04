@@ -1,0 +1,159 @@
+/* E. Berry brand skin for the vendored Leaflet map (css/vendor/leaflet.css).
+ *
+ * Loaded AFTER leaflet.css and used with js/eb-map.js. Everything here is flat brand:
+ * Cream and Berry only, Tangerine as the one accent, nothing floating and nothing blended
+ * (Leaflet's own stylesheet draws drop effects and off-palette neutrals; they are all
+ * replaced below). Colors come from the tokens in css/tailwind.css (:root --eb-*), with
+ * literal fallbacks so the map still looks right if that stylesheet is late.
+ */
+
+/* ---- the map frame ---- */
+.eb-map {
+  --ebm-berry: var(--eb-berry, #670A2F);
+  --ebm-cream: var(--eb-cream, #F1ECE9);
+  --ebm-tangerine: var(--eb-tangerine, #F36E30);
+  --ebm-serif: var(--eb-font-serif, Fraunces, ui-serif, Georgia, serif);
+  position: relative;
+  z-index: 0;
+  isolation: isolate;                     /* Leaflet panes use z-index up to 1000; keep them under the sticky header */
+  overflow: hidden;
+  border: 1.5px solid var(--ebm-berry);
+  border-radius: 24px;
+  background: var(--ebm-cream);           /* Cream while tiles load (or if they never do) */
+}
+.eb-map.leaflet-container {
+  background: var(--ebm-cream);
+  color: var(--ebm-berry);
+  font-family: var(--ebm-serif);
+  font-size: 1rem;
+  line-height: 1.4;
+  -webkit-tap-highlight-color: transparent;
+}
+.eb-map.leaflet-container:focus-visible { outline: 2px solid var(--ebm-berry); outline-offset: 2px; }
+.eb-map.leaflet-container a { color: var(--ebm-berry); }
+
+/* Warm the stock OSM tiles toward the brand's paper tones. */
+.eb-map-tiles { filter: sepia(.18) saturate(.85); }
+
+/* ---- attribution (required: keep it visible and legible) ---- */
+.eb-map.leaflet-container .leaflet-control-attribution {
+  background: var(--ebm-cream);
+  color: var(--ebm-berry);
+  font: 0.8125rem/1.4 var(--ebm-serif);
+  padding: 2px 8px;
+  border-top: 1.5px solid var(--ebm-berry);
+  border-left: 1.5px solid var(--ebm-berry);
+  border-top-left-radius: 12px;
+}
+.eb-map.leaflet-container .leaflet-control-attribution a {
+  color: var(--ebm-berry);
+  text-decoration: underline;
+  text-decoration-color: var(--ebm-tangerine);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+.eb-map.leaflet-container .leaflet-control-attribution a:hover,
+.eb-map.leaflet-container .leaflet-control-attribution a:focus-visible { text-decoration-color: var(--ebm-berry); }
+
+/* ---- zoom buttons ---- */
+.eb-map.leaflet-container .leaflet-bar {
+  border: 1.5px solid var(--ebm-berry);
+  border-radius: 12px;
+  background: var(--ebm-cream);
+  box-shadow: none;
+  overflow: hidden;
+}
+.eb-map.leaflet-container .leaflet-bar a {
+  width: 40px;
+  height: 40px;
+  line-height: 38px;
+  background-color: var(--ebm-cream);
+  color: var(--ebm-berry);
+  border-bottom: 1.5px solid var(--ebm-berry);
+  border-radius: 0;
+  font: 500 1.75rem/36px var(--ebm-serif);
+  text-indent: 0;
+}
+.eb-map.leaflet-container .leaflet-bar a:last-child { border-bottom: 0; }
+.eb-map.leaflet-container .leaflet-bar a:hover,
+.eb-map.leaflet-container .leaflet-bar a:focus-visible { background-color: var(--ebm-berry); color: var(--ebm-cream); }
+.eb-map.leaflet-container .leaflet-bar a:focus-visible { outline: 2px solid var(--ebm-berry); outline-offset: -4px; }
+.eb-map.leaflet-container .leaflet-bar a.leaflet-disabled { background-color: var(--ebm-cream); color: var(--ebm-berry); opacity: .45; }
+.eb-map.leaflet-container .leaflet-bar a.leaflet-disabled:hover { background-color: var(--ebm-cream); color: var(--ebm-berry); }
+.eb-map .leaflet-top.leaflet-left .leaflet-control { margin: 12px 0 0 12px; }
+
+/* ---- pins: flat Tangerine teardrop, Berry outline and center dot ---- */
+.eb-pin { background: none; border: 0; }
+.eb-pin__svg { display: block; color: var(--ebm-berry); fill: currentColor; }   /* the root element's own fill is never painted; keep it on-palette */
+.eb-pin__body { fill: var(--ebm-tangerine); stroke: var(--ebm-berry); stroke-width: 2.5; stroke-linejoin: round; }
+.eb-pin__dot { fill: var(--ebm-berry); }
+.eb-pin__count {
+  position: absolute; top: -4px; right: -7px;
+  min-width: 22px; height: 22px; padding: 0 5px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 999px;
+  background: var(--ebm-berry); color: var(--ebm-cream);
+  font: 700 0.8125rem/1 var(--ebm-serif);
+}
+/* Non-available points: hollow, Berry outline only. */
+.eb-pin--muted .eb-pin__body { fill: var(--ebm-cream); }
+.eb-pin--muted .eb-pin__dot { fill: var(--ebm-berry); }
+/* Hover and keyboard focus swap to Berry fill (style guide section 5). */
+.eb-pin:hover .eb-pin__body, .eb-pin:focus-visible .eb-pin__body { fill: var(--ebm-berry); }
+.eb-pin:hover .eb-pin__dot, .eb-pin:focus-visible .eb-pin__dot { fill: var(--ebm-cream); }
+.eb-pin:hover .eb-pin__count, .eb-pin:focus-visible .eb-pin__count { background: var(--ebm-tangerine); color: var(--ebm-berry); }
+.eb-pin:focus-visible { outline: 2px solid var(--ebm-berry); outline-offset: 2px; border-radius: 12px; }
+
+/* ---- popups: Cream, Berry hairline border, nothing floating ---- */
+.eb-popup .leaflet-popup-content-wrapper {
+  background: var(--ebm-cream, #F1ECE9);
+  color: var(--ebm-berry, #670A2F);
+  border: 1.5px solid var(--ebm-berry, #670A2F);
+  border-radius: 12px;
+  box-shadow: none;
+  padding: 0;
+}
+.eb-popup .leaflet-popup-tip {
+  background: var(--ebm-cream, #F1ECE9);
+  border: 1.5px solid var(--ebm-berry, #670A2F);
+  box-shadow: none;
+}
+.eb-popup .leaflet-popup-tip-container { margin-top: -1.5px; }
+.eb-popup .leaflet-popup-content {
+  margin: 18px 22px 18px 20px;
+  font-family: var(--ebm-serif, Fraunces, Georgia, serif);
+  font-size: 1rem;
+  line-height: 1.35;
+}
+.leaflet-container .eb-popup a.leaflet-popup-close-button {
+  top: 6px; right: 6px;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 0 2px;
+  border-radius: 50%;
+  color: var(--ebm-berry, #670A2F);
+  font: 400 2rem/1 var(--ebm-serif, Georgia, serif);
+}
+.leaflet-container .eb-popup a.leaflet-popup-close-button:hover,
+.leaflet-container .eb-popup a.leaflet-popup-close-button:focus-visible { background: var(--ebm-berry, #670A2F); color: var(--ebm-cream, #F1ECE9); }
+
+.eb-pop-eyebrow { margin: 0; font-size: 0.8125rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
+.eb-pop-title { margin: 4px 30px 0 0; font-size: 1.25rem; font-weight: 500; line-height: 1.15; }
+.eb-pop-rent { margin: 10px 0 0; font-size: 2rem; font-weight: 500; line-height: 1; }
+.eb-pop-rent span { font-size: 1rem; font-weight: 400; }
+.eb-pop-meta { margin: 6px 0 0; font-size: 0.9375rem; }
+.eb-pop-list { list-style: none; margin: 12px 0 0; padding: 0; max-height: 15rem; overflow-y: auto; }
+.eb-pop-item { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 8px 0; border-top: 1px dashed var(--ebm-berry, #670A2F); }
+.eb-pop-item:first-child { border-top: 0; }
+.eb-pop-item span { white-space: nowrap; font-weight: 500; }
+.leaflet-container .eb-popup a.eb-pop-link {
+  color: var(--ebm-berry, #670A2F);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--ebm-tangerine, #F36E30);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+.leaflet-container .eb-popup a.eb-pop-link:hover { text-decoration-color: var(--ebm-berry, #670A2F); }
+.leaflet-container .eb-popup a.eb-pop-link:focus-visible { outline: 2px solid var(--ebm-berry, #670A2F); outline-offset: 2px; }
+.eb-pop-cta { margin: 14px 0 0; font-size: 1.125rem; }
