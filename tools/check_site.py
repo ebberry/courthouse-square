@@ -6,6 +6,7 @@ data-file shape, version stamps, and download links. Stdlib-only so the owner
 can run it anywhere; the PDF content checks activate only if pypdf is present.
 
 Run:  python3 tools/check_site.py     (exit 0 = all good, 1 = problems)
+      python3 tools/build_pages.py --check   (separately: generated pages and sitemap.xml are fresh)
 """
 
 import json, os, re, sys
@@ -275,6 +276,105 @@ robots = read('robots.txt')
 check('Sitemap: https://eberryvashon.com/sitemap.xml' in robots,
       "robots.txt: Sitemap line must point at https://eberryvashon.com/sitemap.xml")
 
+# =====================================================================
+# E. Berry building pages (Phase 3): generated pages, sitemap, wall script
+#   The pages are written by tools/build_pages.py. These checks assert what must be true of the committed
+#   output; `python3 tools/build_pages.py --check` (separate CI step) proves it is not stale.
+# =====================================================================
+SITE_URL = 'https://eberryvashon.com'
+RERUN = "run `python3 tools/build_pages.py` and commit the result"
+
+for rel in ('tools/build_pages.py', 'tools/templates/building.tmpl.html', 'tools/templates/building.parts.tmpl.html',
+            'js/building.js'):
+    check(os.path.exists(os.path.join(ROOT, rel)), f"{rel} is missing")
+for glob_ in ('./buildings/**/*.html', './js/building.js', './tools/templates/*.html'):
+    check(glob_ in tw_cfg, f"tailwind.config.js content[] does not include {glob_}")
+
+def shell_block(text, name, end=None):
+    """A canonical shell block from index.html or a generated page, or None."""
+    end = end or rf'<!-- /EB:{name} -->'
+    m = re.search(rf'<!-- EB:{name}[^>]*-->.*?{end}', text, re.S)
+    return m.group(0) if m else None
+
+FLAT_BRAND = (('gradient', r'gradient'), ('shadow', r'shadow'),
+              ('pure white', r'#fff\b|#ffffff\b|\bbg-white\b|\btext-white\b'),
+              ('pure black', r'#000\b|#000000\b|\bbg-black\b|\btext-black\b'))
+
+wall_js = read('js/building.js') if os.path.exists(os.path.join(ROOT, 'js/building.js')) else ''
+for label, pat in FLAT_BRAND:
+    check(re.search(pat, wall_js, re.I) is None, f"js/building.js: contains {label} (E. Berry brand is flat)")
+for token in ('LISTINGS_URL', '/data/tenants.json', 'dataset.building', 'dataset.addressMatch'):
+    check(token in wall_js, f"js/building.js: must read {token} (neighbor wall inputs)")
+
+# The "Download the PDFs" link lands on this id in the (frozen) lease page; there is no #downloads anchor.
+check('id="lease-pdf-link"' in lease_page,
+      'lease/index.html: id="lease-pdf-link" is gone (the building pages\' "Download the PDFs" link targets it)')
+
+for B in buildings:
+    bid = B.get('id', '<missing>')
+    rel = f'buildings/{bid}/index.html'
+    path = os.path.join(ROOT, rel)
+    check(os.path.exists(path), f"{rel}: not generated for buildings.json entry {bid!r} ({RERUN})")
+    if not os.path.exists(path):
+        continue
+    page = read(rel)
+    check('A PART OF WINDERMERE VASHON' in page, f"{rel}: header is missing the 'A PART OF WINDERMERE VASHON' firm-ID line")
+    for anchor in ('id="location"', 'id="inquire"', 'name="inquiry"'):
+        check(anchor in page, f"{rel}: missing {anchor}")
+    if B.get('neighborWall'):
+        check('id="suites"' in page and 'id="neighbor-wall"' in page,
+              f"{rel}: neighborWall is true but the page has no id=\"suites\" / id=\"neighbor-wall\"")
+    check(f'data-building="{bid}"' in page, f'{rel}: <body> is missing data-building="{bid}"')
+    check(f'name="building" value="{bid}"' in page, f'{rel}: inquiry form is missing the hidden building field')
+    check(f'<link rel="canonical" href="{SITE_URL}/buildings/{bid}/" />' in page, f"{rel}: canonical URL is not {SITE_URL}/buildings/{bid}/")
+    check(f"<title>{B.get('name', '')} — E. Berry Property Management</title>" in page,
+          f"{rel}: <title> is not '{B.get('name')} — E. Berry Property Management'")
+    check('src="/js/building.js"' in page and 'src="/js/site-config.js"' in page,
+          f"{rel}: must load /js/site-config.js and /js/building.js")
+    # Social image: absolute URL, and the file behind it exists.
+    m = re.search(r'property="og:image" content="https://eberryvashon\.com(/[^"]+)"', page)
+    check(m is not None, f"{rel}: og:image must be an absolute https://eberryvashon.com/... URL")
+    if m:
+        check(os.path.exists(os.path.join(ROOT, m.group(1).lstrip('/'))),
+              f"{rel}: og:image points at {m.group(1)} but the file does not exist")
+    # Structured data parses and carries the postal address.
+    m = re.search(r'<script type="application/ld\+json">(.*?)</script>', page, re.S)
+    try:
+        ld = json.loads(m.group(1)) if m else None
+    except ValueError:
+        ld = None
+    check(isinstance(ld, dict) and ld.get('@type') == 'LocalBusiness'
+          and ld.get('address', {}).get('streetAddress') == str(B.get('address', '')).split(',')[0]
+          and ld.get('geo', {}).get('latitude') == B.get('lat') and ld.get('geo', {}).get('longitude') == B.get('lng'),
+          f"{rel}: JSON-LD is missing/invalid or its address/geo do not match buildings.json")
+    # The shell must be the homepage's, byte for byte (header, footer, shell styles).
+    for name, end in (('HEADER', None), ('FOOTER', None), ('SHELL-STYLES', r'</style>')):
+        a, b = shell_block(index, name, end), shell_block(page, name, end)
+        check(a is not None and a == b, f"{rel}: EB:{name} block differs from index.html ({RERUN})")
+    for label, pat in FLAT_BRAND:
+        check(re.search(pat, page, re.I) is None, f"{rel}: contains {label} (E. Berry brand is flat, Berry/Cream only)")
+
+# ---------------- sitemap.xml ----------------
+import xml.etree.ElementTree as ET
+try:
+    sm = ET.fromstring(read('sitemap.xml'))
+    SM = '{http://www.sitemaps.org/schemas/sitemap/0.9}'
+    sm_entries = sm.findall(f'{SM}url')
+    sm_urls = {u.findtext(f'{SM}loc'): u.findtext(f'{SM}lastmod') for u in sm_entries if u.findtext(f'{SM}loc')}
+except (ET.ParseError, OSError):
+    sm_entries, sm_urls = [], None
+check(sm_urls is not None, "sitemap.xml: missing or not valid XML")
+if sm_urls is not None:
+    check(len(sm_urls) == len(sm_entries), "sitemap.xml: a <url> entry has no <loc> or a URL is listed twice")
+    wanted = [f'{SITE_URL}/', f'{SITE_URL}/listings/']
+    wanted += [f"{SITE_URL}/listings/{L.get('id')}/" for L in listings]
+    wanted += [f"{SITE_URL}/buildings/{B.get('id')}/" for B in buildings]
+    for u in wanted:
+        check(u in sm_urls, f"sitemap.xml: missing {u} ({RERUN})")
+        check(sm_urls.get(u) == listings_doc.get('updated'),
+              f"sitemap.xml: {u} lastmod {sm_urls.get(u)!r} != listings.json updated {listings_doc.get('updated')!r}")
+    check(all(u.startswith(SITE_URL + '/') for u in sm_urls), "sitemap.xml: every URL must be on https://eberryvashon.com")
+
 # ---------------- verdict ----------------
 if problems:
     print(f"FAIL: {len(problems)} problem(s) out of {checks} checks")
@@ -282,3 +382,4 @@ if problems:
         print(f"  - {p}")
     sys.exit(1)
 print(f"OK: {checks} checks passed")
+print("note: generated pages are verified separately; run `python3 tools/build_pages.py --check` (also a CI step) to prove buildings/ and sitemap.xml are not stale")

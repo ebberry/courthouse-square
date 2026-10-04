@@ -53,6 +53,7 @@
 .eb-field-sky       { background: var(--eb-sky);       color: var(--eb-berry); }
 .eb-field-mustard   { background: var(--eb-mustard);   color: var(--eb-berry); }
 .eb-field-sage      { background: var(--eb-sage);      color: var(--eb-berry); }
+.eb-field-sand      { background: var(--eb-sand);      color: var(--eb-berry); }  /* building pages: any buildings.json fieldColor */
 
 .eb-card {
   background: var(--eb-cream);
