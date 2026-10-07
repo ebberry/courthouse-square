@@ -11,7 +11,9 @@ Writes  buildings/<id>/index.html   one landing page per building   (tools/templ
         listing.html                the noindex client-side fallback for feed listings with no page yet
                                     (tools/templates/listing-fallback.tmpl.html; js/listing-detail.js draws it)
         404.html                    the not-found page Netlify serves for any unknown URL (tools/templates/404.tmpl.html)
-        sitemap.xml                 home, /listings/, every listing and every building page (not the 404)
+        owners/index.html           the owners page, /owners/ (tools/templates/owners.tmpl.html); the flagship building's
+                                    name, street and tagline come from data/buildings.json
+        sitemap.xml                 home, /listings/, /owners/, every listing and every building page (not the 404)
 
 Run:    python3 tools/build_pages.py           regenerate the committed pages
         python3 tools/build_pages.py --check   regenerate into a temp dir and byte-compare against the
@@ -44,6 +46,9 @@ FIELD_COLORS = ('berry', 'tangerine', 'sky', 'mustard', 'sage', 'sand')   # .eb-
 # /lease/ has no #downloads anchor and lease/ is frozen, so the "Download the PDFs" link lands on the first
 # download button, which carries this id (tools/check_site.py verifies it still exists).
 LEASE_DOWNLOADS_ANCHOR = 'lease-pdf-link'
+# The building the owners page holds up as proof ("I manage Courthouse Square"); its entry in data/buildings.json
+# supplies the name, street and tagline, so the page cannot drift from the building's own page.
+FLAGSHIP_BUILDING_ID = 'courthouse-square'
 
 ADDRESS_RE = re.compile(r'^(?P<street>[^,]+),\s*(?P<city>[^,]+),\s*(?P<region>[A-Z]{2})\s+(?P<zip>\d{5})(?:-\d{4})?$')
 
@@ -114,6 +119,7 @@ def load_context():
         'listing_parts': load_parts('listing.parts.tmpl.html'),
         'listing_fallback_template': load_template('listing-fallback.tmpl.html'),
         'not_found_template': load_template('404.tmpl.html'),
+        'owners_template': load_template('owners.tmpl.html'),
     }
 
 
@@ -536,11 +542,68 @@ def render_listing_pages(ctx):
     return pages
 
 
+# ---------------------------------------------------------------- owners page (Phase 8)
+
+def owners_json_ld(canonical, meta_description):
+    """The owners page is a Service run by the RealEstateAgent the homepage already describes. Deliberately no
+    offers / price: the page is contact-first and never quotes a fee."""
+    data = {
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        'name': 'Property management on Vashon Island',
+        'serviceType': 'Property management',
+        'description': meta_description,
+        'url': canonical,
+        'areaServed': 'Vashon Island, WA',
+        'audience': {'@type': 'Audience', 'audienceType': 'Property owners'},
+        'provider': {
+            '@type': 'RealEstateAgent',
+            'name': 'E. Berry Property Management',
+            'url': SITE + '/',
+            'email': 'me@ebberry.com',
+            'image': SITE + FALLBACK_OG_IMAGE,
+            'parentOrganization': {'@type': 'Organization', 'name': 'Windermere Vashon'},
+        },
+    }
+    # '<' escaped so no value can ever close the <script> element.
+    return json.dumps(data, indent=2, ensure_ascii=False).replace('<', '\\u003c')
+
+
+def render_owners_page(ctx):
+    """/owners/: the shell plus the owners page. Contact-first, so there is no fee, rate or price data to render."""
+    b = ctx['buildings_by_id'].get(FLAGSHIP_BUILDING_ID)
+    if not b:
+        fail(f'buildings.json has no {FLAGSHIP_BUILDING_ID!r} entry (the owners page cites it as the flagship building)')
+    m = ADDRESS_RE.match(b['address'])
+    if not m:
+        fail(f"buildings.json {b['id']}: address {b['address']!r} must look like '19001 Vashon Hwy SW, Vashon, WA 98070'")
+
+    canonical = f'{SITE}/owners/'
+    title = 'For Vashon property owners — E. Berry Property Management'
+    meta_description = ("Own a home, cottage, or commercial space on Vashon? I'm Elijah Berry, and I'd love to "
+                        "look after it. Tell me about your property.")
+    values = {
+        'title': esc(title),
+        'meta_description': esc(meta_description),
+        'canonical': esc(canonical),
+        'og_image': esc(SITE + FALLBACK_OG_IMAGE),
+        'json_ld': indent_block(owners_json_ld(canonical, meta_description), 2),
+        'flagship_name': esc(b['name']),
+        'flagship_tagline': esc(b['tagline']),
+        'flagship_street': esc(m.group('street')),
+        'flagship_href': esc(f"/buildings/{b['id']}/"),
+        'shell_styles': ctx['shell']['shell_styles'],
+        'header': ctx['shell']['header'],
+        'footer': ctx['shell']['footer'],
+    }
+    return {'owners/index.html': ctx['owners_template'].substitute(values)}
+
+
 # ---------------------------------------------------------------- sitemap
 
 def render_sitemap(ctx):
     lastmod = ctx['updated']
-    urls = [f'{SITE}/', f'{SITE}/listings/']
+    urls = [f'{SITE}/', f'{SITE}/listings/', f'{SITE}/owners/']
     urls += [f"{SITE}/listings/{quote(L['id'])}/" for L in ctx['listings']]
     urls += [f"{SITE}/buildings/{quote(b['id'])}/" for b in ctx['buildings']]
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
@@ -559,6 +622,7 @@ def build_files():
     files.update(render_building_pages(ctx))
     files.update(render_listing_pages(ctx))
     files.update(render_not_found(ctx))
+    files.update(render_owners_page(ctx))
     files.update(render_sitemap(ctx))
     return files
 
@@ -635,7 +699,7 @@ def check_files(files):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description='Generate the E. Berry building and listing pages and sitemap.xml.')
+    ap = argparse.ArgumentParser(description='Generate the E. Berry building, listing and owners pages and sitemap.xml.')
     ap.add_argument('--check', action='store_true',
                     help='regenerate to a temp dir and compare with the committed files; exit 1 if stale')
     args = ap.parse_args(argv)

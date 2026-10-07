@@ -42,15 +42,26 @@ Part 3 is the accessibility sweep over every page type (homepage, /listings/, a 
                       focus ring of at least 3:1 on every Tab stop; and prefers-reduced-motion honoured (no smooth
                       scrolling, no map animation, the tally counts up instantly)
 
+Part 4 drives the owners section (the part of the site for people who might hire E. Berry to manage their property):
+
+  R. Owners         - the homepage owners block and its pill, the "For owners" nav and footer links on every page type
+                      (and the header staying on one row at 1024px), /owners/ (title, JSON-LD, the one huge h1, the six
+                      blurbs, Courthouse Square as proof, the Windermere Vashon block, four steps, Mustard badges), the
+                      contact-first rule (no fee, rate, price or free estimate in the rendered text; no testimonials),
+                      the owner-intro form (labels that really label, required fields, honeypot, the POST body), the
+                      tenant form untouched, and the 390px layout. The page is also in the Q accessibility sweep.
+
 Requirements: pip install playwright; playwright install chromium (or set CHROME=/path/to/chrome).
 Run: python3 tools/test_listings.py
+     python3 tools/test_listings.py owners       (just part R: a fast loop while working on the owners section)
+     EB_TEST_PORT=8191 python3 tools/test_listings.py   (another port, when 8190 is busy)
 """
 
 import base64, copy, datetime, glob, http.server, io, json, os, re, socketserver, sys, threading
 from urllib.parse import parse_qs, urlsplit
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PORT = 8190
+PORT = int(os.environ.get('EB_TEST_PORT', 8190))
 BASE = f'http://127.0.0.1:{PORT}'
 failures = []
 passed = 0
@@ -915,6 +926,7 @@ A11Y_PAGES = [
     ('building', '/buildings/courthouse-square/', '#neighbor-wall article'),
     ('404', '/404.html', '#not-found-title'),
     ('fallback', '/listing.html?id=chs-n101', '#listing-title'),
+    ('owners', '/owners/', '#owner-form'),
 ]
 TENANTS = [{'name': 'Lantern Counseling', 'suite': 'N105', 'category': 'therapy', 'blurb': 'Talk therapy for adults.',
             'website': 'https://example.com', 'phone': '(206) 555-0100', 'email': 'hi@example.com'},
@@ -1117,11 +1129,351 @@ def part3(browser, sessions):
     s.ctx.close()
 
 
+# ---------------------------------------------------------------- part 4: the owners section (R)
+
+OWNERS_TITLE = 'For Vashon property owners — E. Berry Property Management'
+# Contact-first: nothing a visitor can read on the owners page (or the homepage's owners block) quotes a fee, a rate or a
+# price, or promises an estimate. (tools/check_site.py scans the HTML for the same things; this scans the rendered text.)
+FEE_RE = re.compile(r'\$|\d\s*%|\bpercent\b|\bfees?\b|\brates?\b|\bpric(?:e|es|ed|ing)\b|\bcommissions?\b|/\s*(?:mo|month|yr|year)\b'
+                    r'|\bper (?:month|year|unit)\b|\bfree\b|\banalysis\b|\bestimates?\b|\bappraisals?\b', re.I)
+OWNER_LABELS = {'name': 'Name *', 'email': 'Email *', 'phone': 'Phone (optional)', 'property-type': 'What kind of property?',
+                'property-address': 'Property address *', 'message': 'Tell me about it'}
+OWNER_BLURBS = ['Marketing & listing', 'Tenant screening', 'Leases done properly', 'Rent & monthly statements',
+                'Maintenance with island vendors', 'Regular walk-throughs']
+OWNER_FIELDS = {'name': 'Pat Example', 'email': 'pat@example.com', 'phone': '206-555-0100', 'property-type': 'Residential',
+                'property-address': '12345 99th Ave SW, Vashon, WA', 'message': 'A two-bedroom cottage near Burton that I would love some help with.'}
+
+# The biggest type under <main>, with where it sits (the h1 is the page's one huge element).
+H1_SIZES_JS = r"""
+() => {
+  const sizes = [];
+  const walker = document.createTreeWalker(document.getElementById('main'), NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) {
+    const n = walker.currentNode;
+    if (!n.textContent.trim()) continue;
+    const el = n.parentElement, cs = getComputedStyle(el);
+    if (cs.display === 'none' || cs.visibility === 'hidden') continue;
+    sizes.push({ size: parseFloat(cs.fontSize), inH1: !!el.closest('h1'), inOwners: !!el.closest('#owners'), text: n.textContent.trim().slice(0, 30) });
+  }
+  sizes.sort((a, b) => b.size - a.size);
+  return sizes;
+}
+"""
+
+# Every visible control with the label that wraps it: [name, how many labels, the label's own caption].
+CONTROLS_JS = r"""
+() => [...document.querySelectorAll('#owner-form input:not([type=hidden]), #owner-form select, #owner-form textarea')]
+  .filter(e => !e.closest('.hidden'))
+  .map(e => [e.name, e.labels.length, e.labels.length ? e.labels[0].querySelector('span').textContent.trim().replace(/\s+/g, ' ') : null,
+             Math.round(e.getBoundingClientRect().width), Math.round(e.getBoundingClientRect().height)])
+"""
+
+
+def posted(raw):
+    """A Netlify form POST body as {field: value}; blank fields (the honeypot, an optional phone) are dropped."""
+    return {k: v[0] for k, v in parse_qs(raw or '').items()}
+
+
+def part4(browser, sessions):
+    cs_title = BUILDINGS['courthouse-square']['name']
+
+    # ---------- R: the homepage owners block, reached the way a visitor reaches it ----------
+    s = Session(browser, 'R-home', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    pg = s.pg; pg.goto(BASE + '/', wait_until='networkidle'); pg.wait_for_selector('#owners'); pg.wait_for_timeout(200)
+    blk = pg.locator('section#owners')
+    check(blk.count() == 1 and blk.is_visible(), 'R: the homepage has one visible owners block')
+    check(ws(pg.inner_text('#owners-heading')) == "Own a place on Vashon? I'd love to look after it.", f'R: the owners statement reads {ws(pg.inner_text("#owners-heading"))!r}')
+    look = pg.evaluate("""() => { const f = document.getElementById('owners'), c = f.querySelector('.eb-card'), h = f.querySelector('.eb-hl');
+        return { field: getComputedStyle(f).backgroundColor, card: getComputedStyle(c).backgroundColor, radius: getComputedStyle(c).borderTopLeftRadius,
+                 hl: getComputedStyle(h).backgroundColor, hlColor: getComputedStyle(h).color, hlText: h.textContent.trim(), h: f.getBoundingClientRect().height,
+                 labelled: f.getAttribute('aria-labelledby') } }""")
+    check(look['field'] == MUSTARD and look['card'] == CREAM and look['radius'] == '24px',
+          f'R: the owners block is a Mustard field with one Cream card ({look})')
+    check(look['hl'] == MUSTARD and look['hlColor'] == BERRY and look['hlText'] == 'look after it.', f'R: the highlighted words are Berry on Mustard ({look})')
+    check(look['labelled'] == 'owners-heading' and look['h'] >= 380, f'R: the block is substantial, not a footer whisper ({look["h"]}px tall)')
+    y = pg.evaluate("""() => ['buildings', 'owners', 'inquire'].map(id => document.getElementById(id).getBoundingClientRect().top + window.scrollY)""")
+    check(y == sorted(y) and len(set(y)) == 3, f'R: the owners block sits after the buildings and before the inquiry form ({y})')
+    sizes = pg.evaluate(H1_SIZES_JS)
+    own = max(x['size'] for x in sizes if x['inOwners'])
+    check(sizes[0]['inH1'] and sizes[0]['size'] > own >= 40, f'R: the homepage hero stays the one huge element; the owners statement is big but smaller ({sizes[0]["size"]} vs {own})')
+    check(not FEE_RE.search(blk.inner_text()), f'R: the homepage owners block names no fee, rate or price ({FEE_RE.search(blk.inner_text())})')
+    pill = pg.locator('#owners a.eb-btn')
+    fs = pg.evaluate("parseFloat(getComputedStyle(document.querySelector('#owners a.eb-btn')).fontSize)")
+    fw = pg.evaluate("parseInt(getComputedStyle(document.querySelector('#owners a.eb-btn')).fontWeight)")
+    check(pill.count() == 1 and pill.get_attribute('href') == '/owners/' and fs >= 19 and fw >= 700,
+          f'R: one pill to /owners/, >=19px bold ({fs}px / {fw})')
+    check(ws(pill.inner_text()) == 'Tell me about your place', f'R: the pill reads {ws(pill.inner_text())!r}')
+    check(pg.locator('#owners form').count() == 0 and pg.locator('form[name="inquiry"]').count() == 1 and pg.locator('form[name="owner-intro"]').count() == 0,
+          'R: the homepage keeps exactly one form (the tenant one); the owners block is a link, not a second form')
+    pill.click(); pg.wait_for_url(BASE + '/owners/')
+    check(pg.title() == OWNERS_TITLE and ws(pg.inner_text('h1')) == 'Own a place on Vashon?', f'R: the homepage pill lands on /owners/ ({pg.title()!r})')
+    # the nav link and the footer link, from the homepage
+    pg.goto(BASE + '/', wait_until='networkidle')
+    nav = pg.locator('#site-nav a[href="/owners/"]')
+    check(nav.count() == 1 and nav.is_visible() and ws(nav.inner_text()) == 'For owners', 'R: the header nav shows "For owners" on desktop')
+    nav.click(); pg.wait_for_url(BASE + '/owners/')
+    check(pg.title() == OWNERS_TITLE, 'R: the nav link navigates to /owners/')
+    check(pg.is_visible('footer a[href="/owners/"]') and ws(pg.inner_text('footer a[href="/owners/"]')) == 'For owners', 'R: the footer carries "For owners" too')
+    pg.goto(BASE + '/', wait_until='networkidle')
+    pg.locator('footer a[href="/owners/"]').click(); pg.wait_for_url(BASE + '/owners/')
+    check(pg.title() == OWNERS_TITLE, 'R: the footer link navigates to /owners/')
+    s.ctx.close()
+
+    # the persistent link is on every kind of page, header and footer
+    s = Session(browser, 'R-nav', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    s.ctx.route(re.compile(r'/images/buildings/'), lambda r: r.fulfill(status=200, content_type='image/png', body=TILE_PNG))
+    for name, path, ready in A11Y_PAGES:
+        s.pg.goto(BASE + path, wait_until='networkidle'); s.pg.wait_for_selector(ready, timeout=10000)
+        head = s.pg.locator('header a[href="/owners/"]'); foot = s.pg.locator('footer a[href="/owners/"]')
+        check(head.count() == 1 and head.is_visible() and ws(head.inner_text()) == 'For owners', f'R nav {name}: the header has "For owners"')
+        check(foot.count() == 1 and foot.is_visible(), f'R nav {name}: the footer has "For owners"')
+    s.ctx.close()
+
+    # the header stays on one line at the narrowest desktop widths now that it carries a fifth item
+    for w in (1024, 1100, 1280):
+        s = Session(browser, f'R-header{w}', viewport={'width': w, 'height': 800}); sessions.append(s)
+        pg = s.pg; pg.goto(BASE + '/', wait_until='networkidle')
+        m = pg.evaluate("""() => { const h = document.querySelector('header'), n = document.getElementById('site-nav'),
+              firm = [...h.querySelectorAll('span')].find(e => e.textContent.trim() === 'A PART OF WINDERMERE VASHON'),
+              chip = h.querySelector('.eb-hl').getBoundingClientRect(), nav = n.getBoundingClientRect();
+            return { header: h.getBoundingClientRect().height, firm: firm.getBoundingClientRect().height, logoRight: Math.max(chip.right, firm.getBoundingClientRect().right), navLeft: nav.left,
+                     hscroll: document.documentElement.scrollWidth > document.documentElement.clientWidth } }""")
+        check(m['header'] <= 80 and m['firm'] <= 16 and m['logoRight'] <= m['navLeft'] and not m['hscroll'],
+              f'R: at {w}px the header is one row, the firm-ID line stays on one line and nothing overlaps ({m})')
+        s.ctx.close()
+
+    # ---------- R: the owners page ----------
+    s = Session(browser, 'R-page', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    pg = s.pg; pg.goto(BASE + '/owners/', wait_until='networkidle'); pg.wait_for_selector('#owner-form')
+    check(pg.title() == OWNERS_TITLE, f'R: title is {pg.title()!r}')
+    check(pg.get_attribute('link[rel=canonical]', 'href') == 'https://eberryvashon.com/owners/', 'R: canonical URL')
+    check('Vashon' in (pg.get_attribute('meta[name=description]', 'content') or '') and not FEE_RE.search(pg.get_attribute('meta[name=description]', 'content') or ''),
+          'R: a meta description that names Vashon and quotes no price')
+    check(pg.get_attribute('meta[property="og:image"]', 'content') == 'https://eberryvashon.com/images/og-card-eberry.png'
+          and pg.get_attribute('meta[property="og:url"]', 'content') == 'https://eberryvashon.com/owners/'
+          and pg.get_attribute('meta[property="og:title"]', 'content') == OWNERS_TITLE, 'R: Open Graph title, url and image')
+    check(pg.locator('meta[name="robots"]').count() == 0, 'R: the owners page is indexable')
+    ld = pg.evaluate("JSON.parse(document.querySelector('script[type=\"application/ld+json\"]').textContent)")
+    check(ld['@type'] == 'Service' and ld['url'] == 'https://eberryvashon.com/owners/' and ld['provider']['@type'] == 'RealEstateAgent'
+          and ld['provider']['parentOrganization']['name'] == 'Windermere Vashon' and not ({'offers', 'price', 'priceRange'} & set(ld)),
+          f'R: JSON-LD is a Service by the RealEstateAgent, with no offer or price ({sorted(ld)})')
+    check('A PART OF WINDERMERE VASHON' in pg.inner_text('header'), 'R: the firm-ID line is in the header')
+    check(pg.locator('h1').count() == 1 and ws(pg.inner_text('h1')) == 'Own a place on Vashon?', f'R: one h1, "Own a place on Vashon?" ({ws(pg.inner_text("h1"))!r})')
+    hero = pg.evaluate("""() => { const s = document.querySelector('main > section'), c = s.querySelector('.eb-card'), h = document.querySelector('h1 .eb-hl'),
+        b = s.querySelector('a.eb-btn');
+        return { field: getComputedStyle(s).backgroundColor, card: getComputedStyle(c).backgroundColor, hl: getComputedStyle(h).backgroundColor,
+                 hlColor: getComputedStyle(h).color, hlText: h.textContent, pills: s.querySelectorAll('a.eb-btn').length, href: b.getAttribute('href'),
+                 text: b.textContent.trim(), fs: parseFloat(getComputedStyle(b).fontSize), fw: parseInt(getComputedStyle(b).fontWeight) } }""")
+    check(hero['field'] == MUSTARD and hero['card'] == CREAM, f'R: the hero is a Mustard field with a Cream card ({hero})')
+    check(hero['hl'] == MUSTARD and hero['hlColor'] == BERRY and hero['hlText'] == 'place', f'R: "place" carries the Mustard highlight, Berry text ({hero})')
+    check(hero['pills'] == 1 and hero['href'] == '#tell-me' and hero['text'] == 'Tell me about your place' and hero['fs'] >= 19 and hero['fw'] >= 700,
+          f'R: the hero has one pill, to the form, >=19px bold ({hero})')
+    # one huge element, at least twice anything else
+    sizes = pg.evaluate(H1_SIZES_JS)
+    nxt = next(x for x in sizes if not x['inH1'])
+    check(sizes[0]['inH1'] and sizes[0]['size'] >= 120 and sizes[0]['size'] >= 2 * nxt['size'], f'R: the h1 is the one huge element ({sizes[0]["size"]}px vs next {nxt})')
+    # what I take care of
+    items = pg.eval_on_selector_all('#what-i-do li', 'els => els.map(e => [e.querySelector("h3").textContent.trim(), e.querySelector("p").textContent.trim()])')
+    check([t for t, _ in items] == OWNER_BLURBS, f'R: the six things I take care of: {[t for t, _ in items]}')
+    check(all(len(b) >= 60 and re.search(r"\b(I|I'd|I'll|my|you|your)\b", b, re.I) for _, b in items), 'R: every blurb is a short first-person sentence or two')
+    # both kinds of property, with Courthouse Square as the proof
+    both = ws(pg.text_content('#both'))       # (text_content: the badges are CSS-uppercased in inner_text)
+    check('Commercial' in both and 'Residential' in both and 'I manage Courthouse Square' in both and 'flagship' in both,
+          'R: both commercial and residential are welcome, and the page says "I manage Courthouse Square"')
+    check(pg.get_attribute('#both a[href="/buildings/courthouse-square/"]', 'href') == '/buildings/courthouse-square/', 'R: the proof links to the building page')
+    check(pg.evaluate("getComputedStyle(document.querySelector('#both')).backgroundColor") == SAND, 'R: the property-type band is a Sand field')
+    badge = pg.evaluate("getComputedStyle(document.querySelector('#both article span')).backgroundColor")
+    check(badge == MUSTARD, f'R: the Commercial badge is flat Mustard ({badge})')
+    # Windermere
+    check(ws(pg.inner_text('#windermere h2')) == 'A part of Windermere Vashon' and 'a real estate firm right here on the island' in ws(pg.inner_text('#windermere')),
+          'R: the Windermere Vashon block explains the affiliation warmly')
+    check(pg.evaluate("getComputedStyle(document.querySelector('#windermere')).backgroundColor") == BERRY, 'R: the Windermere block is a Berry field')
+    # how it works
+    steps = pg.eval_on_selector_all('#how ol > li', 'els => els.map(e => [e.querySelector("h3").textContent.trim(), e.querySelector("span").textContent.trim()])')
+    check(steps == [['Say hello', '1'], ['Walk the property together', '2'], ['Agree on the details', '3'], ['I take it from there', '4']], f'R: four conversational steps {steps}')
+    badges = pg.evaluate("""() => [...document.querySelectorAll('#how ol > li > span')].map(e => { const cs = getComputedStyle(e); return [cs.backgroundColor, cs.color, cs.borderTopLeftRadius] })""")
+    check(badges == [[MUSTARD, BERRY, '4px']] * 4, f'R: the step numbers are flat Mustard badges with Berry text and a 4px radius ({badges})')
+    # contact-first, and no testimonials
+    main_text = pg.inner_text('main'); body_text = pg.inner_text('body')
+    check(not FEE_RE.search(main_text), f'R: the page names no fee, rate, price or free estimate ({FEE_RE.search(main_text)})')
+    check(not FEE_RE.search(body_text), f'R: neither does the shell around it ({FEE_RE.search(body_text)})')
+    check(pg.locator('blockquote').count() == 0 and not re.search(r'testimonial|★|five-star', body_text, re.I), 'R: no testimonials (none exist)')
+    check(pg.locator('main img').count() == 1 + 1 and all(pg.eval_on_selector_all('main img', 'els => els.map(e => e.getAttribute("src").startsWith("/images/brand/"))')),
+          'R: the only images are the brand monogram and the wordmark (no stock photos)')
+    # the page is flat, and fits
+    audit(pg, 'body', 'R owners page')
+    check(pg.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), 'R: no sideways scroll on desktop')
+    # the hero pill scrolls to the form
+    pg.click('main > section a.eb-btn')
+    pg.wait_for_function("(() => { const t = document.getElementById('tell-me').getBoundingClientRect().top; return t >= 0 && t < 300 })()", timeout=5000)
+    check(pg.evaluate('location.hash') == '#tell-me' and pg.is_visible('#owner-form'), 'R: the hero pill brings the form into view')
+    s.ctx.close()
+
+    # the Courthouse Square proof link goes where it says
+    s = Session(browser, 'R-proof', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    s.ctx.route(re.compile(r'/images/buildings/'), lambda r: r.fulfill(status=200, content_type='image/png', body=TILE_PNG))
+    pg = s.pg; pg.goto(BASE + '/owners/', wait_until='networkidle')
+    pg.click('#both a[href="/buildings/courthouse-square/"]'); pg.wait_for_url(BASE + '/buildings/courthouse-square/')
+    check(pg.title() == f'{cs_title} — E. Berry Property Management', f'R: the proof link lands on the building page ({pg.title()!r})')
+    s.ctx.close()
+
+    # the whole page works without JS: content, nav and the form are all in the HTML
+    ctx_nojs = browser.new_context(java_script_enabled=False, viewport={'width': 390, 'height': 844})
+    ctx_nojs.route(re.compile(r'^https://fonts\.'), lambda r: r.abort())
+    npg = ctx_nojs.new_page(); npg.goto(BASE + '/owners/', wait_until='load')
+    check(npg.is_visible('#owner-form') and npg.is_visible('#site-nav a[href="/owners/"]') and npg.is_visible('h1'),
+          'R: without JS the owners page, its form and the open mobile menu are all there')
+    ctx_nojs.close()
+
+    # ---------- R: the owner-intro form ----------
+    s = Session(browser, 'R-form', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    pg = s.pg
+    posts = []
+    def catch(route):
+        req = route.request
+        if req.method == 'POST':
+            posts.append(req.post_data or '')
+            route.fulfill(status=200, content_type='text/html', body='<p>thanks</p>')
+        else:
+            route.continue_()
+    pg.route('**/owners/', catch)
+    pg.goto(BASE + '/owners/', wait_until='networkidle'); pg.wait_for_selector('#owner-form')
+    form = pg.locator('form[name="owner-intro"]')
+    check(form.count() == 1 and pg.locator('form').count() == 1 and pg.locator('#tell-me form').count() == 1, 'R: one form named owner-intro, inside #tell-me')
+    check(form.get_attribute('data-netlify') == 'true' and form.get_attribute('netlify-honeypot') == 'bot-field' and form.get_attribute('method').lower() == 'post'
+          and form.get_attribute('action') is None, 'R: Netlify form attributes (data-netlify, honeypot, POST, no action: the same mechanism as the tenant form)')
+    hidden = pg.eval_on_selector_all('#owner-form input[type=hidden]', 'els => els.map(e => [e.name, e.value])')
+    check(hidden == [['form-name', 'owner-intro']], f'R: hidden inputs {hidden}')
+    check(pg.locator('#owner-form input[name="bot-field"]').count() == 1 and not pg.is_visible('#owner-form input[name="bot-field"]'), 'R: the honeypot exists and is hidden')
+    ctrls = pg.evaluate(CONTROLS_JS)
+    check([c[0] for c in ctrls] == list(OWNER_LABELS), f'R: the form fields are {[c[0] for c in ctrls]}')
+    check(all(c[1] == 1 for c in ctrls), f'R: every field has exactly one label ({[(c[0], c[1]) for c in ctrls if c[1] != 1]})')
+    check({c[0]: c[2] for c in ctrls} == OWNER_LABELS, f'R: field labels read {({c[0]: c[2] for c in ctrls})}')
+    # a label is a real label: clicking its caption puts the cursor in its field
+    for name, text in OWNER_LABELS.items():
+        cap = pg.locator(f'#owner-form label:has([name="{name}"]) > span')
+        if cap.count() == 0:
+            check(False, f'R: the {name} field is not wrapped in a <label> with a caption to click')
+            continue
+        cap.first.click()
+        got = pg.evaluate('document.activeElement.name')
+        check(got == name, f'R: clicking the "{text}" label focuses {name} (got {got!r})')
+    req = pg.eval_on_selector_all('#owner-form input:not([type=hidden]), #owner-form select, #owner-form textarea',
+                                  'els => Object.fromEntries(els.filter(e => !e.closest(".hidden")).map(e => [e.name, e.required]))')
+    check(req == {'name': True, 'email': True, 'phone': False, 'property-type': False, 'property-address': True, 'message': False}, f'R: required fields {req}')
+    check(pg.get_attribute('#owner-form input[name=email]', 'type') == 'email' and pg.get_attribute('#owner-form input[name=phone]', 'type') == 'tel'
+          and pg.get_attribute('#owner-form input[name=email]', 'autocomplete') == 'email', 'R: email is typed and autocompletes; phone is a tel field')
+    opts = pg.eval_on_selector_all('#owner-form select[name=property-type] option', 'els => els.map(e => [e.textContent.trim(), e.value])')
+    check(opts == [['Choose one', ''], ['Residential', 'Residential'], ['Commercial', 'Commercial'], ['Other', 'Other']], f'R: property type options {opts}')
+    btn = pg.locator('#owner-form button[type=submit]')
+    fs = pg.evaluate("parseFloat(getComputedStyle(document.querySelector('#owner-form button[type=submit]')).fontSize)")
+    fw = pg.evaluate("parseInt(getComputedStyle(document.querySelector('#owner-form button[type=submit]')).fontWeight)")
+    check(ws(btn.inner_text()) == 'Send my note' and 'eb-btn' in btn.get_attribute('class') and fs >= 19 and fw >= 700, f'R: the submit pill reads "Send my note", >=19px bold ({fs}px / {fw})')
+    check('I don\'t share your contact information. Ever.' in ws(pg.inner_text('#tell-me')) and pg.get_attribute('#tell-me a[href^="mailto:"]', 'href') == 'mailto:me@ebberry.com',
+          'R: the privacy line and the email fallback are there')
+    # an empty submit is stopped by the browser, and so is a bad email
+    btn.click(); pg.wait_for_timeout(200)
+    check(not posts, 'R: an empty form does not submit')
+    pg.fill('#owner-form input[name=name]', 'Pat Example'); pg.fill('#owner-form input[name=email]', 'not-an-email')
+    pg.fill('#owner-form input[name=property-address]', OWNER_FIELDS['property-address'])
+    btn.click(); pg.wait_for_timeout(200)
+    check(not posts and pg.evaluate("document.querySelector('#owner-form input[name=email]').matches(':invalid')"), 'R: a bad email address does not submit')
+    # the minimum (no phone, no type, no message) posts exactly what was filled, plus the hidden form-name
+    pg.fill('#owner-form input[name=email]', OWNER_FIELDS['email'])
+    btn.click(); pg.wait_for_timeout(600)
+    check(len(posts) == 1 and posted(posts[0]) == {'form-name': 'owner-intro', 'name': 'Pat Example', 'email': 'pat@example.com',
+                                                   'property-address': OWNER_FIELDS['property-address']},
+          f'R: the minimum submission POSTs {posted(posts[0]) if posts else None}')
+    # every field filled posts every field
+    pg.goto(BASE + '/owners/', wait_until='networkidle'); pg.wait_for_selector('#owner-form')
+    for name, value in OWNER_FIELDS.items():
+        if name == 'property-type':
+            pg.select_option('#owner-form select[name=property-type]', value)
+        elif name == 'message':
+            pg.fill('#owner-form textarea[name=message]', value)
+        else:
+            pg.fill(f'#owner-form input[name={name}]', value)
+    pg.locator('#owner-form button[type=submit]').click(); pg.wait_for_timeout(600)
+    check(len(posts) == 2 and posted(posts[1]) == {'form-name': 'owner-intro', **OWNER_FIELDS}, f'R: the full submission POSTs {posted(posts[1]) if len(posts) > 1 else None}')
+    s.ctx.close()
+
+    # the tenant form still works, exactly as before
+    s = Session(browser, 'R-tenant', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    pg = s.pg
+    posts = []
+    pg.route(re.compile(r'^http://127\.0\.0\.1:\d+/$'), catch)
+    pg.goto(BASE + '/', wait_until='networkidle')
+    check(pg.locator('form[name="inquiry"]').count() == 1 and pg.locator('form[name="inquiry"] input[name="form-name"]').get_attribute('value') == 'inquiry'
+          and pg.get_attribute('form[name="inquiry"]', 'data-netlify') == 'true', 'R: the tenant "inquiry" form is untouched')
+    pg.fill('#inquiry-form input[name=name]', 'Sam Tenant'); pg.fill('#inquiry-form input[name=email]', 'sam@example.com')
+    pg.click('#inquiry-form button[type=submit]'); pg.wait_for_timeout(600)
+    check(len(posts) == 1 and posted(posts[0]) == {'form-name': 'inquiry', 'name': 'Sam Tenant', 'email': 'sam@example.com'}, f'R: the tenant form still POSTs {posted(posts[0]) if posts else None}')
+    s.ctx.close()
+
+    # ---------- R: the phone ----------
+    s = Session(browser, 'R-mobile', viewport={'width': 390, 'height': 844}, is_mobile=True, has_touch=True); sessions.append(s)
+    pg = s.pg; pg.goto(BASE + '/owners/', wait_until='networkidle'); pg.wait_for_selector('#owner-form')
+    check(pg.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), 'R: no sideways scroll at 390px')
+    m = pg.evaluate("""() => { const r = e => { const b = document.querySelector(e).getBoundingClientRect(); return { l: b.left, r: b.right, h: b.height, t: b.top } };
+        return { h1: r('h1'), pill: r('main > section a.eb-btn'), submit: r('#owner-form button[type=submit]') } }""")
+    check(m['h1']['l'] >= 0 and m['h1']['r'] <= 390, f'R: the headline fits a phone ({m["h1"]})')
+    check(m['pill']['l'] >= 0 and m['pill']['r'] <= 390 and 44 <= m['pill']['h'] < 80, f'R: the hero pill fits on one line and is a real tap target ({m["pill"]})')
+    big = pg.evaluate(H1_SIZES_JS)
+    check(big[0]['inH1'] and big[0]['size'] >= 40, f'R: the headline is still the huge element on a phone ({big[0]})')
+    cols = pg.evaluate(CONTROLS_JS)
+    check(all(c[3] >= 240 and c[4] >= 44 for c in cols), f'R: at 390px every field is wide and at least 44px tall ({[(c[0], c[3], c[4]) for c in cols]})')
+    check(len({c[3] for c in cols}) == 1, f'R: the form is one column at 390px ({sorted({c[3] for c in cols})})')
+    check(m['submit']['l'] >= 0 and m['submit']['r'] <= 390 and m['submit']['h'] >= 44, f'R: the submit pill fits ({m["submit"]})')
+    cards = pg.evaluate("""() => [...document.querySelectorAll('main li, main article, #windermere .eb-card')].filter(e => { const b = e.getBoundingClientRect(); return b.left < 0 || b.right > 390 }).length""")
+    check(cards == 0, f'R: every card fits a phone ({cards} overflow)')
+    audit(pg, 'body', 'R owners page (phone)')
+    # the menu, from the homepage, and the homepage block
+    pg.goto(BASE + '/', wait_until='networkidle'); pg.wait_for_timeout(300)
+    check(not pg.is_visible('#site-nav a[href="/owners/"]'), 'R: the menu is closed until it is opened')
+    pg.click('#nav-toggle')
+    check(pg.is_visible('#site-nav a[href="/owners/"]'), 'R: the open phone menu shows "For owners"')
+    pg.click('#site-nav a[href="/owners/"]'); pg.wait_for_url(BASE + '/owners/')
+    check(pg.title() == OWNERS_TITLE, 'R: the phone menu link navigates to /owners/')
+    pg.goto(BASE + '/', wait_until='networkidle'); pg.wait_for_timeout(300)
+    r = pg.evaluate("""() => { const b = document.querySelector('#owners-heading').getBoundingClientRect(), p = document.querySelector('#owners a.eb-btn').getBoundingClientRect();
+        return { hl: b.left, hr: b.right, pl: p.left, pr: p.right, ph: p.height, scroll: document.documentElement.scrollWidth <= window.innerWidth } }""")
+    check(r['hl'] >= 0 and r['hr'] <= 390 and r['pl'] >= 0 and r['pr'] <= 390 and 44 <= r['ph'] < 80 and r['scroll'], f'R: the homepage owners block fits a phone ({r})')
+    pg.locator('#owners a.eb-btn').click(); pg.wait_for_url(BASE + '/owners/')
+    check(pg.title() == OWNERS_TITLE, 'R: the phone CTA navigates to /owners/')
+    s.ctx.close()
+
+
 # ---------------------------------------------------------------- the test
+
+def main_owners():
+    """`python3 tools/test_listings.py owners`: just part R, with the same zero-errors rule as the full run."""
+    from playwright.sync_api import sync_playwright
+
+    os.chdir(ROOT)
+    socketserver.TCPServer.allow_reuse_address = True
+    httpd = socketserver.TCPServer(('127.0.0.1', PORT), Quiet)
+    threading.Thread(target=httpd.serve_forever, daemon=True).start()
+    sessions = []
+    with sync_playwright() as p:
+        browser = launch(p)
+        part4(browser, sessions)
+        browser.close()
+    for s in sessions:
+        check(not s.errors, f'{s.tag}: page/console errors: {s.errors[:3]}')
+        if s.bad_local is not None:
+            check(not s.bad_local, f'{s.tag}: local requests failed: {s.bad_local[:3]}')
+    if failures:
+        print(f'FAIL: {len(failures)} failure(s), {passed} checks passed')
+        for f in failures: print('  -', f)
+        sys.exit(1)
+    print(f'OK: owners section E2E (part R only) — {passed} checks passed')
+
 
 def main():
     from playwright.sync_api import sync_playwright
 
+    if sys.argv[1:] == ['owners']:
+        return main_owners()
     os.chdir(ROOT)
     ThreadingServer.allow_reuse_address = True
     httpd = ThreadingServer(('127.0.0.1', PORT), Quiet)
@@ -1557,6 +1909,7 @@ def main():
 
         part2(browser, sessions)
         part3(browser, sessions)
+        part4(browser, sessions)
 
         browser.close()
 
@@ -1573,7 +1926,7 @@ def main():
     print(f'OK: listings E2E — {passed} checks passed (A cards, B type, C beds, D price, E map, F URL state, '
           f'G flat brand, H mobile, I synthetic feed, J details, K no map; '
           f'L static page, M inquiry form, N fallback, O structured data, P flat brand + mobile; '
-          f'Q accessibility sweep)')
+          f'Q accessibility sweep; R owners section)')
 
 
 if __name__ == '__main__':

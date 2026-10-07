@@ -10,6 +10,7 @@ module.exports = {
     './index.html', './lease/index.html', './lease/builder.html', './js/lease-builder.js',
     './listings/**/*.html',
     './buildings/**/*.html',
+    './owners/**/*.html',
     './listing.html',
     './404.html',
     './js/listings.js',

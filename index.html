@@ -122,10 +122,11 @@
     </button>
 
     <nav id="site-nav" aria-label="Main"
-         class="absolute left-0 right-0 top-full hidden flex-col items-start gap-1 whitespace-nowrap border-b border-eb-berry bg-eb-cream py-5 pl-4 pr-6 lg:static lg:flex lg:flex-row lg:items-center lg:gap-2 lg:border-0 lg:bg-transparent lg:p-0">
-      <a href="/listings/?type=residential" class="rounded-[4px] px-2 py-1 hover:bg-eb-berry hover:text-eb-cream">Homes</a>
-      <a href="/listings/?type=commercial" class="rounded-[4px] px-2 py-1 hover:bg-eb-berry hover:text-eb-cream">Commercial</a>
-      <a href="/buildings/courthouse-square/" class="rounded-[4px] px-2 py-1 hover:bg-eb-berry hover:text-eb-cream">Courthouse Square</a>
+         class="absolute left-0 right-0 top-full hidden flex-col items-start gap-1 whitespace-nowrap border-b border-eb-berry bg-eb-cream py-5 pl-4 pr-6 lg:static lg:flex lg:flex-row lg:items-center lg:gap-1 lg:border-0 lg:bg-transparent lg:p-0 lg:text-base xl:gap-2 xl:text-lg">
+      <a href="/listings/?type=residential" class="rounded-[4px] px-2 py-1 hover:bg-eb-berry hover:text-eb-cream lg:px-1.5 xl:px-2">Homes</a>
+      <a href="/listings/?type=commercial" class="rounded-[4px] px-2 py-1 hover:bg-eb-berry hover:text-eb-cream lg:px-1.5 xl:px-2">Commercial</a>
+      <a href="/buildings/courthouse-square/" class="rounded-[4px] px-2 py-1 hover:bg-eb-berry hover:text-eb-cream lg:px-1.5 xl:px-2">Courthouse Square</a>
+      <a href="/owners/" class="rounded-[4px] px-2 py-1 hover:bg-eb-berry hover:text-eb-cream lg:px-1.5 xl:px-2">For owners</a>
       <a href="/#inquire" class="eb-btn ml-2 mt-3 text-base lg:ml-3 lg:mt-0">Inquire</a>
     </nav>
   </div>
@@ -235,7 +236,30 @@
 </section>
 
 <!-- ============================================================
-     5. ABOUT — the canonical short bio, set large, with highlighted roles
+     5. FOR OWNERS — Mustard (the Property Management role color) carrying one Cream card.
+     A statement, a sentence or two, and one pill to /owners/. Contact-first: no fees or rates here either.
+============================================================ -->
+<section id="owners" class="eb-field-mustard" aria-labelledby="owners-heading">
+  <div class="mx-auto max-w-[1440px] p-[clamp(1.5rem,4vw,3.5rem)]">
+    <div class="eb-card flex flex-col gap-10 md:min-h-[24rem] md:gap-12">
+      <div class="flex items-start justify-between gap-6">
+        <p class="font-sans text-xs font-medium uppercase tracking-widest">For property owners</p>
+        <!-- Monogram seal, anchored top-right (style guide 4.4 corner anchoring). -->
+        <img src="/images/brand/monogram-tangerine-bare.svg" alt="" aria-hidden="true" class="h-14 w-auto shrink-0 sm:h-16" />
+      </div>
+
+      <div>
+        <h2 id="owners-heading" class="max-w-[18ch] text-balance font-serif text-[length:clamp(2.25rem,4.5vw,3.5rem)] font-medium leading-[1.05] tracking-[-0.01em]">Own a place on Vashon? I'd love to <span class="eb-hl eb-hl-mustard">look after it.</span></h2>
+        <p class="mt-6 max-w-[34rem]">I manage Courthouse Square and homes around the island, as part of Windermere Vashon. If you have a place that could use a steady, friendly hand, tell me about it.</p>
+      </div>
+
+      <p class="mt-auto"><a href="/owners/" class="eb-btn px-6 py-3 text-lg sm:px-8">Tell me about your place</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     6. ABOUT — the canonical short bio, set large, with highlighted roles
 ============================================================ -->
 <section class="bg-eb-cream" aria-label="About Elijah">
   <div class="mx-auto max-w-[1440px] px-[var(--eb-space-margin)] py-[max(4.5rem,calc(var(--eb-space-margin)*1.25))]">
@@ -253,7 +277,7 @@
 </section>
 
 <!-- ============================================================
-     6. INQUIRY FORM — Netlify Forms (statically declared so Netlify detects it).
+     7. INQUIRY FORM — Netlify Forms (statically declared so Netlify detects it).
      id="inquire" is deep-linked from the lease pages (/#inquire).
 ============================================================ -->
 <section id="inquire" class="bg-eb-berry text-eb-cream" aria-labelledby="inquire-heading">
@@ -336,6 +360,7 @@
         <ul class="flex flex-wrap gap-x-7 gap-y-2 text-base">
           <li><a href="/listings/" class="underline underline-offset-4 hover:decoration-eb-tangerine hover:decoration-2">Listings</a></li>
           <li><a href="/buildings/courthouse-square/" class="underline underline-offset-4 hover:decoration-eb-tangerine hover:decoration-2">Courthouse Square</a></li>
+          <li><a href="/owners/" class="underline underline-offset-4 hover:decoration-eb-tangerine hover:decoration-2">For owners</a></li>
           <li><a href="https://courthousesquarevashon.com/lease/" class="underline underline-offset-4 hover:decoration-eb-tangerine hover:decoration-2">Lease documents</a></li>
           <li><a href="mailto:me@ebberry.com" class="underline underline-offset-4 hover:decoration-eb-tangerine hover:decoration-2">Email</a></li>
         </ul>
