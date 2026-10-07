@@ -25,6 +25,9 @@
   const ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
   const ISLAND = [47.4200, -122.4600];     // all of Vashon Island at zoom 11
   const ISLAND_ZOOM = 11;
+  // Hard pan limit: Vashon + Maury with a little water around them. The map
+  // is about the island; nobody needs to scroll to Tacoma.
+  const ISLAND_BOUNDS = [[47.28, -122.62], [47.57, -122.30]];
   const PIN_W = 34, PIN_H = 44;
 
   // ---- helpers (duplicated from index.html / js/building.js / js/listings.js on purpose: those pages
@@ -118,7 +121,9 @@
     const map = L.map(el, {
       center: ISLAND,
       zoom: ISLAND_ZOOM,
-      minZoom: 9,
+      maxBounds: ISLAND_BOUNDS,
+      maxBoundsViscosity: 1.0,        // bounce-free hard edge
+      minZoom: 11,
       maxZoom: 18,
       scrollWheelZoom: false,          // the page scrolls; the wheel only zooms once the map is clicked or focused
       zoomAnimation: !calm,
