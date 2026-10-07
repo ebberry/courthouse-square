@@ -6,7 +6,19 @@
 // see "Rebuilding the stylesheet" in README.md. Rebuild whenever you add a
 // Tailwind class that isn't already used somewhere in the two HTML files.
 module.exports = {
-  content: ['./index.html', './lease/index.html', './lease/builder.html', './js/lease-builder.js'],
+  content: [
+    './index.html', './lease/index.html', './lease/builder.html', './js/lease-builder.js',
+    './listings/**/*.html',
+    './buildings/**/*.html',
+    './owners/**/*.html',
+    './listing.html',
+    './404.html',
+    './js/listings.js',
+    './js/listing-detail.js',
+    './js/building.js',
+    './js/eb-map.js',
+    './tools/templates/*.html'
+  ],
   theme: {
     extend: {
       colors: {
@@ -37,11 +49,27 @@ module.exports = {
           400: '#d98a52',
           500: '#b4521f',
           600: '#9a4419'
+        },
+        // E. Berry brand palette (style guide section 4.1). Namespaced under
+        // `eb` so it never collides with the lease pages' evergreen/sand/rust.
+        eb: {
+          berry:     '#670A2F',
+          cream:     '#F1ECE9',
+          tangerine: '#F36E30',
+          sky:       '#8DC8E8',
+          mustard:   '#E8C450',
+          sage:      '#98B286',
+          sand:      '#F1DDB7'
         }
+      },
+      borderRadius: {
+        card: '24px'
       },
       fontFamily: {
         sans:  ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        serif: ['Fraunces', 'ui-serif', 'Georgia', 'serif']
+        serif: ['Fraunces', 'ui-serif', 'Georgia', 'serif'],
+        // Wordmark-scale display moments only (E. Berry style guide 4.3).
+        display: ['Anton', 'Impact', 'sans-serif']
       }
     }
   }

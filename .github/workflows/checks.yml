@@ -19,3 +19,5 @@ jobs:
           python-version: '3.12'
       - run: pip install pypdf
       - run: python3 tools/check_site.py
+      # Generated building pages and sitemap.xml must match what tools/build_pages.py produces.
+      - run: python3 tools/build_pages.py --check

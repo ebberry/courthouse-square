@@ -1,0 +1,175 @@
+{
+  "version": 8,
+  "name": "E. Berry Vashon",
+  "metadata": {
+    "eberry:about": "Flat brand basemap for the Protomaps tile schema. No raster, no hillshade, no symbol layers: place names are HTML overlays in js/eb-map.js, so the style needs no font or icon files and has nothing to fetch but the tiles.",
+    "eberry:schema": "Source layers and filters follow @protomaps/basemaps 5.7.2 (earth, landuse, water, roads, buildings).",
+    "eberry:palette": "Berry #670A2F, Cream #F1ECE9, Sage #98B286, Sand #F1DDB7, Sky #8DC8E8; tints: water #A7C8D8, greenspace #CBD5BE, minor roads #DCCFC8"
+  },
+  "transition": { "duration": 0, "delay": 0 },
+  "sources": {
+    "vashon": {
+      "type": "vector",
+      "url": "pmtiles:///map/vashon.pmtiles"
+    }
+  },
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "paint": { "background-color": "#F1ECE9" }
+    },
+    {
+      "id": "earth",
+      "type": "fill",
+      "source": "vashon",
+      "source-layer": "earth",
+      "filter": ["==", "$type", "Polygon"],
+      "paint": { "fill-color": "#F1ECE9" }
+    },
+    {
+      "id": "landuse_park",
+      "type": "fill",
+      "source": "vashon",
+      "source-layer": "landuse",
+      "filter": ["in", "kind", "national_park", "park", "cemetery", "protected_area", "nature_reserve", "forest", "golf_course", "wood", "scrub", "grassland", "grass"],
+      "paint": { "fill-color": "#CBD5BE" }
+    },
+    {
+      "id": "landuse_urban_green",
+      "type": "fill",
+      "source": "vashon",
+      "source-layer": "landuse",
+      "filter": ["in", "kind", "allotments", "village_green", "playground"],
+      "paint": { "fill-color": "#CBD5BE" }
+    },
+    {
+      "id": "landuse_beach",
+      "type": "fill",
+      "source": "vashon",
+      "source-layer": "landuse",
+      "filter": ["in", "kind", "beach", "sand"],
+      "paint": { "fill-color": "#F1DDB7" }
+    },
+    {
+      "id": "water",
+      "type": "fill",
+      "source": "vashon",
+      "source-layer": "water",
+      "filter": ["==", "$type", "Polygon"],
+      "paint": { "fill-color": "#A7C8D8" }
+    },
+    {
+      "id": "water_stream",
+      "type": "line",
+      "source": "vashon",
+      "source-layer": "water",
+      "minzoom": 14,
+      "filter": ["in", "kind", "stream"],
+      "paint": { "line-color": "#A7C8D8", "line-width": 1 }
+    },
+    {
+      "id": "water_river",
+      "type": "line",
+      "source": "vashon",
+      "source-layer": "water",
+      "minzoom": 9,
+      "filter": ["in", "kind", "river"],
+      "paint": {
+        "line-color": "#A7C8D8",
+        "line-width": ["interpolate", ["exponential", 1.6], ["zoom"], 9, 0, 9.5, 1, 18, 12]
+      }
+    },
+    {
+      "id": "landuse_pier",
+      "type": "fill",
+      "source": "vashon",
+      "source-layer": "landuse",
+      "filter": ["==", "kind", "pier"],
+      "paint": { "fill-color": "#DCCFC8" }
+    },
+    {
+      "id": "buildings",
+      "type": "fill",
+      "source": "vashon",
+      "source-layer": "buildings",
+      "minzoom": 14,
+      "filter": ["in", "kind", "building", "building_part"],
+      "paint": { "fill-color": "#DCCFC8" }
+    },
+    {
+      "id": "roads_pier",
+      "type": "line",
+      "source": "vashon",
+      "source-layer": "roads",
+      "filter": ["==", "kind_detail", "pier"],
+      "paint": {
+        "line-color": "#DCCFC8",
+        "line-width": ["interpolate", ["exponential", 1.6], ["zoom"], 12, 0, 12.5, 0.5, 20, 16]
+      }
+    },
+    {
+      "id": "roads_minor_service",
+      "type": "line",
+      "source": "vashon",
+      "source-layer": "roads",
+      "minzoom": 13,
+      "filter": ["all", ["==", "kind", "minor_road"], ["==", "kind_detail", "service"]],
+      "layout": { "line-cap": "round", "line-join": "round" },
+      "paint": {
+        "line-color": "#DCCFC8",
+        "line-width": ["interpolate", ["exponential", 1.6], ["zoom"], 13, 0, 15, 0.8, 18, 5]
+      }
+    },
+    {
+      "id": "roads_minor",
+      "type": "line",
+      "source": "vashon",
+      "source-layer": "roads",
+      "filter": ["all", ["==", "kind", "minor_road"], ["!=", "kind_detail", "service"]],
+      "layout": { "line-cap": "round", "line-join": "round" },
+      "paint": {
+        "line-color": "#DCCFC8",
+        "line-width": ["interpolate", ["exponential", 1.6], ["zoom"], 11, 0, 12.5, 0.6, 15, 1.6, 18, 8]
+      }
+    },
+    {
+      "id": "roads_major",
+      "type": "line",
+      "source": "vashon",
+      "source-layer": "roads",
+      "filter": ["==", "kind", "major_road"],
+      "layout": { "line-cap": "round", "line-join": "round" },
+      "paint": {
+        "line-color": "#670A2F",
+        "line-width": ["interpolate", ["exponential", 1.6], ["zoom"], 10, 0.5, 12, 1.1, 15, 2.2, 18, 9]
+      }
+    },
+    {
+      "id": "roads_highway",
+      "type": "line",
+      "source": "vashon",
+      "source-layer": "roads",
+      "filter": ["all", ["==", "kind", "highway"], ["!has", "is_link"]],
+      "layout": { "line-cap": "round", "line-join": "round" },
+      "paint": {
+        "line-color": "#670A2F",
+        "line-width": ["interpolate", ["exponential", 1.6], ["zoom"], 10, 0.6, 12, 1.3, 15, 3.5, 18, 11]
+      }
+    },
+    {
+      "id": "roads_ferry",
+      "type": "line",
+      "source": "vashon",
+      "source-layer": "roads",
+      "filter": ["any", ["==", "kind", "ferry"], ["==", "kind_detail", "ferry"]],
+      "layout": { "line-join": "round" },
+      "paint": {
+        "line-color": "#670A2F",
+        "line-opacity": 0.4,
+        "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1, 16, 2],
+        "line-dasharray": [3, 2]
+      }
+    }
+  ]
+}

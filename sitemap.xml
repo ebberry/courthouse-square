@@ -1,9 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://courthousesquarevashon.com/</loc>
+    <loc>https://eberryvashon.com/</loc>
+    <lastmod>2026-10-04</lastmod>
   </url>
   <url>
-    <loc>https://courthousesquarevashon.com/lease/</loc>
+    <loc>https://eberryvashon.com/listings/</loc>
+    <lastmod>2026-10-04</lastmod>
+  </url>
+  <url>
+    <loc>https://eberryvashon.com/owners/</loc>
+    <lastmod>2026-10-04</lastmod>
+  </url>
+  <url>
+    <loc>https://eberryvashon.com/listings/chs-n101/</loc>
+    <lastmod>2026-10-04</lastmod>
+  </url>
+  <url>
+    <loc>https://eberryvashon.com/listings/chs-n102/</loc>
+    <lastmod>2026-10-04</lastmod>
+  </url>
+  <url>
+    <loc>https://eberryvashon.com/listings/chs-n103/</loc>
+    <lastmod>2026-10-04</lastmod>
+  </url>
+  <url>
+    <loc>https://eberryvashon.com/listings/chs-n108/</loc>
+    <lastmod>2026-10-04</lastmod>
+  </url>
+  <url>
+    <loc>https://eberryvashon.com/listings/chs-n110/</loc>
+    <lastmod>2026-10-04</lastmod>
+  </url>
+  <url>
+    <loc>https://eberryvashon.com/listings/chs-n203/</loc>
+    <lastmod>2026-10-04</lastmod>
+  </url>
+  <url>
+    <loc>https://eberryvashon.com/listings/chs-n204/</loc>
+    <lastmod>2026-10-04</lastmod>
+  </url>
+  <url>
+    <loc>https://eberryvashon.com/listings/chs-n206/</loc>
+    <lastmod>2026-10-04</lastmod>
+  </url>
+  <url>
+    <loc>https://eberryvashon.com/buildings/courthouse-square/</loc>
+    <lastmod>2026-10-04</lastmod>
   </url>
 </urlset>

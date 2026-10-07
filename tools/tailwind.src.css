@@ -3,3 +3,84 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ── E. Berry design tokens (style-guide repo, verbatim) ── */
+/* E. Berry design tokens — extracted from E_Berry_BrandStrat_V2.pdf */
+:root {
+  /* Core palette */
+  --eb-berry:     #670A2F;  /* primary: backgrounds, wordmark, body text on cream */
+  --eb-cream:     #F1ECE9;  /* primary neutral: cards, paper, text on berry */
+  --eb-tangerine: #F36E30;  /* accent: monogram, links, umbrella brand */
+  --eb-sky:       #8DC8E8;  /* role: hospitality consulting / the inn */
+  --eb-mustard:   #E8C450;  /* role: property management */
+  --eb-sage:      #98B286;  /* role: community steward / volunteering */
+  --eb-sand:      #F1DDB7;  /* tertiary soft tile */
+
+  /* Semantic */
+  --eb-bg:            var(--eb-cream);
+  --eb-surface:       var(--eb-cream);
+  --eb-surface-inv:   var(--eb-berry);
+  --eb-text:          var(--eb-berry);
+  --eb-text-inv:      var(--eb-cream);
+  --eb-accent:        var(--eb-tangerine);
+  --eb-link:          var(--eb-tangerine);
+  --eb-link-hover:    var(--eb-berry);
+
+  /* Type */
+  --eb-font-display: "Anton", "Big Shoulders Display", "Bebas Neue", Impact, sans-serif;           /* wordmark-scale only */
+  --eb-font-serif:   "Fraunces", "Source Serif 4", "Newsreader", Georgia, "Times New Roman", serif; /* body, taglines, quotes */
+  --eb-font-condensed: "Roboto Condensed", "Barlow Condensed", "Arial Narrow", sans-serif;          /* names, small condensed labels */
+
+  --eb-body-size: 1.125rem;   /* 18px */
+  --eb-body-lh:   1.4;
+  --eb-h1-size:   clamp(2.5rem, 6vw, 4.5rem);
+  --eb-h2-size:   clamp(1.75rem, 3.5vw, 2.5rem);
+  --eb-caps-tracking: 0.08em;
+
+  /* Shape and space */
+  --eb-radius-card:  24px;   /* cream card on color field */
+  --eb-radius-badge: 999px;  /* pills */
+  --eb-radius-tag:   4px;    /* highlighted-word blocks */
+  --eb-space-margin: clamp(24px, 6vw, 96px);  /* outer page margin */
+  --eb-space-card:   clamp(20px, 5vw, 64px);  /* inner card padding */
+
+  /* Never: gradients, drop shadows on flat art, pure white, pure black */
+}
+
+/* Utility classes */
+.eb-field-berry     { background: var(--eb-berry);     color: var(--eb-cream); }
+.eb-field-tangerine { background: var(--eb-tangerine); color: var(--eb-berry); }
+.eb-field-sky       { background: var(--eb-sky);       color: var(--eb-berry); }
+.eb-field-mustard   { background: var(--eb-mustard);   color: var(--eb-berry); }
+.eb-field-sage      { background: var(--eb-sage);      color: var(--eb-berry); }
+.eb-field-sand      { background: var(--eb-sand);      color: var(--eb-berry); }  /* building pages: any buildings.json fieldColor */
+
+.eb-card {
+  background: var(--eb-cream);
+  color: var(--eb-berry);
+  border-radius: var(--eb-radius-card);
+  padding: var(--eb-space-card);
+}
+
+.eb-serif   { font-family: var(--eb-font-serif); }
+.eb-display { font-family: var(--eb-font-display); text-transform: uppercase; letter-spacing: -0.01em; line-height: 0.9; }
+.eb-caps    { font-size: 0.75rem; text-transform: uppercase; letter-spacing: var(--eb-caps-tracking); }
+
+/* Signature highlighted-word device */
+.eb-hl           { padding: 0 0.15em; border-radius: var(--eb-radius-tag); color: var(--eb-berry); }
+.eb-hl-tangerine { background: var(--eb-tangerine); }
+.eb-hl-sky       { background: var(--eb-sky); }
+.eb-hl-mustard   { background: var(--eb-mustard); }
+.eb-hl-sage      { background: var(--eb-sage); }
+
+.eb-btn {
+  display: inline-block; font-family: var(--eb-font-serif);
+  background: var(--eb-tangerine); color: var(--eb-berry);
+  border: 2px solid var(--eb-tangerine); border-radius: var(--eb-radius-badge);
+  padding: 0.6em 1.4em; text-decoration: none;
+}
+.eb-btn:hover, .eb-btn:focus-visible { background: var(--eb-berry); border-color: var(--eb-berry); color: var(--eb-cream); }
+.eb-btn--secondary { background: transparent; border-color: var(--eb-berry); color: var(--eb-berry); }
+
+a.eb-link { color: var(--eb-link); text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
+a.eb-link:hover { color: var(--eb-link-hover); }
