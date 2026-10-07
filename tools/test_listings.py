@@ -777,6 +777,7 @@ CONTRAST_JS = r"""
   };
   document.querySelectorAll('body *').forEach(el => {
     if (el instanceof SVGElement || ['SCRIPT', 'STYLE', 'NOSCRIPT', 'OPTION', 'IMG'].includes(el.tagName) || !shown(el)) return;
+    if (el.closest('.leaflet-disabled, [aria-disabled="true"]')) return;     // disabled controls are exempt (WCAG 1.4.3/1.4.11), e.g. Leaflet's zoom-out at minZoom
     if (el.matches('input, select, textarea')) {
       if (el.type === 'hidden' || el.disabled) return;                       // inactive controls are exempt
       judge(el, describe(el) + ' (value)', measure(el));
