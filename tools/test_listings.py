@@ -1,26 +1,30 @@
 #!/usr/bin/env python3
 """End-to-end test for the listings index (/listings/).
 
-Drives the real page in headless Chromium, with the network sealed: OpenStreetMap tiles and Google Fonts
-are answered locally, so the test is the same on a laptop, in CI and behind a proxy that blocks both.
+Drives the real page in headless Chromium, with the network sealed: Google Fonts are answered locally and the map
+runs the REAL vendored MapLibre GL + PMTiles against the committed map/vashon.pmtiles, served by the local server
+below (with HTTP Range support, which PMTiles needs), so the test is the same on a laptop, in CI and behind a proxy.
 
   A. Cards          — /listings/ renders one card per feed entry and the count line agrees
   B. Type           — ?type=commercial preselects Commercial; ?type=residential shows the residential empty state;
                       the homepage's header links land on the right filter
   C. Beds           — the beds select is disabled (and muted) while Commercial is active
   D. Price          — price max filters to exactly the subset computed from data/listings.json
-  E. Map            — one marker for the one shared coordinate; its popup lists every listing; markers follow filters
+  E. Map            — the basemap really draws (PMTiles over Range requests, brand colors on the canvas); one pin for the
+                      one shared coordinate; its popup lists every listing; pins follow filters; panning is locked to the
+                      island; place names; attribution
   F. URL state      — filters round-trip through location.search; bad params are ignored; Clear resets
   G. Flat brand     — computed-style audit (no shadows, gradients, pure white/black) on the bar, a card and the map
   H. Mobile         — at 390px the Map / List pill swaps the panes; the map is built lazily; no sideways scroll
   I. Synthetic feed — homes, a future date, a null coordinate: beds semantics, muted pin, no marker without coords
   J. Details        — sticky bar and map, whole-card focus ring, empty/over-filtered/failed-feed states, zero page errors
-  K. No Leaflet     — if the map library fails to load, the page is still a working filterable list
+  K. No map         — if the map library fails to load, the page is still a working filterable list; if only the basemap
+                      fails, the Cream map, pins, names and popups still work, with no page errors
 
 Part 2 drives the listing detail pages (/listings/<id>/, generated) and their client-side fallback (/listing.html):
 
   L. Static page    — a card click on /listings/ lands on /listings/chs-n101/; rent, facts, features, gallery
-                      placeholder, location map and the no-JS / no-Leaflet cases, all computed from data/listings.json;
+                      placeholder, location map and the no-JS / no-MapLibre cases, all computed from data/listings.json;
                       the page never loads the fallback script or the feed
   M. Inquiry form   — form name, hidden form-name / listing / building, honeypot, and the POST body a submission sends
   N. Fallback       — /listing.html?id=<id>, /listings/<id>/ through a simulated Netlify rewrite, unknown ids, a feed-only
@@ -42,7 +46,7 @@ Requirements: pip install playwright; playwright install chromium (or set CHROME
 Run: python3 tools/test_listings.py
 """
 
-import base64, copy, datetime, glob, http.server, json, os, re, socketserver, sys, threading
+import base64, copy, datetime, glob, http.server, io, json, os, re, socketserver, sys, threading
 from urllib.parse import parse_qs, urlsplit
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -51,9 +55,8 @@ BASE = f'http://127.0.0.1:{PORT}'
 failures = []
 passed = 0
 
-# A 1x1 PNG: stands in for every OpenStreetMap tile.
+# A 1x1 PNG: stands in for the gallery photos that are not in the repo yet.
 TILE_PNG = base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==')
-TILE_RE = re.compile(r'^https://tile\.openstreetmap\.org/\d+/\d+/\d+\.png$')
 
 
 def check(ok, msg):
@@ -96,6 +99,11 @@ def groups(listings):
 # ---------------------------------------------------------------- harness
 
 class Quiet(http.server.SimpleHTTPRequestHandler):
+    """The site as Netlify serves it: static files, the /listings/* rewrite, and single-range requests (bytes=a-b),
+    which PMTiles needs to read map/vashon.pmtiles. Netlify does Range natively; SimpleHTTPRequestHandler does not."""
+    support_range = True        # tools/test_listings.py is also the proof that the map section FAILS without this
+    range_log = []              # (status, Range header or None) for every request of map/vashon.pmtiles
+
     def log_message(self, *a):
         pass
 
@@ -107,27 +115,69 @@ class Quiet(http.server.SimpleHTTPRequestHandler):
             return os.path.join(ROOT, 'listing.html')
         return real
 
+    def end_headers(self):
+        if self.support_range:
+            self.send_header('Accept-Ranges', 'bytes')
+        super().end_headers()
+
+    def send_head(self):
+        path = self.translate_path(self.path)
+        is_archive = urlsplit(self.path).path == '/map/vashon.pmtiles'
+        rng = self.headers.get('Range') if self.support_range else None
+        m = re.fullmatch(r'bytes=(\d+)-(\d*)', rng or '')
+        if not (m and os.path.isfile(path)):
+            f = super().send_head()
+            if is_archive:
+                Quiet.range_log.append((200 if f else 404, self.headers.get('Range')))
+            return f
+        size = os.path.getsize(path)
+        start = int(m.group(1))
+        end = min(int(m.group(2)) if m.group(2) else size - 1, size - 1)
+        if start >= size or end < start:
+            self.send_response(416)
+            self.send_header('Content-Range', f'bytes */{size}')
+            self.send_header('Content-Length', '0')
+            self.end_headers()
+            if is_archive:
+                Quiet.range_log.append((416, rng))
+            return None
+        with open(path, 'rb') as fh:
+            fh.seek(start)
+            data = fh.read(end - start + 1)
+        self.send_response(206)
+        self.send_header('Content-Type', self.guess_type(path))
+        self.send_header('Content-Range', f'bytes {start}-{end}/{size}')
+        self.send_header('Content-Length', str(len(data)))
+        self.end_headers()
+        if is_archive:
+            Quiet.range_log.append((206, rng))
+        return io.BytesIO(data)
+
+
+class ThreadingServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    daemon_threads = True       # MapLibre asks for several ranges at once
+
 
 def launch(p):
     chrome = os.environ.get('CHROME')
     candidates = [chrome] + sorted(glob.glob('/opt/pw-browsers/chromium-*/chrome-linux/chrome'))
+    # MapLibre needs WebGL; headless Chromium draws it in software (SwiftShader), which newer builds only allow when asked.
+    args = ['--no-sandbox', '--enable-unsafe-swiftshader']
     for c in candidates:
         if c and os.path.exists(c):
-            return p.chromium.launch(executable_path=c, args=['--no-sandbox'])
-    return p.chromium.launch(args=['--no-sandbox'])   # playwright-managed browser (CI)
+            return p.chromium.launch(executable_path=c, args=args)
+    return p.chromium.launch(args=args)   # playwright-managed browser (CI)
 
 
 class Session:
-    """One browser context with the network sealed and every problem recorded."""
+    """One browser context with the network sealed (only fonts are answered locally) and every problem recorded."""
 
     def __init__(self, browser, tag, feed=None, feed_status=200, **ctx_kw):
         self.tag = tag
         self.errors = []        # page errors and console errors
         self.bad_local = []     # local requests answered 4xx/5xx
-        self.tiles = []         # tile URLs requested
         self.requests = []      # every URL the page asked for
         self.ctx = browser.new_context(**ctx_kw)
-        self.ctx.route(re.compile(r'^https://tile\.openstreetmap\.org/'), self._tile)
         self.ctx.route(re.compile(r'^https://fonts\.googleapis\.com/'),
                        lambda r: r.fulfill(status=200, content_type='text/css', body=''))
         self.ctx.route(re.compile(r'^https://fonts\.gstatic\.com/'), lambda r: r.abort())
@@ -143,10 +193,6 @@ class Session:
         self.pg.on('console', self._console)
         self.pg.on('response', self._response)
         self.pg.on('request', lambda r: self.requests.append(r.url))
-
-    def _tile(self, route):
-        self.tiles.append(route.request.url)
-        route.fulfill(status=200, content_type='image/png', body=TILE_PNG)
 
     def _console(self, m):
         if m.type == 'error':
@@ -193,8 +239,46 @@ def pressed(pg):
                                    'els => Object.fromEntries(els.map(e => [e.dataset.type, e.getAttribute("aria-pressed")]))')
 
 
+# The MapLibre instance that draws `sel` (js/eb-map.js keeps every map it makes on EBMap.maps).
+MAP_JS = "(sel) => { const el = document.querySelector(sel); return el && (window.EBMap.maps || []).find(m => m.getContainer() === el); }"
+
+# True once the PMTiles source has loaded and MapLibre has drawn features from it (the earth and water of the archive).
+MAP_DRAWN_JS = ("(sel) => { const m = (" + MAP_JS + ")(sel);"
+                " return !!(m && m.loaded() && m.isSourceLoaded('vashon') && m.queryRenderedFeatures({layers: ['earth', 'water']}).length > 0); }")
+
+# Colors actually on the WebGL canvas: read the pixels right after a render (no preserveDrawingBuffer needed), on a grid.
+PIXELS_JS = r"""(sel) => new Promise(resolve => {
+  const m = (%s)(sel);
+  m.once('render', () => {
+    const c = m.getCanvas(), gl = c.getContext('webgl2') || c.getContext('webgl');
+    const w = c.width, h = c.height, px = new Uint8Array(4), out = {};
+    for (let i = 1; i < 24; i++) for (let j = 1; j < 24; j++) {
+      gl.readPixels(Math.floor(w * i / 24), Math.floor(h * j / 24), 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px);
+      const k = px[0] + ',' + px[1] + ',' + px[2] + ',' + px[3];
+      out[k] = (out[k] || 0) + 1;
+    }
+    resolve(out);
+  });
+  m.triggerRepaint();
+})""" % MAP_JS
+
+
+def wait_map_drawn(pg, sel='#map', timeout=20000):
+    """Wait until the basemap has drawn; if it never does, record that as a failure (and carry on) instead of crashing."""
+    try:
+        pg.wait_for_function(MAP_DRAWN_JS, arg=sel, timeout=timeout)
+        return True
+    except Exception:
+        check(False, f'{sel}: the basemap never drew (the PMTiles source did not load, or MapLibre drew nothing from it)')
+        return False
+
+
+def close_to(rgb, want, tol=3):
+    return all(abs(a - b) <= tol for a, b in zip(rgb[:3], want))
+
+
 def popup_items(pg):
-    return pg.eval_on_selector_all('.leaflet-popup .eb-pop-item',
+    return pg.eval_on_selector_all('.maplibregl-popup .eb-pop-item',
                                    'els => els.map(e => ({href: e.querySelector("a").getAttribute("href"), rent: e.querySelector("span").textContent}))')
 
 
@@ -310,7 +394,7 @@ SIG_JS = r"""
     const attrs = KEEP.filter(a => el.hasAttribute(a)).map(a => {
       let v = el.getAttribute(a);
       if (a === 'class' && el.id === 'listing-map-wrap') v = v.split(/\s+/).filter(c => c !== 'hidden').join(' ');
-      if (a === 'class' && el.id === 'listing-map') return null;      // Leaflet adds its own classes
+      if (a === 'class' && el.id === 'listing-map') return null;      // MapLibre adds its own classes
       return a + '=' + v;
     }).filter(Boolean);
     if (el.id === 'listing-map') attrs.push(...[...el.attributes].filter(a => a.name.startsWith('data-')).map(a => a.name + '=' + a.value));
@@ -474,19 +558,25 @@ def part2(browser, sessions):
     later = s.requests[mark:]
     check(not any('listing-detail.js' in u or u.endswith('/data/listings.json') for u in later),
           f'L: the generated page must not load the fallback script or the feed ({[u for u in later if "listing-detail" in u or "listings.json" in u]})')
-    # the map: lazy, one marker, OSM tiles, attribution, no popup back to itself
-    check(pg.locator('.leaflet-container').count() == 0, 'L: the map is not built until it is near the screen')
+    # the map: lazy, one pin, the real basemap, attribution, no popup back to itself
+    check(pg.locator('.maplibregl-map').count() == 0, 'L: the map is not built until it is near the screen')
+    Quiet.range_log.clear()
     pg.locator('#listing-map').scroll_into_view_if_needed()
-    pg.wait_for_selector('#listing-map .leaflet-marker-icon', timeout=10000)
-    pg.wait_for_selector('#listing-map .leaflet-tile-loaded', timeout=10000)
-    check(pg.locator('#listing-map .leaflet-marker-icon').count() == 1, 'L: one marker on the single-listing map')
-    check(len(s.tiles) > 0 and all(TILE_RE.match(u) for u in s.tiles), f'L: tile requests {s.tiles[:2]}')
-    attr = ws(pg.text_content('#listing-map .leaflet-control-attribution'))
-    check('© OpenStreetMap contributors' in attr and pg.is_visible('#listing-map .leaflet-control-attribution'), f'L: attribution reads {attr!r}')
+    pg.wait_for_selector('#listing-map .eb-pin', timeout=10000)
+    wait_map_drawn(pg, '#listing-map')
+    check(pg.locator('#listing-map .eb-pin').count() == 1, 'L: one pin on the single-listing map')
+    check(any(st == 206 for st, _ in Quiet.range_log), f'L: this page read the archive with Range requests ({Quiet.range_log[:3]})')
+    zoom = pg.evaluate("(%s)('#listing-map').getZoom()" % MAP_JS)
+    check(zoom == 15.5, f'L: the single-listing map opens as close as the map goes, zoom 15.5 (got {zoom})')
+    attr = ws(pg.text_content('#listing-map .maplibregl-ctrl-attrib'))
+    check('© OpenStreetMap' in attr and 'Protomaps' in attr and pg.is_visible('#listing-map .maplibregl-ctrl-attrib'), f'L: attribution reads {attr!r}')
+    check(pg.get_attribute('#listing-map .maplibregl-ctrl-attrib a', 'href') == 'https://www.openstreetmap.org/copyright', 'L: attribution links to the OSM copyright page')
     check(pg.get_attribute('#listing-map', 'role') == 'region' and 'Suite N101' in (pg.get_attribute('#listing-map', 'aria-label') or ''),
           'L: map is a labelled region')
-    pg.locator('#listing-map .leaflet-marker-icon').click(); pg.wait_for_timeout(400)
-    check(pg.locator('.leaflet-popup').count() == 0, 'L: no popup that links back to the same page')
+    check(pg.get_attribute('#listing-map .eb-pin', 'role') == 'img' and pg.get_attribute('#listing-map .eb-pin', 'tabindex') is None,
+          'L: a pin with no popup is a plain picture, not a button')
+    pg.locator('#listing-map .eb-pin').click(); pg.wait_for_timeout(400)
+    check(pg.locator('.maplibregl-popup').count() == 0, 'L: no popup that links back to the same page')
     # the whole page works without JS: everything is in the HTML
     ctx_nojs = browser.new_context(java_script_enabled=False, viewport={'width': 1440, 'height': 900})
     ctx_nojs.route(re.compile(r'^https://fonts\.'), lambda r: r.abort())
@@ -506,12 +596,12 @@ def part2(browser, sessions):
         check(pg.title() == f"{L['title']} — {money(L['rent'])}/mo on Vashon — E. Berry Property Management", f'L {L["id"]}: title')
         s2.ctx.close()
 
-    # Leaflet will not load: the address and the OpenStreetMap link carry the location
-    s = Session(browser, 'L-noleaflet', viewport={'width': 1440, 'height': 900}); sessions.append(s)
-    s.ctx.route('**/js/vendor/leaflet.js', lambda r: r.abort())
+    # MapLibre will not load: the address and the OpenStreetMap link carry the location
+    s = Session(browser, 'L-nomap', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+    s.ctx.route('**/js/vendor/maplibre-gl.js', lambda r: r.abort())
     pg = s.open_detail('/listings/chs-n101/')
     check(not pg.is_visible('#listing-map-wrap') and pg.is_visible('#location address') and pg.is_visible('#location a[href^="https://www.openstreetmap.org/"]'),
-          'L: without Leaflet the map box stays hidden and the address + OpenStreetMap link stand')
+          'L: without MapLibre the map box stays hidden and the address + OpenStreetMap link stand')
     s.errors = [e for e in s.errors if 'Failed to load resource' not in e]
     s.ctx.close()
 
@@ -571,8 +661,10 @@ def part2(browser, sessions):
     check(pg.locator('script[type="application/ld+json"]').count() == 0, 'N: no structured data on the fallback')
     check('A PART OF WINDERMERE VASHON' in pg.inner_text('header'), 'N: the shell is there')
     pg.locator('#listing-map').scroll_into_view_if_needed()
-    pg.wait_for_selector('#listing-map .leaflet-marker-icon', timeout=10000)
-    check(pg.locator('#listing-map .leaflet-marker-icon').count() == 1, 'N: the fallback builds the same single-marker map')
+    pg.wait_for_selector('#listing-map .eb-pin', timeout=10000)
+    wait_map_drawn(pg, '#listing-map')
+    check(pg.locator('#listing-map .eb-pin').count() == 1, 'N: the fallback builds the same single-pin map')
+    check(pg.locator('#listing-map .eb-pin[role="img"]').count() == 1, 'N: and, like the generated page, its pin has no popup')
     # unknown id and no id: the brand's not-found page
     for path, label in (('/listing.html?id=bogus', '?id=bogus'), ('/listing.html', 'no id'), ('/listings/not-a-real-slug/', 'rewrite /listings/not-a-real-slug/')):
         pg = s.open_detail(path)
@@ -631,9 +723,10 @@ def part2(browser, sessions):
     ctx_pages['listings'] = synth
     ctx_pages['updated'] = UPDATED
     static_html = {L['id']: bp.render_listing_page(L, ctx_pages) for L in synth}
-    check('leaflet' not in static_html['test-studio'].lower() and 'listing-map' not in static_html['test-studio'],
-          'N: a page with no coordinates ships no map markup and no Leaflet')
-    check('leaflet.js' in static_html['test-cottage'] and 'leaflet.css' in static_html['test-cottage'], 'N: a page with coordinates loads Leaflet and its skin')
+    check('maplibre' not in static_html['test-studio'].lower() and 'pmtiles' not in static_html['test-studio'].lower()
+          and 'listing-map' not in static_html['test-studio'], 'N: a page with no coordinates ships no map markup and no MapLibre')
+    check('maplibre-gl.js' in static_html['test-cottage'] and 'pmtiles.js' in static_html['test-cottage'] and 'maplibre-gl.css' in static_html['test-cottage'],
+          'N: a page with coordinates loads MapLibre, PMTiles and the skin')
     sp = Session(browser, 'N-parity-static', viewport={'width': 1440, 'height': 900}); sessions.append(sp)
     sf = Session(browser, 'N-parity-fallback', feed=feed, viewport={'width': 1440, 'height': 900}); sessions.append(sf)
     def serve_static(route):
@@ -711,9 +804,10 @@ def part2(browser, sessions):
     check(r['left'] >= 0 and r['right'] <= 390 and r['h'] < 100, f'P: the rent fits on one line at 390px ({r})')
     mono = pg.evaluate(SIZES_JS)
     check(mono[0]['inRent'] and mono[0]['size'] >= 60, f'P: the rent is still the huge element on a phone ({mono[0]})')
-    check(pg.locator('.leaflet-container').count() == 0, 'P: the map is not built until it is near the screen on a phone')
+    check(pg.locator('.maplibregl-map').count() == 0, 'P: the map is not built until it is near the screen on a phone')
     pg.locator('#listing-map').scroll_into_view_if_needed()
-    pg.wait_for_selector('#listing-map .leaflet-marker-icon', timeout=10000)
+    pg.wait_for_selector('#listing-map .eb-pin', timeout=10000)
+    wait_map_drawn(pg, '#listing-map')
     mb = pg.locator('#listing-map').bounding_box()
     check(mb['width'] <= 390 and mb['height'] >= 300, f'P: the map fits a phone ({mb})')
     pg.click('#nav-toggle'); check(pg.is_visible('#site-nav'), 'P: the mobile menu opens on the detail page')
@@ -777,7 +871,7 @@ CONTRAST_JS = r"""
   };
   document.querySelectorAll('body *').forEach(el => {
     if (el instanceof SVGElement || ['SCRIPT', 'STYLE', 'NOSCRIPT', 'OPTION', 'IMG'].includes(el.tagName) || !shown(el)) return;
-    if (el.closest('.leaflet-disabled, [aria-disabled="true"]')) return;     // disabled controls are exempt (WCAG 1.4.3/1.4.11), e.g. Leaflet's zoom-out at minZoom
+    if (el.closest('button:disabled, [aria-disabled="true"]')) return;       // disabled controls are exempt (WCAG 1.4.3/1.4.11), e.g. the map's zoom-out at minZoom
     if (el.matches('input, select, textarea')) {
       if (el.type === 'hidden' || el.disabled) return;                       // inactive controls are exempt
       judge(el, describe(el) + ' (value)', measure(el));
@@ -810,7 +904,7 @@ FOCUS_JS = r"""
   const again = window.__tabbed.has(a);                                       // the Tab order has come full circle
   window.__tabbed.add(a);
   return { again, name: a.tagName.toLowerCase() + ' ' + JSON.stringify(((a.textContent || '').trim() || a.getAttribute('aria-label') || '').slice(0, 26)),
-           ring: !!ring, cr, filled: a.classList.contains('eb-btn'), map: !!a.closest('.leaflet-container') };
+           ring: !!ring, cr, filled: a.classList.contains('eb-btn'), map: !!a.closest('.maplibregl-map') };
 }
 """
 
@@ -957,10 +1051,10 @@ def part3(browser, sessions):
         pg.evaluate(CONTRAST_JS)
         if w < 1024:
             pg.click('#mobile-toggle')
-        pg.wait_for_selector('.leaflet-marker-icon', timeout=10000)
-        pg.locator('.leaflet-marker-icon').first.click()
-        pg.wait_for_selector('.leaflet-popup', timeout=5000)
-        pg.wait_for_function("getComputedStyle(document.querySelector('.leaflet-popup')).opacity === '1'")   # past its fade-in
+        pg.wait_for_selector('.eb-pin', timeout=10000)
+        wait_map_drawn(pg, '#map')
+        pg.locator('.eb-pin').first.click()
+        pg.wait_for_selector('.maplibregl-popup', timeout=5000)
         r = pg.evaluate(CONTRAST_JS)
         check(r['n'] > 20 and not r['bad'], f'Q {w}: open map popup + attribution + zoom buttons: {r["bad"][:3]} ({r["n"]} looked at)')
         s.open('/listings/?type=residential')
@@ -1001,15 +1095,14 @@ def part3(browser, sessions):
     for name, path, ready in A11Y_PAGES:
         pg.goto(BASE + path, wait_until='networkidle'); pg.wait_for_selector(ready, timeout=10000)
         m = pg.evaluate("""() => ({ scroll: getComputedStyle(document.documentElement).scrollBehavior,
-            moving: [...document.querySelectorAll('body *')].filter(e => !e.closest('.leaflet-container') &&
+            moving: [...document.querySelectorAll('body *')].filter(e => !e.closest('.maplibregl-map') &&
               ((getComputedStyle(e).animationName !== 'none' && parseFloat(getComputedStyle(e).animationDuration) > 0) ||
                (getComputedStyle(e).transitionProperty !== 'none' && parseFloat(getComputedStyle(e).transitionDuration) > 0))).length })""")
         check(m['scroll'] == 'auto', f'Q motion {name}: scroll-behavior is {m["scroll"]!r} under reduced motion')
         check(m['moving'] == 0, f'Q motion {name}: {m["moving"]} element(s) animate or transition under reduced motion')
         if name == 'listings':
-            lm = pg.evaluate("""() => ({ fade: !!document.querySelector('.leaflet-container.leaflet-fade-anim'),
-                                        zoom: !!document.querySelector('.leaflet-marker-icon.leaflet-zoom-animated') })""")
-            check(not lm['fade'] and not lm['zoom'], f'Q motion: the map has no fade or zoom animation under reduced motion ({lm})')
+            pg.wait_for_selector('.eb-pin')
+            check(pg.evaluate("(%s)('#map').ebCalm === true" % MAP_JS), 'Q motion: the map has no tile fade or animated pan/zoom under reduced motion')
         if name == 'building':
             # the tally shows its final numbers the moment the wall is drawn (the open suites + 2 tenants)
             want = str(len(LISTINGS) + len(TENANTS))
@@ -1018,8 +1111,8 @@ def part3(browser, sessions):
     s.ctx.close()
     s = Session(browser, 'Qmotion-off', viewport={'width': 1440, 'height': 900}, reduced_motion='no-preference'); sessions.append(s)
     pg = s.open('/listings/')
-    pg.wait_for_selector('.leaflet-marker-icon')
-    check(pg.evaluate("!!document.querySelector('.leaflet-container.leaflet-fade-anim') && !!document.querySelector('.leaflet-marker-icon.leaflet-zoom-animated')"),
+    pg.wait_for_selector('.eb-pin')
+    check(pg.evaluate("(%s)('#map').ebCalm === false" % MAP_JS),
           'Q motion: with no preference the map keeps its animations (so the reduced-motion check above can fail)')
     s.ctx.close()
 
@@ -1030,8 +1123,8 @@ def main():
     from playwright.sync_api import sync_playwright
 
     os.chdir(ROOT)
-    socketserver.TCPServer.allow_reuse_address = True
-    httpd = socketserver.TCPServer(('127.0.0.1', PORT), Quiet)
+    ThreadingServer.allow_reuse_address = True
+    httpd = ThreadingServer(('127.0.0.1', PORT), Quiet)
     threading.Thread(target=httpd.serve_forever, daemon=True).start()
 
     n_all = len(LISTINGS)
@@ -1060,12 +1153,17 @@ def main():
                        f"{first['sqft']} sq ft", 'available now', first['title'], "Curious? Let's talk", 'photos soon'):
             check(needle.lower() in ctext.lower(), f'A: first card is missing {needle!r}: {ctext!r}')
         check(pg.locator('#listing-grid p.line-clamp-2').count() == n_all, 'A: every card clamps its summary to two lines')
-        # tiles came from OpenStreetMap, and the attribution is on screen
-        pg.wait_for_selector('.leaflet-tile-loaded', timeout=10000)
-        check(len(s.tiles) > 0 and all(TILE_RE.match(u) for u in s.tiles), f'A: tile requests {s.tiles[:2]}')
-        attr = re.sub(r'\s+', ' ', pg.text_content('.leaflet-control-attribution'))
-        check('© OpenStreetMap contributors' in attr, f'A: attribution reads {attr!r}')
-        check(pg.is_visible('.leaflet-control-attribution'), 'A: attribution is visible')
+        # the basemap is ours: map/vashon.pmtiles, read with Range requests and drawn by MapLibre; attribution is on screen
+        wait_map_drawn(pg, '#map')
+        check(any(st == 206 and r for st, r in Quiet.range_log), f'A: the archive is read with Range requests (206): {Quiet.range_log[:4]}')
+        check(all(st in (200, 206) for st, _ in Quiet.range_log), f'A: every archive request succeeded: {Quiet.range_log[:6]}')
+        outside = [u for u in s.requests if not u.startswith((BASE, 'data:', 'blob:')) and not u.startswith(('https://fonts.googleapis.com/', 'https://fonts.gstatic.com/'))]
+        check(not outside, f'A: nothing but the site (and fonts) was asked for: {outside[:3]}')
+        attr = re.sub(r'\s+', ' ', pg.text_content('.maplibregl-ctrl-attrib'))
+        check('© OpenStreetMap' in attr and 'Protomaps' in attr, f'A: attribution reads {attr!r}')
+        check(pg.is_visible('.maplibregl-ctrl-attrib'), 'A: attribution is visible')
+        check(pg.get_attribute('.maplibregl-ctrl-attrib a[href*="openstreetmap.org"]', 'href') == 'https://www.openstreetmap.org/copyright',
+              'A: attribution links OpenStreetMap to its copyright page (the ODbL asks for it)')
         check(pg.get_attribute('#map', 'role') == 'region' and bool(pg.get_attribute('#map', 'aria-label')),
               'A: map container is a labelled region')
 
@@ -1137,36 +1235,113 @@ def main():
         pg = s.open('/listings/')
         g = groups(LISTINGS)
         check(len(g) == 1, f'E: the feed should still share one coordinate (found {len(g)}); update this test if that changed')
-        pg.wait_for_selector('.leaflet-marker-icon')
-        check(pg.locator('.leaflet-marker-icon').count() == len(g), f'E: {pg.locator(".leaflet-marker-icon").count()} markers, expected {len(g)}')
+        pg.wait_for_selector('.eb-pin')
+        wait_map_drawn(pg, '#map')
+        check(pg.locator('.eb-pin').count() == len(g), f'E: {pg.locator(".eb-pin").count()} pins, expected {len(g)}')
         check(pg.locator('.eb-pin__count').first.text_content().strip() == str(n_all), 'E: the pin carries the group count')
-        pin_label = pg.get_attribute('.leaflet-marker-icon', 'aria-label') or ''
-        check(str(n_all) in pin_label and pg.get_attribute('.leaflet-marker-icon', 'tabindex') == '0', f'E: pin is keyboard reachable and named ({pin_label!r})')
-        pg.locator('.leaflet-marker-icon').first.click()
-        pg.wait_for_selector('.leaflet-popup .eb-pop-item')
+        pin_label = pg.get_attribute('.eb-pin', 'aria-label') or ''
+        check(str(n_all) in pin_label and pg.get_attribute('.eb-pin', 'tabindex') == '0' and pg.get_attribute('.eb-pin', 'role') == 'button',
+              f'E: pin is keyboard reachable and named ({pin_label!r})')
+        # the basemap really draws, in brand colors: island (Cream) against water (A7C8D8), nothing pure white or black
+        pg.evaluate("(%s)('#map').jumpTo({center: [-122.46, 47.42], zoom: 11})" % MAP_JS)
+        wait_map_drawn(pg, '#map')
+        colors = {tuple(int(v) for v in k.split(',')): n for k, n in pg.evaluate(PIXELS_JS, '#map').items()}
+        total = sum(colors.values())
+        water = sum(n for c, n in colors.items() if close_to(c, (0xA7, 0xC8, 0xD8)))
+        cream = sum(n for c, n in colors.items() if close_to(c, (0xF1, 0xEC, 0xE9)))
+        check(water / total > 0.08 and cream / total > 0.08, f'E: the canvas shows water {water}/{total} and land {cream}/{total} in the brand colors: {sorted(colors.items(), key=lambda kv: -kv[1])[:4]}')
+        check(not any(c[:3] in ((255, 255, 255), (0, 0, 0)) or c[3] == 0 for c in colors), f'E: no pure white, pure black or empty pixels on the canvas: {[c for c in colors if c[:3] in ((255,255,255),(0,0,0)) or c[3]==0][:3]}')
+        feats = pg.evaluate("(%s)('#map').queryRenderedFeatures({layers: ['earth', 'water', 'roads_major', 'landuse_park']}).map(f => f.layer.id)" % MAP_JS)
+        check({'earth', 'water'} <= set(feats), f'E: the earth and water of the archive are drawn ({sorted(set(feats))})')
+        # labels: six curated names, quiet, not interactive, hidden by zoom where they would crowd a pin
+        labels = pg.eval_on_selector_all('#map .eb-map-label', """els => els.map(e => ({ t: e.textContent, off: e.classList.contains('eb-map-label--off'),
+            hidden: e.getAttribute('aria-hidden'), pe: getComputedStyle(e).pointerEvents, ff: getComputedStyle(e).fontFamily }))""")
+        check([l['t'] for l in labels] == ['Vashon', 'Burton', 'Dockton', 'Maury Island', 'Vashon Heights ferry', 'Tahlequah ferry'], f'E: place names {[l["t"] for l in labels]}')
+        check(all(l['hidden'] == 'true' and l['pe'] == 'none' for l in labels), 'E: place names are decorative (aria-hidden) and not interactive (pointer-events: none)')
+        check(not any(l['off'] for l in labels), f'E: at island zoom every name shows ({[l["t"] for l in labels if l["off"]]})')
+        check(pg.locator('#map .eb-map-label:not(.eb-map-label--off)').count() == 6 and pg.locator('#map .eb-pin').count() == 1, 'E: names are not pins')
+        pg.evaluate("(%s)('#map').jumpTo({center: [-122.46, 47.4471], zoom: 15})" % MAP_JS)
+        off = pg.eval_on_selector_all('#map .eb-map-label--off', 'els => els.map(e => e.textContent)')
+        check(sorted(off) == ['Maury Island', 'Vashon'], f'E: close in, the town and island names step aside from the pin ({off})')
+        # a flat, north-up map locked to the island
+        lock = pg.evaluate("""() => { const m = (%s)('#map'), inside = c => [c.lng, c.lat];
+            m.jumpTo({center: [-120.0, 40.0], zoom: 11}); const far = inside(m.getCenter());
+            m.jumpTo({center: [-124.5, 49.0]}); const far2 = inside(m.getCenter());
+            m.fitBounds([[-125, 40], [-120, 50]], {animate: false}); const fit = inside(m.getCenter());
+            m.jumpTo({zoom: 3}); const lo = m.getZoom(); m.jumpTo({zoom: 20}); const hi = m.getZoom();
+            return { far, far2, fit, lo, hi, bounds: m.getMaxBounds().toArray(), minz: m.getMinZoom(), maxz: m.getMaxZoom(),
+                     rotate: m.dragRotate.isEnabled(), pitch: m.getPitch() }; }""" % MAP_JS)
+        in_island = lambda c: -122.62 <= c[0] <= -122.30 and 47.28 <= c[1] <= 47.57
+        check(in_island(lock['far']) and in_island(lock['far2']) and in_island(lock['fit']), f'E: jumpTo / fitBounds far away leave the center on the island ({lock["far"]}, {lock["far2"]}, {lock["fit"]})')
+        check(lock['bounds'] == [[-122.62, 47.28], [-122.3, 47.57]], f'E: the pan limit is the island box ({lock["bounds"]})')
+        check((lock['lo'], lock['hi'], lock['minz'], lock['maxz']) == (11, 15.5, 11, 15.5), f'E: zoom is held to 11..15.5 ({lock["lo"]}..{lock["hi"]})')
+        check(lock['rotate'] is False and lock['pitch'] == 0, 'E: rotation is off and the map is flat')
+        pg.evaluate("(%s)('#map').jumpTo({center: [-122.46, 47.4471], zoom: 15})" % MAP_JS)
+        box = pg.locator('#map').bounding_box()
+        sx, sy = box['x'] + box['width'] * 0.3, box['y'] + box['height'] * 0.3
+        pg.mouse.move(sx, sy); pg.mouse.down(button='right'); pg.mouse.move(sx + 140, sy + 60, steps=8); pg.mouse.up(button='right')
+        pg.keyboard.down('Control'); pg.mouse.move(sx, sy); pg.mouse.down(); pg.mouse.move(sx + 100, sy + 80, steps=8); pg.mouse.up(); pg.keyboard.up('Control')
+        pg.evaluate("(%s)('#map').getCanvas().focus()" % MAP_JS)
+        pg.keyboard.down('Shift'); pg.keyboard.press('ArrowRight'); pg.keyboard.press('ArrowUp'); pg.keyboard.up('Shift')
+        pg.wait_for_timeout(300)
+        bp = pg.evaluate("(%s)('#map')" % MAP_JS + ".getBearing() + ',' + (%s)('#map').getPitch()" % MAP_JS)
+        check(bp == '0,0', f'E: right-drag, ctrl-drag and shift-arrows cannot rotate or tilt the map (bearing,pitch = {bp})')
+        # the wheel zooms only once the map has been clicked or focused (the page scrolls otherwise)
+        check(pg.evaluate("(%s)('#map').scrollZoom.isEnabled()" % MAP_JS) is True, 'E: the wheel zooms once the map is focused')
+        pg.mouse.move(5, 5)
+        pg.wait_for_timeout(100)
+        pg.evaluate("(%s)('#map').getCanvas().blur()" % MAP_JS)
+        check(pg.evaluate("(%s)('#map').scrollZoom.isEnabled()" % MAP_JS) is False, 'E: and stops again when focus leaves')
+        pg.evaluate("(%s)('#map').jumpTo({center: [-122.46, 47.4471], zoom: 15})" % MAP_JS)
+        pg.wait_for_timeout(300)
+        pg.locator('.eb-pin').first.click()
+        pg.wait_for_selector('.maplibregl-popup .eb-pop-item')
         items = popup_items(pg)
         ids = list(g.values())[0]
         check(len(items) == len(ids) == n_all, f'E: popup lists {len(items)} entries, expected {len(ids)}')
         check([i['href'] for i in items] == [f'/listings/{x}/' for x in ids], f'E: popup links {[i["href"] for i in items]}')
         check([i['rent'] for i in items] == [money(next(L for L in LISTINGS if L['id'] == x)['rent']) + '/mo' for x in ids],
               f'E: popup rents {[i["rent"] for i in items]}')
-        check(pg.get_attribute('.leaflet-popup', 'class').find('eb-popup') >= 0, 'E: popup carries the brand class')
-        audit(pg, '.leaflet-popup', 'E popup')
-        # markers follow the filter: $750 leaves a smaller group
+        check(pg.get_attribute('.maplibregl-popup', 'class').find('eb-popup') >= 0, 'E: popup carries the brand class')
+        check(pg.evaluate("document.activeElement.closest('.maplibregl-popup') === null"), 'E: a mouse click does not pull focus into the popup (no stray ring)')
+        audit(pg, '.maplibregl-popup', 'E popup')
+        fits = pg.evaluate("""() => { const c = document.getElementById('map').getBoundingClientRect(), p = document.querySelector('.maplibregl-popup').getBoundingClientRect();
+                                      return p.left >= c.left && p.right <= c.right && p.top >= c.top && p.bottom <= c.bottom; }""")
+        check(fits, 'E: the popup sits fully inside the map frame')
+        # Escape closes the popup; Enter on a focused pin opens it and moves the keyboard into it; Escape returns to the pin
+        pg.keyboard.press('Escape')
+        check(pg.locator('.maplibregl-popup').count() == 0, 'E: Escape closes the popup')
+        pg.locator('.eb-pin').first.focus()
+        pg.keyboard.press('Enter')
+        pg.wait_for_selector('.maplibregl-popup .eb-pop-item')
+        check(pg.evaluate("document.activeElement.classList.contains('eb-pop-link')"), 'E: opened from the keyboard, focus moves to the first link in the popup')
+        pg.keyboard.press('Escape')
+        check(pg.locator('.maplibregl-popup').count() == 0 and pg.evaluate("document.activeElement.classList.contains('eb-pin')"),
+              'E: Escape from inside the popup closes it and returns focus to the pin')
+        pg.locator('.eb-pin').first.focus()
+        pg.keyboard.press('Enter')
+        pg.wait_for_selector('.maplibregl-popup .eb-pop-item')
+        pg.locator('.maplibregl-popup-close-button').focus()
+        pg.keyboard.press('Enter')
+        check(pg.locator('.maplibregl-popup').count() == 0 and pg.evaluate("document.activeElement.classList.contains('eb-pin')"),
+              'E: the close button works from the keyboard and returns focus to the pin')
+        pg.locator('.eb-pin').first.click()
+        pg.wait_for_selector('.maplibregl-popup .eb-pop-item')
+        # pins follow the filter: $750 leaves a smaller group
         pg.select_option('#f-price', '750')
         try:
-            pg.wait_for_selector('.leaflet-popup', state='detached', timeout=3000)   # Leaflet fades popups out for 200ms
+            pg.wait_for_selector('.maplibregl-popup', state='detached', timeout=3000)
             closed = True
         except Exception:
             closed = False
-        check(closed, 'E: popup closes when its marker is re-rendered')
-        pg.locator('.leaflet-marker-icon').first.click()
-        pg.wait_for_selector('.leaflet-popup .eb-pop-item')
+        check(closed, 'E: popup closes when its pin is re-rendered')
+        pg.locator('.eb-pin').first.click()
+        pg.wait_for_selector('.maplibregl-popup .eb-pop-item')
         got = [i['href'] for i in popup_items(pg)]
         check(sorted(got) == sorted(f'/listings/{x}/' for x in expected(LISTINGS, price=750)), f'E: filtered popup lists {got}')
         pg.select_option('#f-sqft', '1000')   # nothing this big in the feed
         if not expected(LISTINGS, price=750, sqft=1000):
-            check(pg.locator('.leaflet-marker-icon').count() == 0, 'E: no results means no markers')
+            check(pg.locator('.eb-pin').count() == 0, 'E: no results means no pins')
 
         # ---------- F: URL state ----------
         pg = s.open('/listings/')
@@ -1211,7 +1386,7 @@ def main():
         check(abs(geo['bar']['top'] - geo['headerBottom']) <= 1.5, f'J: filter bar sticks under the header ({geo["bar"]["top"]} vs {geo["headerBottom"]})')
         check(geo['map']['top'] >= geo['bar']['bottom'] - 1 and geo['map']['bottom'] <= geo['vh'] + 1 and geo['map']['height'] > 300,
               f'J: map stays in view beside the cards ({geo["map"]})')
-        check(geo['headerOnTop'], 'J: the header stays above the Leaflet panes')
+        check(geo['headerOnTop'], 'J: the header stays above the map')
         audit(pg, '#filter-bar', 'G filter bar')
         audit(pg, '#listing-grid li:first-child', 'G first card')
         audit(pg, '#map', 'G map')
@@ -1246,18 +1421,53 @@ def main():
         s.errors = [e for e in s.errors if 'status of 500' not in e]   # the browser logs the 500 itself
         s.ctx.close()
 
-        # ---------- K: Leaflet will not load: still a perfectly good list ----------
+        # ---------- K: the map will not load: still a perfectly good list ----------
         s = Session(browser, 'K', viewport={'width': 1440, 'height': 900}); sessions.append(s)
-        s.ctx.route('**/js/vendor/leaflet.js', lambda r: r.abort())
+        s.ctx.route('**/js/vendor/maplibre-gl.js', lambda r: r.abort())
         pg = s.pg
         pg.goto(BASE + '/listings/', wait_until='networkidle')
         s.settle()
-        check(cards(pg).count() == n_all, 'K: cards render without Leaflet')
+        check(cards(pg).count() == n_all, 'K: cards render without MapLibre')
         check(not pg.is_visible('#map-pane') and pg.get_attribute('#split', 'data-nomap') == '1', 'K: the map pane steps aside')
         pg.select_option('#f-price', '750')
-        check(cards(pg).count() == len(expected(LISTINGS, price=750)), 'K: filters still work without Leaflet')
+        check(cards(pg).count() == len(expected(LISTINGS, price=750)), 'K: filters still work without MapLibre')
         s.errors = [e for e in s.errors if 'Failed to load resource' not in e]   # the aborted request itself is the point
         s.ctx.close()
+
+        # no WebGL (an old phone, a locked-down browser): the same list-only page, and no errors
+        s = Session(browser, 'K-nogl', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+        s.ctx.add_init_script("""const real = HTMLCanvasElement.prototype.getContext;
+            HTMLCanvasElement.prototype.getContext = function (type, ...rest) { return /webgl/.test(type) ? null : real.call(this, type, ...rest); };""")
+        pg = s.pg
+        pg.goto(BASE + '/listings/', wait_until='networkidle')
+        s.settle()
+        check(cards(pg).count() == n_all and pg.get_attribute('#split', 'data-nomap') == '1' and not pg.is_visible('#map-pane'),
+              'K: without WebGL the page is the list and the map pane steps aside')
+        s.ctx.close()
+
+        # only the basemap is missing (no archive, no PMTiles library, no style): the Cream map, its pins, names and popup still work
+        basemap_down = (('archive', '**/map/vashon.pmtiles', lambda r: r.abort()),
+                        ('pmtiles-js', '**/js/vendor/pmtiles.js', lambda r: r.abort()),
+                        ('archive-404', '**/map/vashon.pmtiles', lambda r: r.fulfill(status=404, body='nope')),
+                        ('style-404', '**/map/style.json', lambda r: r.fulfill(status=404, body='nope')))
+        for tag, pattern, handler in basemap_down:
+            s = Session(browser, f'K-{tag}', viewport={'width': 1440, 'height': 900}); sessions.append(s)
+            s.bad_local = None          # the missing file is the point
+            s.ctx.route(pattern, handler)
+            pg = s.open('/listings/')
+            pg.wait_for_selector('.eb-pin', timeout=10000)
+            pg.wait_for_timeout(800)
+            check(pg.locator('.eb-pin').count() == 1 and pg.locator('#map .eb-map-label').count() == 6, f'K {tag}: the pin and the six names are there without a basemap')
+            bg = pg.evaluate("getComputedStyle(document.getElementById('map')).backgroundColor")
+            check(bg == CREAM, f'K {tag}: the map is Cream when the basemap is missing ({bg})')
+            check(pg.evaluate("(%s)('#map').queryRenderedFeatures().length === 0" % MAP_JS), f'K {tag}: and nothing is drawn from a missing archive')
+            pg.locator('.eb-pin').first.click()
+            pg.wait_for_selector('.maplibregl-popup .eb-pop-item')
+            check(len(popup_items(pg)) == n_all, f'K {tag}: the popup still lists every suite')
+            pg.select_option('#f-price', '750')
+            check(pg.locator('.eb-pin').count() == 1, f'K {tag}: filters still move the pins')
+            s.errors = [e for e in s.errors if 'Failed to load resource' not in e]   # the browser logs the failed request itself
+            s.ctx.close()
 
         # ---------- I: synthetic feed (homes, a future date, a null coordinate) ----------
         feed = synthetic_feed(); all_l = feed['listings']
@@ -1266,8 +1476,8 @@ def main():
         check(cards(pg).count() == len(all_l), f'I: {cards(pg).count()} cards, expected {len(all_l)}')
         g = groups(all_l)
         check(g and len(g) == 3, f'I: synthetic coordinates make 3 groups, got {len(g)}')
-        pg.wait_for_selector('.leaflet-marker-icon')
-        check(pg.locator('.leaflet-marker-icon').count() == 3, f'I: {pg.locator(".leaflet-marker-icon").count()} markers; the null-coordinate home must not get one')
+        pg.wait_for_selector('.eb-pin')
+        check(pg.locator('.eb-pin').count() == 3, f'I: {pg.locator(".eb-pin").count()} pins; the null-coordinate home must not get one')
         check(pg.locator('.eb-pin--muted').count() == 1, f'I: exactly one muted pin (the future-dated cottage), found {pg.locator(".eb-pin--muted").count()}')
         check(pg.locator('[data-id="test-studio"]').count() == 1, 'I: the null-coordinate home still gets a card')
         cottage = re.sub(r'\s+', ' ', pg.locator('[data-id="test-cottage"]').inner_text())
@@ -1281,7 +1491,7 @@ def main():
         pg.select_option('#f-beds', '2')
         check(sorted(card_ids(pg)) == sorted(expected(all_l, type='residential', beds=2)), f'I: Homes 2+ beds shows {card_ids(pg)}')
         check(count_text(pg).startswith('2 of 3 homes match.'), f'I: Homes 2+ beds count line {count_text(pg)!r}')
-        check(pg.locator('.leaflet-marker-icon').count() == 2, 'I: markers follow the beds filter')
+        check(pg.locator('.eb-pin').count() == 2, 'I: pins follow the beds filter')
         pg.click('#type-group [data-type="all"]')
         check(sorted(card_ids(pg)) == sorted(expected(all_l, beds=2)) and not any(i.startswith('chs-') for i in card_ids(pg)),
               f'I: All + 2+ beds drops the commercial suites ({card_ids(pg)})')
@@ -1310,27 +1520,28 @@ def main():
         check(abs((box['x'] + box['width'] / 2) - 195) < 2 and box['y'] + box['height'] > 844 - 80, f'H: pill is bottom-center ({box})')
         check(cards(pg).count() == n_all and pg.is_visible('#listing-grid'), 'H: the list shows first')
         check(not pg.is_visible('#map'), 'H: the map is not shown in List view')
-        check(pg.locator('.leaflet-container').count() == 0, 'H: the map is not built until it is on screen')
+        check(pg.locator('.maplibregl-map').count() == 0, 'H: the map is not built until it is on screen')
         check(pg.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), 'H: no sideways page scroll in List view')
         bar = pg.evaluate("document.getElementById('filter-bar').getBoundingClientRect().height")
         check(bar < 90, f'H: the sticky filter bar stays short on a phone ({bar}px)')
         pg.click('#mobile-toggle')
-        pg.wait_for_selector('.leaflet-container')
-        pg.wait_for_selector('.leaflet-marker-icon')
+        pg.wait_for_selector('.maplibregl-map')
+        pg.wait_for_selector('.eb-pin')
+        wait_map_drawn(pg, '#map')
         mb = pg.locator('#map').bounding_box()
         check(pg.is_visible('#map') and mb['height'] > 400 and mb['width'] > 300, f'H: Map view shows a full-height map ({mb})')
         check(not pg.is_visible('#listing-grid'), 'H: the list is hidden in Map view')
         check(pg.inner_text('#mobile-toggle').strip() == 'List', 'H: the pill now reads "List"')
-        check(pg.locator('.leaflet-marker-icon').count() == 1, 'H: the marker is on the mobile map')
+        check(pg.locator('.eb-pin').count() == 1, 'H: the pin is on the mobile map')
         pill = pg.locator('#mobile-toggle').bounding_box()
-        attrib = pg.locator('.leaflet-control-attribution').bounding_box()
+        attrib = pg.locator('.maplibregl-ctrl-attrib').bounding_box()
         overlap = not (pill['x'] + pill['width'] <= attrib['x'] or attrib['x'] + attrib['width'] <= pill['x']
                        or pill['y'] + pill['height'] <= attrib['y'] or attrib['y'] + attrib['height'] <= pill['y'])
         check(not overlap, f'H: the pill does not cover the map attribution ({pill} vs {attrib})')
         check(pg.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), 'H: no sideways page scroll in Map view')
-        pg.locator('.leaflet-marker-icon').first.click()
-        pg.wait_for_selector('.leaflet-popup .eb-pop-item')
-        pb = pg.locator('.leaflet-popup-content-wrapper').bounding_box()
+        pg.locator('.eb-pin').first.click()
+        pg.wait_for_selector('.maplibregl-popup .eb-pop-item')
+        pb = pg.locator('.maplibregl-popup-content').bounding_box()
         check(pb['x'] >= 0 and pb['x'] + pb['width'] <= 390, f'H: the popup fits a phone screen ({pb})')
         audit(pg, '#mobile-toggle-wrap', 'H pill')
         pg.click('#mobile-toggle')
@@ -1339,8 +1550,8 @@ def main():
         # filters carry over to the mobile map
         pg.select_option('#f-price', '750')
         pg.click('#mobile-toggle')
-        pg.locator('.leaflet-marker-icon').first.click()
-        pg.wait_for_function("document.querySelectorAll('.leaflet-popup').length === 1")   # the old popup fades out for 200ms
+        pg.locator('.eb-pin').first.click()
+        pg.wait_for_function("document.querySelectorAll('.maplibregl-popup').length === 1")
         check(len(popup_items(pg)) == len(expected(LISTINGS, price=750)), 'H: the mobile map shows the filtered set')
         s.ctx.close()
 
@@ -1360,7 +1571,7 @@ def main():
         for f in failures: print('  -', f)
         sys.exit(1)
     print(f'OK: listings E2E — {passed} checks passed (A cards, B type, C beds, D price, E map, F URL state, '
-          f'G flat brand, H mobile, I synthetic feed, J details, K no Leaflet; '
+          f'G flat brand, H mobile, I synthetic feed, J details, K no map; '
           f'L static page, M inquiry form, N fallback, O structured data, P flat brand + mobile; '
           f'Q accessibility sweep)')
 

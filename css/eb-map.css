@@ -1,10 +1,13 @@
-/* E. Berry brand skin for the vendored Leaflet map (css/vendor/leaflet.css).
+/* E. Berry brand skin for the vendored MapLibre GL map (css/vendor/maplibre-gl.css).
  *
- * Loaded AFTER leaflet.css and used with js/eb-map.js. Everything here is flat brand:
+ * Loaded AFTER maplibre-gl.css and used with js/eb-map.js. Everything here is flat brand:
  * Cream and Berry only, Tangerine as the one accent, nothing floating and nothing blended
- * (Leaflet's own stylesheet draws drop effects and off-palette neutrals; they are all
+ * (MapLibre's own stylesheet draws drop effects, blue focus glows and off-palette neutrals; they are all
  * replaced below). Colors come from the tokens in css/tailwind.css (:root --eb-*), with
  * literal fallbacks so the map still looks right if that stylesheet is late.
+ *
+ * The basemap itself (water, parks, roads) is drawn on the canvas from map/style.json; this file styles
+ * only the DOM on top of it: controls, attribution, place names, pins and popups.
  */
 
 /* ---- the map frame ---- */
@@ -15,13 +18,13 @@
   --ebm-serif: var(--eb-font-serif, Fraunces, ui-serif, Georgia, serif);
   position: relative;
   z-index: 0;
-  isolation: isolate;                     /* Leaflet panes use z-index up to 1000; keep them under the sticky header */
+  isolation: isolate;                     /* keep MapLibre's stacking contexts under the sticky header */
   overflow: hidden;
   border: 1.5px solid var(--ebm-berry);
   border-radius: 24px;
-  background: var(--ebm-cream);           /* Cream while tiles load (or if they never do) */
+  background: var(--ebm-cream);           /* Cream while the basemap loads (or if it never does) */
 }
-.eb-map.leaflet-container {
+.eb-map.maplibregl-map {
   background: var(--ebm-cream);
   color: var(--ebm-berry);
   font-family: var(--ebm-serif);
@@ -29,65 +32,102 @@
   line-height: 1.4;
   -webkit-tap-highlight-color: transparent;
 }
-.eb-map.leaflet-container:focus-visible { outline: 2px solid var(--ebm-berry); outline-offset: 2px; }
-.eb-map.leaflet-container a { color: var(--ebm-berry); }
-
-/* Warm the stock OSM tiles toward the brand's paper tones. */
-.eb-map-tiles { filter: sepia(.18) saturate(.85); }
+.eb-map .maplibregl-canvas { outline: none; }
+.eb-map .maplibregl-canvas:focus-visible { outline: 2px solid var(--ebm-berry); outline-offset: -4px; }
+.eb-map a { color: var(--ebm-berry); }
 
 /* ---- attribution (required: keep it visible and legible) ---- */
-.eb-map.leaflet-container .leaflet-control-attribution {
+.eb-map .maplibregl-ctrl.maplibregl-ctrl-attrib {
+  margin: 0;
+  padding: 2px 8px;
   background: var(--ebm-cream);
   color: var(--ebm-berry);
   font: 0.8125rem/1.4 var(--ebm-serif);
-  padding: 2px 8px;
   border-top: 1.5px solid var(--ebm-berry);
   border-left: 1.5px solid var(--ebm-berry);
   border-top-left-radius: 12px;
 }
-.eb-map.leaflet-container .leaflet-control-attribution a {
+.eb-map .maplibregl-ctrl-attrib a {
   color: var(--ebm-berry);
   text-decoration: underline;
   text-decoration-color: var(--ebm-tangerine);
   text-decoration-thickness: 2px;
   text-underline-offset: 2px;
 }
-.eb-map.leaflet-container .leaflet-control-attribution a:hover,
-.eb-map.leaflet-container .leaflet-control-attribution a:focus-visible { text-decoration-color: var(--ebm-berry); }
+.eb-map .maplibregl-ctrl-attrib a:hover,
+.eb-map .maplibregl-ctrl-attrib a:focus-visible { color: var(--ebm-berry); text-decoration-color: var(--ebm-berry); }
 
 /* ---- zoom buttons ---- */
-.eb-map.leaflet-container .leaflet-bar {
+.eb-map .maplibregl-ctrl-top-left .maplibregl-ctrl { margin: 12px 0 0 12px; }
+.eb-map .maplibregl-ctrl-group {
   border: 1.5px solid var(--ebm-berry);
   border-radius: 12px;
   background: var(--ebm-cream);
   box-shadow: none;
   overflow: hidden;
 }
-.eb-map.leaflet-container .leaflet-bar a {
+.eb-map .maplibregl-ctrl-group:not(:empty) { box-shadow: none; }
+.eb-map .maplibregl-ctrl-group button {
   width: 40px;
   height: 40px;
-  line-height: 38px;
   background-color: var(--ebm-cream);
   color: var(--ebm-berry);
-  border-bottom: 1.5px solid var(--ebm-berry);
+  border: 0;
   border-radius: 0;
-  font: 500 1.75rem/36px var(--ebm-serif);
-  text-indent: 0;
+  box-shadow: none;
 }
-.eb-map.leaflet-container .leaflet-bar a:last-child { border-bottom: 0; }
-.eb-map.leaflet-container .leaflet-bar a:hover,
-.eb-map.leaflet-container .leaflet-bar a:focus-visible { background-color: var(--ebm-berry); color: var(--ebm-cream); }
-.eb-map.leaflet-container .leaflet-bar a:focus-visible { outline: 2px solid var(--ebm-berry); outline-offset: -4px; }
-.eb-map.leaflet-container .leaflet-bar a.leaflet-disabled { background-color: var(--ebm-cream); color: var(--ebm-berry); opacity: .45; }
-.eb-map.leaflet-container .leaflet-bar a.leaflet-disabled:hover { background-color: var(--ebm-cream); color: var(--ebm-berry); }
-.eb-map .leaflet-top.leaflet-left .leaflet-control { margin: 12px 0 0 12px; }
+.eb-map .maplibregl-ctrl-group button + button { border-top: 1.5px solid var(--ebm-berry); }
+.eb-map .maplibregl-ctrl button:not(:disabled):hover,
+.eb-map .maplibregl-ctrl button:not(:disabled):active,
+.eb-map .maplibregl-ctrl-group button:focus-visible { background-color: var(--ebm-berry); color: var(--ebm-cream); }
+.eb-map .maplibregl-ctrl-group button:focus,
+.eb-map .maplibregl-ctrl-group button:focus:focus-visible { box-shadow: none; }
+.eb-map .maplibregl-ctrl-group button:focus-visible { outline: 2px solid var(--ebm-berry); outline-offset: -4px; }
+.eb-map .maplibregl-ctrl-group button:focus-visible .maplibregl-ctrl-icon { outline: 0; }
+.eb-map .maplibregl-ctrl button:disabled { background-color: var(--ebm-cream); color: var(--ebm-berry); opacity: .45; }
+.eb-map .maplibregl-ctrl button:disabled .maplibregl-ctrl-icon { opacity: 1; }
+/* The plus and minus are masks filled with the button's own text color, so hover and focus swap them with it. */
+.eb-map .maplibregl-ctrl button .maplibregl-ctrl-icon {
+  background-image: none;
+  background-color: currentColor;
+  -webkit-mask: var(--ebm-icon) center / 20px 20px no-repeat;
+  mask: var(--ebm-icon) center / 20px 20px no-repeat;
+}
+.eb-map .maplibregl-ctrl button.maplibregl-ctrl-zoom-in .maplibregl-ctrl-icon {
+  --ebm-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M9 3h2v6h6v2h-6v6H9v-6H3V9h6z'/%3E%3C/svg%3E");
+}
+.eb-map .maplibregl-ctrl button.maplibregl-ctrl-zoom-out .maplibregl-ctrl-icon {
+  --ebm-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M3 9h14v2H3z'/%3E%3C/svg%3E");
+}
 /* On a phone a popup is nearly as wide as the map and would sit under the zoom buttons: park them bottom-left instead. */
 @media (max-width: 639px) {
-  .eb-map .leaflet-top.leaflet-left { top: auto; bottom: 34px; }
+  .eb-map .maplibregl-ctrl-top-left { top: auto; bottom: 34px; }
 }
 
+/* ---- place names: quiet Berry type on a Cream chip, never interactive ---- */
+.eb-map-label {
+  pointer-events: none;
+  padding: 1px 7px;
+  border-radius: 4px;
+  background: var(--ebm-cream);
+  color: var(--ebm-berry);
+  font-family: var(--ebm-serif);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.eb-map-label--town { font-size: 1.0625rem; font-weight: 600; }
+.eb-map-label--area,
+.eb-map-label--ferry { font-size: 0.8125rem; font-style: italic; font-weight: 400; letter-spacing: .03em; }
+.eb-map-label--off { display: none; }
+
 /* ---- pins: flat Tangerine teardrop, Berry outline and center dot ---- */
-.eb-pin { background: none; border: 0; }
+.eb-map .maplibregl-marker { transition: none; }
+.eb-pin { width: 34px; height: 44px; background: none; border: 0; cursor: pointer; }
 .eb-pin__svg { display: block; color: var(--ebm-berry); fill: currentColor; }   /* the root element's own fill is never painted; keep it on-palette */
 .eb-pin__body { fill: var(--ebm-tangerine); stroke: var(--ebm-berry); stroke-width: 2.5; stroke-linejoin: round; }
 .eb-pin__dot { fill: var(--ebm-berry); }
@@ -108,39 +148,60 @@
 /* The count is 13px, so Berry-on-Tangerine (4.26:1) would miss AA: Cream with a Berry ring instead. */
 .eb-pin:hover .eb-pin__count, .eb-pin:focus-visible .eb-pin__count { background: var(--ebm-cream); color: var(--ebm-berry); outline: 1.5px solid var(--ebm-berry); }
 .eb-pin:focus-visible { outline: 2px solid var(--ebm-berry); outline-offset: 2px; border-radius: 12px; }
+.eb-pin[role="img"] { cursor: default; }
+.eb-pin[role="img"]:hover .eb-pin__body { fill: var(--ebm-tangerine); }
+.eb-pin[role="img"]:hover .eb-pin__dot { fill: var(--ebm-berry); }
 
 /* ---- popups: Cream, Berry hairline border, nothing floating ---- */
-.eb-popup .leaflet-popup-content-wrapper {
+.eb-map .maplibregl-popup.eb-popup { z-index: 3; max-width: 320px; }
+.eb-popup .maplibregl-popup-content {
+  min-width: 240px;
+  margin: 0;
+  padding: 18px 22px 18px 20px;
   background: var(--ebm-cream, #F1ECE9);
   color: var(--ebm-berry, #670A2F);
   border: 1.5px solid var(--ebm-berry, #670A2F);
   border-radius: 12px;
   box-shadow: none;
-  padding: 0;
-}
-.eb-popup .leaflet-popup-tip {
-  background: var(--ebm-cream, #F1ECE9);
-  border: 1.5px solid var(--ebm-berry, #670A2F);
-  box-shadow: none;
-}
-.eb-popup .leaflet-popup-tip-container { margin-top: -1.5px; }
-.eb-popup .leaflet-popup-content {
-  margin: 18px 22px 18px 20px;
   font-family: var(--ebm-serif, Fraunces, Georgia, serif);
   font-size: 1rem;
   line-height: 1.35;
+  z-index: 1;
 }
-.leaflet-container .eb-popup a.leaflet-popup-close-button {
+/* The tip is a small Cream square, turned 45 degrees, tucked under the card so only its two outer edges show. */
+.eb-popup.maplibregl-popup .maplibregl-popup-tip {
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--ebm-berry, #670A2F);
+  border-radius: 2px;
+  background: var(--ebm-cream, #F1ECE9);
+  transform: rotate(45deg);
+  z-index: 0;
+}
+.eb-popup.maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+.eb-popup.maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,
+.eb-popup.maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip { margin-top: -8px; }
+.eb-popup.maplibregl-popup-anchor-top .maplibregl-popup-tip,
+.eb-popup.maplibregl-popup-anchor-top-left .maplibregl-popup-tip,
+.eb-popup.maplibregl-popup-anchor-top-right .maplibregl-popup-tip { margin-bottom: -8px; }
+.eb-popup.maplibregl-popup-anchor-left .maplibregl-popup-tip { margin-right: -8px; }
+.eb-popup.maplibregl-popup-anchor-right .maplibregl-popup-tip { margin-left: -8px; }
+.eb-popup.maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,
+.eb-popup.maplibregl-popup-anchor-top-left .maplibregl-popup-tip { margin-left: 14px; }
+.eb-popup.maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip,
+.eb-popup.maplibregl-popup-anchor-top-right .maplibregl-popup-tip { margin-right: 14px; }
+.eb-popup .maplibregl-popup-close-button {
   top: 6px; right: 6px;
   width: 32px; height: 32px;
   display: flex; align-items: center; justify-content: center;
   padding: 0 0 2px;
   border-radius: 50%;
+  background: transparent;
   color: var(--ebm-berry, #670A2F);
   font: 400 2rem/1 var(--ebm-serif, Georgia, serif);
 }
-.leaflet-container .eb-popup a.leaflet-popup-close-button:hover,
-.leaflet-container .eb-popup a.leaflet-popup-close-button:focus-visible { background: var(--ebm-berry, #670A2F); color: var(--ebm-cream, #F1ECE9); }
+.eb-popup .maplibregl-popup-close-button:hover,
+.eb-popup .maplibregl-popup-close-button:focus-visible { background: var(--ebm-berry, #670A2F); color: var(--ebm-cream, #F1ECE9); }
 
 .eb-pop-eyebrow { margin: 0; font-size: 0.8125rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; }
 .eb-pop-title { margin: 4px 30px 0 0; font-size: 1.25rem; font-weight: 500; line-height: 1.15; }
@@ -151,7 +212,7 @@
 .eb-pop-item { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 8px 0; border-top: 1px dashed var(--ebm-berry, #670A2F); }
 .eb-pop-item:first-child { border-top: 0; }
 .eb-pop-item span { white-space: nowrap; font-weight: 500; }
-.leaflet-container .eb-popup a.eb-pop-link {
+.eb-popup a.eb-pop-link {
   color: var(--ebm-berry, #670A2F);
   font-weight: 600;
   text-decoration: underline;
@@ -159,6 +220,6 @@
   text-decoration-thickness: 2px;
   text-underline-offset: 4px;
 }
-.leaflet-container .eb-popup a.eb-pop-link:hover { text-decoration-color: var(--ebm-berry, #670A2F); }
-.leaflet-container .eb-popup a.eb-pop-link:focus-visible { outline: 2px solid var(--ebm-berry, #670A2F); outline-offset: 2px; }
+.eb-popup a.eb-pop-link:hover { text-decoration-color: var(--ebm-berry, #670A2F); }
+.eb-popup a.eb-pop-link:focus-visible { outline: 2px solid var(--ebm-berry, #670A2F); outline-offset: 2px; }
 .eb-pop-cta { margin: 14px 0 0; font-size: 1.125rem; }

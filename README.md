@@ -23,19 +23,24 @@ The site exists for one job: turn prospective tenants into people who fill out t
 ├── tailwind.config.js            Shared Tailwind theme (single source for both pages)
 ├── css/
 │   ├── tailwind.css              Prebuilt stylesheet (generated; commit it)
-│   ├── eb-map.css                E. Berry skin for the Leaflet map (Cream popups, flat pins, no default drop effects)
-│   └── vendor/                   Vendored Leaflet 1.9.4 stylesheet + its images
+│   ├── eb-map.css                E. Berry skin for the MapLibre map (Cream popups, flat pins, place names, no default drop effects)
+│   └── vendor/                   Vendored MapLibre GL 5.24.0 stylesheet
 ├── js/
 │   ├── lease-builder.js          Lease Builder generation engine (staff tool)
 │   ├── building.js               Building pages: the neighbor wall (open suites + tenants) and the form's suite options
 │   ├── listings.js               /listings/: filters (state in the URL), card grid, map markers
 │   ├── listing-detail.js         /listing.html only: finds the listing in the feed and draws the same page the generator writes
-│   ├── eb-map.js                 window.EBMap.create(): the brand Leaflet wrapper (groups same-coordinate points)
+│   ├── eb-map.js                 window.EBMap.create(): the brand MapLibre wrapper (groups same-coordinate points, place-name labels)
 │   └── vendor/
-│       ├── leaflet.js            Vendored Leaflet 1.9.4 (BSD-2-Clause; see leaflet-LICENSE.md)
+│       ├── maplibre-gl.js        Vendored MapLibre GL JS 5.24.0 (BSD-3-Clause; see maplibre-gl-LICENSE.md)
+│       ├── pmtiles.js            Vendored PMTiles 4.4.1 (BSD-3-Clause; see pmtiles-LICENSE.md)
 │       ├── marked.min.js         Vendored Markdown renderer for the lease page
 │       ├── pdf-lib.min.js        Vendored PDF library for the Lease Builder
 │       └── fontkit.umd.min.js    Vendored font engine (custom TTFs in builder PDFs)
+├── map/
+│   ├── style.json                Brand basemap style (Cream, Sky-tint water, Sage-tint parks, Berry roads; no text layers)
+│   ├── vashon.pmtiles            Self-hosted vector tiles for Vashon-Maury (a PLACEHOLDER until tools/extract_pmtiles.py is run)
+│   └── README.md                 How the basemap works and how to replace the placeholder with the real extract
 ├── data/
 │   ├── identity.json             Entity, addresses, version stamp (single source of truth)
 │   ├── vacancies.json            Source of truth for available suites ({asOf, buildingSqft, suites})
@@ -70,7 +75,10 @@ The site exists for one job: turn prospective tenants into people who fill out t
 │   ├── templates/                string.Template sources for the generated pages (Tailwind scans these)
 │   ├── check_site.py             Sanity checks: pricing math, version stamps, links (run in CI)
 │   ├── test_builder.py           Lease Builder end-to-end test (playwright + pypdf)
-│   ├── test_listings.py          Listings index + listing detail end-to-end test, plus the accessibility sweep of every page type (playwright; network sealed, no tile server needed)
+│   ├── test_listings.py          Listings index + listing detail end-to-end test, plus the accessibility sweep of every page type (playwright; network sealed, runs the real MapLibre + PMTiles against map/vashon.pmtiles)
+│   ├── extract_pmtiles.py        One-shot cut of Vashon-Maury out of a remote Protomaps build into map/vashon.pmtiles (HTTP Range; also --dry-run, --inspect)
+│   ├── make_fixture_pmtiles.py   Writes the placeholder map/vashon.pmtiles (reproducible)
+│   ├── test_extract_pmtiles.py   Hermetic test of the two tools above (pip install pmtiles mapbox-vector-tile)
 │   ├── release_lease.py          One-step lease version bump (identity, rebuild, archive, checks)
 │   └── tailwind.src.css          Source for the generated css/tailwind.css
 ├── review/                       Internal only, git-ignored (NOT deployed):
@@ -78,7 +86,8 @@ The site exists for one job: turn prospective tenants into people who fill out t
 └── .github/workflows/
     ├── checks.yml                Runs tools/check_site.py and tools/build_pages.py --check on every push/PR
     ├── builder-e2e.yml           Lease Builder browser test (runs when builder files change)
-    └── listings-e2e.yml          Listings index browser test (runs when listings files change)
+    ├── listings-e2e.yml          Listings index browser test (runs when listings or map files change)
+    └── map-tools.yml             Tests the PMTiles extract/placeholder tools (runs when map tools or map/ change)
 ```
 
 ## Rebuilding the stylesheet
@@ -126,13 +135,14 @@ The site keeps to a few rules, and `tools/check_site.py` (static) and part Q of 
 `/listings/` (`listings/index.html` + `js/listings.js`) is the browsable index: a sticky filter bar, a card grid (the same card as the homepage's "Available now"), and a sticky map beside it on large screens. On phones it shows one at a time, swapped by a Map / List pill at the bottom.
 
 - **Filters live in the URL**: `?type=residential|commercial&beds=1|2|3&price=750..3000&sqft=150..1000`. The page reads them on load and writes them back with `history.replaceState`, so any filtered view is a shareable link; the header and homepage link to `?type=residential` and `?type=commercial`. Beds apply to homes only (the select is disabled for Commercial). A listing with no value for a filter that is set can't satisfy it.
-- **The map** is Leaflet 1.9.4, vendored (`js/vendor/leaflet.js`, `css/vendor/`), wrapped by `js/eb-map.js` and skinned by `css/eb-map.css`. Points that share a coordinate become one marker (all the Courthouse Square suites do), and its popup lists each listing. Markers always show the *filtered* set; listings with null `lat`/`lng` get a card but no marker. Tiles are OpenStreetMap's, and the required attribution is always on screen. The map is only built once its pane is on screen, and if Leaflet fails to load the page is still a working list.
+- **The map** is MapLibre GL 5.24.0 over a self-hosted PMTiles basemap (`map/vashon.pmtiles`, styled by `map/style.json`; see `map/README.md`), all vendored or committed, with nothing fetched from a tile service. `js/eb-map.js` wraps it and `css/eb-map.css` skins it. Points that share a coordinate become one pin (all the Courthouse Square suites do), and its popup lists each listing. Pins always show the *filtered* set; listings with null `lat`/`lng` get a card but no pin. Panning is locked to Vashon-Maury (minimum zoom 11, maximum 15.5), the map is flat and north-up, and a few place names (Vashon, Burton, Dockton, Maury Island, the two ferry terminals) are HTML labels on top. The OpenStreetMap/Protomaps attribution is always on screen. The map is only built once its pane is on screen, and if MapLibre fails to load (or the browser has no WebGL) the page is still a working list; if only the basemap fails, the Cream map, pins and popups still work.
+- **The basemap file is a placeholder** until someone runs `python3 tools/extract_pmtiles.py` against a Protomaps build (`map/README.md` has the command); `tools/check_site.py` prints a note while it is still the stand-in.
 - **The page shell is hand-maintained**: `listings/index.html` is not generated, so when you change the header, footer or shell styles in `index.html`, copy the `EB:HEADER`, `EB:FOOTER` and `EB:SHELL-STYLES` blocks into it again. `tools/check_site.py` fails until they are byte-identical.
-- **Test**: `python3 tools/test_listings.py` (needs `pip install playwright` and a Chromium). It seals the network (tiles and fonts are answered locally) and covers the cards, filters, URL round-trip, map popup, mobile pill and a flat-brand style audit, plus the listing detail pages (card click-through, facts, form POST, JSON-LD, the `/listing.html` fallback and generated-vs-fallback DOM parity), and then the accessibility sweep (part Q) over the homepage, `/listings/`, a detail page, the building page, `404.html` and the fallback at 1440px and 390px: landmarks, headings, accessible names, the skip link, AA contrast at rest and on hover, focus rings, and reduced motion.
+- **Test**: `python3 tools/test_listings.py` (needs `pip install playwright` and a Chromium). It seals the network (fonts are answered locally; the map runs the real vendored MapLibre + PMTiles against the committed archive, served by the test's own Range-capable server) and covers the cards, filters, URL round-trip, the basemap's brand colors on the canvas, the pan lock, map popup, mobile pill and a flat-brand style audit, plus the listing detail pages (card click-through, facts, form POST, JSON-LD, the `/listing.html` fallback and generated-vs-fallback DOM parity), and then the accessibility sweep (part Q) over the homepage, `/listings/`, a detail page, the building page, `404.html` and the fallback at 1440px and 390px: landmarks, headings, accessible names, the skip link, AA contrast at rest and on hover, focus rings, and reduced motion.
 
 ## Listing detail pages
 
-Every entry in `data/listings.json` gets a page at `/listings/<id>/` (e.g. `/listings/chs-n101/`), **generated and committed** by `python3 tools/build_pages.py` from `tools/templates/listing.tmpl.html` + `listing.parts.tmpl.html`. They are fully static HTML: the rent is the one huge figure, then fact tiles (size, beds/baths when there are any, availability, "All-in pricing"), a photo grid (or one flat "Photos are coming" band until `photos[]` has files), the summary and feature tags, a single-marker map (skipped when `lat`/`lng` are null), and a Netlify inquiry form (`listing-inquiry`, with hidden `listing` and `building` fields). Each page carries its own title, meta description, canonical URL, Open Graph/Twitter tags and `RealEstateListing` JSON-LD (price, address, geo). The `og:image` is the first photo if its file exists when you generate, else the shared card.
+Every entry in `data/listings.json` gets a page at `/listings/<id>/` (e.g. `/listings/chs-n101/`), **generated and committed** by `python3 tools/build_pages.py` from `tools/templates/listing.tmpl.html` + `listing.parts.tmpl.html`. They are fully static HTML: the rent is the one huge figure, then fact tiles (size, beds/baths when there are any, availability, "All-in pricing"), a photo grid (or one flat "Photos are coming" band until `photos[]` has files), the summary and feature tags, a single-pin map (skipped when `lat`/`lng` are null), and a Netlify inquiry form (`listing-inquiry`, with hidden `listing` and `building` fields). Each page carries its own title, meta description, canonical URL, Open Graph/Twitter tags and `RealEstateListing` JSON-LD (price, address, geo). The `og:image` is the first photo if its file exists when you generate, else the shared card.
 
 - **Feature tags** (`features[]`) are short extras the summary doesn't already say: "Free on-site parking", not a restatement of the summary's first sentence. `tools/check_site.py` fails on a tag that just repeats its summary. A commercial listing keeps its "All-in pricing — …" feature, which feeds the fact tile.
 - **Adding or changing a listing**: edit `data/listings.json` (bump `updated`), run `python3 tools/build_pages.py`, commit the new/changed `listings/<id>/` folder and `sitemap.xml`. Removing a listing leaves its folder behind; the generator prints it as an `orphan` and `--check` / `check_site.py` fail until you delete it.

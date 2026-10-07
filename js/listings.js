@@ -1,7 +1,7 @@
 /* E. Berry listings index (/listings/): filter bar, card grid, brand map.
  *
  *   window.EB.LISTINGS_URL   the feed ({updated, listings}, or a bare array), from /js/site-config.js
- *   window.EBMap             js/eb-map.js (Leaflet wrapper); the page still works as a list if it is missing
+ *   window.EBMap             js/eb-map.js (MapLibre wrapper); the page still works as a list if it is missing
  *
  * State lives in the URL: ?type=residential|commercial &beds=1|2|3 &price=750.. &sqft=150..
  * It is read on load and written back with history.replaceState, so every filtered view is a shareable
@@ -222,9 +222,16 @@
     }));
   }
 
+  // MapLibre loaded and the browser can draw WebGL.
+  const mapUsable = () => !!(window.EBMap && window.EBMap.supported && window.EBMap.supported());
+
   function ensureMap() {
-    if (map || !window.L || !window.EBMap || !els.map || !els.map.offsetWidth) return;
-    map = window.EBMap.create(els.map, pointsFor(shown), { label: 'Map of the places that are open' });
+    if (map || !mapUsable() || !els.map || !els.map.offsetWidth) return;
+    try {
+      map = window.EBMap.create(els.map, pointsFor(shown), { label: 'Map of the places that are open' });
+    } catch (err) {
+      els.split.dataset.nomap = '1';       // the map could not start after all: stay a list
+    }
   }
 
   function updateMap() {
@@ -261,7 +268,7 @@
     measure();
     if (view === 'map') {
       ensureMap();
-      if (map) { map.invalidateSize({ animate: false }); map.ebFit(); }
+      if (map) { map.resize(); map.ebFit(); }
     }
     // Keep the filter bar pinned under the header after the swap, so the new view starts at its top.
     const top = els.split.getBoundingClientRect().top + window.scrollY - els.header.offsetHeight - els.bar.offsetHeight;
@@ -299,7 +306,7 @@
   }
 
   function watchMap() {
-    if (!window.L || !window.EBMap) { els.split.dataset.nomap = '1'; return; }   // list-only fallback
+    if (!mapUsable()) { els.split.dataset.nomap = '1'; return; }   // list-only fallback
     // Build the map only once its pane is actually on screen (it is display:none on phones in List view).
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver(es => {

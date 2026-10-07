@@ -380,53 +380,156 @@ if sm_urls is not None:
     check(all(u.startswith(SITE_URL + '/') for u in sm_urls), "sitemap.xml: every URL must be on https://eberryvashon.com")
 
 # =====================================================================
-# E. Berry listings index (Phase 4): /listings/, the filter bar, and the brand Leaflet map
+# E. Berry listings index (Phase 4): /listings/, the filter bar, and the brand MapLibre map (Phase 7a: self-hosted PMTiles basemap)
 #   listings/index.html is hand-maintained (not generated): its shell is copied from index.html, and the
 #   byte-identity check below is what tells you to copy it again when the shell changes.
 # =====================================================================
 LIST_REL = 'listings/index.html'
-LEAFLET_VERSION = '1.9.4'
+MAPLIBRE_VERSION = '5.24.0'
+PMTILES_VERSION = '4.4.1'
 
 def exists(rel):
     return os.path.exists(os.path.join(ROOT, rel))
 
 for rel in (LIST_REL, 'js/listings.js', 'js/eb-map.js', 'css/eb-map.css',
-            'js/vendor/leaflet.js', 'js/vendor/leaflet-LICENSE.md', 'css/vendor/leaflet.css',
+            'js/vendor/maplibre-gl.js', 'js/vendor/maplibre-gl-LICENSE.md', 'css/vendor/maplibre-gl.css',
+            'js/vendor/pmtiles.js', 'js/vendor/pmtiles-LICENSE.md',
+            'map/style.json', 'map/vashon.pmtiles', 'map/README.md',
+            'tools/extract_pmtiles.py', 'tools/make_fixture_pmtiles.py', 'tools/test_extract_pmtiles.py',
             'tools/test_listings.py', '.github/workflows/listings-e2e.yml'):
     check(exists(rel), f"{rel} is missing")
 
-# Vendored Leaflet: exact version, its license, and every image its stylesheet points at.
-if exists('js/vendor/leaflet.js'):
-    leaflet_js = read('js/vendor/leaflet.js')
-    check(f'Leaflet {LEAFLET_VERSION}' in leaflet_js[:200] and f't.version="{LEAFLET_VERSION}"' in leaflet_js,
-          f"js/vendor/leaflet.js is not Leaflet {LEAFLET_VERSION}")
-if exists('js/vendor/leaflet-LICENSE.md'):
-    lic = read('js/vendor/leaflet-LICENSE.md')
-    check(f'Leaflet {LEAFLET_VERSION}' in lic.splitlines()[0] and 'BSD 2-Clause' in lic and 'Volodymyr Agafonkin' in lic,
-          "js/vendor/leaflet-LICENSE.md: header must name the exact version and carry the BSD-2-Clause text")
-if exists('css/vendor/leaflet.css'):
-    for img in sorted(set(re.findall(r'url\((images/[^)]+)\)', read('css/vendor/leaflet.css')))):
-        check(exists('css/vendor/' + img), f"css/vendor/{img} is missing (referenced by css/vendor/leaflet.css)")
+# Leaflet is gone, root and branch.
+for rel in ('js/vendor/leaflet.js', 'js/vendor/leaflet-LICENSE.md', 'css/vendor/leaflet.css', 'css/vendor/images'):
+    check(not exists(rel), f"{rel} is the old Leaflet map and must be deleted")
+
+# Vendored MapLibre GL and PMTiles: exact version, its license, and nothing else at the end of the stylesheet's reach.
+if exists('js/vendor/maplibre-gl.js'):
+    ml_js = read('js/vendor/maplibre-gl.js')
+    check(f'/blob/v{MAPLIBRE_VERSION}/LICENSE.txt' in ml_js[:400] and 'MapLibre GL JS' in ml_js[:400],
+          f"js/vendor/maplibre-gl.js is not MapLibre GL JS {MAPLIBRE_VERSION}")
+if exists('js/vendor/maplibre-gl-LICENSE.md'):
+    lic = read('js/vendor/maplibre-gl-LICENSE.md')
+    check(lic.splitlines()[0] == f'# MapLibre GL JS {MAPLIBRE_VERSION}' and 'BSD-3-Clause' in lic and 'MapLibre contributors' in lic,
+          "js/vendor/maplibre-gl-LICENSE.md: header must name the exact version and carry the BSD-3-Clause text")
+if exists('css/vendor/maplibre-gl.css'):
+    ml_css = read('css/vendor/maplibre-gl.css')
+    check('.maplibregl-map' in ml_css and '.maplibregl-popup' in ml_css, "css/vendor/maplibre-gl.css is not the MapLibre GL stylesheet")
+    check(re.search(r'url\((?!["\']?data:)', ml_css) is None, "css/vendor/maplibre-gl.css points at a file; the stock stylesheet inlines every image")
+if exists('js/vendor/pmtiles.js'):
+    pm_js = read('js/vendor/pmtiles.js')
+    check(pm_js.startswith('"use strict";var pmtiles=(()=>{') and 'getZxy' in pm_js and 'Protocol' in pm_js,
+          "js/vendor/pmtiles.js is not the PMTiles IIFE build (it must define the `pmtiles` global with Protocol)")
+if exists('js/vendor/pmtiles-LICENSE.md'):
+    lic = read('js/vendor/pmtiles-LICENSE.md')
+    check(lic.splitlines()[0] == f'# PMTiles (JavaScript) {PMTILES_VERSION}' and 'BSD 3-Clause' in lic and 'pmtiles@' + PMTILES_VERSION in lic,
+          "js/vendor/pmtiles-LICENSE.md: header must name the exact version and carry the BSD-3-Clause text")
 
 # The brand map wrapper and its skin.
 if exists('js/eb-map.js'):
     ebmap = read('js/eb-map.js')
-    for token in ('https://tile.openstreetmap.org/{z}/{x}/{y}.png', 'OpenStreetMap</a> contributors', 'scrollWheelZoom: false',
-                  'maxZoom: 18', "setAttribute('role', 'region')", "setAttribute('aria-label'", 'L.divIcon', 'eb-pin--muted',
-                  'window.EBMap', 'groupPoints', 'fmtMoney', "'/listings/'"):
+    for token in ("'/map/style.json'", 'MIN_ZOOM = 11, MAX_ZOOM = 15.5', 'maxBounds: ISLAND_BOUNDS', '[[-122.62, 47.28], [-122.30, 47.57]]',
+                  'dragRotate: false', 'pitchWithRotate: false', 'touchPitch: false', 'maxPitch: 0', 'disableRotation()', 'renderWorldCopies: false',
+                  'customAttribution: ATTRIBUTION', 'https://www.openstreetmap.org/copyright', 'https://protomaps.com', 'compact: false',
+                  'pmtiles.Protocol', 'addProtocol', 'map.scrollZoom.disable()', "setAttribute('role', 'region')", "setAttribute('aria-label'",
+                  'new gl.Marker', 'new gl.Popup', 'eb-pin--muted', 'eb-map-label', 'PLACE_LABELS', 'window.EBMap', 'groupPoints', 'supported',
+                  'fmtMoney', "'/listings/'", 'popups', 'map.ebSetPoints', 'map.ebFit'):
         check(token in ebmap, f"js/eb-map.js: expected {token!r}")
+    for name in ('Vashon', 'Burton', 'Dockton', 'Maury Island', 'Vashon Heights ferry', 'Tahlequah ferry'):
+        check(f"name: '{name}'" in ebmap, f"js/eb-map.js: the place-name overlay is missing {name!r}")
+    check('tile.openstreetmap.org' not in ebmap and 'leaflet' not in ebmap.lower(),
+          "js/eb-map.js: remote tiles and Leaflet are gone; the basemap is map/vashon.pmtiles")
+    hosts_in_js = set(re.findall(r'https?://([^/\'"\s)<]+)', ebmap))
+    check(hosts_in_js <= {'www.openstreetmap.org', 'protomaps.com'}, f"js/eb-map.js: unexpected hosts {sorted(hosts_in_js)}; only the attribution links may leave the site")
     for label, pat in FLAT_BRAND:
         check(re.search(pat, ebmap, re.I) is None, f"js/eb-map.js: contains {label} (E. Berry brand is flat)")
 if exists('css/eb-map.css'):
     mapcss = read('css/eb-map.css')
-    for token in ('.leaflet-popup-content-wrapper', '.leaflet-popup-tip', '.eb-map-tiles', '.eb-pin--muted', 'border-radius: 24px',
-                  'border: 1.5px solid', 'sepia(.18) saturate(.85)'):
+    for token in ('.maplibregl-popup-content', '.maplibregl-popup-tip', '.maplibregl-ctrl-attrib', '.maplibregl-ctrl-group', '.eb-pin--muted', '.eb-map-label',
+                  'border-radius: 24px', 'border: 1.5px solid'):
         check(token in mapcss, f"css/eb-map.css: expected {token!r}")
+    check('leaflet' not in mapcss.lower() and 'sepia' not in mapcss and 'filter:' not in mapcss, "css/eb-map.css: no Leaflet selectors and no filters on the map (the basemap is already in brand colors)")
     check(re.search(r'gradient|#fff\b|#ffffff\b|#000\b|#000000\b|(?<![-\w])(?:white|black)(?![-\w])', mapcss, re.I) is None,
           "css/eb-map.css: contains a gradient, pure white or pure black (E. Berry brand is flat)")
     shadows = re.findall(r'(?:box|text|drop)-shadow\s*:\s*([^;}]+)', mapcss)
     check(all(v.strip() == 'none' for v in shadows),
           f"css/eb-map.css: the only shadow value allowed is none (found {[v for v in shadows if v.strip() != 'none']})")
+
+# ---- the basemap: map/style.json and map/vashon.pmtiles ----
+BRAND = {'#670A2F', '#F1ECE9', '#F36E30', '#E8C450', '#8DC8E8', '#98B286', '#F1DDB7'}            # the style guide's palette
+MAP_TINTS = {'#A7C8D8', '#CBD5BE', '#DCCFC8'}                                                    # water, greenspace, minor roads: tints of Sky, Sage and Berry-on-Cream
+MAP_COLORS = BRAND | MAP_TINTS
+PROTOMAPS_LAYERS = {'earth', 'landuse', 'landcover', 'water', 'roads', 'buildings', 'boundaries'}     # source layers of @protomaps/basemaps 5.x that map/style.json may read
+STYLE_REL, ARCHIVE_REL = 'map/style.json', 'map/vashon.pmtiles'
+placeholder_note = None
+if exists(STYLE_REL):
+    style_text = read(STYLE_REL)
+    try:
+        style = json.loads(style_text)
+    except ValueError as e:
+        style = None
+        check(False, f"{STYLE_REL} is not valid JSON ({e})")
+    if isinstance(style, dict):
+        check(style.get('version') == 8, f"{STYLE_REL}: version must be 8")
+        check('glyphs' not in style and 'sprite' not in style and '"glyphs"' not in style_text and '"sprite"' not in style_text and 'text-field' not in style_text,
+              f"{STYLE_REL}: no glyphs, no sprite, no text-field (there are no font or icon files; place names are HTML labels in js/eb-map.js)")
+        src = style.get('sources', {})
+        check(list(src) == ['vashon'] and src['vashon'].get('type') == 'vector' and src['vashon'].get('url') == 'pmtiles:///map/vashon.pmtiles',
+              f"{STYLE_REL}: the only source must be `vashon`, a vector source with url pmtiles:///map/vashon.pmtiles")
+        layers = style.get('layers', [])
+        ids = [l.get('id') for l in layers]
+        check(len(ids) == len(set(ids)) and len(ids) >= 8, f"{STYLE_REL}: layer ids must be unique ({len(ids)} layers)")
+        for l in layers:
+            lid = l.get('id')
+            check(l.get('type') in ('background', 'fill', 'line'), f"{STYLE_REL} {lid}: type {l.get('type')!r}; only background, fill and line (no symbol, raster, hillshade)")
+            if l.get('type') != 'background':
+                check(l.get('source') == 'vashon' and l.get('source-layer') in PROTOMAPS_LAYERS,
+                      f"{STYLE_REL} {lid}: must read source `vashon` and a Protomaps source-layer {sorted(PROTOMAPS_LAYERS)} (got {l.get('source-layer')!r})")
+            check(not any(k.startswith('text-') or k.startswith('icon-') for k in list(l.get('layout', {})) + list(l.get('paint', {}))), f"{STYLE_REL} {lid}: text and icon properties need glyphs and sprites")
+        colors = set(c.upper() for c in re.findall(r'#[0-9A-Fa-f]{6}\b', style_text))
+        check(colors <= MAP_COLORS, f"{STYLE_REL}: colors outside the brand palette: {sorted(colors - MAP_COLORS)}")
+        check(re.search(r'rgba?\(|hsla?\(|#[0-9A-Fa-f]{3}\b|#[0-9A-Fa-f]{8}\b', style_text) is None, f"{STYLE_REL}: write colors as #RRGGBB palette values")
+        for label, pat in FLAT_BRAND:
+            check(re.search(pat, style_text, re.I) is None, f"{STYLE_REL}: contains {label} (E. Berry brand is flat)")
+        by_id = {l.get('id'): l for l in layers}
+        paint = lambda i, k: (by_id.get(i, {}).get('paint') or {}).get(k)
+        check(paint('background', 'background-color') == '#F1ECE9' and paint('earth', 'fill-color') == '#F1ECE9', f"{STYLE_REL}: the background and the land are Cream")
+        check(paint('water', 'fill-color') == '#A7C8D8', f"{STYLE_REL}: water is #A7C8D8")
+        check(paint('landuse_park', 'fill-color') == '#CBD5BE' and paint('landuse_beach', 'fill-color') == '#F1DDB7', f"{STYLE_REL}: parks are #CBD5BE and beaches are Sand")
+        check(paint('roads_minor', 'line-color') == '#DCCFC8' and paint('roads_major', 'line-color') == '#670A2F' and paint('roads_highway', 'line-color') == '#670A2F',
+              f"{STYLE_REL}: minor roads are #DCCFC8 and major roads and highways are Berry")
+        check(paint('roads_ferry', 'line-color') == '#670A2F' and paint('roads_ferry', 'line-opacity') == 0.4 and bool(paint('roads_ferry', 'line-dasharray')),
+              f"{STYLE_REL}: ferry routes are dashed Berry at 40% opacity")
+        check(not any(l.get('layout', {}).get('line-cap') == 'butt' for l in layers) and all('line-gap-width' not in (l.get('paint') or {}) for l in layers),
+              f"{STYLE_REL}: flat roads: no casings")
+
+# The archive: the PMTiles v3 magic, a header that matches the file, and a note while it is still the placeholder.
+if exists(ARCHIVE_REL):
+    import gzip as _gzip, struct as _struct
+    with open(os.path.join(ROOT, ARCHIVE_REL), 'rb') as f:
+        blob = f.read(16384)
+    size = os.path.getsize(os.path.join(ROOT, ARCHIVE_REL))
+    check(blob[:7] == b'PMTiles' and blob[7:8] == b'\x03', f"{ARCHIVE_REL}: does not start with the PMTiles v3 magic bytes (PMTiles + 0x03)")
+    if len(blob) >= 127 and blob[:7] == b'PMTiles':
+        u64 = lambda o: int.from_bytes(blob[o:o + 8], 'little')
+        i32 = lambda o: int.from_bytes(blob[o:o + 4], 'little', signed=True)
+        root_off, root_len, meta_off, meta_len, tile_off, tile_len = u64(8), u64(16), u64(24), u64(32), u64(56), u64(64)
+        check(root_off + root_len <= 16384 and size >= tile_off + tile_len > 0, f"{ARCHIVE_REL}: header does not match the file (truncated or damaged?)")
+        check(blob[99] == 1 and blob[98] in (1, 2) and blob[97] in (1, 2), f"{ARCHIVE_REL}: expected vector tiles (MVT) with none/gzip compression")
+        check(blob[100] <= 11 and blob[101] >= 11, f"{ARCHIVE_REL}: zoom range z{blob[100]}..z{blob[101]} must cover the map's minimum zoom 11")
+        check(i32(102) <= -1226200000 and i32(106) <= 472800000 and i32(110) >= -1223000000 and i32(114) >= 475700000,
+              f"{ARCHIVE_REL}: header bounds do not cover the island box -122.62,47.28,-122.30,47.57")
+        try:
+            meta_blob = open(os.path.join(ROOT, ARCHIVE_REL), 'rb').read()[meta_off:meta_off + meta_len]
+            meta = json.loads(_gzip.decompress(meta_blob) if blob[97] == 2 else meta_blob)
+            if (meta.get('eberry') or {}).get('placeholder') is True:
+                placeholder_note = f"{ARCHIVE_REL} is the PLACEHOLDER; replace it with the real extract (python3 tools/extract_pmtiles.py, see map/README.md)"
+        except (OSError, ValueError):
+            check(False, f"{ARCHIVE_REL}: metadata is unreadable")
+if exists('map/README.md'):
+    mr = read('map/README.md')
+    check('placeholder' in mr.lower() and 'tools/extract_pmtiles.py' in mr and 'tools/make_fixture_pmtiles.py' in mr and 'build.protomaps.com' in mr,
+          "map/README.md: must explain the placeholder and give the extract command")
 
 # The listings script.
 if exists('js/listings.js'):
@@ -450,21 +553,21 @@ if exists(LIST_REL):
     check(m is not None and exists(m.group(1).lstrip('/')), f"{LIST_REL}: og:image must be an absolute eberryvashon.com URL of a file that exists")
     check('application/ld+json' not in lp, f"{LIST_REL}: no JSON-LD here (listing detail pages carry it)")
     check(len(re.findall(r'<h1[ >]', lp)) == 1 and "What's open on Vashon" in lp, f"{LIST_REL}: needs exactly one h1, \"What's open on Vashon\"")
-    # Everything local except OSM tiles (fetched by eb-map.js) and Google Fonts.
-    check(re.search(r'cdn', lp, re.I) is None, f"{LIST_REL}: mentions a CDN; vendor it instead")
+    # Everything local except Google Fonts: the map, its tiles and its libraries are all ours.
+    check(re.search(r'cdn', lp, re.I) is None and 'leaflet' not in lp.lower(), f"{LIST_REL}: mentions a CDN or Leaflet; vendor it instead")
     hosts = set()
     for tag in re.findall(r'<(?:script|link)\b[^>]*>', lp):
         mh = re.search(r'\b(?:src|href)="https?://([^/"]+)', tag)
         if mh and 'rel="canonical"' not in tag:
             hosts.add(mh.group(1))
     check(hosts <= {'fonts.googleapis.com', 'fonts.gstatic.com'}, f"{LIST_REL}: external script/stylesheet hosts {sorted(hosts)}; only Google Fonts allowed")
-    # Load order: Leaflet before the wrapper before the page script; Leaflet's CSS before the skin.
-    order = [lp.find(f'src="{u}"') for u in ('/js/vendor/leaflet.js', '/js/eb-map.js', '/js/site-config.js', '/js/listings.js')]
+    # Load order: MapLibre and PMTiles before the wrapper before the page script; MapLibre's CSS before the skin.
+    order = [lp.find(f'src="{u}"') for u in ('/js/vendor/maplibre-gl.js', '/js/vendor/pmtiles.js', '/js/eb-map.js', '/js/site-config.js', '/js/listings.js')]
     check(all(i >= 0 for i in order) and order == sorted(order),
-          f"{LIST_REL}: scripts must load leaflet.js, eb-map.js, site-config.js, listings.js in that order")
-    css_order = [lp.find(f'href="{u}"') for u in ('/css/tailwind.css', '/css/vendor/leaflet.css', '/css/eb-map.css')]
+          f"{LIST_REL}: scripts must load maplibre-gl.js, pmtiles.js, eb-map.js, site-config.js, listings.js in that order")
+    css_order = [lp.find(f'href="{u}"') for u in ('/css/tailwind.css', '/css/vendor/maplibre-gl.css', '/css/eb-map.css')]
     check(all(i >= 0 for i in css_order) and css_order == sorted(css_order),
-          f"{LIST_REL}: stylesheets must load tailwind.css, vendor/leaflet.css, eb-map.css in that order")
+          f"{LIST_REL}: stylesheets must load tailwind.css, vendor/maplibre-gl.css, eb-map.css in that order")
     for label, pat in FLAT_BRAND:
         check(re.search(pat, lp, re.I) is None, f"{LIST_REL}: contains {label} (E. Berry brand is flat, Berry/Cream only)")
     # The controls the script and the test drive.
@@ -493,7 +596,7 @@ if exists(LIST_REL):
 
 if exists('.github/workflows/listings-e2e.yml'):
     wf = read('.github/workflows/listings-e2e.yml')
-    for token in ("'listings/**'", "'js/listings.js'", "'js/eb-map.js'", "'js/vendor/leaflet.js'", "'data/listings.json'",
+    for token in ("'listings/**'", "'js/listings.js'", "'js/eb-map.js'", "'js/vendor/maplibre-gl.js'", "'js/vendor/pmtiles.js'", "'map/**'", "'data/listings.json'",
                   "'tools/test_listings.py'", 'python3 tools/test_listings.py'):
         check(token in wf, f".github/workflows/listings-e2e.yml: expected {token}")
 
@@ -526,7 +629,7 @@ for d in sorted(set(folders) - with_page):
     check(False, f"listings/{d}/: folder has no index.html (every folder under listings/ is a listing slug)")
 check(listing_ids == with_page, "listings/<id>/ pages do not match listings.json ids exactly")
 
-MAP_SCRIPTS = ('/js/vendor/leaflet.js', '/js/eb-map.js')
+MAP_SCRIPTS = ('/js/vendor/maplibre-gl.js', '/js/vendor/pmtiles.js', '/js/eb-map.js')
 for L in listings:
     lid = str(L.get('id'))
     rel = f'listings/{lid}/index.html'
@@ -584,18 +687,18 @@ for L in listings:
         check('id="listing-photos"' in page and 'id="listing-photos-placeholder"' not in page, f"{rel}: has photos, so a photo grid and no placeholder")
     else:
         check('id="listing-photos-placeholder"' in page and 'id="listing-photos"' not in page, f"{rel}: no photos, so exactly the placeholder band")
-    # Map: only when there are coordinates, and then with Leaflet loaded in order.
+    # Map: only when there are coordinates, and then with MapLibre and PMTiles loaded in order.
     has_map = L.get('lat') is not None and L.get('lng') is not None
     if has_map:
         order = [page.find(f'src="{u}"') for u in MAP_SCRIPTS]
-        check(all(i >= 0 for i in order) and order == sorted(order), f"{rel}: has coordinates, so it must load leaflet.js then eb-map.js")
-        css_order = [page.find(f'href="{u}"') for u in ('/css/tailwind.css', '/css/vendor/leaflet.css', '/css/eb-map.css')]
-        check(all(i >= 0 for i in css_order) and css_order == sorted(css_order), f"{rel}: stylesheets must load tailwind.css, vendor/leaflet.css, eb-map.css in that order")
+        check(all(i >= 0 for i in order) and order == sorted(order), f"{rel}: has coordinates, so it must load maplibre-gl.js, pmtiles.js, then eb-map.js")
+        css_order = [page.find(f'href="{u}"') for u in ('/css/tailwind.css', '/css/vendor/maplibre-gl.css', '/css/eb-map.css')]
+        check(all(i >= 0 for i in css_order) and css_order == sorted(css_order), f"{rel}: stylesheets must load tailwind.css, vendor/maplibre-gl.css, eb-map.css in that order")
         check('id="listing-map"' in page and f'data-lat="{L.get("lat")}"' in page and f'data-lng="{L.get("lng")}"' in page and 'EBMap.create' in page,
               f"{rel}: the #listing-map div (with data-lat/data-lng) or its init script is missing")
     else:
-        check('id="listing-map"' not in page and 'leaflet' not in page.lower() and 'eb-map' not in page,
-              f"{rel}: no coordinates, so it must carry no map markup and load no Leaflet")
+        check('id="listing-map"' not in page and 'maplibre' not in page.lower() and 'pmtiles' not in page.lower() and 'leaflet' not in page.lower() and 'eb-map' not in page,
+              f"{rel}: no coordinates, so it must carry no map markup and load no map library")
         check('openstreetmap.org/search?query=' in page, f"{rel}: no coordinates, so the OpenStreetMap search link must remain")
     check('listing-detail.js' not in page and 'LISTINGS_URL' not in page, f"{rel}: generated pages are static and must not use the fallback script or the feed")
     check(re.search(r'cdn', page, re.I) is None, f"{rel}: mentions a CDN; vendor it instead")
@@ -610,11 +713,11 @@ if exists(FB_REL):
     check_shell(FB_REL, fb, RERUN)
     check('<meta name="robots" content="noindex" />' in fb, f"{FB_REL}: missing the robots noindex meta")
     check('rel="canonical"' not in fb and 'application/ld+json' not in fb, f"{FB_REL}: a noindex fallback has no canonical and no structured data")
-    order = [fb.find(f'src="{u}"') for u in ('/js/vendor/leaflet.js', '/js/eb-map.js', '/js/site-config.js', '/js/listing-detail.js')]
+    order = [fb.find(f'src="{u}"') for u in ('/js/vendor/maplibre-gl.js', '/js/vendor/pmtiles.js', '/js/eb-map.js', '/js/site-config.js', '/js/listing-detail.js')]
     check(all(i >= 0 for i in order) and order == sorted(order),
-          f"{FB_REL}: scripts must load leaflet.js, eb-map.js, site-config.js, listing-detail.js in that order")
-    css_order = [fb.find(f'href="{u}"') for u in ('/css/tailwind.css', '/css/vendor/leaflet.css', '/css/eb-map.css')]
-    check(all(i >= 0 for i in css_order) and css_order == sorted(css_order), f"{FB_REL}: stylesheets must load tailwind.css, vendor/leaflet.css, eb-map.css in that order")
+          f"{FB_REL}: scripts must load maplibre-gl.js, pmtiles.js, eb-map.js, site-config.js, listing-detail.js in that order")
+    css_order = [fb.find(f'href="{u}"') for u in ('/css/tailwind.css', '/css/vendor/maplibre-gl.css', '/css/eb-map.css')]
+    check(all(i >= 0 for i in css_order) and css_order == sorted(css_order), f"{FB_REL}: stylesheets must load tailwind.css, vendor/maplibre-gl.css, eb-map.css in that order")
     check('id="main"' in fb and 'id="listing-loading"' in fb, f"{FB_REL}: needs <main id=\"main\"> with the loading line the script replaces")
     check(re.search(r'cdn', fb, re.I) is None, f"{FB_REL}: mentions a CDN; vendor it instead")
     for label, pat in FLAT_BRAND:
@@ -643,6 +746,17 @@ check(len(hosts) >= 4 and rw and rw[0] > max(hosts, default=-1),
       'netlify.toml: the /listings/* rewrite must come AFTER the host-scoped redirects (first match wins)')
 check(rw and rw[0] == len(redirects) - 1, 'netlify.toml: the /listings/* rewrite should be the last [[redirects]] block')
 
+# netlify.toml: the basemap. Netlify serves byte ranges natively, so /map/* needs headers only, never a redirect.
+header_blocks = {}
+for blk in re.split(r'^\[\[headers\]\]\s*$', nt, flags=re.M)[1:]:
+    blk = re.split(r'^\[\[redirects\]\]', blk, flags=re.M)[0]
+    m_for = re.search(r'^\s*for\s*=\s*"([^"]+)"', blk, re.M)
+    if m_for:
+        header_blocks[m_for.group(1)] = dict(re.findall(r'^\s*([A-Za-z-]+)\s*=\s*"([^"]*)"', blk.split('[headers.values]', 1)[-1], re.M))
+check(header_blocks.get('/map/*', {}).get('Cache-Control') == 'public, max-age=3600', 'netlify.toml: [[headers]] for /map/* must set Cache-Control = "public, max-age=3600"')
+check(header_blocks.get('/*.pmtiles', {}).get('Content-Type') == 'application/octet-stream', 'netlify.toml: [[headers]] for /*.pmtiles must set Content-Type = "application/octet-stream"')
+check(not any(str(r['from']).startswith('/map') or str(r['to']).startswith('/map') for r in redirects), 'netlify.toml: no redirects for /map (Range requests must reach the file)')
+
 # sitemap: the fallback is noindex and must not be listed.
 if sm_urls is not None:
     check(not any(u.rstrip('/').endswith('listing.html') for u in sm_urls), 'sitemap.xml: /listing.html is noindex and must not be listed')
@@ -654,6 +768,14 @@ tw_css = read('css/tailwind.css')
 for cls in (r'sm\:col-span-2', r'sm\:aspect-\[16\/9\]', r'lg\:min-h-\[26rem\]', r'min-h-\[60vh\]', r'min-h-\[15rem\]', r'md\:min-h-\[20rem\]',
             r'bg-eb-sand', r'bg-eb-mustard', r'rounded-card', r'sm\:h-\[24rem\]', r'lg\:grid-cols-\[6fr_7fr\]'):
     check(cls in tw_css, f"css/tailwind.css has no .{cls}; rebuild it (see README, 'Rebuilding the stylesheet')")
+
+if exists('.github/workflows/map-tools.yml'):
+    wf = read('.github/workflows/map-tools.yml')
+    for token in ("'tools/extract_pmtiles.py'", "'tools/make_fixture_pmtiles.py'", "'tools/test_extract_pmtiles.py'", "'map/**'",
+                  'pip install pmtiles==3.8.1 mapbox-vector-tile==2.2.0 shapely==2.2.0', 'python3 tools/test_extract_pmtiles.py'):
+        check(token in wf, f".github/workflows/map-tools.yml: expected {token}")
+else:
+    check(False, ".github/workflows/map-tools.yml is missing (it runs tools/test_extract_pmtiles.py)")
 
 if exists('.github/workflows/listings-e2e.yml'):
     wf = read('.github/workflows/listings-e2e.yml')
@@ -816,8 +938,8 @@ for rel in ('js/building.js', 'js/listings.js', 'js/listing-detail.js', 'js/eb-m
         if re.search(r'smooth|\banimate:\s*true', line):
             check('reduce' in line, f'{rel}: smooth/animated motion must be guarded by prefers-reduced-motion: {line.strip()[:80]}')
 ebm = read('js/eb-map.js')
-check('prefers-reduced-motion: reduce' in ebm and all(t in ebm for t in ('zoomAnimation: !calm', 'fadeAnimation: !calm', 'markerZoomAnimation: !calm', 'inertia: !calm')),
-      'js/eb-map.js: the map must drop its zoom/fade/inertia animation under prefers-reduced-motion')
+check('prefers-reduced-motion: reduce' in ebm and all(t in ebm for t in ('fadeDuration: calm ? 0 : 200', 'animate: !calm', 'map.ebCalm = calm')),
+      'js/eb-map.js: the map must drop its tile fade and animated pans under prefers-reduced-motion')
 check('reduce || target <= 0' in read('js/building.js'), 'js/building.js: countUp must render the final number at once under prefers-reduced-motion')
 
 # ---------------- /404.html ----------------
@@ -853,4 +975,6 @@ if problems:
         print(f"  - {p}")
     sys.exit(1)
 print(f"OK: {checks} checks passed")
+if placeholder_note:
+    print(f"note: {placeholder_note}")
 print("note: generated pages are verified separately; run `python3 tools/build_pages.py --check` (also a CI step) to prove buildings/ and sitemap.xml are not stale")

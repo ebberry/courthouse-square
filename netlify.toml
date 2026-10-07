@@ -26,6 +26,19 @@
   [headers.values]
     Cache-Control = "public, max-age=86400"
 
+# The self-hosted basemap (map/style.json + map/vashon.pmtiles). The browser reads the archive with HTTP Range
+# requests, which Netlify answers natively: do NOT add a redirect or rewrite for /map, it would hide the file from them.
+# An hour of cache means a fresh extract shows up promptly; the PMTiles client notices a changed ETag and refetches.
+[[headers]]
+  for = "/map/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/*.pmtiles"
+  [headers.values]
+    Content-Type = "application/octet-stream"
+
 # ── Dual-domain plumbing (E. Berry site) ──────────────────────────────
 # The old Courthouse Square domain now forwards to the building page on the
 # E. Berry site; the lease documents stay reachable at their historical URL.

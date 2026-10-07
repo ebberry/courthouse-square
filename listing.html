@@ -18,8 +18,8 @@
   <!-- Prebuilt Tailwind stylesheet (generated from tailwind.config.js + tools/tailwind.src.css;
        see "Rebuilding the stylesheet" in README.md). -->
   <link rel="stylesheet" href="/css/tailwind.css" />
-  <!-- Vendored Leaflet 1.9.4, then the E. Berry skin for it. Both local; only the map tiles come from OpenStreetMap. -->
-  <link rel="stylesheet" href="/css/vendor/leaflet.css" />
+  <!-- Vendored MapLibre GL 5.24.0, then the E. Berry skin for it. Both local; the map tiles are our own map/vashon.pmtiles. -->
+  <link rel="stylesheet" href="/css/vendor/maplibre-gl.css" />
   <link rel="stylesheet" href="/css/eb-map.css" />
 
   <!-- Fonts: Fraunces (serif body + headings), Inter (small labels), Anton (wordmark-scale display). -->
@@ -149,13 +149,14 @@
 <!-- /EB:FOOTER -->
 
 <!-- ============================================================
-     SCRIPT (vanilla; Leaflet is vendored)
-     - Leaflet 1.9.4 and the E. Berry map wrapper
+     SCRIPT (vanilla; MapLibre GL and PMTiles are vendored)
+     - MapLibre GL 5.24.0, PMTiles 4.4.1 and the E. Berry map wrapper
      - window.EB.LISTINGS_URL from /js/site-config.js
      - listing-detail.js: finds the listing, draws the page, builds the map
      - Mobile nav toggle and dynamic copyright year (same as the homepage)
 ============================================================ -->
-<script src="/js/vendor/leaflet.js"></script>
+<script src="/js/vendor/maplibre-gl.js"></script>
+<script src="/js/vendor/pmtiles.js"></script>
 <script src="/js/eb-map.js"></script>
 <script src="/js/site-config.js"></script>
 <script src="/js/listing-detail.js"></script>

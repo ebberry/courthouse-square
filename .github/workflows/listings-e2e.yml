@@ -1,9 +1,12 @@
 # End-to-end test of the listings index (/listings/) and the listing detail pages (/listings/<id>/ and the
-# /listing.html fallback) in headless Chromium: cards, filters, URL state, the Leaflet map and its popup, the
-# mobile Map/List pill, the inquiry form, structured data and generated-vs-fallback parity, plus the
-# accessibility sweep (landmarks, skip link, AA contrast, focus rings, reduced motion) over the homepage, the
-# listings pages, the building page and 404.html. The network is sealed inside the test (map tiles and fonts are
-# answered locally). Runs only when listings-related or shared page files change.
+# /listing.html fallback) in headless Chromium: cards, filters, URL state, the MapLibre map (the real vendored
+# MapLibre GL + PMTiles drawing map/vashon.pmtiles over HTTP Range requests) and its popup, the mobile Map/List
+# pill, the inquiry form, structured data and generated-vs-fallback parity, plus the accessibility sweep
+# (landmarks, skip link, AA contrast, focus rings, reduced motion) over the homepage, the listings pages, the
+# building page and 404.html. The network is sealed inside the test (only fonts are answered locally; the test's own
+# server does Range). Runs only when listings-related or shared page files change. It needs nothing beyond
+# playwright and pypdf: the placeholder archive is committed, and tools/test_extract_pmtiles.py (map-tools.yml)
+# is what needs the pmtiles pip packages.
 name: Listings E2E
 
 on:
@@ -18,7 +21,9 @@ on:
       - 'js/listing-detail.js'
       - 'js/building.js'
       - 'js/eb-map.js'
-      - 'js/vendor/leaflet.js'
+      - 'js/vendor/maplibre-gl.js'
+      - 'js/vendor/pmtiles.js'
+      - 'map/**'
       - 'css/eb-map.css'
       - 'css/tailwind.css'
       - 'css/vendor/**'
@@ -39,7 +44,9 @@ on:
       - 'js/listing-detail.js'
       - 'js/building.js'
       - 'js/eb-map.js'
-      - 'js/vendor/leaflet.js'
+      - 'js/vendor/maplibre-gl.js'
+      - 'js/vendor/pmtiles.js'
+      - 'map/**'
       - 'css/eb-map.css'
       - 'css/tailwind.css'
       - 'css/vendor/**'

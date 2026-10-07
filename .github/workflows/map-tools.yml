@@ -1,0 +1,36 @@
+# The basemap pipeline's own test: tools/extract_pmtiles.py (the one-shot cut of Vashon-Maury out of a Protomaps
+# build) is exercised against a stand-in archive served from a local Range-capable server, and the placeholder
+# map/vashon.pmtiles is checked against tools/make_fixture_pmtiles.py. No network beyond 127.0.0.1. The pmtiles and
+# vector-tile packages are pinned to the versions the placeholder was generated with, so the check cannot drift.
+# (The browser-side map is covered by listings-e2e.yml, which needs none of these packages.)
+name: Map tools
+
+on:
+  push:
+    paths:
+      - 'tools/extract_pmtiles.py'
+      - 'tools/make_fixture_pmtiles.py'
+      - 'tools/test_extract_pmtiles.py'
+      - 'map/**'
+      - '.github/workflows/map-tools.yml'
+  pull_request:
+    paths:
+      - 'tools/extract_pmtiles.py'
+      - 'tools/make_fixture_pmtiles.py'
+      - 'tools/test_extract_pmtiles.py'
+      - 'map/**'
+      - '.github/workflows/map-tools.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  tools:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pmtiles==3.8.1 mapbox-vector-tile==2.2.0 shapely==2.2.0
+      - run: python3 tools/test_extract_pmtiles.py

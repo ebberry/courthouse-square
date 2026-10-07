@@ -1,7 +1,7 @@
 /* E. Berry listing detail, client-side fallback (/listing.html).
  *
  *   window.EB.LISTINGS_URL   the feed ({updated, listings}, or a bare array), from /js/site-config.js
- *   window.EBMap             js/eb-map.js (Leaflet wrapper); the page still works without it
+ *   window.EBMap             js/eb-map.js (MapLibre wrapper); the page still works without it
  *
  * Used ONLY by listing.html. The real detail pages (/listings/<id>/) are generated, fully static HTML from
  * tools/build_pages.py and never load this file. This is the safety net behind the netlify.toml rewrite
@@ -301,7 +301,7 @@
   function watchMap() {
     const el = document.getElementById('listing-map');
     const wrap = document.getElementById('listing-map-wrap');
-    if (!el || !wrap || !window.L || !window.EBMap) return;     // the address and the OpenStreetMap link stand on their own
+    if (!el || !wrap || !window.EBMap || !window.EBMap.supported()) return;     // the address and the OpenStreetMap link stand on their own
     wrap.classList.remove('hidden');
     let built = false;
     function build() {
@@ -309,11 +309,14 @@
       built = true;
       const d = el.dataset;
       const lat = parseFloat(d.lat), lng = parseFloat(d.lng);
-      const map = window.EBMap.create(el, [{
-        id: d.id, lat: lat, lng: lng, title: d.title, rent: Number(d.rent)
-      }], { label: 'Map showing ' + d.title });
-      map.setView([lat, lng], 16, { animate: false });
-      map.eachLayer(function (layer) { if (layer instanceof window.L.Marker) layer.unbindPopup(); });
+      try {
+        // A popup that links back to this very page would only be noise: plain pin, no popup.
+        window.EBMap.create(el, [{
+          id: d.id, lat: lat, lng: lng, title: d.title, rent: Number(d.rent)
+        }], { label: 'Map showing ' + d.title, zoom: 15.5, popups: false });
+      } catch (err) {
+        wrap.classList.add('hidden');
+      }
     }
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver(function (es) {

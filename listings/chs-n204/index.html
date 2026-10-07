@@ -67,8 +67,8 @@
   <!-- Prebuilt Tailwind stylesheet (generated from tailwind.config.js + tools/tailwind.src.css;
        see "Rebuilding the stylesheet" in README.md). -->
   <link rel="stylesheet" href="/css/tailwind.css" />
-  <!-- Vendored Leaflet 1.9.4, then the E. Berry skin for it (this page has a map). -->
-    <link rel="stylesheet" href="/css/vendor/leaflet.css" />
+  <!-- Vendored MapLibre GL 5.24.0, then the E. Berry skin for it (this page has a map). -->
+    <link rel="stylesheet" href="/css/vendor/maplibre-gl.css" />
     <link rel="stylesheet" href="/css/eb-map.css" />
 
   <!-- Fonts: Fraunces (serif body + headings), Inter (small labels), Anton (wordmark-scale display). -->
@@ -241,7 +241,7 @@
         <address class="mt-6 font-serif text-2xl not-italic leading-[1.3] md:text-3xl">19001 Vashon Hwy SW, Suite N204<br />Vashon, WA 98070</address>
         <p class="mt-8"><a href="https://www.openstreetmap.org/?mlat=47.4471&amp;mlon=-122.46#map=17/47.4471/-122.46" class="text-xl font-semibold text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-[6px] hover:decoration-eb-berry">Open in OpenStreetMap &rarr;</a></p>
       </div>
-      <!-- Hidden until the inline script below finds Leaflet; the map itself is built when it scrolls near the screen. -->
+      <!-- Hidden until the inline script below finds MapLibre; the map itself is built when it scrolls near the screen. -->
       <div id="listing-map-wrap" class="hidden">
         <div id="listing-map" class="h-[20rem] w-full sm:h-[24rem] lg:h-full lg:min-h-[26rem]"
              data-lat="47.4471" data-lng="-122.46" data-id="chs-n204" data-title="Suite N204 — Courthouse Square" data-rent="912"></div>
@@ -354,16 +354,17 @@
      - The single-marker map scripts are only present when the listing has coordinates
      - Mobile nav toggle and copyright year (same as the homepage)
 ============================================================ -->
-<script src="/js/vendor/leaflet.js"></script>
+<script src="/js/vendor/maplibre-gl.js"></script>
+<script src="/js/vendor/pmtiles.js"></script>
 <script src="/js/eb-map.js"></script>
 <script src="/js/site-config.js"></script>
 <script>
   // ---- Single-marker map: built only once it is near the screen; the address and the OpenStreetMap link
-  //      above it stand on their own if Leaflet is missing. ----
+  //      above it stand on their own if MapLibre is missing. ----
   (function () {
     const el = document.getElementById('listing-map');
     const wrap = document.getElementById('listing-map-wrap');
-    if (!el || !wrap || !window.L || !window.EBMap) return;
+    if (!el || !wrap || !window.EBMap || !window.EBMap.supported()) return;
     wrap.classList.remove('hidden');
     let built = false;
     function build() {
@@ -371,12 +372,14 @@
       built = true;
       const d = el.dataset;
       const lat = parseFloat(d.lat), lng = parseFloat(d.lng);
-      const map = window.EBMap.create(el, [{
-        id: d.id, lat: lat, lng: lng, title: d.title, rent: Number(d.rent)
-      }], { label: 'Map showing ' + d.title });
-      map.setView([lat, lng], 16, { animate: false });
-      // A popup that links back to this very page would only be noise.
-      map.eachLayer(function (layer) { if (layer instanceof window.L.Marker) layer.unbindPopup(); });
+      try {
+        // A popup that links back to this very page would only be noise: plain pin, no popup.
+        window.EBMap.create(el, [{
+          id: d.id, lat: lat, lng: lng, title: d.title, rent: Number(d.rent)
+        }], { label: 'Map showing ' + d.title, zoom: 15.5, popups: false });
+      } catch (err) {
+        wrap.classList.add('hidden');
+      }
     }
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver(function (es) {
