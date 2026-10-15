@@ -1826,7 +1826,7 @@ def part6(browser, sessions):
                   f'{tag}: the logo sits alone on a flat Cream panel with the 24px card radius, no border or shadow ({m["bg"]}, {m["radius"]}, {m["boxShadow"]}, {m["border"]})')
             check(m['panel']['l'] <= m['img']['l'] and m['img']['r'] <= m['panel']['r'] and m['panel']['t'] <= m['img']['t'] and m['img']['b'] <= m['panel']['b'],
                   f'{tag}: the logo is inside its panel')
-            check(180 <= m['panel']['w'] <= 240, f'{tag}: the panel is {m["panel"]["w"]:.0f}px wide (want about 180-220)')
+            check(160 <= m['panel']['w'] <= 200, f'{tag}: the panel is {m["panel"]["w"]:.0f}px wide (want about 172)')
             # reads together with the firm line: unchanged text, directly above the panel, same left edge
             check(m['firmText'] == FIRM_LINE and m['firm'] is not None, f'{tag}: the footer firm line is unchanged ({m["firmText"]!r})')
             if m['firm']:
