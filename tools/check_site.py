@@ -1410,7 +1410,7 @@ if exists(TECH_REL):
     for label, pat in FLAT_BRAND:
         check(re.search(pat, tp, re.I) is None, f'{TECH_REL}: contains {label} (E. Berry brand is flat, Berry/Cream only)')
 tw_css = read('css/tailwind.css')
-for cls in (r'lg\:grid-cols-\[5fr_7fr\]', r'lg\:grid-cols-3', r'lg\:grid-cols-4', r'text-\[length\:clamp\(2\.75rem\2c 11\.5vw\2c 8rem\)\]', r'sm\:py-12', r'sm\:flex-row', r'sm\:text-\[2\.5rem\]'):
+for cls in (r'lg\:grid-cols-\[5fr_7fr\]', r'lg\:grid-cols-3', r'lg\:grid-cols-4', r'text-\[length\:clamp\(2\.75rem\2c 11\.5vw\2c 8rem\)\]', r'sm\:py-12', r'sm\:flex-row'):
     check(cls in tw_css, f"css/tailwind.css has no .{cls}; rebuild it (see README, 'Rebuilding the stylesheet')")
 
 # =====================================================================

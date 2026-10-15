@@ -625,8 +625,8 @@ def render_technology_page(ctx):
     lives in the template, so a change to it is a change to a reviewed text."""
     canonical = f'{SITE}/technology/'
     title = 'Our technology — E. Berry Property Management'
-    meta_description = ("Meet Ledger, the property-management software I built for Vashon Island. Tenants pay rent "
-                        "securely through Stripe, and owners see clear monthly statements.")
+    meta_description = ("Meet Ledger, built for Vashon Island rentals. Tenants report problems, follow repairs to done "
+                        "and pay securely through Stripe; owners see every repair as it happens.")
     values = {
         'title': esc(title),
         'meta_description': esc(meta_description),
