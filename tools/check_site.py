@@ -1421,7 +1421,11 @@ for cls in (r'lg\:grid-cols-\[5fr_7fr\]', r'lg\:grid-cols-3', r'lg\:grid-cols-4'
 #   stay exactly as they are; the logo only makes the affiliation unmistakable. It goes in three places and nowhere else:
 #     - the footer of every page, on its own flat Cream panel (the navy and black mark is illegible on Berry),
 #     - the owners page's "A part of Windermere Vashon" lockup card, beside the E. Berry wordmark,
-#     - the homepage's "part of Windermere Vashon" line, straight on the Cream field, at most 160px wide.
+#     - the homepage's "part of Windermere Vashon" line, straight on the Cream field, exactly w-28 (112px) wide.
+#   SIZES (Phase 12: the owner found them too big): footer panel w-32 (128px) with p-3, so the logo is 104px; homepage w-28 (112px);
+#   owners lockup 9rem (144px). TRADEMARK RULE and legal line unchanged.
+#   LINKS (Phase 12): every logo is a plain link to the office's own website, https://www.windermerevashon.com/ (same convention as the
+#   footer's "Lease documents" link: no target, no rel), named by the img alt alone (no visible text, no aria-label needed).
 #   NOT in the header: at header size its "Vashon Island" lettering would be about 6px, not clear and conspicuous.
 #   TRADEMARK RULE: the mark is used unmodified (no recolor, restyle, redraw, distort or crop): only its white background was removed.
 # =====================================================================
@@ -1491,7 +1495,7 @@ if exists(WM_PNG_REL):
         check((pdepth, pctype, pinter) == (8, 6, 0) and prows is not None,
               f'{WM_PNG_REL}: must be an 8-bit, non-interlaced RGBA PNG (color type 6) so it has a real alpha channel (got depth {pdepth}, color type {pctype}, interlace {pinter})')
         check(pw >= 700 and 1.6 <= pw / max(ph, 1) <= 1.8,
-              f'{WM_PNG_REL}: keep the full source resolution (>= 700px wide, about 1.69:1); it is shown at up to 240px CSS wide and must stay crisp at 2x (got {pw}x{ph})')
+              f'{WM_PNG_REL}: keep the full source resolution (>= 700px wide, about 1.69:1); it is shown at up to 144px CSS wide and must stay crisp at 2x and 3x (got {pw}x{ph})')
         check(os.path.getsize(os.path.join(ROOT, WM_PNG_REL)) <= 80 * 1024,
               f'{WM_PNG_REL}: is {os.path.getsize(os.path.join(ROOT, WM_PNG_REL))} bytes; keep it under 80KB')
         if prows is not None:
@@ -1517,6 +1521,21 @@ FOOTER_FIRM_LINE = '<p class="mt-5 text-base">E. Berry Property Management &mdas
 HEADER_FIRM_LINE = '>A PART OF WINDERMERE VASHON</span>'
 WM_IMG_RE = re.compile(r'<img\b[^>]*\bsrc="/images/brand/windermere-vashon-island\.png"[^>]*>')
 EXPECT_WM_COUNT = {'index.html': 2, OWN_REL: 2}      # footer + (about line | owners lockup); every other page: the footer only
+WM_HREF = 'https://www.windermerevashon.com/'          # the office's own website (Phase 12)
+WM_LINK_RE = re.compile(r'<a\b([^>]*)>\s*(<img\b[^>]*\bsrc="/images/brand/windermere-vashon-island\.png"[^>]*>)\s*</a>')
+
+def attrs_of(tag_attrs):
+    """{name: value} of the attributes in an opening tag's attribute text (a bare attribute has the value '')."""
+    return {m.group(1): m.group(2) or '' for m in re.finditer(r'([\w:-]+)(?:="([^"]*)")?', tag_attrs)}
+
+def wm_links_ok(page):
+    """(how many Windermere <img>s the page has, how many sit alone inside an <a> that is exactly a plain link to WM_HREF)."""
+    good = 0
+    for m in WM_LINK_RE.finditer(page):
+        a = attrs_of(m.group(1))
+        if a.get('href') == WM_HREF and set(a) <= {'href', 'class'} and 'target' not in a and 'rel' not in a and 'aria-label' not in a:
+            good += 1
+    return len(WM_IMG_RE.findall(page)), good
 for rel in A11Y_PAGES:
     if not exists(rel):
         continue
@@ -1526,12 +1545,25 @@ for rel in A11Y_PAGES:
     check(len(tags) == EXPECT_WM_COUNT.get(rel, 1),
           f'{rel}: the Windermere logo should appear {EXPECT_WM_COUNT.get(rel, 1)} time(s) (footer{", plus its placement" if rel in EXPECT_WM_COUNT else " only"}), found {len(tags)}')
     check(all(f'alt="{WM_ALT}"' in t for t in tags), f'{rel}: every Windermere logo needs alt="{WM_ALT}"')
+    # Phase 12: every logo is wrapped by a plain <a href="https://www.windermerevashon.com/"> (no target, no rel, no aria-label: the alt names it)
+    n_imgs, n_good = wm_links_ok(pg_)
+    check(n_imgs == n_good == EXPECT_WM_COUNT.get(rel, 1),
+          f'{rel}: every Windermere logo ({n_imgs}) must be the only content of a plain <a href="{WM_HREF}"> with no target, rel or aria-label (found {n_good} such link(s))')
+    check(len(re.findall(r'<a\b[^>]*\bhref="https?://(?:www\.)?windermere[^"]*"', pg_)) == EXPECT_WM_COUNT.get(rel, 1)
+          and all(h == WM_HREF for h in re.findall(r'<a\b[^>]*\bhref="(https?://(?:www\.)?windermere[^"]*)"', pg_)),
+          f'{rel}: the only links to a Windermere site are the logo links, all to exactly {WM_HREF} (not windermere.com)')
     # Footer: one logo on its own Cream panel, directly after the (unchanged) firm line.
     check(len(WM_IMG_RE.findall(ftr_)) == 1, f'{rel}: EB:FOOTER must carry the Windermere logo once (edit index.html, then {RERUN})')
-    pm = re.search(r'<div class="([^"]*)">\s*(<img\b[^>]*\bsrc="/images/brand/windermere-vashon-island\.png"[^>]*>)\s*</div>', ftr_)
+    pm = re.search(r'<div class="([^"]*)">\s*<a href="' + re.escape(WM_HREF) + r'" class="block">\s*(<img\b[^>]*\bsrc="/images/brand/windermere-vashon-island\.png"[^>]*>)\s*</a>\s*</div>', ftr_)
     check(pm is not None and 'bg-eb-cream' in pm.group(1).split() and 'rounded-card' in pm.group(1).split()
           and not re.search(r'\bbg-(?:white|black|eb-berry)\b', pm.group(1)),
-          f'{rel}: the footer logo must sit alone on a flat Cream panel (bg-eb-cream rounded-card); the navy and black mark is illegible on Berry')
+          f'{rel}: the footer logo must be one link inside a flat Cream panel (bg-eb-cream rounded-card); the navy and black mark is illegible on Berry')
+    pcls = pm.group(1).split() if pm else []
+    check(pm is not None and 'w-32' in pcls and 'p-3' in pcls and 'max-w-full' in pcls and 'eb-cobrand-panel' in pcls
+          and not any(c in pcls for c in ('p-4', 'p-5', 'p-6', 'w-40', 'w-36', 'w-44', 'w-48')) and not any(re.fullmatch(r'w-\[.*\]', c) for c in pcls),
+          f'{rel}: the footer logo panel is w-32 (128px) with p-3 (so the logo is 104px), max-w-full and eb-cobrand-panel (for its Berry focus ring); found {pcls}')
+    check(pm is not None and re.search(r'\bclass="block h-auto w-full"', pm.group(2)) is not None,
+          f'{rel}: the footer logo fills the panel\'s content box (class "block h-auto w-full"), so its width follows the panel')
     check(FOOTER_FIRM_LINE in ftr_ and re.search(re.escape(FOOTER_FIRM_LINE) + r'\s*(?:<!--.*?-->\s*)?<div class="[^"]*\bbg-eb-cream\b', ftr_, re.S) is not None,
           f'{rel}: the footer firm line "E. Berry Property Management — A Part of Windermere Vashon" must be unchanged, with the logo panel right after it')
     # Header: the text line is the legal identification and stays; NO logo (at header size its lettering would be ~6px).
@@ -1540,7 +1572,14 @@ for rel in A11Y_PAGES:
     check(hdr_imgs == ['/images/brand/wordmark-berry.svg'] and 'windermere-vashon-island' not in hdr_ and not re.search(r'<img\b[^>]*\balt="[^"]*windermere', hdr_, re.I),
           f'{rel}: the header must hold only the E. Berry wordmark, NO Windermere logo (found {hdr_imgs}); the text line there is the legal identification')
 
-# Homepage: the "part of Windermere Vashon" line carries a modest logo (<= 160px) straight on the Cream field, copy unchanged.
+# Focus ring (Phase 12): the footer's Cream logo panel sits inside the Berry footer, where the shell turns every focus ring Cream, which would
+# vanish on Cream. The shell must switch the panel's link back to a Berry ring (the owners lockup card is an .eb-card, which already does).
+shell_css = shell_block(index, 'SHELL-STYLES', r'</style>') or ''
+check(re.search(r'\.bg-eb-berry \.eb-cobrand-panel a:focus-visible\s*\{\s*outline-color:\s*var\(--eb-berry\)', shell_css) is not None
+      and re.search(r'\.bg-eb-berry \.eb-card :is\([^)]*\):focus-visible', shell_css) is not None,
+      'index.html: EB:SHELL-STYLES must give the Windermere logo panel (.eb-cobrand-panel) and Cream cards on Berry a Berry focus ring (Cream on Cream is invisible)')
+
+# Homepage: the "part of Windermere Vashon" line carries a modest logo (exactly w-28, 112px), linked, straight on the Cream field, copy unchanged.
 about = (re.search(r'<section class="bg-eb-cream" aria-label="About Elijah">.*?</section>', index, re.S) or [''])[0]
 check(bool(about), 'index.html: the About section (<section class="bg-eb-cream" aria-label="About Elijah">) is missing')
 if about:
@@ -1550,8 +1589,8 @@ if about:
     check(len(atags) == 1 and f'alt="{WM_ALT}"' in atags[0], f'index.html: the About section carries exactly one Windermere logo with alt="{WM_ALT}"')
     wclass = re.search(r'\bclass="([^"]*)"', atags[0]) if atags else None
     wnum = re.findall(r'(?<![\w:-])w-(\d+)(?![\w.-])', wclass.group(1)) if wclass else []
-    check(len(wnum) == 1 and int(wnum[0]) <= 40, f'index.html: the homepage logo is a modest co-brand, at most w-40 (160px) wide (found w-{wnum})')
-    wrap = re.search(r'<div class="([^"]*)">\s*<p[^>]*>Our property management work[^<]*</p>\s*<img\b[^>]*windermere-vashon-island\.png', about)
+    check(wnum == ['28'], f'index.html: the homepage logo is a modest co-brand, exactly w-28 (112px) wide (found w-{wnum})')
+    wrap = re.search(r'<div class="([^"]*)">\s*<p[^>]*>Our property management work[^<]*</p>\s*<a href="' + re.escape(WM_HREF) + r'"[^>]*>\s*<img\b[^>]*windermere-vashon-island\.png', about)
     check(wrap is not None and re.search(r'(?<![\w:-])bg-|\beb-field-|\beb-card\b', wrap.group(1)) is None,
           'index.html: the logo sits with the "part of Windermere Vashon" line, straight on the About section\'s Cream field (no color field or card behind the navy and black mark)')
 check(len(WM_IMG_RE.findall(re.search(r'<main id="main">.*?</main>', index, re.S).group(0))) == 1,
@@ -1573,6 +1612,12 @@ if exists(OWN_REL):
           f'{OWN_REL}: the lockup is one Cream card (.eb-card) holding the wordmark, the divider and the logo')
     check(re.search(r'\.eb-cobrand-rule\s*\{[^}]*background:\s*var\(--eb-berry\)', op_) is not None and '@container' in op_,
           f'{OWN_REL}: the divider is a thin Berry rule, vertical or horizontal depending on the card width (page styles are missing)')
+    # Phase 12 size: the lockup's Windermere logo is 9rem (144px) wide, and keeps its 7.5rem floor in the side-by-side layout
+    check(re.search(r'\.eb-cobrand-logo\s*\{[^}]*\bwidth:\s*9rem\b', op_) is not None
+          and re.search(r'@container[^{]*\{[^@]*\.eb-cobrand-logo\s*\{[^}]*\bflex:\s*0 1 9rem\b[^}]*\bmin-width:\s*7\.5rem\b', op_) is not None,
+          f'{OWN_REL}: the lockup logo is 9rem (144px) wide, flex: 0 1 9rem with min-width: 7.5rem when side by side (found {re.findall(r"[.]eb-cobrand-logo[^}]*}", op_)})')
+    check(re.search(r'<a href="' + re.escape(WM_HREF) + r'" class="eb-cobrand-logo block">\s*<img\b[^>]*windermere-vashon-island\.png[^>]*class="block h-auto w-full"', wind_) is not None,
+          f'{OWN_REL}: the lockup logo is a plain link (class eb-cobrand-logo, the sized flex item) with the image filling it')
     owner_imgs = sorted(re.findall(r'<img\b[^>]*\bsrc="([^"]+)"', (re.search(r'<main id="main">.*?</main>', op_, re.S) or [''])[0]))
     check(owner_imgs == sorted(['/images/brand/monogram-tangerine-bare.svg', '/images/brand/wordmark-berry.svg', WM_LOGO]),
           f'{OWN_REL}: the only images in <main> are the monogram, the E. Berry wordmark and the Windermere logo (found {owner_imgs})')

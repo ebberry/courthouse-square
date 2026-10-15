@@ -87,9 +87,10 @@
     :is(a, button, summary, input, select, textarea):focus-visible { outline: 2px solid var(--eb-berry); outline-offset: 2px; }
     .eb-field-berry :is(a, button, summary, input, select, textarea):focus-visible,
     .bg-eb-berry :is(a, button, summary, input, select, textarea):focus-visible { outline-color: var(--eb-cream); }
-    /* …but back to Berry inside a Cream card that sits on a Berry field. */
+    /* …but back to Berry inside a Cream card that sits on a Berry field, and on the Cream panel holding the Windermere logo link in the footer. */
     .bg-eb-berry .eb-card :is(a, button, summary, input, select, textarea):focus-visible,
-    .eb-field-berry .eb-card :is(a, button, summary, input, select, textarea):focus-visible { outline-color: var(--eb-berry); }
+    .eb-field-berry .eb-card :is(a, button, summary, input, select, textarea):focus-visible,
+    .bg-eb-berry .eb-cobrand-panel a:focus-visible { outline-color: var(--eb-berry); }
 
     /* Berry-on-Tangerine is 4.26:1 — AA only as large text, so every pill
        label renders at >=19px bold. Do not shrink pill type below this. */
@@ -385,9 +386,12 @@
         <img src="/images/brand/wordmark-cream.svg" alt="E. Berry" class="h-6 w-auto" />
         <p class="mt-5 text-base">E. Berry Property Management &mdash; A Part of Windermere Vashon</p>
         <!-- Co-brand: the Windermere Real Estate Vashon Island logo is navy and black ink, illegible on Berry, so it sits on its own
-             flat Cream panel. The mark is used unmodified (images/brand/README.md); the text line above stays the firm-ID wording. -->
-        <div class="mt-5 w-[10.75rem] max-w-full rounded-card bg-eb-cream p-4">
-          <img src="/images/brand/windermere-vashon-island.png" alt="Windermere Real Estate, Vashon Island" width="725" height="430" decoding="async" class="block h-auto w-full" />
+             flat Cream panel (128px, logo 104px), and links to the office's own website. The mark is used unmodified
+             (images/brand/README.md); the text line above stays the firm-ID wording. The panel's focus ring is Berry (see SHELL-STYLES). -->
+        <div class="eb-cobrand-panel mt-5 w-32 max-w-full rounded-card bg-eb-cream p-3">
+          <a href="https://www.windermerevashon.com/" class="block">
+            <img src="/images/brand/windermere-vashon-island.png" alt="Windermere Real Estate, Vashon Island" width="725" height="430" decoding="async" class="block h-auto w-full" />
+          </a>
         </div>
       </div>
       <nav aria-label="Footer">

@@ -13,9 +13,10 @@ The co-brand logo for E. Berry Property Management's affiliation with Windermere
 - **Never recolor, restyle, redraw, stretch, outline or crop parts of it.** It is navy and black ink (plus a grey diamond) by design. Set its width and let the height follow.
 - Because the ink is dark navy and black, it **only ever sits on Cream** (`#F1ECE9`): straight on a Cream field, or on a flat Cream panel (24px radius, no border) when the surrounding field is Berry, as in the footer. Never on Berry, never on a photo.
 - Alt text, everywhere: `Windermere Real Estate, Vashon Island` (it says exactly what the logo says).
+- It is always a link to the office's own website, `https://www.windermerevashon.com/`: a plain `<a>` (no `target`, no `rel`, no underline, no hover effect), named by the alt text alone. Its keyboard focus ring is Berry, even on the footer's Cream panel.
 - It is a co-brand, not a replacement for the legal identification. The text lines ("A PART OF WINDERMERE VASHON" in the header, "E. Berry Property Management — A Part of Windermere Vashon" in the footer, the owners page block) stay as the firm-ID wording; the logo only makes the affiliation unmistakable. There is no logo in the header on purpose: at header height the "Vashon Island" lettering would be about 6px.
 
-Where it appears: the footer of every page (on its own Cream panel), the lockup card in the owners page's "A part of Windermere Vashon" block (beside the E. Berry wordmark, with a thin Berry divider), and the homepage's "part of Windermere Vashon" line (160px, on the Cream field). `tools/check_site.py` and `tools/test_listings.py` hold those placements, and keep it out of the header.
+Where it appears, and how big: the footer of every page (on its own 128px Cream panel with 12px padding, so the logo is 104px), the lockup card in the owners page's "A part of Windermere Vashon" block (144px, beside the E. Berry wordmark, with a thin Berry divider), and the homepage's "part of Windermere Vashon" line (112px, on the Cream field). It stays modest: the E. Berry marks are the larger ones. `tools/check_site.py` and `tools/test_listings.py` hold those placements, sizes and links, and keep it out of the header.
 
 ### How the file was made
 
