@@ -1194,7 +1194,7 @@ if exists('.github/workflows/listings-e2e.yml'):
     check("'owners/**'" in read('.github/workflows/listings-e2e.yml'),
           ".github/workflows/listings-e2e.yml: expected 'owners/**' (the owners page is covered by the same E2E)")
 tw_css = read('css/tailwind.css')
-for cls in (r'lg\:grid-cols-\[7fr_5fr\]', r'lg\:grid-cols-2', r'max-w-\[20ch\]', r'lg\:grid-cols-4', r'lg\:px-1\.5', r'xl\:px-2', r'xl\:text-lg', r'lg\:text-base', r'xl\:gap-2',
+for cls in (r'md\:grid-cols-2', r'lg\:grid-cols-2',r'max-w-\[20ch\]', r'lg\:grid-cols-4', r'lg\:px-1\.5', r'xl\:px-2', r'xl\:text-lg', r'lg\:text-base', r'xl\:gap-2',
             r'sm\:px-8', r'text-\[length\:clamp\(2\.25rem\2c 4\.5vw\2c 3\.5rem\)\]'):
     check(cls in tw_css, f"css/tailwind.css has no .{cls}; rebuild it (see README, 'Rebuilding the stylesheet')")
 
