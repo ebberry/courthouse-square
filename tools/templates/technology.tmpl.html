@@ -6,7 +6,10 @@
        Do not edit by hand: change the template, then re-run `python3 tools/build_pages.py`.
        EVIDENCE RULE: every factual claim about Ledger on this page was checked against the Ledger source before it
        shipped. No pricing, no statistics, no screenshots, no testimonials (tools/check_site.py fails the build if
-       one sneaks in). Add a claim only after finding the code that does it. -->
+       one sneaks in). Add a claim only after finding the code that does it.
+       ONE EXCEPTION, owner-directed: the owners tile "Bigger repairs wait for your OK" describes owner repair approval,
+       which is being built in Ledger and is not in the source yet. It must be live in Ledger before this site goes to
+       production (README, "Before launch"); tools/check_site.py prints a reminder while the tile is on the page. -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>$title</title>
@@ -70,7 +73,7 @@ $header
         <p class="font-sans text-xs font-medium uppercase tracking-widest">Meet Ledger</p>
         <h1 id="tech-title" class="mt-6 text-balance font-serif text-[length:clamp(2.75rem,11.5vw,8rem)] font-medium leading-[0.98] tracking-[-0.02em]">Our <span class="eb-hl eb-hl-mustard">technology</span></h1>
         <p class="mt-8 max-w-[40rem] text-balance font-serif text-2xl leading-[1.3] md:text-3xl">It's called Ledger, and I built it for this island.</p>
-        <p class="mt-6 max-w-[34rem] text-xl leading-[1.4]">Instead of renting someone else's software and bending my work around it, I built something that fits how renting really works on Vashon: homes and storefronts looked after side by side, state and county rules to follow, and messages that come straight to me.</p>
+        <p class="mt-6 max-w-[34rem] text-xl leading-[1.4]">I built it so tenants can see where they stand and report a problem without chasing anyone, and so owners can follow their buildings and their repairs without the worry. It fits how renting really works on Vashon, where I look after homes and storefronts side by side.</p>
         <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
           <a href="#tenants" class="text-lg underline decoration-2 underline-offset-[6px] hover:decoration-eb-tangerine">What it does for tenants</a>
           <a href="#for-owners" class="text-lg underline decoration-2 underline-offset-[6px] hover:decoration-eb-tangerine">What it does for owners</a>
@@ -111,34 +114,24 @@ $header
 </section>
 
 <!-- ============================================================
-     3. FOR TENANTS — Sand field. Stripe is the prominent card; four flat tiles under it.
+     3. FOR TENANTS — Sand field. Answers without chasing anyone: reporting a problem leads (a wide first tile),
+     then seeing where you stand, messages, and rent through Stripe as an ordinary tile (it is no longer the hero).
 ============================================================ -->
 <section id="tenants" class="bg-eb-sand" aria-labelledby="tenants-heading">
   <div class="mx-auto max-w-[1440px] px-[var(--eb-space-margin)] py-[max(4.5rem,calc(var(--eb-space-margin)*1.25))]">
-    <div class="grid gap-10 lg:grid-cols-[5fr_7fr] lg:items-start lg:gap-16">
-      <div>
-        <h2 id="tenants-heading" class="font-serif text-[length:var(--eb-h2-size)] font-medium leading-[1.1]">For tenants</h2>
-        <p class="mt-4 max-w-[26rem]">Your portal is one place for rent, repairs, messages and your lease. It shows you your own account and no one else's.</p>
-      </div>
+    <h2 id="tenants-heading" class="font-serif text-[length:var(--eb-h2-size)] font-medium leading-[1.1]">For tenants</h2>
+    <p class="mt-4 max-w-[34rem]">You shouldn't have to struggle to get an answer about your own place. So I made your portal the place to look: what you owe, how your repair is coming along, and a message line that comes straight to me. It shows you your own account and no one else's.</p>
 
-      <article class="eb-card">
-        <p class="font-sans text-xs font-medium uppercase tracking-widest">Paying rent</p>
-        <h3 class="mt-4 max-w-[18ch] text-balance font-serif text-3xl font-medium leading-[1.1] sm:text-[2.5rem]">Rent, paid through <span class="eb-hl eb-hl-mustard">Stripe</span>.</h3>
-        <p class="mt-6 max-w-[34rem]">Open your portal and you'll see one number: what you owe. Choose bank transfer or card, and you finish on Stripe's own secure page. Your card or bank details go to Stripe, not to me, and Ledger never sees or stores your full card or bank account number.</p>
-        <p class="mt-4 max-w-[34rem]">Every payment gets a receipt in your messages. Bank transfers take a few business days to clear, and Ledger lets you know when yours has been received.</p>
-      </article>
-    </div>
-
-    <ul class="mt-10 grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-      <li class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-7">
+    <ul class="mt-10 grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+      <li class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:col-span-2 sm:p-7">
         <span class="block h-3 w-3 bg-eb-tangerine" aria-hidden="true"></span>
-        <h3 class="mt-5 font-serif text-2xl font-medium leading-[1.2]">Autopay, if you'd like it</h3>
-        <p class="mt-3">Link a bank account once on Stripe's page, pick any day from the 1st to the 28th, and what you owe is paid for you. You get a reminder three days before each payment, and you can switch it off whenever you like.</p>
+        <h3 class="mt-5 max-w-[22ch] text-balance font-serif text-3xl font-medium leading-[1.1]">Report a <span class="eb-hl eb-hl-mustard">problem</span>, then follow it</h3>
+        <p class="mt-3 max-w-[34rem]">It's a short form in your portal. Say what's wrong, add up to three photos, and mark it urgent if it's water, heat or safety. You'll see right away that it's been received, then you can follow it from received to done, and you're told as it moves.</p>
       </li>
       <li class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-7">
         <span class="block h-3 w-3 bg-eb-tangerine" aria-hidden="true"></span>
-        <h3 class="mt-5 font-serif text-2xl font-medium leading-[1.2]">Tell me what's wrong</h3>
-        <p class="mt-3">Report a problem, add up to three photos, and mark it urgent if it's water, heat or safety. You can follow your request from received to done, and you're told as it moves.</p>
+        <h3 class="mt-5 font-serif text-2xl font-medium leading-[1.2]">See where you stand</h3>
+        <p class="mt-3">Open your portal and the first thing you see is one number: what you owe, and when it's due. Every charge on your account is listed with its due date and whether it's paid. Your lease is signed on screen, and the finished copy waits in your Documents.</p>
       </li>
       <li class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-7">
         <span class="block h-3 w-3 bg-eb-tangerine" aria-hidden="true"></span>
@@ -147,8 +140,13 @@ $header
       </li>
       <li class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-7">
         <span class="block h-3 w-3 bg-eb-tangerine" aria-hidden="true"></span>
-        <h3 class="mt-5 font-serif text-2xl font-medium leading-[1.2]">Your lease, signed online</h3>
-        <p class="mt-3">Leases are written from a template and signed on screen. Once everyone has signed, the finished copy waits in your Documents, and your account lists every charge with its due date and whether it's paid.</p>
+        <h3 class="mt-5 font-serif text-2xl font-medium leading-[1.2]">Rent, paid through Stripe</h3>
+        <p class="mt-3">Choose bank transfer or card, and you finish on Stripe's own secure page. Your card or bank details go to Stripe, not to me, and Ledger never sees or stores your full card or bank account number. Every payment gets a receipt in your messages.</p>
+      </li>
+      <li class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-7">
+        <span class="block h-3 w-3 bg-eb-tangerine" aria-hidden="true"></span>
+        <h3 class="mt-5 font-serif text-2xl font-medium leading-[1.2]">Autopay, if you'd like it</h3>
+        <p class="mt-3">Link a bank account once on Stripe's page, pick any day from the 1st to the 28th, and what you owe is paid for you. You get a reminder three days before each payment, and you can switch it off whenever you like.</p>
       </li>
     </ul>
   </div>
@@ -156,7 +154,8 @@ $header
 
 <!-- ============================================================
      4. FOR OWNERS — Mustard (the Property Management role color) carrying one Cream card, six flat tiles inside.
-     Contact-first like /owners/: nothing here quotes a fee, rate or price.
+     Your building, without the worry: repair visibility and repair approval lead. Contact-first like /owners/:
+     nothing here quotes a fee, rate or price.
 ============================================================ -->
 <section id="for-owners" class="eb-field-mustard" aria-labelledby="owners-heading">
   <div class="mx-auto max-w-[1440px] p-[clamp(1.5rem,4vw,3.5rem)]">
@@ -168,9 +167,21 @@ $header
       </div>
 
       <h2 id="owners-heading" class="mt-6 font-serif text-[length:var(--eb-h2-size)] font-medium leading-[1.1]">For owners</h2>
-      <p class="mt-4 max-w-[34rem]">You get your own login. It shows your own buildings and nobody else's, and the figures come from the same records I work from.</p>
+      <p class="mt-4 max-w-[34rem]">You shouldn't have to worry about your building. With your own login you can see how it's doing and follow its repairs whenever you like. It shows your own buildings and nobody else's, and the figures come from the same records I work from.</p>
 
       <ul class="mt-10 grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+        <li class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-7">
+          <span class="block h-3 w-3 bg-eb-tangerine" aria-hidden="true"></span>
+          <h3 class="mt-5 font-serif text-2xl font-medium leading-[1.2]">Repairs you can see</h3>
+          <p class="mt-3">As a repair moves along, each step shows up in your activity as it happens. Once I record what it cost, it lands on your statement as its own line. And you can ask "any open repairs?" in plain words and get an answer from your real records.</p>
+        </li>
+        <!-- OWNER-DIRECTED COPY, used exactly as given. Owner repair approval is being built in Ledger and is not in the
+             source yet, so this tile is the one claim not checked against it. See the header note and README "Before launch". -->
+        <li class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-7">
+          <span class="block h-3 w-3 bg-eb-tangerine" aria-hidden="true"></span>
+          <h3 class="mt-5 font-serif text-2xl font-medium leading-[1.2]">Bigger repairs wait for your OK</h3>
+          <p class="mt-3">When a repair goes past the everyday, it comes to you first: what's wrong, what it should cost, and who'd do it. You approve it from your owner login, then watch it through to done.</p>
+        </li>
         <li class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-7">
           <span class="block h-3 w-3 bg-eb-tangerine" aria-hidden="true"></span>
           <h3 class="mt-5 font-serif text-2xl font-medium leading-[1.2]">A statement every month</h3>
@@ -183,23 +194,13 @@ $header
         </li>
         <li class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-7">
           <span class="block h-3 w-3 bg-eb-tangerine" aria-hidden="true"></span>
-          <h3 class="mt-5 font-serif text-2xl font-medium leading-[1.2]">Ask in plain words</h3>
-          <p class="mt-3">Type a question about your own portfolio, like how full your buildings are or what your latest statement netted, and get an answer from your real numbers.</p>
-        </li>
-        <li class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-7">
-          <span class="block h-3 w-3 bg-eb-tangerine" aria-hidden="true"></span>
-          <h3 class="mt-5 font-serif text-2xl font-medium leading-[1.2]">What happened, in plain language</h3>
-          <p class="mt-3">An activity page lists payments, statements and repairs on your buildings in everyday words. Pick the dates you want and download it.</p>
+          <h3 class="mt-5 font-serif text-2xl font-medium leading-[1.2]">Rent to your bank account</h3>
+          <p class="mt-3">Rent your tenants pay goes to your bank account through Stripe, set up in your name from your owner login.</p>
         </li>
         <li class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-7">
           <span class="block h-3 w-3 bg-eb-tangerine" aria-hidden="true"></span>
           <h3 class="mt-5 font-serif text-2xl font-medium leading-[1.2]">Shared costs, budget and actual</h3>
           <p class="mt-3">If your building has shared costs, you can see the budget next to what has actually been spent, by category.</p>
-        </li>
-        <li class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-7">
-          <span class="block h-3 w-3 bg-eb-tangerine" aria-hidden="true"></span>
-          <h3 class="mt-5 font-serif text-2xl font-medium leading-[1.2]">Paid to your own account</h3>
-          <p class="mt-3">Online rent payments run through Stripe and are paid to your own Stripe account, set up in your name from your owner login.</p>
         </li>
       </ul>
     </div>

@@ -1280,6 +1280,7 @@ check(0 < hm < index.find('id="buildings"') < index.find('id="owners"'), 'index.
 check('<option value="Courthouse Square">Courthouse Square</option>' in index, 'index.html: the inquiry form still offers Courthouse Square')
 
 # ---------------- /technology/ ----------------
+approval_note = None
 if exists(TECH_REL):
     tp = read(TECH_REL)
     check('A PART OF WINDERMERE VASHON' in tp, f"{TECH_REL}: header is missing the 'A PART OF WINDERMERE VASHON' firm-ID line")
@@ -1321,16 +1322,52 @@ if exists(TECH_REL):
     main_ = (re.search(r'<main id="main">.*?</main>', tp, re.S) or [''])[0]
     text_ = visible_text(main_)
     sec = lambda i: (re.search(rf'<section id="{i}".*?</section>', tp, re.S) or [''])[0]
-    # The software is named, and Stripe is prominent in the tenants section (a highlighted word in the lead card, before the tiles).
+    # The software is named. Stripe is still on the page (and in the meta description), but as an ordinary tenants tile: since P11 the
+    # tenants section leads with easy visibility and easy issue reporting, not with paying rent.
     check('Ledger' in text_ and text_.count('Ledger') >= 5, f'{TECH_REL}: the page names the software "Ledger"')
-    ten = sec('tenants')
-    check(re.search(r'<article class="eb-card">.*?<span class="eb-hl eb-hl-mustard">Stripe</span>', ten, re.S) is not None
-          and ten.find('Stripe') < ten.find('<ul'), f'{TECH_REL}: Stripe is the prominent card in the tenants section (highlighted word, before the tiles)')
+    ten, own = sec('tenants'), sec('for-owners')
+    tiles = lambda s_: re.findall(r'<li\b[^>]*>(.*?)</li>', s_, re.S)
+    ten_tiles, own_tiles = tiles(ten), tiles(own)
     check('Stripe' in text_ and 'Stripe' in (re.search(r'name="description" content="([^"]*)"', tp) or ['', ''])[1], f'{TECH_REL}: "Stripe" must be on the page and in its meta description')
     check('Your card or bank details go to Stripe, not to me' in ten and 'never sees or stores your full card or bank account number' in ten,
-          f'{TECH_REL}: the tenants card must say card and bank details go to Stripe and Ledger never sees or stores the full numbers (verified in Ledger: hosted Checkout, no card fields)')
-    check(len(re.findall(r'<li\b', ten)) == 4 and len(re.findall(r'<li\b', sec('for-owners'))) == 6 and len(re.findall(r'<li\b', sec('why'))) == 3 and len(re.findall(r'<li\b', sec('private'))) == 4,
-          f'{TECH_REL}: tiles: 3 in why, 4 under tenants, 6 for owners, 4 in private')
+          f'{TECH_REL}: the Stripe tile must say card and bank details go to Stripe and Ledger never sees or stores the full numbers (verified in Ledger: hosted Checkout, no card fields)')
+    check('<article' not in ten and 'eb-card' not in ten, f'{TECH_REL}: the tenants section has no big featured card (rent through Stripe is an ordinary tile, not the hero)')
+    ten_titles = [visible_text(m_.group(0)) if m_ else '' for m_ in (re.search(r'<h3[^>]*>.*?</h3>', t_, re.S) for t_ in ten_tiles)]
+    stripe_tiles = [i for i, t_ in enumerate(ten_titles) if 'Stripe' in t_]
+    check(len(stripe_tiles) == 1 and stripe_tiles[0] > 0 and 'eb-hl' not in ten_tiles[stripe_tiles[0]],
+          f'{TECH_REL}: exactly one tenants tile is titled for Stripe, it is not the first tile, and it carries no highlighted word (it is no longer the hero)')
+    check(len(ten_tiles) == 5 and len(own_tiles) == 6 and len(tiles(sec('why'))) == 3 and len(tiles(sec('private'))) == 4,
+          f'{TECH_REL}: tiles: 3 in why, 5 under tenants, 6 for owners, 4 in private')
+    # Tenants lead with easy issue submission: the FIRST tile is the report-a-problem tile (verified in Ledger: tenant/maintenance form,
+    # up to 3 photos, the urgent checkbox "water, heat, safety", the status timeline, and the notices queued as a request moves).
+    lead = visible_text(ten_tiles[0]) if ten_tiles else ''
+    check(all(p_ in lead for p_ in ('Report a problem', 'up to three photos', 'urgent', 'water, heat or safety', 'received to done', "you're told as it moves")),
+          f'{TECH_REL}: the first tenants tile must be the one about reporting a problem (up to three photos, urgent for water, heat or safety, followed from received to done, told as it moves); found {lead[:80]!r}')
+    check(re.search(r'shouldn.t have to struggle to get an answer', visible_text(re.sub(r'<ul.*?</ul>', ' ', ten, flags=re.S))) is not None,
+          f'{TECH_REL}: the tenants intro must carry "you shouldn\'t have to struggle to get an answer"')
+    # Owners lead with seeing their repairs, then the repair-approval tile, whose copy the owner dictated word for word.
+    APPROVAL_TITLE = 'Bigger repairs wait for your OK'
+    APPROVAL_BODY = ("When a repair goes past the everyday, it comes to you first: what's wrong, what it should cost, and who'd do it. "
+                     "You approve it from your owner login, then watch it through to done.")
+    check(len(own_tiles) >= 2 and 'Repairs you can see' in visible_text(own_tiles[0]) and 'any open repairs?' in visible_text(own_tiles[0]),
+          f'{TECH_REL}: the first owners tile must be "Repairs you can see" (activity as it happens, the cost on the statement, "any open repairs?")')
+    check(len(own_tiles) >= 2 and visible_text(own_tiles[1]) == f'{APPROVAL_TITLE} {APPROVAL_BODY}',
+          f'{TECH_REL}: the SECOND owners tile must be the approval tile with the owner-directed copy, exactly: "{APPROVAL_TITLE}" / "{APPROVAL_BODY}" (found {visible_text(own_tiles[1])[:90] if len(own_tiles) > 1 else None!r})')
+    check(re.search(r'shouldn.t have to worry about your building', visible_text(re.sub(r'<ul.*?</ul>', ' ', own, flags=re.S))) is not None,
+          f'{TECH_REL}: the owners intro must carry "you shouldn\'t have to worry about your building"')
+    # Rent reaches the owner's bank account through Stripe: Ledger's own words (src/app/owner/payouts/page.tsx, "Rent paid by your tenants
+    # goes to your bank account through Stripe."). The old "paid to your own Stripe account" wording, and any claim that the money never
+    # passes through another account, are gone and must stay gone.
+    own_text = visible_text(own)
+    check('goes to your bank account through Stripe' in own_text, f'{TECH_REL}: the owners section must say rent goes to the owner\'s bank account through Stripe')
+    check(re.search(r'own\s+Stripe\s+account|paid\s+to\s+your\s+own\b', visible_text(tp) + ' ' + (visible_text(read(TECH_TMPL)) if exists(TECH_TMPL) else ''), re.I) is None,
+          f'{TECH_REL} (or its template): still says rent is paid to the owner\'s "own Stripe account"; Ledger says it goes to the owner\'s bank account through Stripe')
+    check(re.search(r'never\s+(?:passes?|touch|goes through|moves? through)|doesn.t\s+(?:pass|touch)|bypass|no other account|any other account', own_text, re.I) is None,
+          f'{TECH_REL}: the owners section must not claim the money never passes through any other account (Ledger does not say that)')
+    # The approval tile describes owner repair approval, which Ledger does not have yet. While the tile is on the page, remind (do not fail).
+    if APPROVAL_TITLE in tp:
+        approval_note = (f'{TECH_REL} carries the owner-directed tile "{APPROVAL_TITLE}"; owner repair approval must be LIVE in Ledger before this site '
+                         'goes to production. Remove or reword the tile if it is not (README, "Before launch")')
     # Links: the two audiences' calls to action, and the pill is >=19px bold (.eb-btn).
     check(re.search(r'<a href="/listings/" class="eb-btn [^"]*">[^<]+</a>', sec('closer')) is not None and 'href="/owners/"' in sec('closer'),
           f'{TECH_REL}: the closer needs an .eb-btn pill to /listings/ and a link to /owners/')
@@ -1550,4 +1587,6 @@ if problems:
 print(f"OK: {checks} checks passed")
 if placeholder_note:
     print(f"note: {placeholder_note}")
+if approval_note:
+    print(f"note: {approval_note}")
 print("note: generated pages are verified separately; run `python3 tools/build_pages.py --check` (also a CI step) to prove buildings/ and sitemap.xml are not stale")

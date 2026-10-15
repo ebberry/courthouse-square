@@ -138,7 +138,7 @@ For Vashon property owners who might hire E. Berry to manage and list their plac
 
 **Courthouse Square is one of the properties, not the flagship.** It keeps its own page (`/buildings/courthouse-square/`) and its footer link, but it is not a top-level destination: the header nav is **Homes, Commercial, For owners, Technology** (+ the Inquire pill), and the homepage shows it as one modest outlined strip (`<section id="buildings">`) lighter than Homes, Commercial and Owners. `tools/check_site.py` fails if the header nav changes, if the strip grows a color field, pill or big heading, or if the word "flagship" appears anywhere in the site's pages, templates, data or code; `tools/test_listings.py` part S measures the same things in a browser (and that the header stays on one row at 1024px).
 
-**`/technology/` ("Our technology")** explains Ledger, the property-management software built for this company, to tenants and owners. It is generated from `tools/templates/technology.tmpl.html` (edit the copy there, then re-run the generator). **Evidence rule: a claim about Ledger goes on the page only after the code that does it has been found in the Ledger source** (the hand-back of the phase that added the page lists each claim and its file). The page carries no pricing, statistics, security superlatives ("bank-level"), screenshots or testimonials, and `tools/check_site.py` fails if one appears. It deliberately does not say the listings on this site come live from Ledger: `js/site-config.js` still reads `/data/listings.json`, and the check keeps the copy honest until `LISTINGS_URL` is flipped to Ledger's public feed. Test: part S of `tools/test_listings.py` (`python3 tools/test_listings.py technology` runs just that part), and the page is in the accessibility sweep (part Q).
+**`/technology/` ("Our technology")** explains Ledger, the property-management software built for this company, to tenants and owners. It is generated from `tools/templates/technology.tmpl.html` (edit the copy there, then re-run the generator). **Evidence rule: a claim about Ledger goes on the page only after the code that does it has been found in the Ledger source** (the hand-back of the phase that added the page lists each claim and its file). The page carries no pricing, statistics, security superlatives ("bank-level"), screenshots or testimonials, and `tools/check_site.py` fails if one appears. It deliberately does not say the listings on this site come live from Ledger: `js/site-config.js` still reads `/data/listings.json`, and the check keeps the copy honest until `LISTINGS_URL` is flipped to Ledger's public feed. The one exception to the evidence rule is the owner-directed "Bigger repairs wait for your OK" tile, which describes a feature Ledger was still building (see "Before launch" below). Test: part S of `tools/test_listings.py` (`python3 tools/test_listings.py technology` runs just that part), and the page is in the accessibility sweep (part Q).
 
 ## The Windermere co-brand logo
 
@@ -346,6 +346,12 @@ See `images/README.md` for the full list of filenames and recommended sizes. Qui
 - Drop files into `/images/` using the exact filenames listed there.
 - The site picks them up automatically — no code change needed.
 - If a file is missing, the page falls back to a muted evergreen placeholder so nothing breaks visually.
+
+## Before launch
+
+Things that must be true before this site goes to production:
+
+- [ ] **Owner repair approval must be live in Ledger.** The technology page's "Bigger repairs wait for your OK" tile (`tools/templates/technology.tmpl.html`, the second tile in the owners section) describes owner repair approval: a bigger repair goes to the owner first, who approves it from their owner login and then watches it through to done. That feature was still being built in Ledger when the tile was written, so it is the one claim on the page not checked against Ledger's source. If it is not live in Ledger by launch, remove the tile or reword it, then re-run `python3 tools/build_pages.py` and update the tile assertions in `tools/check_site.py` and part S of `tools/test_listings.py`. `tools/check_site.py` prints a reminder note while the tile is on the page (like the map placeholder note, it does not fail the build).
 
 ## Deploying to Netlify
 

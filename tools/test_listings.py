@@ -57,9 +57,11 @@ page about Ledger:
   S. Technology     - the nav is Homes, Commercial, For owners, Technology (+ Inquire) on every page type, Courthouse Square
                       lives in the footer, and the header stays on one row at 1024px with the new labels; the homepage's
                       Courthouse Square strip is one modest outlined card, visibly lighter than Homes, Commercial and Owners,
-                      with a working link; /technology/ (title, JSON-LD, the one huge h1, the sections and tiles, Stripe as
-                      the prominent card, no statistics or security superlatives or prices, the calls to action, the 390px
-                      layout, no-JS). The page is also in the Q accessibility sweep at 1440px and 390px.
+                      with a working link; /technology/ (title, JSON-LD, the one huge h1, the sections and tiles, the tenants
+                      section leading with reporting a problem and rent through Stripe as an ordinary tile, the owners
+                      section leading with repair visibility and the owner-directed approval tile, rent to the owner's bank
+                      account, no statistics or security superlatives or prices, the calls to action, the 390px layout,
+                      no-JS). The page is also in the Q accessibility sweep at 1440px and 390px.
 
 Part 6 drives the Phase 10 co-brand: the Windermere Real Estate Vashon Island logo next to the E. Berry brand:
 
@@ -1652,18 +1654,44 @@ def part5(browser, sessions):
     sizes = pg.evaluate(H1_SIZES_JS)
     nxt = next(x for x in sizes if not x['inH1'])
     check(sizes[0]['inH1'] and sizes[0]['size'] >= 120 and sizes[0]['size'] >= 2 * nxt['size'], f'S: the h1 is the one huge element ({sizes[0]["size"]}px vs next {nxt})')
-    # the tiles, and Stripe as the prominent card
+    # the tiles. Since P11 the tenants section leads with easy issue reporting (a wide first tile, one highlighted word), and rent through
+    # Stripe is an ordinary tile; the owners section leads with repair visibility, then the approval tile with the owner-directed copy.
     counts = pg.evaluate("""() => Object.fromEntries(['why', 'tenants', 'for-owners', 'private'].map(id => [id, document.querySelectorAll('#' + id + ' li').length]))""")
-    check(counts == {'why': 3, 'tenants': 4, 'for-owners': 6, 'private': 4}, f'S: tiles per section {counts}')
-    stripe = pg.evaluate("""() => { const hl = document.querySelector('#tenants article .eb-hl'), art = document.querySelector('#tenants article'), ul = document.querySelector('#tenants ul'),
-        cs = getComputedStyle(hl), h3 = hl.closest('h3');
-      return { text: hl.textContent, bg: cs.backgroundColor, color: cs.color, fs: parseFloat(getComputedStyle(h3).fontSize), cardBg: getComputedStyle(art).backgroundColor,
-               aboveTiles: art.getBoundingClientRect().bottom <= ul.getBoundingClientRect().top + 1, body: art.innerText.replace(/\\s+/g, ' ') } }""")
-    check(stripe['text'] == 'Stripe' and stripe['bg'] == MUSTARD and stripe['color'] == BERRY and stripe['cardBg'] == CREAM and stripe['aboveTiles'] and stripe['fs'] >= 30,
-          f'S: Stripe is the prominent tenants card: a highlighted word in a large heading on a Cream card above the tiles ({stripe})')
-    check('details go to Stripe, not to me' in stripe['body'] and 'never sees or stores your full card or bank account number' in stripe['body'] and 'finish on Stripe' in stripe['body'],
-          'S: the Stripe card says details go to Stripe and Ledger never sees or stores the full numbers')
+    check(counts == {'why': 3, 'tenants': 5, 'for-owners': 6, 'private': 4}, f'S: tiles per section {counts}')
+    ten = pg.evaluate("""() => { const q = e => document.querySelector(e), cs = e => getComputedStyle(e), tiles = [...document.querySelectorAll('#tenants li')],
+        box = e => { const b = e.getBoundingClientRect(); return { l: Math.round(b.left), t: Math.round(b.top + scrollY), w: Math.round(b.width) } },
+        hl = tiles[0].querySelector('.eb-hl'), stripeLi = tiles.find(li => li.querySelector('h3').textContent.includes('Stripe')),
+        intro = q('#tenants-heading').nextElementSibling;
+      return { n: tiles.length, firstTitle: tiles[0].querySelector('h3').innerText.replace(/\\s+/g, ' ').trim(), firstBody: tiles[0].innerText.replace(/\\s+/g, ' '),
+               hlText: hl && hl.textContent, hlBg: hl && cs(hl).backgroundColor, hlColor: hl && cs(hl).color, firstFs: parseFloat(cs(tiles[0].querySelector('h3')).fontSize),
+               boxes: tiles.map(box), stripeIdx: tiles.indexOf(stripeLi), stripeFs: parseFloat(cs(stripeLi.querySelector('h3')).fontSize), stripeHl: stripeLi.querySelectorAll('.eb-hl').length,
+               stripeBody: stripeLi.innerText.replace(/\\s+/g, ' '), fs: tiles.slice(1).map(li => parseFloat(cs(li.querySelector('h3')).fontSize)), bg: tiles.map(li => cs(li).backgroundColor),
+               cards: document.querySelectorAll('#tenants article, #tenants .eb-card').length, intro: intro.innerText.replace(/\\s+/g, ' '),
+               introAboveTiles: intro.getBoundingClientRect().bottom <= tiles[0].getBoundingClientRect().top } }""")
+    check(ten['n'] == 5 and ten['firstTitle'] == 'Report a problem, then follow it' and 'up to three photos' in ten['firstBody'] and 'urgent if it\'s water, heat or safety' in ten['firstBody']
+          and 'from received to done' in ten['firstBody'] and 'you\'re told as it moves' in ten['firstBody'],
+          f'S: the first tenants tile is about reporting a problem: three photos, urgent, received to done, told as it moves ({ten["firstTitle"]!r})')
+    check(ten['hlText'] == 'problem' and ten['hlBg'] == MUSTARD and ten['hlColor'] == BERRY, f'S: the lead tenants tile highlights "problem" in Mustard ({ten["hlText"]}, {ten["hlBg"]})')
+    b0, rest = ten['boxes'][0], ten['boxes'][1:]
+    check(b0['t'] <= min(b['t'] for b in rest) and b0['l'] <= min(b['l'] for b in rest) and b0['w'] > 1.5 * max(b['w'] for b in rest) and ten['firstFs'] > max(ten['fs']),
+          f'S: the lead tenants tile is first, widest and has the biggest title on desktop ({ten["boxes"]}, {ten["firstFs"]} vs {ten["fs"]})')
+    check(all(b == CREAM for b in ten['bg']) and ten['cards'] == 0, f'S: every tenants tile is a flat Cream tile and there is no big featured card ({ten["bg"]}, {ten["cards"]} cards)')
+    check(ten['stripeIdx'] > 0 and ten['stripeHl'] == 0 and ten['stripeFs'] == ten['fs'][0] and ten['stripeFs'] < ten['firstFs'],
+          f'S: rent through Stripe is an ordinary tile (not first, no highlighted word, the same title size as the other tiles) ({ten["stripeIdx"]}, {ten["stripeHl"]}, {ten["stripeFs"]})')
+    check('details go to Stripe, not to me' in ten['stripeBody'] and 'never sees or stores your full card or bank account number' in ten['stripeBody'] and 'finish on Stripe' in ten['stripeBody'],
+          'S: the Stripe tile says details go to Stripe and Ledger never sees or stores the full numbers')
+    check("shouldn't have to struggle to get an answer" in ten['intro'] and ten['introAboveTiles'], f'S: the tenants intro carries "you shouldn\'t have to struggle to get an answer" above the tiles ({ten["intro"]!r})')
+    own = pg.evaluate("""() => { const tiles = [...document.querySelectorAll('#for-owners li')], t = li => li.innerText.replace(/\\s+/g, ' ').trim(),
+        intro = document.querySelector('#owners-heading').nextElementSibling;
+      return { titles: tiles.map(li => li.querySelector('h3').innerText.trim()), first: t(tiles[0]), second: t(tiles[1]), all: tiles.map(t), intro: intro.innerText.replace(/\\s+/g, ' ') } }""")
+    check(own['titles'][:2] == ['Repairs you can see', 'Bigger repairs wait for your OK'] and 'any open repairs?' in own['first'], f'S: the first two owners tiles are repair visibility, then the approval tile ({own["titles"]})')
+    check(own['second'] == "Bigger repairs wait for your OK When a repair goes past the everyday, it comes to you first: what's wrong, what it should cost, and who'd do it. "
+                           "You approve it from your owner login, then watch it through to done.", f'S: the approval tile carries the owner-directed copy exactly ({own["second"]!r})')
+    check(any('goes to your bank account through Stripe' in t for t in own['all']) and not any(re.search(r'own Stripe account|paid to your own', t, re.I) for t in own['all']),
+          'S: the owners section says rent goes to the owner\'s bank account through Stripe, and no longer says "your own Stripe account"')
+    check("shouldn't have to worry about your building" in own['intro'], f'S: the owners intro carries "you shouldn\'t have to worry about your building" ({own["intro"]!r})')
     main_text = pg.inner_text('main'); body_text = pg.inner_text('body')
+    check(not re.search(r'own Stripe account|paid to your own', main_text, re.I), 'S: nowhere on the page does it say rent is paid to the owner\'s "own Stripe account"')
     check(main_text.count('Ledger') >= 5 and 'Stripe' in main_text, f'S: the page names Ledger ({main_text.count("Ledger")}x) and Stripe')
     check(not TECH_FORBIDDEN_RE.search(body_text), f'S: no statistic, security superlative, price or SaaS-speak anywhere a visitor can read ({TECH_FORBIDDEN_RE.search(body_text)})')
     check(pg.locator('blockquote').count() == 0 and pg.locator('table').count() == 0 and pg.locator('form').count() == 0, 'S: no testimonials, no feature-matrix table, no form')
@@ -1709,7 +1737,7 @@ def part5(browser, sessions):
     pg = s.pg; pg.goto(BASE + '/technology/', wait_until='networkidle'); pg.wait_for_selector('#tech-title')
     check(pg.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), 'S: no sideways scroll at 390px')
     m = pg.evaluate("""() => { const r = e => { const b = document.querySelector(e).getBoundingClientRect(); return { l: b.left, r: b.right, h: b.height } };
-        return { h1: r('h1'), pill: r('#closer a.eb-btn'), stripe: r('#tenants article') } }""")
+        return { h1: r('h1'), pill: r('#closer a.eb-btn'), lead: r('#tenants li') } }""")
     check(m['h1']['l'] >= 0 and m['h1']['r'] <= 390, f'S: the headline fits a phone ({m["h1"]})')
     check(m['pill']['l'] >= 0 and m['pill']['r'] <= 390 and 44 <= m['pill']['h'] < 80, f'S: the pill fits on one line and is a real tap target ({m["pill"]})')
     big = pg.evaluate(H1_SIZES_JS)
