@@ -128,8 +128,8 @@ $header
 </section>
 
 <!-- ============================================================
-     3. COMMERCIAL & RESIDENTIAL — Sand field, two Cream cards. Courthouse Square is the commercial example
-     (name, street and tagline come from data/buildings.json).
+     3. COMMERCIAL & RESIDENTIAL — Sand field, two Cream cards, one generic card per kind of property. Courthouse Square
+     is only an inline link inside the commercial card's body: it is one of the properties, not the headline.
 ============================================================ -->
 <section id="both" class="bg-eb-sand" aria-labelledby="both-heading">
   <div class="mx-auto max-w-[1440px] px-[var(--eb-space-margin)] py-[max(4.5rem,calc(var(--eb-space-margin)*1.25))]">
@@ -139,10 +139,10 @@ $header
     <div class="mt-10 grid gap-6 lg:grid-cols-[7fr_5fr]">
       <article class="eb-card flex flex-col">
         <span class="self-start rounded-[4px] bg-eb-mustard px-2 py-0.5 font-serif text-xs font-medium uppercase tracking-[0.08em]">Commercial</span>
-        <h3 class="mt-4 font-serif text-3xl font-medium leading-[1.1] sm:text-[2rem]">$building_name</h3>
-        <p class="mt-2 italic">$building_tagline</p>
-        <p class="mt-6 max-w-[34rem]">I manage $building_name, a multi-suite commercial building at $building_street. If you'd like to see how I work, its page has the suites, the standard lease, and the neighbors all out in the open.</p>
-        <p class="mt-8"><a href="$building_href" class="text-xl font-semibold text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-[6px] hover:decoration-eb-berry">See $building_name &rarr;</a></p>
+        <h3 class="mt-4 font-serif text-3xl font-medium leading-[1.1] sm:text-[2rem]">Storefronts and offices</h3>
+        <p class="mt-2 italic">Room for the people who keep Vashon running.</p>
+        <p class="mt-6 max-w-[34rem]">From a one-room practice to a place with a front window, I look after commercial space with the same care as a home. <a href="/buildings/courthouse-square/" class="text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-4 hover:decoration-eb-berry">Courthouse Square</a>, a multi-suite building on Vashon Hwy, is one of them. Its page shows how I work: the suites, the standard lease, and the neighbors, all out in the open.</p>
+        <p class="mt-auto pt-8"><a href="/listings/?type=commercial" class="text-xl font-semibold text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-[6px] hover:decoration-eb-berry">See commercial spaces &rarr;</a></p>
       </article>
       <article class="eb-card flex flex-col">
         <span class="self-start rounded-[4px] bg-eb-sand px-2 py-0.5 font-serif text-xs font-medium uppercase tracking-[0.08em]">Residential</span>

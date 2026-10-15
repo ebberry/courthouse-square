@@ -1032,6 +1032,13 @@ if hb:
     check(re.search(r'<a href="/owners/" class="eb-btn [^"]*">[^<]+</a>', hb) is not None,
           'index.html: the owners block needs one .eb-btn pill linking to /owners/')
     check('aria-labelledby="owners-heading"' in hb, 'index.html: the owners block must be labelled by its heading')
+    # Courthouse Square is one of the properties, not the owners pitch: the body speaks of homes and storefronts around the island.
+    hb_body = re.search(r'</h2>\s*<p[^>]*>(.*?)</p>', hb, re.S)
+    hb_body = visible_text(hb_body.group(1)) if hb_body else ''
+    check(bool(hb_body) and not hb_body.startswith('I manage Courthouse Square') and 'Courthouse Square' not in hb_body,
+          f'index.html: the owners block body must not lead with (or name) Courthouse Square; it is one of the properties, not the pitch (found {hb_body!r})')
+    check(hb_body == 'I look after homes and storefronts around the island, as part of Windermere Vashon. If you have a place that could use a steady, friendly hand, tell me about it.',
+          f'index.html: the owners block body must read "I look after homes and storefronts around the island, as part of Windermere Vashon. ..." (found {hb_body!r})')
     contact_first('index.html owners block', visible_text(hb))
 check(0 < index.find('id="buildings"') < index.find('id="owners"') < index.find('id="inquire"'),
       'index.html: the owners block belongs after the buildings teaser and before the inquiry form')
@@ -1086,8 +1093,40 @@ if exists(OWN_REL):
                      'Maintenance with island vendors', 'Regular walk-throughs'],
           f'{OWN_REL}: "What I take care of" needs its six blurbs, got {titles}')
     both = (re.search(r'<section id="both".*?</section>', op, re.S) or [''])[0]
-    check('href="/buildings/courthouse-square/"' in both and 'I manage Courthouse Square, a multi-suite commercial building' in both and 'flagship' not in both.lower(),
-          f'{OWN_REL}: the commercial card must say "I manage Courthouse Square, a multi-suite commercial building" (never "flagship") and link to /buildings/courthouse-square/')
+    # The commercial card is generic and mirrors the residential card (badge, title, italic tagline, body, link); Courthouse
+    # Square appears only as an inline link in the commercial body, so it is one of the properties and not the card's headline.
+    cards = re.findall(r'<article class="eb-card.*?</article>', both, re.S)
+    check(len(cards) == 2, f'{OWN_REL}: "Storefronts and homes, both" has two cards, commercial then residential (found {len(cards)})')
+    if len(cards) == 2:
+        com, res = cards
+        def card_parts(c):
+            badge = re.search(r'<span class="self-start[^>]*>(.*?)</span>', c, re.S)
+            title = re.search(r'<h3[^>]*>(.*?)</h3>', c, re.S)
+            tag = re.search(r'<p class="mt-2 italic">(.*?)</p>', c, re.S)
+            ps = re.findall(r'<p\b[^>]*>(.*?)</p>', c, re.S)
+            link = [(h, visible_text(t)) for h, t in re.findall(r'<a href="([^"]*)"[^>]*>([^<]*)</a>', ps[-1])] if ps else []
+            return (visible_text(badge.group(1)) if badge else '', visible_text(title.group(1)) if title else '',
+                    visible_text(tag.group(1)) if tag else '', re.sub(r'\s+', ' ', _html.unescape(re.sub(r'<[^>]+>', '', ps[1]))).strip() if len(ps) > 1 else '', link)   # (inline tags dropped without a space)
+        cb, ct, cg, cbody, clink = card_parts(com)
+        rb, rt, rg, rbody, rlink = card_parts(res)
+        check(ct != 'Courthouse Square' and 'Courthouse Square' not in ct and 'Courthouse Square' not in cg,
+              f'{OWN_REL}: the commercial card title/tagline must not be Courthouse Square; it is a generic card (found {ct!r} / {cg!r})')
+        check((cb, ct, cg) == ('Commercial', 'Storefronts and offices', 'Room for the people who keep Vashon running.'),
+              f'{OWN_REL}: the commercial card is Commercial / "Storefronts and offices" / "Room for the people who keep Vashon running." (found {(cb, ct, cg)})')
+        check(cbody == 'From a one-room practice to a place with a front window, I look after commercial space with the same care as a home. '
+                       'Courthouse Square, a multi-suite building on Vashon Hwy, is one of them. Its page shows how I work: the suites, the standard lease, and the neighbors, all out in the open.',
+              f'{OWN_REL}: the commercial card body changed (found {cbody!r})')
+        check(re.search(r'<a href="/buildings/courthouse-square/" class="[^"]*\bunderline\b[^"]*\bdecoration-eb-tangerine\b[^"]*">Courthouse Square</a>', com) is not None
+              and com.count('/buildings/courthouse-square/') == 1,
+              f'{OWN_REL}: "Courthouse Square" is one inline body link (Tangerine underline) to /buildings/courthouse-square/ in the commercial card')
+        check(clink == [('/listings/?type=commercial', 'See commercial spaces →')],
+              f'{OWN_REL}: the commercial card link is "See commercial spaces →" to /listings/?type=commercial (found {clink})')
+        check((rb, rt, rg) == ('Residential', 'Homes and cottages', 'Houses, cottages, and apartments.') and rlink == [('#tell-me', 'Tell me about your home →')],
+              f'{OWN_REL}: the residential card must stay as it was (found {(rb, rt, rg, rlink)})')
+        check(len(re.findall(r'<p\b', com)) == len(re.findall(r'<p\b', res)) == 3,
+              f'{OWN_REL}: the commercial card mirrors the residential card (same number of paragraphs: tagline, body, link)')
+    check('I manage Courthouse Square' not in op and 'flagship' not in both.lower(),
+          f'{OWN_REL}: no "I manage Courthouse Square" sentence anywhere, and never "flagship"')
     check('Residential' in both and 'Commercial' in both, f'{OWN_REL}: both commercial and residential are welcome')
     wind = (re.search(r'<section id="windermere".*?</section>', op, re.S) or [''])[0]
     check('>A part of Windermere Vashon</h2>' in wind and 'is a part of Windermere Vashon' in wind,

@@ -1195,6 +1195,11 @@ def part4(browser, sessions):
     blk = pg.locator('section#owners')
     check(blk.count() == 1 and blk.is_visible(), 'R: the homepage has one visible owners block')
     check(ws(pg.inner_text('#owners-heading')) == "Own a place on Vashon? I'd love to look after it.", f'R: the owners statement reads {ws(pg.inner_text("#owners-heading"))!r}')
+    own_body = ws(pg.inner_text('#owners-heading + p'))
+    check(not own_body.startswith('I manage Courthouse Square') and 'Courthouse Square' not in own_body,
+          f'R: the homepage owners-block body does not lead with Courthouse Square ({own_body!r})')
+    check(own_body == 'I look after homes and storefronts around the island, as part of Windermere Vashon. If you have a place that could use a steady, friendly hand, tell me about it.',
+          f'R: the homepage owners-block body reads {own_body!r}')
     look = pg.evaluate("""() => { const f = document.getElementById('owners'), c = f.querySelector('.eb-card'), h = f.querySelector('.eb-hl');
         return { field: getComputedStyle(f).backgroundColor, card: getComputedStyle(c).backgroundColor, radius: getComputedStyle(c).borderTopLeftRadius,
                  hl: getComputedStyle(h).backgroundColor, hlColor: getComputedStyle(h).color, hlText: h.textContent.trim(), h: f.getBoundingClientRect().height,
@@ -1288,11 +1293,31 @@ def part4(browser, sessions):
     items = pg.eval_on_selector_all('#what-i-do li', 'els => els.map(e => [e.querySelector("h3").textContent.trim(), e.querySelector("p").textContent.trim()])')
     check([t for t, _ in items] == OWNER_BLURBS, f'R: the six things I take care of: {[t for t, _ in items]}')
     check(all(len(b) >= 60 and re.search(r"\b(I|I'd|I'll|my|you|your)\b", b, re.I) for _, b in items), 'R: every blurb is a short first-person sentence or two')
-    # both kinds of property, with Courthouse Square as the proof
+    # both kinds of property: two generic, matching cards; Courthouse Square is one inline link in the commercial card's body
     both = ws(pg.text_content('#both'))       # (text_content: the badges are CSS-uppercased in inner_text)
-    check('Commercial' in both and 'Residential' in both and 'I manage Courthouse Square, a multi-suite commercial building' in both and 'flagship' not in both.lower(),
-          'R: both commercial and residential are welcome, and the page says "I manage Courthouse Square, a multi-suite commercial building" (never "flagship")')
-    check(pg.get_attribute('#both a[href="/buildings/courthouse-square/"]', 'href') == '/buildings/courthouse-square/', 'R: the proof links to the building page')
+    check('Commercial' in both and 'Residential' in both and 'flagship' not in both.lower(), 'R: both commercial and residential are welcome (never "flagship")')
+    cards = pg.eval_on_selector_all('#both article', """els => els.map(a => ({ badge: a.querySelector('span').textContent.trim(), title: a.querySelector('h3').textContent.trim(),
+        tagline: a.querySelector('p.italic').textContent.trim(), paras: a.querySelectorAll('p').length, linkHref: a.querySelector('p:last-of-type > a').getAttribute('href'),
+        linkText: a.querySelector('p:last-of-type > a').textContent.trim(), h3Font: getComputedStyle(a.querySelector('h3')).fontSize,
+        taglineStyle: getComputedStyle(a.querySelector('p.italic')).fontStyle }))""")
+    check([c['badge'] for c in cards] == ['Commercial', 'Residential'] and [c['title'] for c in cards] == ['Storefronts and offices', 'Homes and cottages'],
+          f'R: the two cards are Commercial "Storefronts and offices" and Residential "Homes and cottages" ({[(c["badge"], c["title"]) for c in cards]})')
+    check(cards[0]['title'] != 'Courthouse Square' and 'Courthouse Square' not in cards[0]['title'] + cards[0]['tagline'],
+          'R: the commercial card is not titled Courthouse Square; it is a generic card like the residential one')
+    check(cards[0]['tagline'] == 'Room for the people who keep Vashon running.' and all(c['taglineStyle'] == 'italic' for c in cards),
+          f'R: the commercial tagline is the italic "Room for the people who keep Vashon running." ({cards[0]["tagline"]!r})')
+    check(len({c['paras'] for c in cards}) == 1 and len({c['h3Font'] for c in cards}) == 1,
+          f'R: the commercial card mirrors the residential card (same structure and title size: {[(c["paras"], c["h3Font"]) for c in cards]})')
+    check('I manage Courthouse Square' not in both and 'Courthouse Square, a multi-suite building on Vashon Hwy, is one of them.' in both,
+          'R: the commercial body says "Courthouse Square, a multi-suite building on Vashon Hwy, is one of them." and never "I manage Courthouse Square"')
+    check((cards[0]['linkHref'], cards[0]['linkText']) == ('/listings/?type=commercial', 'See commercial spaces \u2192'),
+          f'R: the commercial card link is "See commercial spaces \u2192" to the commercial listings ({cards[0]["linkHref"]!r}, {cards[0]["linkText"]!r})')
+    cs_link = pg.evaluate("""() => { const a = document.querySelectorAll('#both a[href="/buildings/courthouse-square/"]'), x = a[0], cs = x && getComputedStyle(x);
+      return { n: a.length, text: x && x.textContent.trim(), inBody: !!(x && x.closest('article') && x.parentElement.tagName === 'P' && x.parentElement.textContent.length > 120),
+               underline: cs && cs.textDecorationLine, decoColor: cs && cs.textDecorationColor, color: cs && cs.color, size: cs && parseFloat(cs.fontSize) } }""")
+    check(cs_link['n'] == 1 and cs_link['text'] == 'Courthouse Square' and cs_link['inBody'], f'R: "Courthouse Square" is one inline link in the commercial body, linking to the building page ({cs_link})')
+    check(cs_link['underline'] == 'underline' and cs_link['decoColor'] == TANGERINE and cs_link['color'] == BERRY,
+          f'R: the inline link is Berry text with a Tangerine underline, like the other body links ({cs_link})')
     check(pg.evaluate("getComputedStyle(document.querySelector('#both')).backgroundColor") == SAND, 'R: the property-type band is a Sand field')
     badge = pg.evaluate("getComputedStyle(document.querySelector('#both article span')).backgroundColor")
     check(badge == MUSTARD, f'R: the Commercial badge is flat Mustard ({badge})')
@@ -1327,6 +1352,12 @@ def part4(browser, sessions):
     pg = s.pg; pg.goto(BASE + '/owners/', wait_until='networkidle')
     pg.click('#both a[href="/buildings/courthouse-square/"]'); pg.wait_for_url(BASE + '/buildings/courthouse-square/')
     check(pg.title() == f'{cs_title} — E. Berry Property Management', f'R: the proof link lands on the building page ({pg.title()!r})')
+    # ...and the commercial card's own link opens the listings filtered to commercial
+    pg.goto(BASE + '/owners/', wait_until='networkidle')
+    pg.click('#both a[href="/listings/?type=commercial"]'); pg.wait_for_url(re.compile(r'/listings/\?type=commercial$'))
+    pg.wait_for_selector('#type-group [data-type=commercial]')
+    check(pg.get_attribute('#type-group [data-type=commercial]', 'aria-pressed') == 'true' and pg.get_attribute('#type-group [data-type=residential]', 'aria-pressed') == 'false',
+          'R: "See commercial spaces" opens the listings with Commercial selected')
     s.ctx.close()
 
     # the whole page works without JS: content, nav and the form are all in the HTML

@@ -11,8 +11,7 @@ Writes  buildings/<id>/index.html   one landing page per building   (tools/templ
         listing.html                the noindex client-side fallback for feed listings with no page yet
                                     (tools/templates/listing-fallback.tmpl.html; js/listing-detail.js draws it)
         404.html                    the not-found page Netlify serves for any unknown URL (tools/templates/404.tmpl.html)
-        owners/index.html           the owners page, /owners/ (tools/templates/owners.tmpl.html); the building it
-                                    cites as its commercial example: name, street and tagline come from data/buildings.json
+        owners/index.html           the owners page, /owners/ (tools/templates/owners.tmpl.html)
         technology/index.html       the "Our technology" page about Ledger, /technology/ (tools/templates/technology.tmpl.html)
         sitemap.xml                 home, /listings/, /owners/, /technology/, every listing and every building page (not the 404)
 
@@ -47,9 +46,6 @@ FIELD_COLORS = ('berry', 'tangerine', 'sky', 'mustard', 'sage', 'sand')   # .eb-
 # /lease/ has no #downloads anchor and lease/ is frozen, so the "Download the PDFs" link lands on the first
 # download button, which carries this id (tools/check_site.py verifies it still exists).
 LEASE_DOWNLOADS_ANCHOR = 'lease-pdf-link'
-# The building the owners page cites as its commercial example ("I manage Courthouse Square"); its entry in
-# data/buildings.json supplies the name, street and tagline, so the page cannot drift from the building's own page.
-OWNERS_BUILDING_ID = 'courthouse-square'
 
 ADDRESS_RE = re.compile(r'^(?P<street>[^,]+),\s*(?P<city>[^,]+),\s*(?P<region>[A-Z]{2})\s+(?P<zip>\d{5})(?:-\d{4})?$')
 
@@ -573,13 +569,6 @@ def owners_json_ld(canonical, meta_description):
 
 def render_owners_page(ctx):
     """/owners/: the shell plus the owners page. Contact-first, so there is no fee, rate or price data to render."""
-    b = ctx['buildings_by_id'].get(OWNERS_BUILDING_ID)
-    if not b:
-        fail(f'buildings.json has no {OWNERS_BUILDING_ID!r} entry (the owners page cites it as its commercial example)')
-    m = ADDRESS_RE.match(b['address'])
-    if not m:
-        fail(f"buildings.json {b['id']}: address {b['address']!r} must look like '19001 Vashon Hwy SW, Vashon, WA 98070'")
-
     canonical = f'{SITE}/owners/'
     title = 'For Vashon property owners — E. Berry Property Management'
     meta_description = ("Own a home, cottage, or commercial space on Vashon? I'm Elijah Berry, and I'd love to "
@@ -590,10 +579,6 @@ def render_owners_page(ctx):
         'canonical': esc(canonical),
         'og_image': esc(SITE + FALLBACK_OG_IMAGE),
         'json_ld': indent_block(owners_json_ld(canonical, meta_description), 2),
-        'building_name': esc(b['name']),
-        'building_tagline': esc(b['tagline']),
-        'building_street': esc(m.group('street')),
-        'building_href': esc(f"/buildings/{b['id']}/"),
         'shell_styles': ctx['shell']['shell_styles'],
         'header': ctx['shell']['header'],
         'footer': ctx['shell']['footer'],
