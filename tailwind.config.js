@@ -11,6 +11,7 @@ module.exports = {
     './listings/**/*.html',
     './buildings/**/*.html',
     './owners/**/*.html',
+    './technology/**/*.html',
     './listing.html',
     './404.html',
     './js/listings.js',

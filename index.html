@@ -125,8 +125,8 @@
          class="absolute left-0 right-0 top-full hidden flex-col items-start gap-1 whitespace-nowrap border-b border-eb-berry bg-eb-cream py-5 pl-4 pr-6 lg:static lg:flex lg:flex-row lg:items-center lg:gap-1 lg:border-0 lg:bg-transparent lg:p-0 lg:text-base xl:gap-2 xl:text-lg">
       <a href="/listings/?type=residential" class="rounded-[4px] px-2 py-1 hover:bg-eb-berry hover:text-eb-cream lg:px-1.5 xl:px-2">Homes</a>
       <a href="/listings/?type=commercial" class="rounded-[4px] px-2 py-1 hover:bg-eb-berry hover:text-eb-cream lg:px-1.5 xl:px-2">Commercial</a>
-      <a href="/buildings/courthouse-square/" class="rounded-[4px] px-2 py-1 hover:bg-eb-berry hover:text-eb-cream lg:px-1.5 xl:px-2">Courthouse Square</a>
       <a href="/owners/" class="rounded-[4px] px-2 py-1 hover:bg-eb-berry hover:text-eb-cream lg:px-1.5 xl:px-2">For owners</a>
+      <a href="/technology/" class="rounded-[4px] px-2 py-1 hover:bg-eb-berry hover:text-eb-cream lg:px-1.5 xl:px-2">Technology</a>
       <a href="/#inquire" class="eb-btn ml-2 mt-3 text-base lg:ml-3 lg:mt-0">Inquire</a>
     </nav>
   </div>
@@ -206,32 +206,21 @@
 </section>
 
 <!-- ============================================================
-     4. BUILDINGS TEASER — Berry field; the row scales to more buildings
-     Content mirrors data/buildings.json (courthouse-square). To add a
-     building, add another <article> to #buildings-row.
+     4. ONE OF THE PROPERTIES — a modest strip, deliberately lighter than Homes, Commercial and Owners.
+     Courthouse Square keeps its own page as a multi-suite property, but it is one of the buildings I look
+     after, not the headline: no color field, no big heading, no pill. One outlined card on Cream, a sentence,
+     one quiet link. (tools/check_site.py and tools/test_listings.py hold it to that.)
 ============================================================ -->
-<section id="buildings" class="bg-eb-berry text-eb-cream" aria-labelledby="buildings-heading">
+<section id="buildings" class="bg-eb-cream" aria-labelledby="buildings-heading">
   <span id="location" class="block"></span><!-- legacy anchor: lease pages link to /#location -->
-  <div class="mx-auto max-w-[1440px] px-[var(--eb-space-margin)] py-[max(4.5rem,calc(var(--eb-space-margin)*1.25))]">
-    <div class="grid gap-10 lg:grid-cols-[5fr_7fr] lg:gap-16">
-      <div>
-        <h2 id="buildings-heading" class="max-w-[14ch] text-balance font-serif text-[length:var(--eb-h2-size)] font-medium leading-[1.1]">The buildings I look after</h2>
-        <p class="mt-4 max-w-[26rem]">Each one has its own feel, and I'm always glad to walk you around.</p>
+  <div class="mx-auto max-w-[1440px] px-[var(--eb-space-margin)] py-10 sm:py-12">
+    <article class="flex flex-col gap-4 rounded-card border-[1.5px] border-eb-berry p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:px-8 sm:py-6">
+      <div class="max-w-[40rem]">
+        <h2 id="buildings-heading" class="font-serif text-xl font-medium leading-snug">I also look after Courthouse Square.</h2>
+        <p class="mt-1">A building full of small offices and storefronts on Vashon Hwy.</p>
       </div>
-
-      <div id="buildings-row" class="grid grid-cols-[repeat(auto-fit,minmax(17rem,1fr))] gap-6">
-        <article class="eb-card flex flex-col">
-          <span class="self-start rounded-[4px] bg-eb-mustard px-2 py-0.5 font-serif text-xs font-medium uppercase tracking-[0.08em]">Commercial</span>
-          <h3 class="mt-4 font-serif text-3xl font-medium leading-[1.1] sm:text-[2rem]">Courthouse Square</h3>
-          <p class="mt-2 italic">A calm, professional home for your business.</p>
-          <ul class="mt-6 space-y-2">
-            <li class="flex gap-3"><span class="mt-[0.55em] h-2 w-2 shrink-0 rounded-full bg-eb-tangerine" aria-hidden="true"></span>Free on-site parking, with plenty to go around</li>
-            <li class="flex gap-3"><span class="mt-[0.55em] h-2 w-2 shrink-0 rounded-full bg-eb-tangerine" aria-hidden="true"></span>A shared outdoor patio, open to all tenants</li>
-          </ul>
-          <p class="mt-8"><a href="/buildings/courthouse-square/" class="text-xl font-semibold text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-[6px] hover:decoration-eb-berry">Visit Courthouse Square &rarr;</a></p>
-        </article>
-      </div>
-    </div>
+      <p class="shrink-0"><a href="/buildings/courthouse-square/" class="text-lg font-medium text-eb-berry underline decoration-eb-tangerine decoration-2 underline-offset-[6px] hover:decoration-eb-berry">About the building &rarr;</a></p>
+    </article>
   </div>
 </section>
 
@@ -361,6 +350,7 @@
           <li><a href="/listings/" class="underline underline-offset-4 hover:decoration-eb-tangerine hover:decoration-2">Listings</a></li>
           <li><a href="/buildings/courthouse-square/" class="underline underline-offset-4 hover:decoration-eb-tangerine hover:decoration-2">Courthouse Square</a></li>
           <li><a href="/owners/" class="underline underline-offset-4 hover:decoration-eb-tangerine hover:decoration-2">For owners</a></li>
+          <li><a href="/technology/" class="underline underline-offset-4 hover:decoration-eb-tangerine hover:decoration-2">Technology</a></li>
           <li><a href="https://courthousesquarevashon.com/lease/" class="underline underline-offset-4 hover:decoration-eb-tangerine hover:decoration-2">Lease documents</a></li>
           <li><a href="mailto:me@ebberry.com" class="underline underline-offset-4 hover:decoration-eb-tangerine hover:decoration-2">Email</a></li>
         </ul>
