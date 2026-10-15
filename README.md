@@ -47,7 +47,7 @@ The site exists for one job: turn prospective tenants into people who fill out t
 │   └── tenants.json              Tenant roster for the Your Neighbors wall
 ├── images/
 │   ├── README.md                 Photo conventions and the owner's shot list
-│   ├── brand/                    E. Berry logos (from ebberry/style-guide; do not edit)
+│   ├── brand/                    E. Berry logos (from ebberry/style-guide; do not edit) + the Windermere co-brand logo (see brand/README.md)
 │   ├── buildings/<id>/           gallery-1..6.jpg for a building page  ← owner drops files here
 │   ├── listings/<slug>/          photo-1.jpg, photo-2.jpg, ... for a listing  ← owner drops files here
 │   ├── og-card-eberry.png        Social-share card for the E. Berry site (1200×630)
@@ -139,6 +139,18 @@ For Vashon property owners who might hire E. Berry to manage and list their plac
 **Courthouse Square is one of the properties, not the flagship.** It keeps its own page (`/buildings/courthouse-square/`) and its footer link, but it is not a top-level destination: the header nav is **Homes, Commercial, For owners, Technology** (+ the Inquire pill), and the homepage shows it as one modest outlined strip (`<section id="buildings">`) lighter than Homes, Commercial and Owners. `tools/check_site.py` fails if the header nav changes, if the strip grows a color field, pill or big heading, or if the word "flagship" appears anywhere in the site's pages, templates, data or code; `tools/test_listings.py` part S measures the same things in a browser (and that the header stays on one row at 1024px).
 
 **`/technology/` ("Our technology")** explains Ledger, the property-management software built for this company, to tenants and owners. It is generated from `tools/templates/technology.tmpl.html` (edit the copy there, then re-run the generator). **Evidence rule: a claim about Ledger goes on the page only after the code that does it has been found in the Ledger source** (the hand-back of the phase that added the page lists each claim and its file). The page carries no pricing, statistics, security superlatives ("bank-level"), screenshots or testimonials, and `tools/check_site.py` fails if one appears. It deliberately does not say the listings on this site come live from Ledger: `js/site-config.js` still reads `/data/listings.json`, and the check keeps the copy honest until `LISTINGS_URL` is flipped to Ledger's public feed. Test: part S of `tools/test_listings.py` (`python3 tools/test_listings.py technology` runs just that part), and the page is in the accessibility sweep (part Q).
+
+## The Windermere co-brand logo
+
+`images/brand/windermere-vashon-island.png` is the Windermere Real Estate Vashon Island logo, supplied by the owner and shown **unmodified** (never recolored, restyled, stretched or cropped; `images/brand/README.md` says how the transparent PNG was made). It makes the affiliation unmistakable, but it is **not** the legal identification: Washington requires the firm's licensed name to be shown clearly and conspicuously with the brand (WAC 308-124B-210(2)(a)), and that is the text, which stays exactly as it is: "A PART OF WINDERMERE VASHON" in the header, "E. Berry Property Management — A Part of Windermere Vashon" in the footer, and the owners page's "A part of Windermere Vashon" block. The exact licensed name is still to be confirmed with the Windermere designated broker.
+
+It appears in three places, and `tools/check_site.py` and part T of `tools/test_listings.py` (`python3 tools/test_listings.py cobrand` runs just that part) fail if that changes:
+
+- **Footer of every page** (part of the shell in `index.html`, so a change means re-running `python3 tools/build_pages.py` and re-copying the shell into `listings/index.html`): on its own flat Cream panel with the 24px card radius, directly under the firm line. The logo is navy and black ink, so it never sits on Berry.
+- **The owners page's "A part of Windermere Vashon" card** (`tools/templates/owners.tmpl.html`): a co-brand lockup of the E. Berry wordmark, a thin Berry divider and the logo (vertical divider when they sit side by side, horizontal when they stack), with the uppercase firm-ID line under it.
+- **The homepage's "Our property management work is part of Windermere Vashon." line**: 160px wide, straight on the Cream field.
+
+**Not in the header, on purpose:** at header size the "Vashon Island" lettering would be about 6px, which is not clear and conspicuous; the text line there is the legal identification. The alt text is always "Windermere Real Estate, Vashon Island".
 
 ## Accessibility
 

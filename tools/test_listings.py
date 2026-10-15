@@ -61,10 +61,20 @@ page about Ledger:
                       the prominent card, no statistics or security superlatives or prices, the calls to action, the 390px
                       layout, no-JS). The page is also in the Q accessibility sweep at 1440px and 390px.
 
+Part 6 drives the Phase 10 co-brand: the Windermere Real Estate Vashon Island logo next to the E. Berry brand:
+
+  T. Co-brand       - the logo is in the footer of every page type at 1440px and 390px (visible, really loaded, at the exact
+                      alt text, 120-240px wide, alone on a flat Cream panel with the 24px card radius, right under the unchanged
+                      firm-ID line, clear of the footer links, nothing overflowing); the header has NO logo and keeps its text
+                      line; the owners page's Windermere card is a lockup (E. Berry wordmark, a thin Berry divider that is vertical
+                      when the pieces sit side by side and horizontal when they stack, the logo) with its uppercase firm-ID line;
+                      the homepage's "part of Windermere Vashon" line carries the logo at 160px or less on the Cream field.
+
 Requirements: pip install playwright; playwright install chromium (or set CHROME=/path/to/chrome).
 Run: python3 tools/test_listings.py
      python3 tools/test_listings.py owners       (just part R: a fast loop while working on the owners section)
      python3 tools/test_listings.py technology   (just part S: the nav, the Courthouse Square strip and /technology/)
+     python3 tools/test_listings.py cobrand      (just part T: the Windermere co-brand logo)
      EB_TEST_PORT=8191 python3 tools/test_listings.py   (another port, when 8190 is busy)
 """
 
@@ -79,6 +89,14 @@ passed = 0
 
 # A 1x1 PNG: stands in for the gallery photos that are not in the repo yet.
 TILE_PNG = base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==')
+
+# The brand images the owners and technology pages may show: the E. Berry marks, plus the one Windermere co-brand logo (Phase 10).
+WM_LOGO = '/images/brand/windermere-vashon-island.png'
+WM_ALT = 'Windermere Real Estate, Vashon Island'
+EB_MONOGRAM = '/images/brand/monogram-tangerine-bare.svg'
+EB_WORDMARK = '/images/brand/wordmark-berry.svg'
+BRAND_IMAGES = {f'/images/brand/{n}.svg' for n in ('wordmark-berry', 'wordmark-cream', 'wordmark-tangerine', 'monogram-tangerine-bare',
+                                                  'monogram-tangerine-badge', 'lockup-friend-to-vashon')} | {WM_LOGO}
 
 
 def check(ok, msg):
@@ -1335,8 +1353,9 @@ def part4(browser, sessions):
     check(not FEE_RE.search(main_text), f'R: the page names no fee, rate, price or free estimate ({FEE_RE.search(main_text)})')
     check(not FEE_RE.search(body_text), f'R: neither does the shell around it ({FEE_RE.search(body_text)})')
     check(pg.locator('blockquote').count() == 0 and not re.search(r'testimonial|★|five-star', body_text, re.I), 'R: no testimonials (none exist)')
-    check(pg.locator('main img').count() == 1 + 1 and all(pg.eval_on_selector_all('main img', 'els => els.map(e => e.getAttribute("src").startsWith("/images/brand/"))')),
-          'R: the only images are the brand monogram and the wordmark (no stock photos)')
+    owner_imgs = sorted(pg.eval_on_selector_all('main img', 'els => els.map(e => e.getAttribute("src"))'))
+    check(owner_imgs == sorted([EB_MONOGRAM, EB_WORDMARK, WM_LOGO]),
+          f'R: the only images are the brand monogram, the E. Berry wordmark and the one Windermere co-brand logo (no stock photos): {owner_imgs}')
     # the page is flat, and fits
     audit(pg, 'body', 'R owners page')
     check(pg.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), 'R: no sideways scroll on desktop')
@@ -1648,8 +1667,9 @@ def part5(browser, sessions):
     check(main_text.count('Ledger') >= 5 and 'Stripe' in main_text, f'S: the page names Ledger ({main_text.count("Ledger")}x) and Stripe')
     check(not TECH_FORBIDDEN_RE.search(body_text), f'S: no statistic, security superlative, price or SaaS-speak anywhere a visitor can read ({TECH_FORBIDDEN_RE.search(body_text)})')
     check(pg.locator('blockquote').count() == 0 and pg.locator('table').count() == 0 and pg.locator('form').count() == 0, 'S: no testimonials, no feature-matrix table, no form')
-    check(pg.locator('main img').count() == 2 and all(pg.eval_on_selector_all('main img', 'els => els.map(e => e.getAttribute("src").startsWith("/images/brand/"))')),
-          'S: the only images are the two brand monograms (no screenshots, no stock photos)')
+    tech_imgs = pg.eval_on_selector_all('main img', 'els => els.map(e => e.getAttribute("src"))')
+    check(len(tech_imgs) == 2 and all(src in BRAND_IMAGES for src in tech_imgs),
+          f'S: the only images are the two brand monograms, E. Berry marks only (no screenshots, no stock photos; the Windermere logo lives in the footer): {tech_imgs}')
     # calls to action: one pill, >=19px bold, and the owners link
     pill = pg.locator('main a.eb-btn')
     fs = pg.evaluate("parseFloat(getComputedStyle(document.querySelector('main a.eb-btn')).fontSize)")
@@ -1698,6 +1718,152 @@ def part5(browser, sessions):
     check(off == 0, f'S: every card and tile fits a phone ({off} overflow)')
     audit(pg, 'body', 'S technology page (phone)')
     s.ctx.close()
+
+
+# ---------------------------------------------------------------- part 6: the Windermere co-brand logo (T)
+
+FIRM_LINE = 'E. Berry Property Management — A Part of Windermere Vashon'
+
+# The footer's co-brand: one logo, alone on a flat Cream panel, right under the (unchanged) firm line, clear of the links.
+COBRAND_FOOTER_JS = """() => {
+  const f = document.querySelector('footer'), sel = 'img[src="/images/brand/windermere-vashon-island.png"]', img = f.querySelector(sel);
+  const r = e => { const b = e.getBoundingClientRect(); return { l: b.left, r: b.right, t: b.top, b: b.bottom, w: b.width, h: b.height }; };
+  if (!img) return null;
+  const panel = img.parentElement, pcs = getComputedStyle(panel), ics = getComputedStyle(img);
+  const firm = [...f.querySelectorAll('p')].find(p => p.textContent.trim() === %s), nav = f.querySelector('nav');
+  return { n: f.querySelectorAll(sel).length, nAll: document.querySelectorAll(sel).length, alt: img.getAttribute('alt'),
+           alts: [...document.querySelectorAll(sel)].map(e => e.getAttribute('alt')),
+           loaded: img.complete && img.naturalWidth > 0, natural: img.naturalWidth,
+           shown: ics.display !== 'none' && ics.visibility !== 'hidden' && r(img).w > 0, inLink: !!img.closest('a, button'),
+           img: r(img), panel: r(panel), kids: panel.children.length, bg: pcs.backgroundColor, bgImage: pcs.backgroundImage, radius: pcs.borderTopLeftRadius,
+           boxShadow: pcs.boxShadow, border: pcs.borderTopWidth, firm: firm ? r(firm) : null, firmText: firm ? firm.textContent.trim() : null,
+           nav: r(nav), links: [...nav.querySelectorAll('a')].map(r), footer: r(f), hscroll: document.documentElement.scrollWidth > window.innerWidth,
+           headerImgs: [...document.querySelectorAll('header img')].map(e => e.getAttribute('src')), headerText: document.querySelector('header').textContent.replace(/\\s+/g, ' ') } }
+""" % json.dumps(FIRM_LINE)
+
+# The homepage's "part of Windermere Vashon" line: a modest logo straight on the Cream field.
+COBRAND_HOME_JS = """() => {
+  const sec = document.querySelector('section[aria-label="About Elijah"]'), sel = 'img[src="/images/brand/windermere-vashon-island.png"]', img = sec.querySelector(sel);
+  const rect = e => { const b = e.getBoundingClientRect(); return { l: b.left, r: b.right, t: b.top, b: b.bottom, w: b.width, h: b.height }; };
+  let bg = 'rgba(0, 0, 0, 0)';
+  for (let e = img; e && bg === 'rgba(0, 0, 0, 0)'; e = e.parentElement) bg = getComputedStyle(e).backgroundColor;
+  const line = [...sec.querySelectorAll('p')].find(p => p.textContent.trim() === 'Our property management work is part of Windermere Vashon.');
+  return { n: sec.querySelectorAll(sel).length, box: rect(img), alt: img.getAttribute('alt'), loaded: img.complete && img.naturalWidth > 0, bg,
+           line: line ? rect(line) : null, inLink: !!img.closest('a, button') } }
+"""
+
+# The owners page's co-brand lockup: E. Berry wordmark | divider | Windermere logo, plus the uppercase firm-ID line.
+COBRAND_LOCKUP_JS = """() => {
+  const card = document.querySelector('#windermere .eb-card'), r = e => { const b = e.getBoundingClientRect(); return { l: b.left, r: b.right, t: b.top, b: b.bottom, w: b.width, h: b.height }; };
+  const logo = card.querySelector('img[src="/images/brand/windermere-vashon-island.png"]'), eb = card.querySelector('img[src="/images/brand/wordmark-berry.svg"]'),
+        rule = card.querySelector('.eb-cobrand-rule'), firm = [...card.querySelectorAll('p')].find(p => p.textContent.trim() === 'A PART OF WINDERMERE VASHON');
+  const cs = e => getComputedStyle(e);
+  return { card: r(card), cardBg: cs(card).backgroundColor, logo: r(logo), eb: r(eb), rule: r(rule), firm: firm ? r(firm) : null,
+           ruleBg: cs(rule).backgroundColor, ruleHidden: rule.getAttribute('aria-hidden'), logoAlt: logo.getAttribute('alt'), ebAlt: eb.getAttribute('alt'),
+           logoLoaded: logo.complete && logo.naturalWidth > 0, ebLoaded: eb.complete && eb.naturalWidth > 0, nImgs: card.querySelectorAll('img').length,
+           descriptor: (card.querySelector('.eb-hl') || {}).textContent, hscroll: document.documentElement.scrollWidth > window.innerWidth,
+           overflow: [...document.querySelectorAll('#windermere .eb-card, #windermere .eb-card *')].filter(e => { const b = e.getBoundingClientRect(); return b.right > window.innerWidth + 0.5 || b.left < -0.5; }).length } }
+"""
+
+
+def boxes_overlap(a, b):
+    return not (a['r'] <= b['l'] or b['r'] <= a['l'] or a['b'] <= b['t'] or b['b'] <= a['t'])
+
+
+def part6(browser, sessions):
+    # ---------- T: the footer of every page type, desktop and phone ----------
+    for wide, vp in ((True, {'width': 1440, 'height': 900}), (False, {'width': 390, 'height': 844})):
+        w = vp['width']
+        s = Session(browser, f'T{w}', viewport=vp); sessions.append(s)
+        s.ctx.route(re.compile(r'/images/buildings/'), lambda r: r.fulfill(status=200, content_type='image/png', body=TILE_PNG))
+        pg = s.pg
+        for name, path, ready in A11Y_PAGES:
+            tag = f'T {name}@{w}'
+            pg.goto(BASE + path, wait_until='networkidle'); pg.wait_for_selector(ready, timeout=10000)
+            pg.wait_for_function("[...document.querySelectorAll('footer img')].every(i => i.complete)", timeout=10000)
+            m = pg.evaluate(COBRAND_FOOTER_JS)
+            check(m is not None and m['n'] == 1, f'{tag}: the footer carries the Windermere logo once')
+            if not m:
+                continue
+            want_all = 2 if name in ('home', 'owners') else 1       # footer + the homepage line / the owners lockup
+            check(m['nAll'] == want_all, f'{tag}: the logo appears {want_all} time(s) on the page ({m["nAll"]})')
+            check(m['alt'] == WM_ALT and set(m['alts']) == {WM_ALT}, f'{tag}: every logo has the alt text {WM_ALT!r} ({m["alts"]})')
+            check(m['loaded'] and m['natural'] >= 700 and m['shown'] and pg.is_visible(f'footer img[src="{WM_LOGO}"]'),
+                  f'{tag}: the footer logo is visible and really loaded at full resolution (naturalWidth {m["natural"]})')
+            check(120 <= m['img']['w'] <= 240, f'{tag}: the footer logo is {m["img"]["w"]:.0f}px wide (want 120-240)')
+            check(abs(m['img']['w'] / m['img']['h'] - 725 / 430) < 0.02, f'{tag}: the logo keeps its proportions ({m["img"]["w"]:.0f}x{m["img"]["h"]:.0f}); it is never stretched')
+            check(not m['inLink'], f'{tag}: the logo is a plain image, not a link or button (no new tab stop)')
+            # the panel: flat Cream, 24px radius, nothing else in it, no border, no shadow, no gradient
+            check(m['bg'] == CREAM and m['bgImage'] == 'none' and m['radius'] == '24px' and m['boxShadow'] == 'none' and m['border'] == '0px' and m['kids'] == 1,
+                  f'{tag}: the logo sits alone on a flat Cream panel with the 24px card radius, no border or shadow ({m["bg"]}, {m["radius"]}, {m["boxShadow"]}, {m["border"]})')
+            check(m['panel']['l'] <= m['img']['l'] and m['img']['r'] <= m['panel']['r'] and m['panel']['t'] <= m['img']['t'] and m['img']['b'] <= m['panel']['b'],
+                  f'{tag}: the logo is inside its panel')
+            check(180 <= m['panel']['w'] <= 240, f'{tag}: the panel is {m["panel"]["w"]:.0f}px wide (want about 180-220)')
+            # reads together with the firm line: unchanged text, directly above the panel, same left edge
+            check(m['firmText'] == FIRM_LINE and m['firm'] is not None, f'{tag}: the footer firm line is unchanged ({m["firmText"]!r})')
+            if m['firm']:
+                gap = m['panel']['t'] - m['firm']['b']
+                check(0 <= gap <= 40 and abs(m['panel']['l'] - m['firm']['l']) <= 1,
+                      f'{tag}: the panel sits right under the firm line (gap {gap:.0f}px, left edges {m["panel"]["l"]:.0f} vs {m["firm"]["l"]:.0f})')
+            # must not crowd the footer links, and must not push the page sideways
+            check(not boxes_overlap(m['panel'], m['nav']) and not any(boxes_overlap(m['panel'], l) for l in m['links']),
+                  f'{tag}: the panel does not overlap the footer links')
+            if wide:
+                check(m['nav']['l'] - m['panel']['r'] >= 24, f'{tag}: on desktop the links sit well clear of the panel ({m["nav"]["l"] - m["panel"]["r"]:.0f}px)')
+            else:
+                check(m['nav']['t'] >= m['panel']['b'] + 16, f'{tag}: on a phone the links stack below the panel ({m["nav"]["t"] - m["panel"]["b"]:.0f}px)')
+            check(m['panel']['r'] <= w and m['panel']['l'] >= 0 and not m['hscroll'], f'{tag}: nothing overflows sideways')
+            # the header: NO logo (its lettering would be ~6px), and the legal text line stays
+            check(m['headerImgs'] == [EB_WORDMARK] and 'A PART OF WINDERMERE VASHON' in m['headerText'],
+                  f'{tag}: the header has only the E. Berry wordmark and keeps "A PART OF WINDERMERE VASHON" ({m["headerImgs"]})')
+            audit(pg, 'footer', f'{tag} footer')
+            if name == 'home':
+                a = pg.evaluate(COBRAND_HOME_JS)
+                check(a['n'] == 1 and a['loaded'] and a['alt'] == WM_ALT and a['line'] is not None,
+                      f'{tag}: the "part of Windermere Vashon" line and its logo are both there ({a})')
+                check(60 <= a['box']['w'] <= 160.5, f'{tag}: the homepage logo is modest, at most 160px wide ({a["box"]["w"]:.0f}px)')
+                check(a['bg'] == CREAM and not a['inLink'], f'{tag}: the homepage logo sits straight on the Cream field ({a["bg"]})')
+                check(a['box']['r'] <= w and a['box']['l'] >= 0, f'{tag}: the homepage logo fits the screen')
+                if a['line']:
+                    after = a['box']['l'] >= a['line']['r'] - 1 or a['box']['t'] >= a['line']['b'] - 1
+                    near = abs(a['box']['t'] - a['line']['b']) <= 48 or abs(a['box']['l'] - a['line']['r']) <= 48
+                    check(after and near and not boxes_overlap(a['box'], a['line']), f'{tag}: the logo sits with its line, after it ({a["line"]} vs {a["box"]})')
+                audit(pg, 'section[aria-label="About Elijah"]', f'{tag} about')
+        s.ctx.close()
+
+    # ---------- T: the owners page's lockup: E. Berry wordmark | divider | Windermere logo ----------
+    for w, mobile, orient in ((1440, False, 'row'), (1280, False, None), (1024, False, None), (768, False, None), (390, True, 'stack')):
+        s = Session(browser, f'T-owners{w}', viewport={'width': w, 'height': 900}, is_mobile=mobile, has_touch=mobile); sessions.append(s)
+        pg = s.pg; pg.goto(BASE + '/owners/', wait_until='networkidle'); pg.wait_for_selector('#windermere .eb-card')
+        pg.wait_for_function("[...document.querySelectorAll('#windermere img')].every(i => i.complete)", timeout=10000)
+        tag = f'T owners lockup@{w}'
+        m = pg.evaluate(COBRAND_LOCKUP_JS)
+        check(pg.is_visible('#windermere .eb-card') and pg.is_visible(f'#windermere .eb-card img[src="{WM_LOGO}"]') and pg.is_visible(f'#windermere .eb-card img[src="{EB_WORDMARK}"]'),
+              f'{tag}: the lockup card, the wordmark and the logo are all visible')
+        check(m['nImgs'] == 2 and m['ebLoaded'] and m['logoLoaded'] and m['ebAlt'] == 'E. Berry' and m['logoAlt'] == WM_ALT,
+              f'{tag}: both marks are there, loaded, with their alt text ({m["ebAlt"]!r}, {m["logoAlt"]!r})')
+        check(m['cardBg'] == CREAM and m['ruleBg'] == BERRY and m['ruleHidden'] == 'true', f'{tag}: a Cream card with a Berry divider (decorative) ({m["cardBg"]}, {m["ruleBg"]})')
+        check(120 <= m['logo']['w'] <= 240 and abs(m['logo']['w'] / m['logo']['h'] - 725 / 430) < 0.02, f'{tag}: the logo is {m["logo"]["w"]:.0f}px wide and keeps its proportions')
+        check(m['descriptor'] == 'Property Management' and m['firm'] is not None, f'{tag}: the lockup keeps "Property Management" and the uppercase firm-ID line')
+        check(m['firm'] is not None and m['firm']['t'] >= max(m['logo']['b'], m['eb']['b']) - 1, f'{tag}: the firm-ID line sits under the lockup')
+        in_card = lambda b: b['l'] >= m['card']['l'] and b['r'] <= m['card']['r'] and b['t'] >= m['card']['t'] and b['b'] <= m['card']['b']
+        check(all(in_card(m[k]) for k in ('eb', 'rule', 'logo')) and m['overflow'] == 0 and not m['hscroll'], f'{tag}: everything fits inside the card and the screen')
+        row = (m['eb']['r'] <= m['rule']['l'] and m['rule']['r'] <= m['logo']['l'] and m['rule']['h'] > m['rule']['w']
+               and abs((m['logo']['t'] + m['logo']['b']) / 2 - (m['eb']['t'] + m['eb']['b']) / 2) < 80)
+        stack = m['eb']['b'] <= m['rule']['t'] and m['rule']['b'] <= m['logo']['t'] and m['rule']['w'] > m['rule']['h']
+        check(row or stack, f'{tag}: the divider is vertical when the marks sit side by side and horizontal when they stack ({m})')
+        check(1 <= (m['rule']['w'] if row else m['rule']['h']) <= 2, f'{tag}: the divider is thin ({m["rule"]})')
+        if orient == 'row':
+            check(row, f'{tag}: on desktop the marks sit side by side with a vertical divider ({m})')
+        if orient == 'stack':
+            check(stack, f'{tag}: on a phone the marks stack with a horizontal divider ({m})')
+        audit(pg, '#windermere', f'{tag}')
+        if w in (1440, 390):
+            # the section's prose is unchanged
+            txt = ws(pg.inner_text('#windermere'))
+            check('A part of Windermere Vashon' in txt and 'E. Berry Property Management is a part of Windermere Vashon, a real estate firm right here on the island.' in txt
+                  and "But you're hiring a neighbor with a real island firm behind the work" in txt, f'{tag}: the section prose is unchanged')
+        s.ctx.close()
 
 
 # ---------------------------------------------------------------- the test
@@ -1750,6 +1916,30 @@ def main_technology():
     print(f'OK: technology page + Courthouse Square de-emphasis E2E (part S only) — {passed} checks passed')
 
 
+def main_cobrand():
+    """`python3 tools/test_listings.py cobrand`: just part T, with the same zero-errors rule as the full run."""
+    from playwright.sync_api import sync_playwright
+
+    os.chdir(ROOT)
+    socketserver.TCPServer.allow_reuse_address = True
+    httpd = socketserver.TCPServer(('127.0.0.1', PORT), Quiet)
+    threading.Thread(target=httpd.serve_forever, daemon=True).start()
+    sessions = []
+    with sync_playwright() as p:
+        browser = launch(p)
+        part6(browser, sessions)
+        browser.close()
+    for s in sessions:
+        check(not s.errors, f'{s.tag}: page/console errors: {s.errors[:3]}')
+        if s.bad_local is not None:
+            check(not s.bad_local, f'{s.tag}: local requests failed: {s.bad_local[:3]}')
+    if failures:
+        print(f'FAIL: {len(failures)} failure(s), {passed} checks passed')
+        for f in failures: print('  -', f)
+        sys.exit(1)
+    print(f'OK: Windermere co-brand logo E2E (part T only) — {passed} checks passed')
+
+
 def main():
     from playwright.sync_api import sync_playwright
 
@@ -1757,6 +1947,8 @@ def main():
         return main_owners()
     if sys.argv[1:] == ['technology']:
         return main_technology()
+    if sys.argv[1:] == ['cobrand']:
+        return main_cobrand()
     os.chdir(ROOT)
     ThreadingServer.allow_reuse_address = True
     httpd = ThreadingServer(('127.0.0.1', PORT), Quiet)
@@ -2194,6 +2386,7 @@ def main():
         part3(browser, sessions)
         part4(browser, sessions)
         part5(browser, sessions)
+        part6(browser, sessions)
 
         browser.close()
 
@@ -2210,7 +2403,7 @@ def main():
     print(f'OK: listings E2E — {passed} checks passed (A cards, B type, C beds, D price, E map, F URL state, '
           f'G flat brand, H mobile, I synthetic feed, J details, K no map; '
           f'L static page, M inquiry form, N fallback, O structured data, P flat brand + mobile; '
-          f'Q accessibility sweep; R owners section; S technology page + Courthouse Square de-emphasis)')
+          f'Q accessibility sweep; R owners section; S technology page + Courthouse Square de-emphasis; T Windermere co-brand logo)')
 
 
 if __name__ == '__main__':

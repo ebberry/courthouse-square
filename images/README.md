@@ -6,7 +6,7 @@ Everything the site shows lives under here. Most of it is already in place; the 
 
 | Path | What it is | Touch it? |
 | --- | --- | --- |
-| `brand/` | The E. Berry logos: wordmark (Berry, Cream, Tangerine), the monogram (bare and badge) and the "A Friend to Vashon" lockup. Copied verbatim from the `ebberry/style-guide` repo (`reference/logos/`). | **No.** If a logo needs to change, change it in the style-guide repo and copy it over again. |
+| `brand/` | The E. Berry logos: wordmark (Berry, Cream, Tangerine), the monogram (bare and badge) and the "A Friend to Vashon" lockup. Copied verbatim from the `ebberry/style-guide` repo (`reference/logos/`). Also `windermere-vashon-island.png`, the Windermere Real Estate Vashon Island co-brand logo (Windermere's trademark, used unmodified, only on Cream; see `brand/README.md`). | **No.** If a logo needs to change, change it in the style-guide repo and copy it over again. Never recolor the Windermere logo. |
 | `buildings/<building-id>/` | Photos for a building page. Courthouse Square is `buildings/courthouse-square/` (the id in `data/buildings.json`). | Yes: add `gallery-1.jpg` … `gallery-6.jpg` (see below). |
 | `listings/<slug>/` | Photos for one listing. `<slug>` is the listing's `id` in `data/listings.json` (e.g. `chs-n101`). | Yes: add `photo-1.jpg`, `photo-2.jpg`, … (see below). |
 | `og-card-eberry.png` | The social-share card for the E. Berry site (1200×630, under 300 KB, checked by `tools/check_site.py`). It is the share image for the homepage, `/listings/`, and for any building or listing page that has no photo yet. | Only to redesign the card; keep the size. |

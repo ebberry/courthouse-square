@@ -307,6 +307,14 @@ FLAT_BRAND = (('gradient', r'gradient'), ('shadow', r'shadow'),
               ('pure white', r'#fff\b|#ffffff\b|\bbg-white\b|\btext-white\b'),
               ('pure black', r'#000\b|#000000\b|\bbg-black\b|\btext-black\b'))
 
+# The only images the owners and technology pages may show: the E. Berry brand marks, and the one Windermere co-brand
+# logo (images/brand/windermere-vashon-island.png, Phase 10). Nothing else: no screenshots, no stock photos.
+WM_LOGO = '/images/brand/windermere-vashon-island.png'
+WM_ALT = 'Windermere Real Estate, Vashon Island'
+EB_BRAND_SVGS = tuple(f'/images/brand/{n}.svg' for n in ('wordmark-berry', 'wordmark-cream', 'wordmark-tangerine', 'monogram-tangerine-bare',
+                                                         'monogram-tangerine-badge', 'lockup-friend-to-vashon'))
+BRAND_IMAGES = frozenset(EB_BRAND_SVGS) | {WM_LOGO}
+
 wall_js = read('js/building.js') if os.path.exists(os.path.join(ROOT, 'js/building.js')) else ''
 for label, pat in FLAT_BRAND:
     check(re.search(pat, wall_js, re.I) is None, f"js/building.js: contains {label} (E. Berry brand is flat)")
@@ -1186,7 +1194,7 @@ if exists('.github/workflows/listings-e2e.yml'):
     check("'owners/**'" in read('.github/workflows/listings-e2e.yml'),
           ".github/workflows/listings-e2e.yml: expected 'owners/**' (the owners page is covered by the same E2E)")
 tw_css = read('css/tailwind.css')
-for cls in (r'lg\:grid-cols-\[7fr_5fr\]', r'max-w-\[20ch\]', r'lg\:grid-cols-4', r'lg\:px-1\.5', r'xl\:px-2', r'xl\:text-lg', r'lg\:text-base', r'xl\:gap-2',
+for cls in (r'lg\:grid-cols-\[7fr_5fr\]', r'lg\:grid-cols-2', r'max-w-\[20ch\]', r'lg\:grid-cols-4', r'lg\:px-1\.5', r'xl\:px-2', r'xl\:text-lg', r'lg\:text-base', r'xl\:gap-2',
             r'sm\:px-8', r'text-\[length\:clamp\(2\.25rem\2c 4\.5vw\2c 3\.5rem\)\]'):
     check(cls in tw_css, f"css/tailwind.css has no .{cls}; rebuild it (see README, 'Rebuilding the stylesheet')")
 
@@ -1347,7 +1355,7 @@ if exists(TECH_REL):
         mm = re.search(pat, re.sub(r'\$[a-z_]+', ' ', visible_text(read(TECH_TMPL))), re.I) if exists(TECH_TMPL) else None
         check(mm is None, f'{TECH_TMPL}: contains {what} ({mm.group(0) if mm else ""!r})')
     check('<blockquote' not in tp and '<table' not in tp, f'{TECH_REL}: no testimonials and no feature-matrix tables')
-    check(all(src.startswith('/images/brand/') for src in re.findall(r'<img [^>]*\bsrc="([^"]+)"', main_)), f'{TECH_REL}: the only images are the brand monogram and wordmark (no screenshots, no stock photos)')
+    check(all(src in BRAND_IMAGES for src in re.findall(r'<img [^>]*\bsrc="([^"]+)"', main_)), f'{TECH_REL}: the only images are the E. Berry brand marks and the one Windermere co-brand logo (no screenshots, no stock photos)')
     # The Ledger listings feed: this site still reads /data/listings.json. While it does, the page must not say the site's listings
     # come straight from Ledger or are "never stale" (Ledger's feed is cached for minutes and this site is not wired to it yet).
     site_cfg = read('js/site-config.js') if exists('js/site-config.js') else ''
@@ -1367,6 +1375,171 @@ if exists(TECH_REL):
 tw_css = read('css/tailwind.css')
 for cls in (r'lg\:grid-cols-\[5fr_7fr\]', r'lg\:grid-cols-3', r'lg\:grid-cols-4', r'text-\[length\:clamp\(2\.75rem\2c 11\.5vw\2c 8rem\)\]', r'sm\:py-12', r'sm\:flex-row', r'sm\:text-\[2\.5rem\]'):
     check(cls in tw_css, f"css/tailwind.css has no .{cls}; rebuild it (see README, 'Rebuilding the stylesheet')")
+
+# =====================================================================
+# E. Berry Phase 10: the Windermere Real Estate Vashon Island co-brand logo (images/brand/windermere-vashon-island.png)
+#   LEGAL CONTEXT: a broker using a brand must show the firm's licensed name clearly and conspicuously with it
+#   (WAC 308-124B-210(2)(a)). The text co-brand lines (the header's "A PART OF WINDERMERE VASHON", the footer's
+#   "E. Berry Property Management — A Part of Windermere Vashon", the owners page block) ARE that identification and
+#   stay exactly as they are; the logo only makes the affiliation unmistakable. It goes in three places and nowhere else:
+#     - the footer of every page, on its own flat Cream panel (the navy and black mark is illegible on Berry),
+#     - the owners page's "A part of Windermere Vashon" lockup card, beside the E. Berry wordmark,
+#     - the homepage's "part of Windermere Vashon" line, straight on the Cream field, at most 160px wide.
+#   NOT in the header: at header size its "Vashon Island" lettering would be about 6px, not clear and conspicuous.
+#   TRADEMARK RULE: the mark is used unmodified (no recolor, restyle, redraw, distort or crop): only its white background was removed.
+# =====================================================================
+import struct, zlib
+
+WM_PNG_REL = 'images/brand/windermere-vashon-island.png'
+WM_INKS = {(0, 0, 0), (1, 26, 68), (104, 105, 107)}   # the logo's three solid inks (black, navy, grey), measured from the source JPEG
+
+def decode_png(path):
+    """(width, height, bit depth, color type, interlace, rows) of a PNG, stdlib only. rows are unfiltered RGBA scanlines
+    (bytearrays) for 8-bit non-interlaced RGBA, else None."""
+    with open(path, 'rb') as f:
+        data = f.read()
+    if data[:8] != b'\x89PNG\r\n\x1a\n':
+        return None
+    pos, idat, ihdr = 8, b'', None
+    while pos + 8 <= len(data):
+        n, typ = struct.unpack('>I4s', data[pos:pos + 8])
+        body = data[pos + 8:pos + 8 + n]
+        pos += 12 + n
+        if typ == b'IHDR':
+            ihdr = struct.unpack('>IIBBBBB', body)
+        elif typ == b'IDAT':
+            idat += body
+        elif typ == b'IEND':
+            break
+    if ihdr is None:
+        return None
+    w, h, depth, ctype, _, _, interlace = ihdr
+    if (depth, ctype, interlace) != (8, 6, 0):
+        return (w, h, depth, ctype, interlace, None)
+    raw, stride, bpp = zlib.decompress(idat), w * 4, 4
+    rows, prev, i = [], bytearray(stride), 0
+    for _y in range(h):
+        ft = raw[i]
+        line = bytearray(raw[i + 1:i + 1 + stride])
+        i += 1 + stride
+        if ft == 1:
+            for x in range(bpp, stride):
+                line[x] = (line[x] + line[x - bpp]) & 255
+        elif ft == 2:
+            for x in range(stride):
+                line[x] = (line[x] + prev[x]) & 255
+        elif ft == 3:
+            for x in range(stride):
+                left = line[x - bpp] if x >= bpp else 0
+                line[x] = (line[x] + ((left + prev[x]) >> 1)) & 255
+        elif ft == 4:
+            for x in range(stride):
+                a = line[x - bpp] if x >= bpp else 0
+                b = prev[x]
+                c = prev[x - bpp] if x >= bpp else 0
+                pa, pb, pc = abs(b - c), abs(a - c), abs(a + b - 2 * c)
+                pred = a if pa <= pb and pa <= pc else (b if pb <= pc else c)
+                line[x] = (line[x] + pred) & 255
+        rows.append(line)
+        prev = line
+    return (w, h, depth, ctype, interlace, rows)
+
+# ---------------- the asset: a transparent RGBA PNG at full resolution, unmodified ink colors ----------------
+check(exists(WM_PNG_REL), f'{WM_PNG_REL} is missing (the Windermere co-brand logo)')
+if exists(WM_PNG_REL):
+    png = decode_png(os.path.join(ROOT, WM_PNG_REL))
+    check(png is not None, f'{WM_PNG_REL}: not a PNG')
+    if png:
+        pw, ph, pdepth, pctype, pinter, prows = png
+        check((pdepth, pctype, pinter) == (8, 6, 0) and prows is not None,
+              f'{WM_PNG_REL}: must be an 8-bit, non-interlaced RGBA PNG (color type 6) so it has a real alpha channel (got depth {pdepth}, color type {pctype}, interlace {pinter})')
+        check(pw >= 700 and 1.6 <= pw / max(ph, 1) <= 1.8,
+              f'{WM_PNG_REL}: keep the full source resolution (>= 700px wide, about 1.69:1); it is shown at up to 240px CSS wide and must stay crisp at 2x (got {pw}x{ph})')
+        check(os.path.getsize(os.path.join(ROOT, WM_PNG_REL)) <= 80 * 1024,
+              f'{WM_PNG_REL}: is {os.path.getsize(os.path.join(ROOT, WM_PNG_REL))} bytes; keep it under 80KB')
+        if prows is not None:
+            px = lambda x, y: tuple(prows[y][4 * x:4 * x + 4])
+            check(all(px(x, y)[3] == 0 for x, y in ((0, 0), (pw - 1, 0), (0, ph - 1), (pw - 1, ph - 1))),
+                  f'{WM_PNG_REL}: the four corners must be fully transparent (the white background was not removed)')
+            check(all(prows[y][4 * x + 3] == 0 for y in list(range(8)) + list(range(ph - 8, ph)) for x in range(pw))
+                  and all(prows[y][4 * x + 3] == 0 for y in range(ph) for x in list(range(8)) + list(range(pw - 8, pw))),
+                  f'{WM_PNG_REL}: the padding around the logo must be fully transparent')
+            if (pw, ph) == (725, 430):
+                check(px(362, 225)[3] == 0, f'{WM_PNG_REL}: the gap between "Windermere" and "REAL ESTATE" must be transparent (a flat white fill was left)')
+                # Solid interiors of each ink (black: the "W"; navy and grey: the diamond mark): fully opaque, in the exact ink color.
+                for x, y, rgb in ((104, 201, (0, 0, 0)), (319, 68, (1, 26, 68)), (385, 48, (1, 26, 68)), (347, 53, (104, 105, 107)), (425, 52, (104, 105, 107))):
+                    check(px(x, y) == rgb + (255,), f'{WM_PNG_REL}: the interior pixel at ({x}, {y}) should be opaque {rgb}, got {px(x, y)} (solid ink must stay fully opaque)')
+            n_clear = sum(row[3::4].count(0) for row in prows)
+            check(0.55 <= n_clear / (pw * ph) <= 0.95, f'{WM_PNG_REL}: {n_clear / (pw * ph):.0%} of the pixels are transparent; a logo on a transparent field should be mostly clear')
+            # No recolor, no halo: every visible pixel is one of the three inks (only its alpha varies at anti-aliased edges).
+            stray = sum(1 for row in prows for x in range(pw) if row[4 * x + 3] and tuple(row[4 * x:4 * x + 3]) not in WM_INKS)
+            check(stray == 0, f'{WM_PNG_REL}: {stray} visible pixel(s) are not one of the logo\'s own ink colors (the mark must not be recolored; edges vary only in alpha)')
+
+# ---------------- the placements: footer of every page, owners lockup, homepage line; never the header ----------------
+FOOTER_FIRM_LINE = '<p class="mt-5 text-base">E. Berry Property Management &mdash; A Part of Windermere Vashon</p>'
+HEADER_FIRM_LINE = '>A PART OF WINDERMERE VASHON</span>'
+WM_IMG_RE = re.compile(r'<img\b[^>]*\bsrc="/images/brand/windermere-vashon-island\.png"[^>]*>')
+EXPECT_WM_COUNT = {'index.html': 2, OWN_REL: 2}      # footer + (about line | owners lockup); every other page: the footer only
+for rel in A11Y_PAGES:
+    if not exists(rel):
+        continue
+    pg_ = read(rel)
+    ftr_, hdr_ = shell_block(pg_, 'FOOTER') or '', shell_block(pg_, 'HEADER') or ''
+    tags = WM_IMG_RE.findall(pg_)
+    check(len(tags) == EXPECT_WM_COUNT.get(rel, 1),
+          f'{rel}: the Windermere logo should appear {EXPECT_WM_COUNT.get(rel, 1)} time(s) (footer{", plus its placement" if rel in EXPECT_WM_COUNT else " only"}), found {len(tags)}')
+    check(all(f'alt="{WM_ALT}"' in t for t in tags), f'{rel}: every Windermere logo needs alt="{WM_ALT}"')
+    # Footer: one logo on its own Cream panel, directly after the (unchanged) firm line.
+    check(len(WM_IMG_RE.findall(ftr_)) == 1, f'{rel}: EB:FOOTER must carry the Windermere logo once (edit index.html, then {RERUN})')
+    pm = re.search(r'<div class="([^"]*)">\s*(<img\b[^>]*\bsrc="/images/brand/windermere-vashon-island\.png"[^>]*>)\s*</div>', ftr_)
+    check(pm is not None and 'bg-eb-cream' in pm.group(1).split() and 'rounded-card' in pm.group(1).split()
+          and not re.search(r'\bbg-(?:white|black|eb-berry)\b', pm.group(1)),
+          f'{rel}: the footer logo must sit alone on a flat Cream panel (bg-eb-cream rounded-card); the navy and black mark is illegible on Berry')
+    check(FOOTER_FIRM_LINE in ftr_ and re.search(re.escape(FOOTER_FIRM_LINE) + r'\s*(?:<!--.*?-->\s*)?<div class="[^"]*\bbg-eb-cream\b', ftr_, re.S) is not None,
+          f'{rel}: the footer firm line "E. Berry Property Management — A Part of Windermere Vashon" must be unchanged, with the logo panel right after it')
+    # Header: the text line is the legal identification and stays; NO logo (at header size its lettering would be ~6px).
+    check(HEADER_FIRM_LINE in hdr_ and 'A PART OF WINDERMERE VASHON' in hdr_, f'{rel}: the header firm-ID line "A PART OF WINDERMERE VASHON" must stay exactly as it is')
+    hdr_imgs = re.findall(r'<img\b[^>]*\bsrc="([^"]+)"', hdr_)
+    check(hdr_imgs == ['/images/brand/wordmark-berry.svg'] and 'windermere-vashon-island' not in hdr_ and not re.search(r'<img\b[^>]*\balt="[^"]*windermere', hdr_, re.I),
+          f'{rel}: the header must hold only the E. Berry wordmark, NO Windermere logo (found {hdr_imgs}); the text line there is the legal identification')
+
+# Homepage: the "part of Windermere Vashon" line carries a modest logo (<= 160px) straight on the Cream field, copy unchanged.
+about = (re.search(r'<section class="bg-eb-cream" aria-label="About Elijah">.*?</section>', index, re.S) or [''])[0]
+check(bool(about), 'index.html: the About section (<section class="bg-eb-cream" aria-label="About Elijah">) is missing')
+if about:
+    check('Our property management work is part of Windermere Vashon.' in visible_text(about),
+          'index.html: the line "Our property management work is part of Windermere Vashon." must stay as written')
+    atags = WM_IMG_RE.findall(about)
+    check(len(atags) == 1 and f'alt="{WM_ALT}"' in atags[0], f'index.html: the About section carries exactly one Windermere logo with alt="{WM_ALT}"')
+    wclass = re.search(r'\bclass="([^"]*)"', atags[0]) if atags else None
+    wnum = re.findall(r'(?<![\w:-])w-(\d+)(?![\w.-])', wclass.group(1)) if wclass else []
+    check(len(wnum) == 1 and int(wnum[0]) <= 40, f'index.html: the homepage logo is a modest co-brand, at most w-40 (160px) wide (found w-{wnum})')
+    wrap = re.search(r'<div class="([^"]*)">\s*<p[^>]*>Our property management work[^<]*</p>\s*<img\b[^>]*windermere-vashon-island\.png', about)
+    check(wrap is not None and re.search(r'(?<![\w:-])bg-|\beb-field-|\beb-card\b', wrap.group(1)) is None,
+          'index.html: the logo sits with the "part of Windermere Vashon" line, straight on the About section\'s Cream field (no color field or card behind the navy and black mark)')
+check(len(WM_IMG_RE.findall(re.search(r'<main id="main">.*?</main>', index, re.S).group(0))) == 1,
+      'index.html: <main> carries the Windermere logo exactly once (the About line); the footer has the other')
+
+# Owners page: the "A part of Windermere Vashon" card is a co-brand lockup: E. Berry wordmark | divider | Windermere logo, plus the firm-ID line.
+if exists(OWN_REL):
+    op_ = read(OWN_REL)
+    wind_ = (re.search(r'<section id="windermere".*?</section>', op_, re.S) or [''])[0]
+    wm_pos = wind_.find('src="/images/brand/windermere-vashon-island.png"')
+    eb_pos = wind_.find('src="/images/brand/wordmark-berry.svg"')
+    rule_pos = wind_.find('eb-cobrand-rule')
+    check(len(WM_IMG_RE.findall(wind_)) == 1 and f'alt="{WM_ALT}"' in (WM_IMG_RE.findall(wind_) or [''])[0],
+          f'{OWN_REL}: the Windermere block carries the Windermere logo once, with alt="{WM_ALT}"')
+    check('<img src="/images/brand/wordmark-berry.svg" alt="E. Berry"' in wind_, f'{OWN_REL}: the Windermere block lockup needs the E. Berry wordmark (the verbatim images/brand/wordmark-berry.svg)')
+    check(0 < eb_pos < rule_pos < wm_pos, f'{OWN_REL}: the lockup runs E. Berry wordmark, then a divider (.eb-cobrand-rule), then the Windermere logo')
+    check('>A PART OF WINDERMERE VASHON</p>' in wind_, f'{OWN_REL}: the lockup card keeps the uppercase firm-ID line "A PART OF WINDERMERE VASHON"')
+    check(wind_.count('<div class="eb-card">') == 1 and 0 < wind_.find('<div class="eb-card">') < eb_pos,
+          f'{OWN_REL}: the lockup is one Cream card (.eb-card) holding the wordmark, the divider and the logo')
+    check(re.search(r'\.eb-cobrand-rule\s*\{[^}]*background:\s*var\(--eb-berry\)', op_) is not None and '@container' in op_,
+          f'{OWN_REL}: the divider is a thin Berry rule, vertical or horizontal depending on the card width (page styles are missing)')
+    owner_imgs = sorted(re.findall(r'<img\b[^>]*\bsrc="([^"]+)"', (re.search(r'<main id="main">.*?</main>', op_, re.S) or [''])[0]))
+    check(owner_imgs == sorted(['/images/brand/monogram-tangerine-bare.svg', '/images/brand/wordmark-berry.svg', WM_LOGO]),
+          f'{OWN_REL}: the only images in <main> are the monogram, the E. Berry wordmark and the Windermere logo (found {owner_imgs})')
+    check(all(s in BRAND_IMAGES for s in owner_imgs), f'{OWN_REL}: only E. Berry brand marks and {WM_LOGO} may appear (no stock photos)')
 
 # ---------------- verdict ----------------
 if problems:
