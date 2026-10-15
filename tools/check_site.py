@@ -1171,7 +1171,7 @@ if exists(OWN_TMPL):
 # The form name belongs to exactly one page; the existing forms keep theirs.
 form_names = {}
 for dirpath, dirs, files in os.walk(ROOT):
-    dirs[:] = [d for d in dirs if d not in ('.git', 'node_modules', 'lease', 'tools')]
+    dirs[:] = [d for d in dirs if d not in ('.git', '.claude', 'node_modules', 'lease', 'tools')]
     for fn in files:
         if fn.endswith('.html'):
             frel = os.path.relpath(os.path.join(dirpath, fn), ROOT)
@@ -1239,7 +1239,7 @@ check(all('lg:px-1.5 xl:px-2' in m for m in re.findall(r'<a href="(?!/#inquire)[
       'index.html: every header nav link keeps lg:px-1.5 xl:px-2 (tight at 1024px)')
 
 # ---------------- Courthouse Square is not the flagship: no such word anywhere a visitor or the owner's sheet could meet it ----------------
-FLAGSHIP_SKIP_DIRS = {'.git', 'node_modules', 'vendor', 'fonts', 'images', 'map', '__pycache__'}
+FLAGSHIP_SKIP_DIRS = {'.git', '.claude', 'node_modules', 'vendor', 'fonts', 'images', 'map', '__pycache__'}
 FLAGSHIP_SKIP_FILES = {'tools/check_site.py', 'tools/test_listings.py', 'README.md'}      # these name the word in order to forbid it
 FLAGSHIP_EXT = ('.html', '.json', '.js', '.py', '.md', '.toml', '.xml', '.yml', '.css')
 flagship_hits = []
