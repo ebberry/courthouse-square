@@ -1217,11 +1217,11 @@ def part4(browser, sessions):
     pg = s.pg; pg.goto(BASE + '/', wait_until='networkidle'); pg.wait_for_selector('#owners'); pg.wait_for_timeout(200)
     blk = pg.locator('section#owners')
     check(blk.count() == 1 and blk.is_visible(), 'R: the homepage has one visible owners block')
-    check(ws(pg.inner_text('#owners-heading')) == "Own a place on Vashon? I'd love to look after it.", f'R: the owners statement reads {ws(pg.inner_text("#owners-heading"))!r}')
+    check(ws(pg.inner_text('#owners-heading')) == "Own a place on Vashon? I'd like to manage it for you.", f'R: the owners statement reads {ws(pg.inner_text("#owners-heading"))!r}')
     own_body = ws(pg.inner_text('#owners-heading + p'))
     check(not own_body.startswith('I manage Courthouse Square') and 'Courthouse Square' not in own_body,
           f'R: the homepage owners-block body does not lead with Courthouse Square ({own_body!r})')
-    check(own_body == 'I look after homes and storefronts around the island, as part of Windermere Vashon. If you have a place that could use a steady, friendly hand, tell me about it.',
+    check(own_body == 'I manage homes and storefronts around the island, as part of Windermere Vashon. If you have a place that could use a steady, friendly hand, tell me about it.',
           f'R: the homepage owners-block body reads {own_body!r}')
     look = pg.evaluate("""() => { const f = document.getElementById('owners'), c = f.querySelector('.eb-card'), h = f.querySelector('.eb-hl');
         return { field: getComputedStyle(f).backgroundColor, card: getComputedStyle(c).backgroundColor, radius: getComputedStyle(c).borderTopLeftRadius,
@@ -1229,7 +1229,7 @@ def part4(browser, sessions):
                  labelled: f.getAttribute('aria-labelledby') } }""")
     check(look['field'] == MUSTARD and look['card'] == CREAM and look['radius'] == '24px',
           f'R: the owners block is a Mustard field with one Cream card ({look})')
-    check(look['hl'] == MUSTARD and look['hlColor'] == BERRY and look['hlText'] == 'look after it.', f'R: the highlighted words are Berry on Mustard ({look})')
+    check(look['hl'] == MUSTARD and look['hlColor'] == BERRY and look['hlText'] == 'manage it', f'R: the highlighted words are Berry on Mustard ({look})')
     check(look['labelled'] == 'owners-heading' and look['h'] >= 380, f'R: the block is substantial, not a footer whisper ({look["h"]}px tall)')
     y = pg.evaluate("""() => ['buildings', 'owners', 'inquire'].map(id => document.getElementById(id).getBoundingClientRect().top + window.scrollY)""")
     check(y == sorted(y) and len(set(y)) == 3, f'R: the owners block sits after the buildings and before the inquiry form ({y})')

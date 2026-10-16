@@ -1045,8 +1045,8 @@ if hb:
     hb_body = visible_text(hb_body.group(1)) if hb_body else ''
     check(bool(hb_body) and not hb_body.startswith('I manage Courthouse Square') and 'Courthouse Square' not in hb_body,
           f'index.html: the owners block body must not lead with (or name) Courthouse Square; it is one of the properties, not the pitch (found {hb_body!r})')
-    check(hb_body == 'I look after homes and storefronts around the island, as part of Windermere Vashon. If you have a place that could use a steady, friendly hand, tell me about it.',
-          f'index.html: the owners block body must read "I look after homes and storefronts around the island, as part of Windermere Vashon. ..." (found {hb_body!r})')
+    check(hb_body == 'I manage homes and storefronts around the island, as part of Windermere Vashon. If you have a place that could use a steady, friendly hand, tell me about it.',
+          f'index.html: the owners block body must read "I manage homes and storefronts around the island, as part of Windermere Vashon. ..." (found {hb_body!r})')
     contact_first('index.html owners block', visible_text(hb))
 check(0 < index.find('id="buildings"') < index.find('id="owners"') < index.find('id="inquire"'),
       'index.html: the owners block belongs after the buildings teaser and before the inquiry form')
@@ -1121,7 +1121,7 @@ if exists(OWN_REL):
               f'{OWN_REL}: the commercial card title/tagline must not be Courthouse Square; it is a generic card (found {ct!r} / {cg!r})')
         check((cb, ct, cg) == ('Commercial', 'Storefronts and offices', 'Room for the people who keep Vashon running.'),
               f'{OWN_REL}: the commercial card is Commercial / "Storefronts and offices" / "Room for the people who keep Vashon running." (found {(cb, ct, cg)})')
-        check(cbody == 'From a one-room practice to a place with a front window, I look after commercial space with the same care as a home. '
+        check(cbody == 'From a one-room practice to a place with a front window, I manage commercial space with the same care as a home. '
                        'Courthouse Square, a multi-suite building on Vashon Hwy, is one of them. Its page shows how I work: the suites, the standard lease, and the neighbors, all out in the open.',
               f'{OWN_REL}: the commercial card body changed (found {cbody!r})')
         check(re.search(r'<a href="/buildings/courthouse-square/" class="[^"]*\bunderline\b[^"]*\bdecoration-eb-tangerine\b[^"]*">Courthouse Square</a>', com) is not None

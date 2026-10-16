@@ -571,8 +571,8 @@ def render_owners_page(ctx):
     """/owners/: the shell plus the owners page. Contact-first, so there is no fee, rate or price data to render."""
     canonical = f'{SITE}/owners/'
     title = 'For Vashon property owners — E. Berry Property Management'
-    meta_description = ("Own a home, cottage, or commercial space on Vashon? I'm Elijah Berry, and I'd love to "
-                        "look after it. Tell me about your property.")
+    meta_description = ("Own a home, cottage, or commercial space on Vashon? I'm Elijah Berry, and I'd like to "
+                        "manage it for you. Tell me about your property.")
     values = {
         'title': esc(title),
         'meta_description': esc(meta_description),
