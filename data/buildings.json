@@ -1,0 +1,47 @@
+{
+  "buildings": [
+    {
+      "id": "courthouse-square",
+      "name": "Courthouse Square",
+      "shortName": "CHS",
+      "address": "19001 Vashon Hwy SW, Vashon, WA 98070",
+      "lat": 47.4471,
+      "lng": -122.46,
+      "fieldColor": "mustard",
+      "tagline": "A calm, professional home for your business.",
+      "description": "Courthouse Square is a quiet, well-kept office building on Vashon Hwy SW with free parking, a shared patio, and an easy in-and-out for you and your visitors. There's room here for all sorts of small businesses to settle in and grow, from therapists and bodyworkers to attorneys, accountants, and designers. If you'd like a calm, professional space, I'd love to show you around.",
+      "featureBullets": [
+        "Free on-site parking, with plenty to go around",
+        "A shared outdoor patio, open to all tenants",
+        "Walking distance to the Athletic Center, the schools, and a Metro bus stop",
+        "A quiet, low-traffic setting where clients can think and talk"
+      ],
+      "gallery": [
+        "/images/buildings/courthouse-square/gallery-1.jpg",
+        "/images/buildings/courthouse-square/gallery-2.jpg",
+        "/images/buildings/courthouse-square/gallery-3.jpg",
+        "/images/buildings/courthouse-square/gallery-4.jpg",
+        "/images/buildings/courthouse-square/gallery-5.jpg",
+        "/images/buildings/courthouse-square/gallery-6.jpg"
+      ],
+      "leaseUrl": "/lease/",
+      "neighborWall": true,
+      "addressMatch": "19001 Vashon Hwy SW",
+      "directions": [
+        {
+          "name": "Fauntleroy (West Seattle)",
+          "note": "About 15 minutes south on Vashon Hwy SW. You'll come straight up the island and find us on the right."
+        },
+        {
+          "name": "Point Defiance (Tacoma)",
+          "note": "About 20 minutes north on Vashon Hwy SW from the south-end dock."
+        }
+      ],
+      "nearby": [
+        "Vashon Athletic Center, across the street.",
+        "Vashon schools, walking distance.",
+        "King County Metro bus stop, at the corner."
+      ]
+    }
+  ]
+}
