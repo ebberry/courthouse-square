@@ -422,6 +422,13 @@
             <img src="/images/brand/windermere-vashon-island.png" alt="Windermere Real Estate, Vashon Island" width="725" height="430" decoding="async" class="block h-auto w-full" />
           </a>
         </div>
+        <!-- Equal Housing Opportunity: the mark (Cream, 48px; the file draws in Cream by itself since an <img> cannot inherit text color) and the
+             words beside it, which are legible where the mark's own lettering is not. Separate from the Windermere panel above, which stays as it is.
+             The words are aria-hidden because the image's alt already says them. -->
+        <div class="mt-5 flex items-center gap-3">
+          <img src="/images/brand/equal-housing-opportunity.svg" alt="Equal Housing Opportunity" width="288" height="305" class="h-12 w-auto" />
+          <p class="text-sm" aria-hidden="true">Equal Housing Opportunity</p>
+        </div>
       </div>
       <nav aria-label="Footer">
         <ul class="flex flex-wrap gap-x-7 gap-y-2 text-base">
@@ -434,9 +441,19 @@
         </ul>
       </nav>
     </div>
-    <div class="mt-12 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3">
+    <div class="mt-12 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
       <p class="font-serif text-xl italic">A friend to Vashon.</p>
-      <p class="text-sm">&copy; <span id="copyright-year">2026</span> E. Berry Property Management. All rights reserved.</p>
+      <div class="flex flex-col gap-2 sm:items-end">
+        <!-- The quiet second row: the three legal pages. Not in the header nav on purpose. -->
+        <nav aria-label="Legal">
+          <ul class="flex flex-wrap gap-x-5 gap-y-1 text-sm">
+            <li><a href="/fair-housing/" class="underline underline-offset-4 hover:decoration-eb-tangerine hover:decoration-2">Fair housing</a></li>
+            <li><a href="/privacy/" class="underline underline-offset-4 hover:decoration-eb-tangerine hover:decoration-2">Privacy</a></li>
+            <li><a href="/accessibility/" class="underline underline-offset-4 hover:decoration-eb-tangerine hover:decoration-2">Accessibility</a></li>
+          </ul>
+        </nav>
+        <p class="text-sm">&copy; <span id="copyright-year">2026</span> E. Berry Property Management. All rights reserved.</p>
+      </div>
     </div>
   </div>
 </footer>

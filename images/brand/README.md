@@ -29,3 +29,11 @@ Source: a 900x600 JPEG on a white background, provided by the owner (`1.jpg`; th
 A plain threshold leaves white halos, and a plain color-to-alpha turns the solid grey diamond translucent; this does neither. Checked: composited back on white, the PNG matches the JPEG to a mean absolute error of 0.43 per channel over the whole crop (2.6 / 1.6 / 2.5 on R / G / B over just the logo pixels; the rest is JPEG chroma noise that cannot be reproduced), and it is clean on Cream and on Berry.
 
 If Windermere ever sends a vector (SVG) or a higher-resolution logo, replace this file with it, keeping the name and the alt text.
+
+## Equal Housing Opportunity mark (`equal-housing-opportunity.svg`)
+
+The fair housing mark: a house outline with an equals sign inside it and the words "EQUAL HOUSING OPPORTUNITY" beneath. It is **not** one of the style-guide marks and is not copied from the `ebberry/style-guide` repo: it was drawn for this site from the proportions of HUD's own artwork (the 1.00-inch version on <https://www.hud.gov/contactus/hudgraphics>, measured at 288x305), as flat vector shapes, with the lettering as outlines of Liberation Sans Regular (SIL Open Font License 1.1) scaled so each line spans the same width as HUD's. HUD's page offers the artwork for printing; it does not say anything about the mark's legal status, so no claim about that is made here.
+
+- **Never use the house without the words beneath it:** the mark is the house and the words together. It stays 44-56px tall in the footer (48px, `h-12`); at that size the mark's own lettering is too small to read, so the footer sets the words "Equal Housing Opportunity" beside it as well.
+- **Color:** every shape is `currentColor`, and the root carries `color="#F1ECE9"` (Cream). That is deliberate: an `<img>` cannot inherit the page's text color, so the file has to carry its own, and Cream is the footer's text color on Berry. To use it on Cream, inline the SVG, or set `color` to Berry in a copy. Flat only: no outline effects, no gradients, no recoloring outside the palette.
+- **Alt text, everywhere:** `Equal Housing Opportunity`. It sits in the footer of every page (outside the Windermere panel) and in the hero of `/fair-housing/`. `tools/check_site.py` and part U of `tools/test_listings.py` hold the placements, the size and the contrast (3:1 or better against the footer).

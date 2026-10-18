@@ -13,7 +13,10 @@ Writes  buildings/<id>/index.html   one landing page per building   (tools/templ
         404.html                    the not-found page Netlify serves for any unknown URL (tools/templates/404.tmpl.html)
         owners/index.html           the owners page, /owners/ (tools/templates/owners.tmpl.html)
         technology/index.html       the "Our technology" page about Ledger, /technology/ (tools/templates/technology.tmpl.html)
-        sitemap.xml                 home, /listings/, /owners/, /technology/, every listing and every building page (not the 404)
+        fair-housing/index.html     the fair housing statement, /fair-housing/ (tools/templates/fair-housing.tmpl.html + legal.parts.tmpl.html)
+        privacy/index.html          the privacy notice, /privacy/ (tools/templates/privacy.tmpl.html); its form field lists are read from the forms' markup
+        accessibility/index.html    the accessibility statement, /accessibility/ (tools/templates/accessibility.tmpl.html)
+        sitemap.xml                 home, /listings/, /owners/, /technology/, the three legal pages, every listing and every building page (not the 404)
 
 Run:    python3 tools/build_pages.py           regenerate the committed pages
         python3 tools/build_pages.py --check   regenerate into a temp dir and byte-compare against the
@@ -104,12 +107,13 @@ def extract_shell(index_html):
 def load_context():
     buildings_doc = load_json('data/buildings.json')
     listings_doc = load_json('data/listings.json')
+    index_html = read_text(os.path.join(ROOT, 'index.html'))
     return {
         'buildings': buildings_doc['buildings'],
         'buildings_by_id': {b['id']: b for b in buildings_doc['buildings']},
         'listings': listings_doc['listings'],
         'updated': listings_doc['updated'],
-        'shell': extract_shell(read_text(os.path.join(ROOT, 'index.html'))),
+        'shell': extract_shell(index_html),
         'building_template': load_template('building.tmpl.html'),
         'building_parts': load_parts('building.parts.tmpl.html'),
         'listing_template': load_template('listing.tmpl.html'),
@@ -118,6 +122,12 @@ def load_context():
         'not_found_template': load_template('404.tmpl.html'),
         'owners_template': load_template('owners.tmpl.html'),
         'technology_template': load_template('technology.tmpl.html'),
+        'legal_parts': load_parts('legal.parts.tmpl.html'),
+        'fair_housing_template': load_template('fair-housing.tmpl.html'),
+        'privacy_template': load_template('privacy.tmpl.html'),
+        'accessibility_template': load_template('accessibility.tmpl.html'),
+        'forms': {f['name']: form_labels(index_html if f['source'] == 'index.html' else read_text(os.path.join(ROOT, f['source'])),
+                                         f['name'], f['source']) for f in PRIVACY_FORMS},
     }
 
 
@@ -640,11 +650,247 @@ def render_technology_page(ctx):
     return {'technology/index.html': ctx['technology_template'].substitute(values)}
 
 
+# ---------------------------------------------------------------- legal pages (Phase 13): /fair-housing/, /privacy/, /accessibility/
+#
+# EVIDENCE RULE (the same one the technology page lives by): a fact goes on these pages only after it was read on a primary source, and every
+# source is linked at the bottom of /fair-housing/. A fact that could not be verified is left off: no deadlines, no statistics, no prices, and a
+# phone number only where the agency prints it on its own page. The data below is the ONE place the verified lists live; the templates render
+# it, and tools/check_site.py pins an independent copy of each list so that an edit here cannot slip through.
+#
+# Verified 2026-10-18 (every URL fetched that day):
+#   Federal list ........ HUD, "Fair Housing: Rights and Obligations" and "Report Housing Discrimination" (the seven classes, in HUD's words)
+#   Washington list ..... RCW 49.60.222(1), app.leg.wa.gov (read in full); source of income RCW 59.18.255(2), (3), (5); screening RCW 59.18.257(1)(a)
+#   King County list .... K.C.C. 12.20.040.A (as amended by Ord. 19977, 2025) = "the protected classes as defined in K.C.C. chapter 3.12D" + Section 8 /
+#                         other housing subsidy + alternative source of income; K.C.C. 3.12D.005.H defines "protected classes"; 12.20.040.E adds
+#                         use of a service or assistive animal. Compiled code "UPDATED: September 9, 2026" (aqua.kingcounty.gov). It applies in
+#                         unincorporated King County (K.C.C. 12.20.013), which includes all of Vashon/Maury Island (King County, Community Service Areas).
+#                         NOT in the current code, so NOT listed: "ancestry" and "gender" (Ord. 18708 of 2018 had them; 3.12D says "sex" and "ethnicity").
+#   Agencies ............ hud.gov/reporthousingdiscrimination (phone 1-800-669-9777); hum.wa.gov/fair-housing (1-800-233-3247, also on its contact page);
+#                         kingcounty.gov Civil Rights Program page (206-263-2446, TTY 7-1-1). The county's office is called the "Civil Rights Program" now.
+#   Left off on purpose . "no pet fee for assistance animals": HUD rescinded FHEO-2020-01 on 2025-09-17 and reconfirmed it on 2026-05-22, and no current
+#                         federal, Washington or King County rule could be verified. Filing deadlines: each agency states its own; none is repeated here.
+
+LEGAL_DATE = '2026-10-18'     # the day these pages were written: the privacy notice's effective date, the accessibility statement's date, and when the sources were checked
+MONTH_NAMES = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
+
+URL_HUD_RIGHTS = 'https://www.hud.gov/stat/fheo/rights-obligations'
+URL_HUD_REPORT = 'https://www.hud.gov/reporthousingdiscrimination'
+URL_RCW_49_60_222 = 'https://app.leg.wa.gov/RCW/default.aspx?cite=49.60.222'
+URL_RCW_59_18_255 = 'https://app.leg.wa.gov/RCW/default.aspx?cite=59.18.255'
+URL_RCW_59_18_257 = 'https://app.leg.wa.gov/RCW/default.aspx?cite=59.18.257'
+URL_KCC_TITLE_12 = 'https://aqua.kingcounty.gov/council/clerk/code/15_Title_12.htm'
+URL_KCC_TITLE_3 = 'https://aqua.kingcounty.gov/council/clerk/code/06_Title_3.htm'
+URL_KC_UNINCORPORATED = 'https://kingcounty.gov/en/dept/local-services/governance-leadership/local-government-for-unincorporated-king-county/community-service-areas'
+URL_WSHRC = 'https://www.hum.wa.gov/fair-housing'
+URL_KC_CIVIL_RIGHTS = 'https://kingcounty.gov/en/dept/executive/governance-leadership/equity-social-justice/civil-rights-program'
+
+# The three protected-class lists on /fair-housing/. Each list is that law's own wording (first letter capitalized). One list, rendered by
+# tools/templates/legal.parts.tmpl.html: the page cannot say anything this does not.
+PROTECTED_CLASSES = (
+    {'key': 'federal', 'label': 'Federal law', 'title': 'The Fair Housing Act',
+     'items': ['Race', 'Color', 'National origin', 'Religion', 'Sex', 'Familial status', 'Disability'],
+     'note': '',
+     'sources': (('HUD, Fair Housing: Rights and Obligations', URL_HUD_RIGHTS),)},
+    {'key': 'washington', 'label': 'Washington law', 'title': 'RCW 49.60.222',
+     'items': ['Sex', 'Marital status', 'Sexual orientation', 'Race', 'Creed', 'Color', 'National origin',
+               'Citizenship or immigration status', 'Families with children status',
+               'Honorably discharged veteran or military status',
+               'Presence of any sensory, mental, or physical disability',
+               'Use of a trained dog guide or service animal by a person with a disability'],
+     'note': '',
+     'sources': (('RCW 49.60.222', URL_RCW_49_60_222),)},
+    {'key': 'king-county', 'label': 'King County code', 'title': 'K.C.C. 12.20.040',
+     'items': ['Sex', 'Race', 'Color', 'National origin', 'Ethnicity', 'Religious affiliation', 'Disability', 'Sexual orientation',
+               'Gender identity or expression', 'Age (except by minimum age and retirement provisions)',
+               'Status as a family caregiver', 'Parental status', 'Marital status',
+               "Military status, or status as a veteran who was honorably discharged or who was discharged solely as a result of "
+               "the person's sexual orientation or gender identity or expression",
+               'Citizenship or immigration status',
+               'Participation in the Section 8 program or other housing subsidy program', 'Alternative source of income',
+               'Use of a service or assistive animal by an individual with a disability'],
+     'note': ("Where federal or state law, a regulation or a government contract authorizes a distinction based on citizenship or "
+              "immigration status, the county code does not treat it as an unfair practice."),
+     'sources': (('K.C.C. 12.20.040', URL_KCC_TITLE_12), ('K.C.C. 3.12D.005', URL_KCC_TITLE_3))},
+)
+
+# Where to take a concern. Website always; phone only where the agency prints it on its own page (see the header comment above).
+AGENCIES = (
+    {'name': 'HUD: Office of Fair Housing and Equal Opportunity',
+     'about': "The federal agency that investigates complaints of housing discrimination under the Fair Housing Act.",
+     'url': URL_HUD_REPORT, 'link_text': 'Report housing discrimination', 'phone': '1-800-669-9777', 'phone_note': ''},
+    {'name': 'Washington State Human Rights Commission',
+     'about': "The state agency that enforces Washington's Law Against Discrimination, including its fair housing rules.",
+     'url': URL_WSHRC, 'link_text': 'Fair housing and how to file', 'phone': '1-800-233-3247', 'phone_note': ''},
+    {'name': 'King County Civil Rights Program',
+     'about': "Investigates discrimination complaints about housing providers in unincorporated King County, which includes Vashon.",
+     'url': URL_KC_CIVIL_RIGHTS, 'link_text': 'Civil Rights Program', 'phone': '206-263-2446', 'phone_note': ' (TTY 7-1-1)'},
+)
+
+# "Where this comes from" at the bottom of /fair-housing/: everything the page leans on.
+LEGAL_SOURCES = (
+    ('HUD: Fair Housing, Rights and Obligations', URL_HUD_RIGHTS),
+    ('HUD: Report Housing Discrimination', URL_HUD_REPORT),
+    ('RCW 49.60.222: unfair practices in real estate transactions (Washington)', URL_RCW_49_60_222),
+    ('RCW 59.18.255: source of income (Washington)', URL_RCW_59_18_255),
+    ('RCW 59.18.257: tenant screening (Washington)', URL_RCW_59_18_257),
+    ('King County Code, Title 12, chapter 12.20: open housing', URL_KCC_TITLE_12),
+    ('King County Code, Title 3, chapter 3.12D: protected classes', URL_KCC_TITLE_3),
+    ('King County: unincorporated areas, including Vashon/Maury Island', URL_KC_UNINCORPORATED),
+    ('Washington State Human Rights Commission: Fair Housing', URL_WSHRC),
+    ('King County Civil Rights Program', URL_KC_CIVIL_RIGHTS),
+)
+
+# The forms the privacy notice describes. The field lists are READ from the forms' own markup, never typed here: `source` is the file whose
+# <form name="..."> is parsed (index.html is the homepage's; the other two are the templates that every listing and the owners page are built from).
+PRIVACY_FORMS = (
+    {'name': 'inquiry', 'source': 'index.html', 'title': 'The inquiry form',
+     'where': 'On the home page and on the Courthouse Square page.',
+     'hidden': 'On the Courthouse Square page it also notes which building page you wrote from.'},
+    {'name': 'listing-inquiry', 'source': 'tools/templates/listing.tmpl.html', 'title': 'The listing form',
+     'where': "At the bottom of each listing's page.",
+     'hidden': 'It also notes which listing and building you asked about.'},
+    {'name': 'owner-intro', 'source': 'tools/templates/owners.tmpl.html', 'title': 'The owner form',
+     'where': 'On the For owners page.',
+     'hidden': ''},
+)
+FORM_LABEL_RE = re.compile(r'<span class="mb-1\.5 block text-base font-medium">(.*?)</span>(?=\s*<(?:input|select|textarea)\b)', re.S)
+
+
+def long_date(iso):
+    """'2026-10-18' -> 'October 18, 2026'."""
+    m = ISO_DATE_RE.match(iso)
+    if not m:
+        fail(f'date {iso!r} is not YYYY-MM-DD')
+    return f'{MONTH_NAMES[int(m.group(2)) - 1]} {int(m.group(3))}, {m.group(1)}'
+
+
+def indent_lines(text, n):
+    """Prefix every line (the first too) with n spaces."""
+    pad = ' ' * n
+    return '\n'.join(pad + line if line else line for line in text.split('\n'))
+
+
+def form_labels(markup, form_name, where):
+    """The visible field labels of <form name="form_name"> in `markup`, in order, as a visitor reads them: tags dropped, the required-field
+    asterisk dropped ("Name *" -> "Name"), "(optional)" kept. The honeypot has no such label, so it is not listed."""
+    m = re.search(r'<form\b[^>]*\bname="' + re.escape(form_name) + r'"[^>]*>(.*?)</form>', markup, re.S)
+    if not m:
+        fail(f'{where}: no <form name="{form_name}"> to read the privacy notice from')
+    labels = []
+    for raw in FORM_LABEL_RE.findall(m.group(1)):
+        text = ' '.join(html.unescape(re.sub(r'<[^>]+>', '', raw)).split())
+        labels.append(re.sub(r'\s*\*$', '', text))
+    if not labels:
+        fail(f'{where}: <form name="{form_name}"> has no field labels (did the form markup change?)')
+    return labels
+
+
+def legal_json_ld(name, canonical, meta_description):
+    """A WebPage published by the firm. No offers, prices, ratings or reviews: these are notices, not products."""
+    data = {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        'name': name,
+        'url': canonical,
+        'description': meta_description,
+        'inLanguage': 'en-US',
+        'dateModified': LEGAL_DATE,
+        'isPartOf': {'@type': 'WebSite', 'name': 'E. Berry Property Management', 'url': SITE + '/'},
+        'publisher': {
+            '@type': 'RealEstateAgent',
+            'name': 'E. Berry Property Management',
+            'url': SITE + '/',
+            'email': 'me@ebberry.com',
+            'image': SITE + FALLBACK_OG_IMAGE,
+            'parentOrganization': {'@type': 'Organization', 'name': 'Windermere Vashon'},
+        },
+    }
+    # '<' escaped so no value can ever close the <script> element.
+    return json.dumps(data, indent=2, ensure_ascii=False).replace('<', '\\u003c')
+
+
+def legal_values(ctx, slug, h1, title_text, meta_description):
+    """The placeholders every legal template shares."""
+    canonical = f'{SITE}/{slug}/'
+    title = f'{title_text} — E. Berry Property Management'
+    return {
+        'title': esc(title),
+        'meta_description': esc(meta_description),
+        'canonical': esc(canonical),
+        'og_image': esc(SITE + FALLBACK_OG_IMAGE),
+        'json_ld': indent_block(legal_json_ld(h1, canonical, meta_description), 2),
+        'shell_styles': ctx['shell']['shell_styles'],
+        'header': ctx['shell']['header'],
+        'footer': ctx['shell']['footer'],
+    }
+
+
+def render_fair_housing_page(ctx):
+    """/fair-housing/: the shell plus the fair housing statement. The lists, the agencies and the sources are all rendered from the data above."""
+    parts = ctx['legal_parts']
+    link = lambda label, href: parts['source_link'].substitute(href=esc(href), label=esc(label))
+    cards = []
+    for c in PROTECTED_CLASSES:
+        items = '\n'.join(parts['class_item'].substitute(text=esc(t)) for t in c['items'])
+        note = parts['class_note'].substitute(text=esc(c['note'])) if c['note'] else ''
+        cards.append(parts['class_card'].substitute(
+            key=esc(c['key']), label=esc(c['label']), title=esc(c['title']), items=indent_lines(items, 4),
+            note=note, sources=', '.join(link(label, url) for label, url in c['sources'])).replace('\n\n', '\n'))
+    agencies = []
+    for a in AGENCIES:
+        digits = re.sub(r'\D', '', a['phone'])
+        tel = '+' + (digits if len(digits) == 11 else '1' + digits)
+        agencies.append(parts['agency'].substitute(
+            name=esc(a['name']), about=esc(a['about']), url=esc(a['url']), link_text=esc(a['link_text']),
+            tel=esc(tel), phone=esc(a['phone']), phone_note=esc(a['phone_note'])))
+    sources = [parts['source_item'].substitute(href=esc(url), label=esc(label)) for label, url in LEGAL_SOURCES]
+    values = legal_values(
+        ctx, 'fair-housing', 'Fair housing', 'Fair housing',
+        "Every home I manage is offered to everyone on the same terms. Here's who the law protects on Vashon, "
+        "how I screen, and where to go if something doesn't feel right.")
+    values.update({
+        'class_cards': indent_lines('\n'.join(cards), 6),
+        'agencies': indent_lines('\n'.join(agencies), 10),
+        'source_items': indent_lines('\n'.join(sources), 8),
+        'checked_date': long_date(LEGAL_DATE),
+    })
+    return {'fair-housing/index.html': ctx['fair_housing_template'].substitute(values)}
+
+
+def render_privacy_page(ctx):
+    """/privacy/: the shell plus the privacy notice. The form field lists come from the forms' own markup (ctx['forms'])."""
+    parts = ctx['legal_parts']
+    cards = []
+    for f in PRIVACY_FORMS:
+        fields = '\n'.join(parts['class_item'].substitute(text=esc(t)) for t in ctx['forms'][f['name']])
+        hidden = parts['hidden_note'].substitute(text=esc(f['hidden'])) if f['hidden'] else ''
+        cards.append(parts['form_card'].substitute(
+            name=esc(f['name']), title=esc(f['title']), where=esc(f['where']), fields=indent_lines(fields, 4),
+            hidden_note=hidden).replace('\n\n', '\n'))
+    values = legal_values(
+        ctx, 'privacy', 'Privacy', 'Privacy',
+        "I collect only what you type into my forms, I use it to write back, and I don't sell it. "
+        "No cookies, analytics or ads on this site.")
+    values.update({'form_cards': indent_lines('\n'.join(cards), 6), 'effective_date': long_date(LEGAL_DATE)})
+    return {'privacy/index.html': ctx['privacy_template'].substitute(values)}
+
+
+def render_accessibility_page(ctx):
+    """/accessibility/: the shell plus the accessibility statement."""
+    values = legal_values(
+        ctx, 'accessibility', 'Accessibility', 'Accessibility',
+        "I'm aiming for WCAG 2.1 AA. Here's what the site checks, how the map and the list work together, "
+        "and how to tell me when something gets in your way.")
+    values.update({'statement_date': long_date(LEGAL_DATE)})
+    return {'accessibility/index.html': ctx['accessibility_template'].substitute(values)}
+
+
 # ---------------------------------------------------------------- sitemap
 
 def render_sitemap(ctx):
     lastmod = ctx['updated']
-    urls = [f'{SITE}/', f'{SITE}/listings/', f'{SITE}/owners/', f'{SITE}/technology/']
+    urls = [f'{SITE}/', f'{SITE}/listings/', f'{SITE}/owners/', f'{SITE}/technology/',
+            f'{SITE}/fair-housing/', f'{SITE}/privacy/', f'{SITE}/accessibility/']
     urls += [f"{SITE}/listings/{quote(L['id'])}/" for L in ctx['listings']]
     urls += [f"{SITE}/buildings/{quote(b['id'])}/" for b in ctx['buildings']]
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
@@ -665,6 +911,9 @@ def build_files():
     files.update(render_not_found(ctx))
     files.update(render_owners_page(ctx))
     files.update(render_technology_page(ctx))
+    files.update(render_fair_housing_page(ctx))
+    files.update(render_privacy_page(ctx))
+    files.update(render_accessibility_page(ctx))
     files.update(render_sitemap(ctx))
     return files
 
@@ -741,7 +990,7 @@ def check_files(files):
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description='Generate the E. Berry building, listing, owners and technology pages and sitemap.xml.')
+    ap = argparse.ArgumentParser(description='Generate the E. Berry building, listing, owners, technology and legal pages and sitemap.xml.')
     ap.add_argument('--check', action='store_true',
                     help='regenerate to a temp dir and compare with the committed files; exit 1 if stale')
     args = ap.parse_args(argv)

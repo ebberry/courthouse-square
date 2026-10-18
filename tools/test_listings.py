@@ -75,11 +75,25 @@ Part 6 drives the Phase 10 co-brand: the Windermere Real Estate Vashon Island lo
                       https://www.windermerevashon.com/ (a plain link: no target, no rel, no underline, no hover effect; its
                       accessible name is the alt text; reached with the keyboard, its focus ring is Berry, 3:1 or better).
 
+Part 7 drives Phase 13: the three legal pages, the Equal Housing Opportunity mark and the footer's quiet legal row:
+
+  U. Legal pages    - /fair-housing/, /privacy/ and /accessibility/ load clean at 1440px and 390px (title, canonical, robots, JSON-LD, one h1 that
+                      fits, landmarks and headings, a flat-brand audit, nothing asked of any host but the site and fonts); the footer of every
+                      page type carries the EHO mark once (visible, really loaded, exact alt text, 44-56px tall, drawn in Cream, 3:1 or better
+                      against the footer, outside the Windermere panel, its words beside it) and a legal row of Fair housing, Privacy and
+                      Accessibility (14px, under the six unchanged links and above the copyright line, no mark or legal links in the header);
+                      the footer links navigate and take the keyboard; /fair-housing/ shows its three lists (7, 12 and 18 classes), the EHO mark
+                      in its hero, "me first" and the three agencies with their sites and verified phone numbers, and no fee, pet promise or
+                      deadline; /privacy/ lists exactly the fields its forms really have, read live from the home page, a listing page and
+                      /owners/; /accessibility/ states its target and its six checks. All three are in the Q accessibility sweep (1440px
+                      and 390px, hover, focus rings, reduced motion) and in the T footer checks.
+
 Requirements: pip install playwright; playwright install chromium (or set CHROME=/path/to/chrome).
 Run: python3 tools/test_listings.py
      python3 tools/test_listings.py owners       (just part R: a fast loop while working on the owners section)
      python3 tools/test_listings.py technology   (just part S: the nav, the Courthouse Square strip and /technology/)
      python3 tools/test_listings.py cobrand      (just part T: the Windermere co-brand logo)
+     python3 tools/test_listings.py legal        (just part U: the legal pages, the EHO mark and the footer's legal row)
      EB_TEST_PORT=8191 python3 tools/test_listings.py   (another port, when 8190 is busy)
 """
 
@@ -962,6 +976,9 @@ A11Y_PAGES = [
     ('fallback', '/listing.html?id=chs-n101', '#listing-title'),
     ('owners', '/owners/', '#owner-form'),
     ('technology', '/technology/', '#tech-title'),
+    ('fair-housing', '/fair-housing/', '#fair-title'),
+    ('privacy', '/privacy/', '#privacy-title'),
+    ('accessibility', '/accessibility/', '#access-title'),
 ]
 TENANTS = [{'name': 'Lantern Counseling', 'suite': 'N105', 'category': 'therapy', 'blurb': 'Talk therapy for adults.',
             'website': 'https://example.com', 'phone': '(206) 555-0100', 'email': 'hi@example.com'},
@@ -1990,6 +2007,209 @@ def part6(browser, sessions):
         s.ctx.close()
 
 
+# ---------------------------------------------------------------- part 7: the legal pages, the EHO mark and the footer's legal row (U)
+
+LEGAL_NAV = [('/fair-housing/', 'Fair housing'), ('/privacy/', 'Privacy'), ('/accessibility/', 'Accessibility')]
+LEGAL_U = [('fair-housing', '/fair-housing/', 'Fair housing', '#fair-title'),
+           ('privacy', '/privacy/', 'Privacy', '#privacy-title'),
+           ('accessibility', '/accessibility/', 'Accessibility', '#access-title')]
+EHO_SRC = '/images/brand/equal-housing-opportunity.svg'
+EHO_ALT = 'Equal Housing Opportunity'
+FOOTER_LINK_HREFS = ['/listings/', '/buildings/courthouse-square/', '/owners/', '/technology/', 'https://courthousesquarevashon.com/lease/', 'mailto:me@ebberry.com']
+
+
+def contrast(a, b):
+    """WCAG contrast ratio of two (r, g, b) tuples."""
+    def lum(c):
+        def lin(v):
+            v /= 255
+            return v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4
+        return 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2])
+    x, y = lum(a), lum(b)
+    return (max(x, y) + 0.05) / (min(x, y) + 0.05)
+
+
+def rgb_of(css):
+    return tuple(int(v) for v in re.findall(r'\d+', css)[:3])
+
+
+# The footer's Equal Housing Opportunity mark and legal row, as the browser lays them out. The mark is an <img> of an SVG, so its colour is read
+# by drawing it on a canvas (same origin: not tainted) and taking the colour of its solid pixels.
+EHO_FOOTER_JS = """() => {
+  const f = document.querySelector('footer'), sel = 'img[src="/images/brand/equal-housing-opportunity.svg"]', img = f.querySelector(sel);
+  const r = e => { const b = e.getBoundingClientRect(); return { l: b.left, r: b.right, t: b.top, b: b.bottom, w: b.width, h: b.height }; };
+  if (!img) return { n: 0 };
+  let bg = 'rgba(0, 0, 0, 0)';
+  for (let e = img; e && bg === 'rgba(0, 0, 0, 0)'; e = e.parentElement) bg = getComputedStyle(e).backgroundColor;
+  const c = document.createElement('canvas'); c.width = 144; c.height = 153;
+  const cx = c.getContext('2d'); cx.drawImage(img, 0, 0, 144, 153);
+  const px = cx.getImageData(0, 0, 144, 153).data, seen = {}; let solid = 0;
+  for (let i = 0; i < px.length; i += 4) if (px[i + 3] >= 250) { solid++; const k = px[i] + ',' + px[i + 1] + ',' + px[i + 2]; seen[k] = (seen[k] || 0) + 1; }
+  const ink = Object.entries(seen).sort((a, b) => b[1] - a[1])[0];
+  const panel = f.querySelector('.eb-cobrand-panel'), firm = [...f.querySelectorAll('p')].find(p => p.textContent.trim() === 'E. Berry Property Management — A Part of Windermere Vashon');
+  const label = img.nextElementSibling, navs = [...f.querySelectorAll('nav')];
+  const main = navs.find(n => n.getAttribute('aria-label') === 'Footer'), legal = navs.find(n => n.getAttribute('aria-label') === 'Legal');
+  const copy = f.querySelector('#copyright-year').parentElement;
+  const fs = e => parseFloat(getComputedStyle(e).fontSize);
+  return { n: f.querySelectorAll(sel).length, nAll: document.querySelectorAll(sel).length, alt: img.getAttribute('alt'), complete: img.complete, natural: img.naturalWidth,
+           shown: getComputedStyle(img).display !== 'none' && getComputedStyle(img).visibility !== 'hidden' && r(img).w > 0,
+           img: r(img), bg, ink: ink ? ink[0] : null, inkShare: solid / (144 * 153), inPanel: !!img.closest('.eb-cobrand-panel'),
+           panel: panel ? r(panel) : null, firm: firm ? r(firm) : null,
+           label: label ? { text: label.textContent.trim(), aria: label.getAttribute('aria-hidden'), box: r(label), fs: fs(label), color: getComputedStyle(label).color } : null,
+           main: main ? r(main) : null, mainLinks: main ? [...main.querySelectorAll('a')].map(a => [a.getAttribute('href'), a.textContent.trim(), fs(a)]) : null,
+           legal: legal ? r(legal) : null, legalLinks: legal ? [...legal.querySelectorAll('a')].map(a => ({ href: a.getAttribute('href'), text: a.textContent.trim(), fs: fs(a), box: r(a), deco: getComputedStyle(a).textDecorationLine, color: getComputedStyle(a).color, tab: a.tabIndex })) : null,
+           copy: r(copy), copyFs: fs(copy), hscroll: document.documentElement.scrollWidth > window.innerWidth,
+           headerHas: { eho: !!document.querySelector('header img[src*="equal-housing"]'), legal: !!document.querySelector('header a[href="/fair-housing/"], header a[href="/privacy/"], header a[href="/accessibility/"]') } } }
+"""
+
+# What a form asks for, as a visitor reads it: the visible label of each field (the honeypot's label is in a hidden paragraph).
+FORM_LABELS_JS = """(name) => [...document.querySelectorAll('form[name="' + name + '"] label')].filter(l => !l.closest('.hidden') && l.querySelector('input, select, textarea'))
+  .map(l => l.firstElementChild.textContent.replace(/\\s*\\*\\s*$/, '').replace(/\\s+/g, ' ').trim())"""
+
+
+def check_legal_footer(s, tag, wide):
+    """The footer of the page in `s`: the EHO mark (visible, loaded, 44-56px tall, Cream, 3:1 against the footer, outside the Windermere panel,
+    with its words beside it) and the quiet legal row (three links, text-sm, under the main link row and above the copyright line)."""
+    pg = s.pg
+    pg.wait_for_function("[...document.querySelectorAll('footer img')].every(i => i.complete)", timeout=10000)
+    m = pg.evaluate(EHO_FOOTER_JS)
+    check(m['n'] == 1, f'{tag}: the footer carries the EHO mark once ({m["n"]})')
+    if m['n'] != 1:
+        return
+    want_all = 2 if tag.startswith('U fair-housing') else 1          # the fair housing page shows the mark in its hero as well
+    check(m['nAll'] == want_all, f'{tag}: the EHO mark appears {want_all} time(s) on the page ({m["nAll"]})')
+    check(m['alt'] == EHO_ALT, f'{tag}: the EHO mark\'s alt text is exactly {EHO_ALT!r} ({m["alt"]!r})')
+    check(m['complete'] and m['natural'] > 0 and m['shown'] and pg.is_visible(f'footer img[src="{EHO_SRC}"]'), f'{tag}: the footer EHO mark is visible and really loaded ({m["natural"]})')
+    check(44 <= m['img']['h'] <= 56 and abs(m['img']['w'] / m['img']['h'] - 288 / 305) < 0.03, f'{tag}: the footer EHO mark is 44-56px tall and keeps its proportions ({m["img"]["w"]:.0f}x{m["img"]["h"]:.0f})')
+    ink = tuple(int(v) for v in m['ink'].split(',')) if m['ink'] else None
+    check(ink is not None and all(abs(a - b) <= 2 for a, b in zip(ink, rgb_of(CREAM))) and m['inkShare'] > 0.15, f'{tag}: the EHO mark draws in Cream ({m["ink"]}, {m["inkShare"]:.0%} solid)')
+    cr = contrast(ink, rgb_of(m['bg'])) if ink else 0
+    check(cr >= 3, f'{tag}: the EHO mark has at least 3:1 against the footer ({cr:.1f}:1, {m["ink"]} on {m["bg"]})')
+    check(not m['inPanel'] and m['panel'] is not None and m['img']['t'] >= m['panel']['b'] and abs(m['img']['l'] - m['panel']['l']) <= 1,
+          f'{tag}: the EHO mark sits under the Windermere panel, not inside it ({m["panel"]} vs {m["img"]})')
+    lb = m['label']
+    check(lb is not None and lb['text'] == EHO_ALT and lb['aria'] == 'true' and lb['box']['l'] >= m['img']['r'] and abs((lb['box']['t'] + lb['box']['b']) / 2 - (m['img']['t'] + m['img']['b']) / 2) < 14,
+          f'{tag}: the words "{EHO_ALT}" sit beside the mark (aria-hidden: the alt already says them) ({lb})')
+    check(lb is not None and rgb_of(lb['color']) == rgb_of(CREAM) and lb['fs'] <= 14.5, f'{tag}: the words are Cream and small ({lb and lb["fs"]}px)')
+    check(m['firm'] is not None and m['panel'] is not None and 0 <= m['panel']['t'] - m['firm']['b'] <= 40, f'{tag}: the Windermere panel still sits right under the unchanged firm line')
+    check(m['main'] is not None and [h for h, _, _ in m['mainLinks']] == FOOTER_LINK_HREFS and all(abs(f - 16) < 0.5 for _, _, f in m['mainLinks']),
+          f'{tag}: the six footer links are unchanged, in order, at 16px ({m["mainLinks"]})')
+    ll = m['legalLinks'] or []
+    check([(l['href'], l['text']) for l in ll] == LEGAL_NAV, f'{tag}: the legal row is Fair housing, Privacy, Accessibility ({[(l["href"], l["text"]) for l in ll]})')
+    check(all(abs(l['fs'] - 14) < 0.5 and l['deco'] == 'underline' and l['tab'] == 0 and rgb_of(l['color']) == rgb_of(CREAM) for l in ll),
+          f'{tag}: the legal links are text-sm (14px), underlined, Cream and tabbable like the other footer links ({[(l["fs"], l["deco"]) for l in ll]})')
+    check(ll and m['legal'] is not None and m['legal']['t'] >= m['main']['b'] and m['legal']['b'] <= m['copy']['t'] + 1 and m['copy']['t'] - m['legal']['b'] < 30 and abs(m['copyFs'] - 14) < 0.5,
+          f'{tag}: the legal row sits under the main link row and right above the copyright line ({m["legal"]} vs {m["copy"]})')
+    check(all(0 <= l['box']['l'] and l['box']['r'] <= pg.evaluate('window.innerWidth') for l in ll) and not m['hscroll'], f'{tag}: nothing in the footer overflows sideways')
+    check(not m['headerHas']['eho'] and not m['headerHas']['legal'], f'{tag}: the header has neither the mark nor the legal links')
+    if wide:
+        check(m['img']['r'] < m['main']['l'], f'{tag}: on desktop the mark sits left of the link row')
+    audit(pg, 'footer', f'{tag} footer')
+
+
+def part7(browser, sessions):
+    # ---------- U: the EHO mark and the legal row in the footer of every page type, desktop and phone ----------
+    for wide, vp in ((True, {'width': 1440, 'height': 900}), (False, {'width': 390, 'height': 844})):
+        w = vp['width']
+        s = Session(browser, f'U{w}', viewport=vp); sessions.append(s)
+        s.ctx.route(re.compile(r'/images/buildings/'), lambda r: r.fulfill(status=200, content_type='image/png', body=TILE_PNG))
+        for name, path, ready in A11Y_PAGES:
+            s.pg.goto(BASE + path, wait_until='networkidle'); s.pg.wait_for_selector(ready, timeout=10000)
+            check_legal_footer(s, f'U {name}@{w}', wide)
+        s.ctx.close()
+
+    # ---------- U: the three pages, desktop and phone ----------
+    for wide, vp in ((True, {'width': 1440, 'height': 900}), (False, {'width': 390, 'height': 844})):
+        w = vp['width']
+        s = Session(browser, f'Upages{w}', viewport=vp); sessions.append(s)
+        pg = s.pg
+        for slug, path, h1_text, ready in LEGAL_U:
+            tag = f'U {slug}@{w}'
+            pg.goto(BASE + path, wait_until='networkidle'); pg.wait_for_selector(ready, timeout=10000)
+            check(pg.title() == f'{h1_text} — E. Berry Property Management', f'{tag}: title is {pg.title()!r}')
+            check(pg.get_attribute('link[rel=canonical]', 'href') == f'https://eberryvashon.com{path}', f'{tag}: canonical URL')
+            check(pg.get_attribute('meta[name=robots]', 'content') == 'index, follow', f'{tag}: robots is index, follow')
+            check(ws(pg.inner_text('h1')) == h1_text and pg.locator('h1').count() == 1, f'{tag}: the one h1 reads {h1_text!r}')
+            ld = json.loads(pg.text_content('script[type="application/ld+json"]'))
+            check(ld['@type'] == 'WebPage' and ld['url'] == f'https://eberryvashon.com{path}' and ld['name'] == h1_text, f'{tag}: the WebPage JSON-LD parses and names the page')
+            a11y_structure(s, tag)                                         # banner / main / contentinfo, names, one h1, no skipped levels
+            check(pg.locator('main section').count() >= 5 and pg.locator('main h2').count() >= 4, f'{tag}: the page has its sections and headings')
+            check(not pg.evaluate('document.documentElement.scrollWidth > document.documentElement.clientWidth + 1'), f'{tag}: no sideways scroll')
+            h1b = pg.evaluate("(() => { const b = document.querySelector('h1').getBoundingClientRect(); const hl = document.querySelector('h1 .eb-hl'); const hb = hl && hl.getBoundingClientRect(); return { r: b.right, hr: hb ? hb.right : 0, l: b.left, hl: hb ? hb.left : 0 } })()")
+            check(h1b['r'] <= w and h1b['hr'] <= w - 8 and h1b['l'] >= 0 and h1b['hl'] >= 0, f'{tag}: the huge h1 and its highlight fit the screen ({h1b})')
+            audit(pg, 'main', f'{tag} main')
+            check(pg.evaluate("[...document.querySelectorAll('main img')].every(i => i.complete && i.naturalWidth > 0)"), f'{tag}: every image on the page really loaded')
+            check(pg.locator('form').count() == 0 and pg.locator('main table, main blockquote').count() == 0, f'{tag}: no form, table or quote on a legal page')
+            outside = [u for u in s.requests if not u.startswith((BASE, 'data:', 'blob:')) and not u.startswith(('https://fonts.googleapis.com/', 'https://fonts.gstatic.com/'))]
+            check(not outside, f'{tag}: the page asked for nothing but the site (and fonts): {outside[:3]}')
+        # /fair-housing/ in detail
+        pg.goto(BASE + '/fair-housing/', wait_until='networkidle'); pg.wait_for_selector('#fair-title')
+        tag = f'U fair-housing@{w}'
+        lists = pg.evaluate("""[...document.querySelectorAll('main ul[data-protected]')].map(u => [u.dataset.protected, [...u.querySelectorAll('li')].map(li => li.textContent.trim())])""")
+        check([k for k, _ in lists] == ['federal', 'washington', 'king-county'] and [len(v) for _, v in lists] == [7, 12, 18], f'{tag}: three lists of 7, 12 and 18 classes ({[(k, len(v)) for k, v in lists]})')
+        check('Alternative source of income' in dict(lists)['king-county'] and 'Creed' in dict(lists)['washington'] and 'Familial status' in dict(lists)['federal'], f'{tag}: the lists carry their own wording')
+        check(pg.evaluate("[...document.querySelectorAll('main ul[data-protected] li')].every(li => { const b = li.getBoundingClientRect(); return b.width > 0 && b.right <= window.innerWidth })"), f'{tag}: every listed class is on screen and inside the page')
+        hero = pg.evaluate("""(() => { const i = document.querySelector('main img[src="/images/brand/equal-housing-opportunity.svg"]'); const b = i.getBoundingClientRect(); return { n: document.querySelectorAll('main img').length, alt: i.alt, ok: i.complete && i.naturalWidth > 0, h: b.height, r: b.right, vis: b.width > 0 } })()""")
+        check(hero['n'] == 1 and hero['alt'] == EHO_ALT and hero['ok'] and hero['vis'] and 80 <= hero['h'] <= 120 and hero['r'] <= w, f'{tag}: the EHO mark is in the hero, visible, at {hero["h"]:.0f}px ({hero})')
+        agencies = pg.evaluate("""[...document.querySelectorAll('#concerns .eb-card li')].map(li => ({ name: li.querySelector('h3').textContent.trim(),
+            links: [...li.querySelectorAll('a')].map(a => a.getAttribute('href')) }))""")
+        check([a['name'] for a in agencies] == ['HUD: Office of Fair Housing and Equal Opportunity', 'Washington State Human Rights Commission', 'King County Civil Rights Program'], f'{tag}: the three agencies, in order ({[a["name"] for a in agencies]})')
+        check([a['links'] for a in agencies] == [['https://www.hud.gov/reporthousingdiscrimination', 'tel:+18006699777'], ['https://www.hum.wa.gov/fair-housing', 'tel:+18002333247'],
+                                                  ['https://kingcounty.gov/en/dept/executive/governance-leadership/equity-social-justice/civil-rights-program', 'tel:+12062632446']],
+              f'{tag}: each agency has its website and the phone number printed on its own page ({[a["links"] for a in agencies]})')
+        check(pg.get_attribute('#concerns a[href^="mailto:"]', 'href') == 'mailto:me@ebberry.com' and pg.locator('#concerns .eb-card').count() == 1, f'{tag}: me first (mailto), then one Cream card with the agencies')
+        txt = ws(pg.inner_text('main'))
+        check(all(s_ in txt for s_ in ('Every home I manage is offered to everyone on the same terms.', 'I welcome housing choice vouchers', 'off the monthly rent first', 'RCW 59.18.257', 'Where this comes from')), f'{tag}: the page says what it is meant to say')
+        check(not re.search(r'\bfees?\b|\$|\bpet\b|\bdays\b|\byears?\b', txt, re.I), f'{tag}: no fee, price, pet promise or deadline appears')
+        # /privacy/ in detail: its form lists are the forms' own fields, read live from the pages
+        pg.goto(BASE + '/privacy/', wait_until='networkidle'); pg.wait_for_selector('#privacy-title')
+        tag = f'U privacy@{w}'
+        on_page = pg.evaluate("""Object.fromEntries([...document.querySelectorAll('main ul[data-form]')].map(u => [u.dataset.form, [...u.querySelectorAll('li')].map(li => li.textContent.trim())]))""")
+        live = {}
+        for form, fpath in (('inquiry', '/'), ('listing-inquiry', '/listings/chs-n101/'), ('owner-intro', '/owners/')):
+            pg.goto(BASE + fpath, wait_until='networkidle')
+            live[form] = pg.evaluate(FORM_LABELS_JS, form)
+        pg.goto(BASE + '/buildings/courthouse-square/', wait_until='networkidle')
+        check(pg.evaluate(FORM_LABELS_JS, 'inquiry') == live['inquiry'], f'{tag}: the Courthouse Square page asks the same questions as the home page')
+        check(on_page == live and all(len(v) >= 5 for v in live.values()), f'{tag}: the notice lists exactly the fields each form really has (page {on_page}, forms {live})')
+        pg.goto(BASE + '/privacy/', wait_until='networkidle')
+        ptxt = ws(pg.inner_text('main'))
+        check(all(s_ in ptxt for s_ in ('No cookies', 'No analytics', 'No ads or trackers', 'Fraunces, Inter and Anton come from Google Fonts', 'includes your IP address', "Google's privacy policy",
+                                       'privacy notice is shown inside the portal')) and re.search(r"It's effective (?:January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}, 20\d\d\.", ptxt) is not None,
+              f'{tag}: the notice says what it is meant to say, and carries its effective date')
+        check(not pg.locator('main a[href*="ledger"], main a[href*="portal"], main a[href*="app."]').count(), f'{tag}: no portal URL is linked')
+        pg.goto(BASE + '/accessibility/', wait_until='networkidle'); pg.wait_for_selector('#access-title')
+        tag = f'U accessibility@{w}'
+        atxt = ws(pg.inner_text('main'))
+        check(pg.locator('#checks h3').count() == 6 and all(s_ in atxt for s_ in ('WCAG 2.1', 'level AA', 'Skip to content', '390 pixels', 'courthousesquarevashon.com', 'I\'ll fix what I can and write back')), f'{tag}: the six checks, the target and the way to tell me are there')
+        check(pg.get_attribute('main a[href^="https://www.w3.org/"]', 'href') == 'https://www.w3.org/TR/WCAG21/', f'{tag}: links the W3C\'s WCAG 2.1')
+        s.ctx.close()
+
+    # ---------- U: the footer's legal links navigate (desktop and phone), and take the keyboard ----------
+    for vp in ({'width': 1440, 'height': 900}, {'width': 390, 'height': 844}):
+        w = vp['width']
+        s = Session(browser, f'Unav{w}', viewport=vp); sessions.append(s)
+        pg = s.pg
+        for href, label in LEGAL_NAV:
+            pg.goto(BASE + '/', wait_until='networkidle')
+            link = pg.locator(f'footer nav[aria-label="Legal"] a[href="{href}"]')
+            check(link.count() == 1 and link.is_visible() and ws(link.inner_text()) == label, f'U nav@{w}: the footer has the "{label}" link')
+            link.click(); pg.wait_for_url(BASE + href)
+            slug = href.strip('/')
+            h1_text = {a: c for a, _, c, _ in LEGAL_U}[slug]
+            check(pg.title() == f'{h1_text} — E. Berry Property Management' and ws(pg.inner_text('h1')) == h1_text, f'U nav@{w}: the footer "{label}" link lands on the {label} page ({pg.title()!r})')
+            # from any page: the legal row is on the legal pages too, and each one links the other two
+            others = pg.eval_on_selector_all('footer nav[aria-label="Legal"] a', 'els => els.map(e => e.getAttribute("href"))')
+            check(others == [h for h, _ in LEGAL_NAV], f'U nav@{w}: the legal row is on the {label} page too ({others})')
+        # the keyboard: a legal link takes focus and shows a Cream ring that is clearly visible on the Berry footer
+        pg.goto(BASE + '/', wait_until='networkidle')
+        pg.focus('footer nav[aria-label="Legal"] a[href="/privacy/"]'); pg.keyboard.press('Shift+Tab'); pg.keyboard.press('Tab')
+        f = pg.evaluate(FOCUS_JS)
+        check(f is not None and f['ring'] and f['cr'] >= 3 and 'Privacy' in f['name'], f'U nav@{w}: the legal links take the keyboard with a visible ring ({f})')
+        pg.keyboard.press('Enter'); pg.wait_for_url(BASE + '/privacy/')
+        s.ctx.close()
+
+
 # ---------------------------------------------------------------- the test
 
 def main_owners():
@@ -2040,6 +2260,30 @@ def main_technology():
     print(f'OK: technology page + Courthouse Square de-emphasis E2E (part S only) — {passed} checks passed')
 
 
+def main_legal():
+    """`python3 tools/test_listings.py legal`: just part U, with the same zero-errors rule as the full run."""
+    from playwright.sync_api import sync_playwright
+
+    os.chdir(ROOT)
+    socketserver.TCPServer.allow_reuse_address = True
+    httpd = socketserver.TCPServer(('127.0.0.1', PORT), Quiet)
+    threading.Thread(target=httpd.serve_forever, daemon=True).start()
+    sessions = []
+    with sync_playwright() as p:
+        browser = launch(p)
+        part7(browser, sessions)
+        browser.close()
+    for s in sessions:
+        check(not s.errors, f'{s.tag}: page/console errors: {s.errors[:3]}')
+        if s.bad_local is not None:
+            check(not s.bad_local, f'{s.tag}: local requests failed: {s.bad_local[:3]}')
+    if failures:
+        print(f'FAIL: {len(failures)} failure(s), {passed} checks passed')
+        for f in failures: print('  -', f)
+        sys.exit(1)
+    print(f'OK: legal pages + EHO mark + footer legal row E2E (part U only) — {passed} checks passed')
+
+
 def main_cobrand():
     """`python3 tools/test_listings.py cobrand`: just part T, with the same zero-errors rule as the full run."""
     from playwright.sync_api import sync_playwright
@@ -2073,6 +2317,8 @@ def main():
         return main_technology()
     if sys.argv[1:] == ['cobrand']:
         return main_cobrand()
+    if sys.argv[1:] == ['legal']:
+        return main_legal()
     os.chdir(ROOT)
     ThreadingServer.allow_reuse_address = True
     httpd = ThreadingServer(('127.0.0.1', PORT), Quiet)
@@ -2511,6 +2757,7 @@ def main():
         part4(browser, sessions)
         part5(browser, sessions)
         part6(browser, sessions)
+        part7(browser, sessions)
 
         browser.close()
 
@@ -2527,7 +2774,7 @@ def main():
     print(f'OK: listings E2E — {passed} checks passed (A cards, B type, C beds, D price, E map, F URL state, '
           f'G flat brand, H mobile, I synthetic feed, J details, K no map; '
           f'L static page, M inquiry form, N fallback, O structured data, P flat brand + mobile; '
-          f'Q accessibility sweep; R owners section; S technology page + Courthouse Square de-emphasis; T Windermere co-brand logo)')
+          f'Q accessibility sweep; R owners section; S technology page + Courthouse Square de-emphasis; T Windermere co-brand logo; U legal pages, EHO mark and footer legal row)')
 
 
 if __name__ == '__main__':
