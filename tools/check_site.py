@@ -10,7 +10,7 @@ Run:  python3 tools/check_site.py     (exit 0 = all good, 1 = problems)
       python3 tools/build_pages.py --check   (separately: generated pages and sitemap.xml are fresh)
 """
 
-import json, os, re, sys
+import glob, json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 problems = []
@@ -1916,6 +1916,20 @@ if exists(PV):
     check('Ledger' in vtext and 'separate system' in vtext and 'privacy notice is shown inside the portal' in vtext and not re.search(r'https?://[^\s"]*(?:ledger|portal|app\.)', vmain, re.I), f'{PV}: Ledger is a separate system with its own notice; no portal URL is linked')
     check('me@ebberry.com' in vtext and "tell me and I'll delete it" in vtext and not re.search(r'retain|retention|\bkeep\b.*\bdays\b', vtext, re.I), f'{PV}: "your choices" is "on request" (see it, or have it deleted), with no retention period promised')
     check(f"It's effective {bp.long_date(bp.LEGAL_DATE)}." in vtext, f'{PV}: the effective date must be {bp.long_date(bp.LEGAL_DATE)}')
+
+
+# RCW 59.18.257(2): the reusable-screening-report statement must be on the home page; the shell carries it on every page.
+SCREENING_STATEMENT = 'I accept comprehensive reusable tenant screening reports.'
+for rel in sorted(set(['index.html', 'listings/index.html', 'listing.html', '404.html', 'owners/index.html', 'technology/index.html',
+                       'fair-housing/index.html', 'privacy/index.html', 'accessibility/index.html', 'buildings/courthouse-square/index.html']
+                      + sorted(glob.glob('listings/chs-*/index.html')))):
+    if not exists(rel):
+        continue
+    html_ = read(rel)
+    foot = html_.split('<!-- EB:FOOTER')[-1]
+    check(SCREENING_STATEMENT in foot, f'{rel}: the footer must carry the reusable tenant screening report statement (RCW 59.18.257(2))')
+check(SCREENING_STATEMENT[:-1] in read('tools/templates/fair-housing.tmpl.html'),
+      'fair-housing template: the Screening section must state that reusable tenant screening reports are accepted')
 
 # ---- /accessibility/ ----
 AC = 'accessibility/index.html'
