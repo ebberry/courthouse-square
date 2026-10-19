@@ -1,0 +1,99 @@
+<!-- Partials for tools/templates/listing.tmpl.html, split by tools/build_pages.py on the
+     "@part <name>" marker lines below. They live in tools/templates/ (not in the Python) so that
+     Tailwind, which scans tools/templates/*.html, sees every class used on the page.
+     js/listing-detail.js (the client-side fallback at /listing.html) writes the SAME markup from
+     template literals; tools/test_listings.py compares the two DOMs, so change both together. -->
+<!-- @part building_crumb -->
+<a href="$href" class="underline decoration-eb-tangerine decoration-2 underline-offset-4 hover:decoration-eb-berry">Part of $name &rarr;</a>
+<!-- @part badge_commercial -->
+<span class="inline-block rounded-[4px] bg-eb-mustard px-2 py-0.5 font-serif text-xs font-medium uppercase tracking-[0.08em]">Commercial</span>
+<!-- @part badge_home -->
+<span class="inline-block rounded-[4px] bg-eb-sand px-2 py-0.5 font-serif text-xs font-medium uppercase tracking-[0.08em]">Home</span>
+<!-- @part fact_tile -->
+<li class="rounded-[12px] border-[1.5px] border-eb-berry bg-eb-cream px-5 py-3">
+  <span class="block font-serif text-xl font-medium leading-tight">$value</span>
+</li>
+<!-- @part fact_tile_note -->
+<li class="rounded-[12px] border-[1.5px] border-eb-berry bg-eb-cream px-5 py-3">
+  <span class="block font-serif text-xl font-medium leading-tight">$value</span>
+  <span class="mt-1 block text-base leading-tight">$note</span>
+</li>
+<!-- @part feature_tag_commercial -->
+<li class="rounded-[4px] bg-eb-mustard px-3 py-1.5 text-lg leading-snug">$text</li>
+<!-- @part feature_tag_home -->
+<li class="rounded-[4px] bg-eb-sand px-3 py-1.5 text-lg leading-snug">$text</li>
+<!-- @part photo_tile -->
+<li class="relative aspect-[4/3] overflow-hidden rounded-card bg-eb-berry">
+  <img src="$src" alt="$alt" loading="$loading" decoding="async" class="absolute inset-0 h-full w-full object-cover" onerror="this.remove()" />
+</li>
+<!-- @part photo_tile_wide -->
+<li class="relative aspect-[4/3] overflow-hidden rounded-card bg-eb-berry sm:col-span-2 sm:aspect-[16/9]">
+  <img src="$src" alt="$alt" loading="$loading" decoding="async" class="absolute inset-0 h-full w-full object-cover" onerror="this.remove()" />
+</li>
+<!-- @part photo_grid -->
+<ul id="listing-photos" role="list" class="grid gap-4 sm:grid-cols-2">
+  $tiles
+</ul>
+<!-- @part summary_paragraph -->
+<p id="listing-summary" class="mt-6 max-w-[46rem] font-serif text-2xl leading-[1.35] sm:text-[1.75rem] md:text-[2rem]">$text</p>
+<!-- @part features_list -->
+<ul id="listing-features" role="list" class="mt-10 flex flex-wrap gap-3">
+  $tags
+</ul>
+<!-- @part location_layout_map -->
+grid gap-10 lg:grid-cols-[6fr_7fr] lg:gap-16
+<!-- @part location_layout_plain -->
+max-w-[44rem]
+<!-- @part gallery_placeholder -->
+<div id="listing-photos-placeholder" class="relative flex min-h-[15rem] flex-col justify-end rounded-card bg-eb-berry p-6 text-eb-cream sm:p-10 md:min-h-[20rem]">
+  <img src="/images/brand/monogram-tangerine-bare.svg" alt="" aria-hidden="true" class="absolute right-6 top-6 h-14 w-auto sm:right-10 sm:top-10 sm:h-16" />
+  <p class="max-w-[30rem] font-serif text-2xl italic leading-[1.3] md:text-3xl">Photos are coming — ask me and I'll walk you through in person.</p>
+</div>
+<!-- @part map_block -->
+<!-- Hidden until the inline script below finds MapLibre; the map itself is built when it scrolls near the screen. -->
+<div id="listing-map-wrap" class="hidden">
+  <div id="listing-map" class="h-[20rem] w-full sm:h-[24rem] lg:h-full lg:min-h-[26rem]"
+       data-lat="$lat" data-lng="$lng" data-id="$id" data-title="$title" data-rent="$rent"></div>
+</div>
+<!-- @part map_css -->
+<!-- Vendored MapLibre GL 5.24.0, then the E. Berry skin for it (this page has a map). -->
+  <link rel="stylesheet" href="/css/vendor/maplibre-gl.css" />
+  <link rel="stylesheet" href="/css/eb-map.css" />
+<!-- @part map_scripts -->
+<script src="/js/vendor/maplibre-gl.js"></script>
+<script src="/js/vendor/pmtiles.js"></script>
+<script src="/js/eb-map.js"></script>
+<script src="/js/site-config.js"></script>
+<script>
+  // ---- Single-marker map: built only once it is near the screen; the address and the OpenStreetMap link
+  //      above it stand on their own if MapLibre is missing. ----
+  (function () {
+    const el = document.getElementById('listing-map');
+    const wrap = document.getElementById('listing-map-wrap');
+    if (!el || !wrap || !window.EBMap || !window.EBMap.supported()) return;
+    wrap.classList.remove('hidden');
+    let built = false;
+    function build() {
+      if (built) return;
+      built = true;
+      const d = el.dataset;
+      const lat = parseFloat(d.lat), lng = parseFloat(d.lng);
+      try {
+        // A popup that links back to this very page would only be noise: plain pin, no popup.
+        window.EBMap.create(el, [{
+          id: d.id, lat: lat, lng: lng, title: d.title, rent: Number(d.rent)
+        }], { label: 'Map showing ' + d.title, zoom: 15.5, popups: false });
+      } catch (err) {
+        wrap.classList.add('hidden');
+      }
+    }
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(function (es) {
+        if (es.some(function (e) { return e.isIntersecting; })) { io.disconnect(); build(); }
+      }, { rootMargin: '200px' });
+      io.observe(el);
+    } else {
+      build();
+    }
+  })();
+</script>

@@ -1,0 +1,78 @@
+<!-- Partials for tools/templates/building.tmpl.html, split by tools/build_pages.py on the
+     "@part <name>" marker lines below. They live in tools/templates/ (not in the Python) so that
+     Tailwind, which scans tools/templates/*.html, sees every class used on the page. -->
+<!-- @part feature_tile -->
+<li class="flex items-start gap-4 rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-7">
+  <span class="mt-2 h-3 w-3 shrink-0 bg-eb-tangerine" aria-hidden="true"></span>
+  <span class="text-xl leading-[1.35]">$text</span>
+</li>
+<!-- @part gallery_tile -->
+<li class="relative aspect-[4/3] overflow-hidden rounded-[12px] bg-eb-berry">
+  <!-- Flat placeholder underneath: if the photo is missing, onerror removes the <img> and this shows. -->
+  <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-eb-cream">
+    <img src="/images/brand/monogram-tangerine-bare.svg" alt="" aria-hidden="true" class="h-10 w-auto" />
+    <span class="font-serif text-sm italic">photos soon</span>
+  </div>
+  <img src="$src" alt="$alt" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover" onerror="this.remove()" />
+</li>
+<!-- @part direction_item -->
+<li><strong class="font-semibold">$label:</strong> $text</li>
+<!-- @part nearby_item -->
+<li>$text</li>
+<!-- @part directions_block -->
+<div>
+  <h3 class="font-serif text-2xl font-medium leading-[1.2]">From the ferries</h3>
+  <ul class="mt-3 space-y-2">
+    $items
+  </ul>
+</div>
+<!-- @part nearby_block -->
+<div>
+  <h3 class="font-serif text-2xl font-medium leading-[1.2]">Nearby</h3>
+  <ul class="mt-3 space-y-2">
+    $items
+  </ul>
+</div>
+<!-- @part suites_section -->
+<!-- ============================================================
+     3. SUITES / NEIGHBOR WALL — Berry field, Cream cards.
+     Rendered client-side by js/building.js from the listings feed (+ data/tenants.json).
+     With no tenants it is a plain wall of open suites; with tenants it grows a tally,
+     category filters and a "See what's open" toggle (all hidden until then).
+     legacy anchor: courthousesquarevashon.com/#suites lands here after the redirect
+============================================================ -->
+<section id="suites" class="bg-eb-berry text-eb-cream" aria-labelledby="neighbors-heading">
+  <div class="mx-auto max-w-[1440px] px-[var(--eb-space-margin)] py-[max(4.5rem,calc(var(--eb-space-margin)*1.25))]">
+    <header class="max-w-[46rem]">
+      <p class="font-serif text-sm font-medium uppercase tracking-[0.08em]">Suites &amp; neighbors</p>
+      <h2 id="neighbors-heading" class="mt-3 text-balance font-serif text-[length:var(--eb-h2-size)] font-medium leading-[1.1]">Find your place at $name.</h2>
+      <p id="neighbors-lede" class="mt-4 max-w-[34rem]">A few quiet, welcoming suites are open right now, with free on-site parking, a shared outdoor patio, and an easy in-and-out for you, your team, and your visitors.</p>
+      <p class="mt-4 max-w-[34rem]">The standard prices are below, but I'm looking for long-term tenants I can support and help grow. If these numbers feel out of reach, let's have a conversation regardless. All-in monthly figures include rent, CAM, and utilities, so there are no surprises.</p>
+    </header>
+
+    <!-- Tally: hidden until there are neighbors to count. -->
+    <div id="neighbors-tally" class="mt-10 hidden flex-wrap gap-x-10 gap-y-3 font-serif">
+      <span class="flex items-baseline gap-2"><b id="tally-suites" class="text-3xl font-medium">0</b><span class="text-base">suites</span></span>
+      <span class="flex items-baseline gap-2"><b id="tally-neighbors" class="text-3xl font-medium">0</b><span class="text-base">neighbors</span></span>
+      <span class="flex items-baseline gap-2"><b id="tally-open" class="text-3xl font-medium">0</b><span class="text-base">open</span></span>
+    </div>
+
+    <!-- Controls (category filters + open toggle): hidden until there are occupied tenants to filter. -->
+    <div id="neighbors-controls" class="mt-8 hidden flex-wrap items-center gap-3">
+      <div id="neighbor-tags" class="flex flex-wrap gap-2"></div>
+      <button id="open-toggle" type="button" aria-pressed="false"
+              class="cursor-pointer rounded-full border-2 border-eb-cream px-5 py-2 text-base text-eb-cream hover:bg-eb-cream hover:text-eb-berry aria-pressed:border-eb-tangerine aria-pressed:bg-eb-tangerine aria-pressed:text-eb-berry">See what's open</button>
+    </div>
+
+    <!-- The wall mounts here. data-address-match is the fallback listing filter (address prefix). -->
+    <div id="neighbor-wall" class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+         data-address-match="$address_match" data-building-name="$name">
+      <p class="col-span-full">Loading suites&hellip;</p>
+    </div>
+    <noscript>
+      <p class="mt-6"><a href="/listings/?type=commercial" class="text-xl font-semibold underline decoration-2 underline-offset-[6px] hover:decoration-eb-tangerine">See what's open &rarr;</a></p>
+    </noscript>
+
+    <p id="pricing-snapshot" class="mt-8 max-w-[34rem] text-base">Figures are a starting point for conversation.</p>
+  </div>
+</section>

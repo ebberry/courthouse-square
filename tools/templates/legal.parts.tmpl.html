@@ -1,0 +1,43 @@
+<!-- Partials for the three legal pages (fair-housing.tmpl.html, privacy.tmpl.html, accessibility.tmpl.html).
+     Split on '<!-- @part NAME -->' lines by tools/build_pages.py. Markup that carries Tailwind classes lives here, not in the Python,
+     so tailwind.config.js (which scans tools/templates/*.html) sees every class. -->
+<!-- @part class_card -->
+<li class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-7">
+  <span class="block h-3 w-3 bg-eb-tangerine" aria-hidden="true"></span>
+  <p class="mt-5 font-sans text-xs font-medium uppercase tracking-widest">$label</p>
+  <h3 class="mt-2 font-serif text-2xl font-medium leading-[1.2]">$title</h3>
+  <ul class="mt-4 list-disc space-y-1.5 pl-5" data-protected="$key">
+$items
+  </ul>
+$note
+  <p class="mt-5 text-base">Source: $sources</p>
+</li>
+<!-- @part class_item -->
+<li>$text</li>
+<!-- @part class_note -->
+  <p class="mt-4 text-base">$text</p>
+<!-- @part source_link -->
+<a href="$href" class="underline decoration-eb-tangerine decoration-2 underline-offset-4 hover:decoration-eb-berry">$label</a>
+<!-- @part agency -->
+<li class="border-b-[1.5px] border-eb-berry py-6 first:pt-0 last:border-b-0 last:pb-0">
+  <h3 class="font-serif text-2xl font-medium leading-[1.2]">$name</h3>
+  <p class="mt-2">$about</p>
+  <p class="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-base">
+    <a href="$url" class="underline decoration-eb-tangerine decoration-2 underline-offset-4 hover:decoration-eb-berry">$link_text &rarr;</a>
+    <span>Phone: <a href="tel:$tel" class="underline decoration-eb-tangerine decoration-2 underline-offset-4 hover:decoration-eb-berry">$phone</a>$phone_note</span>
+  </p>
+</li>
+<!-- @part source_item -->
+<li><a href="$href" class="underline decoration-eb-tangerine decoration-2 underline-offset-4 hover:decoration-eb-berry">$label</a></li>
+<!-- @part form_card -->
+<li class="rounded-card border-[1.5px] border-eb-berry bg-eb-cream p-6 sm:p-7">
+  <span class="block h-3 w-3 bg-eb-tangerine" aria-hidden="true"></span>
+  <h3 class="mt-5 font-serif text-2xl font-medium leading-[1.2]">$title</h3>
+  <p class="mt-2 text-base">$where</p>
+  <ul class="mt-4 list-disc space-y-1.5 pl-5" data-form="$name">
+$fields
+  </ul>
+$hidden_note
+</li>
+<!-- @part hidden_note -->
+  <p class="mt-4 text-base">$text</p>

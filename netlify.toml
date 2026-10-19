@@ -25,3 +25,63 @@
   for = "/images/*"
   [headers.values]
     Cache-Control = "public, max-age=86400"
+
+# The self-hosted basemap (map/style.json + map/vashon.pmtiles). The browser reads the archive with HTTP Range
+# requests, which Netlify answers natively: do NOT add a redirect or rewrite for /map, it would hide the file from them.
+# An hour of cache means a fresh extract shows up promptly; the PMTiles client notices a changed ETag and refetches.
+[[headers]]
+  for = "/map/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/*.pmtiles"
+  [headers.values]
+    Content-Type = "application/octet-stream"
+
+# ── Dual-domain plumbing (E. Berry site) ──────────────────────────────
+# The old Courthouse Square domain now forwards to the building page on the
+# E. Berry site; the lease documents stay reachable at their historical URL.
+[[redirects]]
+  from = "https://courthousesquarevashon.com/"
+  to = "https://eberryvashon.com/buildings/courthouse-square/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.courthousesquarevashon.com/"
+  to = "https://eberryvashon.com/buildings/courthouse-square/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://eberryvashon.com/lease/*"
+  to = "https://courthousesquarevashon.com/lease/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.eberryvashon.com/*"
+  to = "https://eberryvashon.com/:splat"
+  status = 301
+  force = true
+
+# ── Listing detail fallback (E. Berry site) ───────────────────────────
+# Every listing in data/listings.json has a generated page at /listings/<id>/. This rewrite is the safety net
+# for a listing that is in the live feed but has no generated page yet (after the switch to the Ledger feed):
+# an unknown /listings/<slug>/ falls through to /listing.html, which reads the slug from the URL and draws the
+# page in the browser (js/listing-detail.js).
+# It is deliberately NOT forced: a real file wins, so listings/<id>/index.html and /listings/ are served as
+# files and only unknown slugs reach the rewrite. Netlify applies redirects top to bottom, first match wins,
+# so this rule MUST stay AFTER the host-scoped rules above (the courthousesquarevashon.com and www redirects
+# match by host and have to be tried first).
+[[redirects]]
+  from = "/listings/*"
+  to = "/listing.html"
+  status = 200
+
+# Listing feed: short cache so rent/availability edits show up quickly.
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300"
