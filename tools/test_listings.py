@@ -54,10 +54,10 @@ Part 4 drives the owners section (the part of the site for people who might hire
 Part 5 drives the Phase 9 changes: Courthouse Square is one of the properties, not the flagship, and the "Our technology"
 page about Ledger:
 
-  S. Technology     - the nav is Homes, Commercial, For owners, Technology (+ Inquire) on every page type, Courthouse Square
-                      lives in the footer, and the header stays on one row at 1024px with the new labels; the homepage's
-                      Courthouse Square strip is one modest outlined card, visibly lighter than Homes, Commercial and Owners,
-                      with a working link; /technology/ (title, JSON-LD, the one huge h1, the sections and tiles, the tenants
+  S. Technology     - the nav is Homes, Commercial, For owners, Technology (+ Inquire) on every page type, the footer has no
+                      Courthouse Square link, and the header stays on one row at 1024px with the new labels; the homepage has
+                      no Courthouse Square strip and no link to the building page (only a suite's own listing page links it,
+                      desktop and JS-fallback); /technology/ (title, JSON-LD, the one huge h1, the sections and tiles, the tenants
                       section leading with reporting a problem and rent through Stripe as an ordinary tile, the owners
                       section leading with repair visibility and the owner-directed approval tile, rent to the owner's bank
                       account, no statistics or security superlatives or prices, the calls to action, the 390px layout,
@@ -81,7 +81,7 @@ Part 7 drives Phase 13: the three legal pages, the Equal Housing Opportunity mar
                       fits, landmarks and headings, a flat-brand audit, nothing asked of any host but the site and fonts); the footer of every
                       page type carries the EHO mark once (visible, really loaded, exact alt text, 44-56px tall, drawn in Cream, 3:1 or better
                       against the footer, outside the Windermere panel, its words beside it) and a legal row of Fair housing, Privacy and
-                      Accessibility (14px, under the six unchanged links and above the copyright line, no mark or legal links in the header);
+                      Accessibility (14px, under the five unchanged links and above the copyright line, no mark or legal links in the header);
                       the footer links navigate and take the keyboard; /fair-housing/ shows its three lists (7, 12 and 18 classes), the EHO mark
                       in its hero, "me first" and the three agencies with their sites and verified phone numbers, and no fee, pet promise or
                       deadline; /privacy/ lists exactly the fields its forms really have, read live from the home page, a listing page and
@@ -91,7 +91,7 @@ Part 7 drives Phase 13: the three legal pages, the Equal Housing Opportunity mar
 Requirements: pip install playwright; playwright install chromium (or set CHROME=/path/to/chrome).
 Run: python3 tools/test_listings.py
      python3 tools/test_listings.py owners       (just part R: a fast loop while working on the owners section)
-     python3 tools/test_listings.py technology   (just part S: the nav, the Courthouse Square strip and /technology/)
+     python3 tools/test_listings.py technology   (just part S: the nav, no building link on the homepage, and /technology/)
      python3 tools/test_listings.py cobrand      (just part T: the Windermere co-brand logo)
      python3 tools/test_listings.py legal        (just part U: the legal pages, the EHO mark and the footer's legal row)
      EB_TEST_PORT=8191 python3 tools/test_listings.py   (another port, when 8190 is busy)
@@ -1248,8 +1248,8 @@ def part4(browser, sessions):
           f'R: the owners block is a Mustard field with one Cream card ({look})')
     check(look['hl'] == MUSTARD and look['hlColor'] == BERRY and look['hlText'] == 'manage it', f'R: the highlighted words are Berry on Mustard ({look})')
     check(look['labelled'] == 'owners-heading' and look['h'] >= 380, f'R: the block is substantial, not a footer whisper ({look["h"]}px tall)')
-    y = pg.evaluate("""() => ['buildings', 'owners', 'inquire'].map(id => document.getElementById(id).getBoundingClientRect().top + window.scrollY)""")
-    check(y == sorted(y) and len(set(y)) == 3, f'R: the owners block sits after the buildings and before the inquiry form ({y})')
+    y = pg.evaluate("""() => ['section[aria-label="Homes and commercial space"]', '#owners', '#inquire'].map(e => document.querySelector(e).getBoundingClientRect().top + window.scrollY)""")
+    check(y == sorted(y) and len(set(y)) == 3, f'R: the owners block sits after Homes/Commercial and before the inquiry form ({y})')
     sizes = pg.evaluate(H1_SIZES_JS)
     own = max(x['size'] for x in sizes if x['inOwners'])
     check(sizes[0]['inH1'] and sizes[0]['size'] > own >= 40, f'R: the homepage hero stays the one huge element; the owners statement is big but smaller ({sizes[0]["size"]} vs {own})')
@@ -1352,12 +1352,11 @@ def part4(browser, sessions):
           'R: the commercial body says "Courthouse Square, a multi-suite building on Vashon Hwy, is one of them." and never "I manage Courthouse Square"')
     check((cards[0]['linkHref'], cards[0]['linkText']) == ('/listings/?type=commercial', 'See commercial spaces \u2192'),
           f'R: the commercial card link is "See commercial spaces \u2192" to the commercial listings ({cards[0]["linkHref"]!r}, {cards[0]["linkText"]!r})')
-    cs_link = pg.evaluate("""() => { const a = document.querySelectorAll('#both a[href="/buildings/courthouse-square/"]'), x = a[0], cs = x && getComputedStyle(x);
-      return { n: a.length, text: x && x.textContent.trim(), inBody: !!(x && x.closest('article') && x.parentElement.tagName === 'P' && x.parentElement.textContent.length > 120),
-               underline: cs && cs.textDecorationLine, decoColor: cs && cs.textDecorationColor, color: cs && cs.color, size: cs && parseFloat(cs.fontSize) } }""")
-    check(cs_link['n'] == 1 and cs_link['text'] == 'Courthouse Square' and cs_link['inBody'], f'R: "Courthouse Square" is one inline link in the commercial body, linking to the building page ({cs_link})')
-    check(cs_link['underline'] == 'underline' and cs_link['decoColor'] == TANGERINE and cs_link['color'] == BERRY,
-          f'R: the inline link is Berry text with a Tangerine underline, like the other body links ({cs_link})')
+    cs_link = pg.evaluate("""() => ({ inBoth: document.querySelectorAll('#both a[href*="buildings/courthouse-square"]').length, anywhere: document.querySelectorAll('a[href*="buildings/courthouse-square"]').length,
+      body: [...document.querySelectorAll('#both article')].map(a => a.innerText.replace(/\\s+/g, ' ')).find(t => t.startsWith('COMMERCIAL') || t.startsWith('Commercial')) || '' })""")
+    check(cs_link['inBoth'] == 0 and cs_link['anywhere'] == 0 and 'Courthouse Square, a multi-suite building on Vashon Hwy, is one of them.' in cs_link['body']
+          and 'Its page shows how I work' not in cs_link['body'],
+          f'R: "Courthouse Square" in the commercial body is plain text; /owners/ has no link to the building page ({cs_link})')
     check(pg.evaluate("getComputedStyle(document.querySelector('#both')).backgroundColor") == SAND, 'R: the property-type band is a Sand field')
     badge = pg.evaluate("getComputedStyle(document.querySelector('#both article span')).backgroundColor")
     check(badge == MUSTARD, f'R: the Commercial badge is flat Mustard ({badge})')
@@ -1387,12 +1386,10 @@ def part4(browser, sessions):
     check(pg.evaluate('location.hash') == '#tell-me' and pg.is_visible('#owner-form'), 'R: the hero pill brings the form into view')
     s.ctx.close()
 
-    # the Courthouse Square proof link goes where it says
+    # (no Courthouse Square proof link any more: Phase 14 left the building page linked only from its own suites' listings)
     s = Session(browser, 'R-proof', viewport={'width': 1440, 'height': 900}); sessions.append(s)
     s.ctx.route(re.compile(r'/images/buildings/'), lambda r: r.fulfill(status=200, content_type='image/png', body=TILE_PNG))
     pg = s.pg; pg.goto(BASE + '/owners/', wait_until='networkidle')
-    pg.click('#both a[href="/buildings/courthouse-square/"]'); pg.wait_for_url(BASE + '/buildings/courthouse-square/')
-    check(pg.title() == f'{cs_title} — E. Berry Property Management', f'R: the proof link lands on the building page ({pg.title()!r})')
     # ...and the commercial card's own link opens the listings filtered to commercial
     pg.goto(BASE + '/owners/', wait_until='networkidle')
     pg.click('#both a[href="/listings/?type=commercial"]'); pg.wait_for_url(re.compile(r'/listings/\?type=commercial$'))
@@ -1563,8 +1560,10 @@ def part5(browser, sessions):
         check([h for h, _ in links] == NAV_HREFS and [t for _, t in links] == NAV_LABELS, f'S nav {name}: the header nav is {links}')
         check(s.pg.locator('header a[href="/buildings/courthouse-square/"]').count() == 0 and 'Courthouse Square' not in s.pg.inner_text('header'),
               f'S nav {name}: the header has no Courthouse Square link')
-        foot = s.pg.locator('footer a[href="/buildings/courthouse-square/"]')
-        check(foot.count() == 1 and foot.is_visible() and ws(foot.inner_text()) == 'Courthouse Square', f'S nav {name}: the footer still links Courthouse Square')
+        check(s.pg.locator('footer a[href="/buildings/courthouse-square/"]').count() == 0 and 'Courthouse Square' not in s.pg.inner_text('footer'),
+              f'S nav {name}: the footer does not link Courthouse Square')
+        if name not in ('detail', 'fallback', 'building'):
+            check(s.pg.locator('a[href="/buildings/courthouse-square/"]').count() == 0, f'S nav {name}: the page has no link to the building page (only a suite\'s own listing does)')
         ft = s.pg.locator('footer a[href="/technology/"]')
         check(ft.count() == 1 and ft.is_visible() and ws(ft.inner_text()) == 'Technology', f'S nav {name}: the footer links Technology')
         check(all(s.pg.locator(f'header #site-nav a[href="{h}"]').first.is_visible() for h in NAV_HREFS), f'S nav {name}: every header link is visible on desktop')
@@ -1593,49 +1592,37 @@ def part5(browser, sessions):
     pg.goto(BASE + '/', wait_until='networkidle')
     pg.click('footer a[href="/technology/"]'); pg.wait_for_url(BASE + '/technology/')
     check(pg.title() == TECH_TITLE, 'S: the footer Technology link lands on /technology/')
-    pg.goto(BASE + '/', wait_until='networkidle')
-    pg.click('footer a[href="/buildings/courthouse-square/"]'); pg.wait_for_url(BASE + '/buildings/courthouse-square/')
-    check(pg.title() == CS_PAGE_TITLE, f'S: the footer Courthouse Square link lands on the building page ({pg.title()!r})')
     s.ctx.close()
 
-    # ---------- S: the homepage's Courthouse Square strip: one modest card, lighter than Homes, Commercial and Owners ----------
+    # ---------- S: the homepage has no Courthouse Square strip and no link to the building page (Phase 14) ----------
     s = Session(browser, 'S-home', viewport={'width': 1440, 'height': 900}); sessions.append(s)
     s.ctx.route(re.compile(r'/images/buildings/'), lambda r: r.fulfill(status=200, content_type='image/png', body=TILE_PNG))
-    pg = s.pg; pg.goto(BASE + '/', wait_until='networkidle'); pg.wait_for_selector('#buildings'); pg.wait_for_timeout(200)
-    sec = pg.locator('section#buildings')
-    check(sec.count() == 1 and sec.is_visible(), 'S: the homepage has one visible Courthouse Square strip (#buildings)')
-    m = pg.evaluate("""() => { const q = e => document.querySelector(e), h = e => e.getBoundingClientRect().height, fs = e => parseFloat(getComputedStyle(e).fontSize),
-        sec = q('#buildings'), band = q('section[aria-label="Homes and commercial space"]'), own = q('#owners'),
-        card = sec.querySelector('article');
-      return { secH: h(sec), bandH: h(band), ownH: h(own), chsFs: fs(sec.querySelector('h2')), homesFs: fs(band.querySelector('h2')), ownFs: fs(q('#owners-heading')),
-               heroFs: fs(q('h1')), bg: getComputedStyle(sec).backgroundColor, cardBg: getComputedStyle(card).backgroundColor, cardBorder: getComputedStyle(card).borderTopColor,
-               pills: sec.querySelectorAll('.eb-btn').length, links: [...sec.querySelectorAll('a')].map(a => a.getAttribute('href')), text: sec.innerText.trim().replace(/\\s+/g, ' '),
-               top: [q('h1'), band, sec, own, q('#inquire')].map(e => Math.round(e.getBoundingClientRect().top + scrollY)), hscroll: document.documentElement.scrollWidth > innerWidth,
-               fields: [...sec.querySelectorAll('*')].filter(e => ['rgb(103, 10, 47)', 'rgb(232, 196, 80)', 'rgb(243, 110, 48)', 'rgb(141, 200, 232)', 'rgb(152, 178, 134)', 'rgb(241, 221, 183)'].includes(getComputedStyle(e).backgroundColor)).length } }""")
-    check(m['bg'] == CREAM and m['cardBg'] == 'rgba(0, 0, 0, 0)' and m['cardBorder'] == BERRY and m['fields'] == 0,
-          f'S: the strip is an outlined card on Cream, with no color field ({m["bg"]}, {m["cardBg"]}, {m["cardBorder"]}, {m["fields"]} filled)')
-    check(m['pills'] == 0 and m['links'] == ['/buildings/courthouse-square/'], f'S: the strip has no pill and one link, to the building page ({m["pills"]}, {m["links"]})')
-    check('Courthouse Square' in m['text'] and len(m['text']) <= 150 and 'flagship' not in m['text'].lower(), f'S: the strip is a sentence and a link ({m["text"]!r})')
-    check(m['chsFs'] < m['homesFs'] and m['chsFs'] < m['ownFs'] and m['homesFs'] / m['chsFs'] >= 1.4 and m['ownFs'] / m['chsFs'] >= 1.8,
-          f'S: its heading is clearly smaller than the Homes/Commercial and Owners headings ({m["chsFs"]} vs {m["homesFs"]} and {m["ownFs"]})')
-    check(m['secH'] <= 0.6 * m['bandH'] and m['secH'] <= 0.45 * m['ownH'], f'S: it takes far less room than Homes/Commercial and Owners ({m["secH"]:.0f}px vs {m["bandH"]:.0f} and {m["ownH"]:.0f})')
-    check(m['top'] == sorted(m['top']) and len(set(m['top'])) == 5, f'S: the order is hero, Homes/Commercial, the strip, Owners, the inquiry form ({m["top"]})')
-    check(m['heroFs'] > m['ownFs'] > m['homesFs'] > m['chsFs'], f'S: weight runs hero > Owners > Homes/Commercial > the strip ({m["heroFs"]}, {m["ownFs"]}, {m["homesFs"]}, {m["chsFs"]})')
-    check(pg.locator('a[href="/buildings/courthouse-square/"]').count() == 2, 'S: the homepage links Courthouse Square from the strip and the footer only')
+    pg = s.pg; pg.goto(BASE + '/', wait_until='networkidle'); pg.wait_for_selector('#owners'); pg.wait_for_timeout(200)
+    check(pg.locator('section#buildings').count() == 0 and pg.locator('#buildings-heading').count() == 0 and 'I also manage Courthouse Square' not in pg.inner_text('body'),
+          'S: the homepage has no Courthouse Square strip')
+    check(pg.locator('a[href*="buildings/courthouse-square"]').count() == 0, 'S: the homepage has no link to the building page (body or footer)')
     check('flagship' not in pg.inner_text('body').lower() and 'The buildings I look after' not in pg.inner_text('body'), 'S: no "flagship" and no old Courthouse Square band on the homepage')
-    audit(pg, '#buildings', 'S strip')
-    pg.click('#buildings a'); pg.wait_for_url(BASE + '/buildings/courthouse-square/')
-    check(pg.title() == CS_PAGE_TITLE, f'S: the strip link lands on the building page ({pg.title()!r})')
+    tops = pg.evaluate("""() => ['h1', 'section[aria-label="Homes and commercial space"]', '#owners', '#inquire'].map(e => Math.round(document.querySelector(e).getBoundingClientRect().top + scrollY))""")
+    check(tops == sorted(tops) and len(set(tops)) == 4, f'S: the order is hero, Homes/Commercial, Owners, the inquiry form ({tops})')
     pg.goto(BASE + '/#location', wait_until='networkidle')
     check(pg.evaluate("!!document.getElementById('location') && !!document.getElementById('suites')"), 'S: the legacy #location and #suites anchors the lease pages link to still exist')
+    # a suite's own listing page still links the building page, and the link lands there
+    pg.goto(BASE + '/listings/chs-n101/', wait_until='networkidle'); pg.wait_for_selector('#listing-title')
+    crumb = pg.locator('a[href="/buildings/courthouse-square/"]')
+    check(crumb.count() == 1 and crumb.first.is_visible() and ws(crumb.first.inner_text()).startswith('Part of'), 'S: a Courthouse Square suite listing still links its building page')
+    # ... and so does the JS fallback path
+    pg.goto(BASE + '/listing.html?id=chs-n101', wait_until='networkidle'); pg.wait_for_selector('#listing-title'); pg.wait_for_selector('a[href="/buildings/courthouse-square/"]', timeout=10000)
+    check(pg.locator('main a[href="/buildings/courthouse-square/"]').count() == 1, 'S: the JS fallback listing page still links its building page')
+    pg.goto(BASE + '/listings/chs-n101/', wait_until='networkidle'); pg.wait_for_selector('#listing-title')
+    pg.locator('a[href="/buildings/courthouse-square/"]').first.click(); pg.wait_for_url(BASE + '/buildings/courthouse-square/')
+    check(pg.title() == CS_PAGE_TITLE, f'S: the listing\'s building link lands on the building page ({pg.title()!r})')
     s.ctx.close()
 
     # ... and on a phone
     s = Session(browser, 'S-home-phone', viewport={'width': 390, 'height': 844}, is_mobile=True, has_touch=True); sessions.append(s)
-    pg = s.pg; pg.goto(BASE + '/', wait_until='networkidle'); pg.wait_for_selector('#buildings'); pg.wait_for_timeout(200)
-    m = pg.evaluate("""() => { const r = document.querySelector('#buildings article').getBoundingClientRect(), l = document.querySelector('#buildings a').getBoundingClientRect();
-        return { l: r.left, r: r.right, ll: l.left, lr: l.right, lh: l.height, h: r.height, scroll: document.documentElement.scrollWidth <= innerWidth } }""")
-    check(m['l'] >= 0 and m['r'] <= 390 and m['ll'] >= 0 and m['lr'] <= 390 and m['scroll'] and m['h'] < 260, f'S: the strip fits a phone ({m})')
+    pg = s.pg; pg.goto(BASE + '/', wait_until='networkidle'); pg.wait_for_selector('#owners'); pg.wait_for_timeout(200)
+    check(pg.locator('a[href*="buildings/courthouse-square"]').count() == 0 and pg.evaluate('document.documentElement.scrollWidth <= innerWidth'),
+          'S: on a phone the homepage has no link to the building page and does not scroll sideways')
     pg.click('#nav-toggle')
     check(pg.is_visible('#site-nav a[href="/technology/"]') and not pg.locator('#site-nav a[href="/buildings/courthouse-square/"]').count(), 'S: the phone menu lists Technology, and no Courthouse Square')
     pg.click('#site-nav a[href="/technology/"]'); pg.wait_for_url(BASE + '/technology/')
@@ -2015,7 +2002,7 @@ LEGAL_U = [('fair-housing', '/fair-housing/', 'Fair housing', '#fair-title'),
            ('accessibility', '/accessibility/', 'Accessibility', '#access-title')]
 EHO_SRC = '/images/brand/equal-housing-opportunity.svg'
 EHO_ALT = 'Equal Housing Opportunity'
-FOOTER_LINK_HREFS = ['/listings/', '/buildings/courthouse-square/', '/owners/', '/technology/', 'https://courthousesquarevashon.com/lease/', 'mailto:me@ebberry.com']
+FOOTER_LINK_HREFS = ['/listings/', '/owners/', '/technology/', 'https://courthousesquarevashon.com/lease/', 'mailto:me@ebberry.com']
 
 
 def contrast(a, b):
@@ -2093,7 +2080,7 @@ def check_legal_footer(s, tag, wide):
     check(lb is not None and rgb_of(lb['color']) == rgb_of(CREAM) and lb['fs'] <= 14.5, f'{tag}: the words are Cream and small ({lb and lb["fs"]}px)')
     check(m['firm'] is not None and m['panel'] is not None and 0 <= m['panel']['t'] - m['firm']['b'] <= 40, f'{tag}: the Windermere panel still sits right under the unchanged firm line')
     check(m['main'] is not None and [h for h, _, _ in m['mainLinks']] == FOOTER_LINK_HREFS and all(abs(f - 16) < 0.5 for _, _, f in m['mainLinks']),
-          f'{tag}: the six footer links are unchanged, in order, at 16px ({m["mainLinks"]})')
+          f'{tag}: the five footer links are unchanged, in order, at 16px ({m["mainLinks"]})')
     ll = m['legalLinks'] or []
     check([(l['href'], l['text']) for l in ll] == LEGAL_NAV, f'{tag}: the legal row is Fair housing, Privacy, Accessibility ({[(l["href"], l["text"]) for l in ll]})')
     check(all(abs(l['fs'] - 14) < 0.5 and l['deco'] == 'underline' and l['tab'] == 0 and rgb_of(l['color']) == rgb_of(CREAM) for l in ll),

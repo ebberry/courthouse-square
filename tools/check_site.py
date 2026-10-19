@@ -591,11 +591,11 @@ if exists(LIST_REL):
         got = re.findall(r'<option value="([^"]*)"', m.group(0)) if m else None
         check(got == values, f"{LIST_REL}: #{sel_id} options are {got}, expected {values}")
     check('class="eb-btn ' in lp and 'id="mobile-toggle"' in lp, f"{LIST_REL}: the Map/List pill must be an .eb-btn (>=19px bold)")
-    # <noscript>: a plain link to every listing and to the building.
+    # <noscript>: a plain link to every listing (and none to the building page: only the suites' own listings link to it).
     noscript_text = ' '.join(re.findall(r'<noscript>(.*?)</noscript>', lp, re.S))
     for L in listings:
         check(f'href="/listings/{L.get("id")}/"' in noscript_text, f"{LIST_REL}: <noscript> has no link to /listings/{L.get('id')}/")
-    check('href="/buildings/courthouse-square/"' in noscript_text, f"{LIST_REL}: <noscript> has no link to /buildings/courthouse-square/")
+    check('/buildings/courthouse-square/' not in noscript_text, f"{LIST_REL}: <noscript> must not link /buildings/courthouse-square/ (only the suites' own listing pages do)")
     # The homepage and header deep-link here; both filters must be understood.
     for q in ('/listings/?type=residential', '/listings/?type=commercial'):
         check(f'href="{q}"' in index and f'href="{q}"' in lp, f"{q} must be linked from the homepage and from the listings header")
@@ -966,7 +966,7 @@ if exists(NF_REL):
     check('<meta name="robots" content="noindex" />' in nf, f'{NF_REL}: missing the robots noindex meta')
     check('rel="canonical"' not in nf and 'application/ld+json' not in nf, f'{NF_REL}: a not-found page has no canonical and no structured data')
     check('Well, this is a dead end.' in nf and "The page you're after isn't here" in nf and "we'll find it." in nf, f'{NF_REL}: the headline or the warm line is missing')
-    for href in ('/', '/listings/', '/buildings/courthouse-square/'):
+    for href in ('/', '/listings/'):
         check(f'href="{href}"' in re.sub(r'<header.*?</header>|<footer.*?</footer>', '', nf, flags=re.S), f'{NF_REL}: the page body must link to {href}')
     check('monogram-tangerine-bare.svg' in nf, f'{NF_REL}: missing the monogram seal')
     check(not re.search(r'(?:src|href)="(?!https?:|mailto:|#|/)', nf), f'{NF_REL}: Netlify serves it at any depth, so every src/href must be absolute (/...)')
@@ -1051,8 +1051,8 @@ if hb:
     check(hb_body == 'I manage homes and storefronts around the island, as part of Windermere Vashon. If you have a place that could use a steady, friendly hand, tell me about it.',
           f'index.html: the owners block body must read "I manage homes and storefronts around the island, as part of Windermere Vashon. ..." (found {hb_body!r})')
     contact_first('index.html owners block', visible_text(hb))
-check(0 < index.find('id="buildings"') < index.find('id="owners"') < index.find('id="inquire"'),
-      'index.html: the owners block belongs after the buildings teaser and before the inquiry form')
+check(0 < index.find('aria-label="Homes and commercial space"') < index.find('id="owners"') < index.find('id="inquire"'),
+      'index.html: the owners block belongs after Homes/Commercial and before the inquiry form')
 check('name="inquiry"' in index and 'name="owner-intro"' not in index,
       'index.html: the tenant form stays "inquiry"; the owner form lives on /owners/ only')
 
@@ -1105,7 +1105,7 @@ if exists(OWN_REL):
           f'{OWN_REL}: "What I take care of" needs its six blurbs, got {titles}')
     both = (re.search(r'<section id="both".*?</section>', op, re.S) or [''])[0]
     # The commercial card is generic and mirrors the residential card (badge, title, italic tagline, body, link); Courthouse
-    # Square appears only as an inline link in the commercial body, so it is one of the properties and not the card's headline.
+    # Square appears only as plain text in the commercial body (no link: Phase 14), so it is one of the properties and not the card's headline.
     cards = re.findall(r'<article class="eb-card.*?</article>', both, re.S)
     check(len(cards) == 2, f'{OWN_REL}: "Storefronts and homes, both" has two cards, commercial then residential (found {len(cards)})')
     if len(cards) == 2:
@@ -1125,11 +1125,10 @@ if exists(OWN_REL):
         check((cb, ct, cg) == ('Commercial', 'Storefronts and offices', 'Room for the people who keep Vashon running.'),
               f'{OWN_REL}: the commercial card is Commercial / "Storefronts and offices" / "Room for the people who keep Vashon running." (found {(cb, ct, cg)})')
         check(cbody == 'From a one-room practice to a place with a front window, I manage commercial space with the same care as a home. '
-                       'Courthouse Square, a multi-suite building on Vashon Hwy, is one of them. Its page shows how I work: the suites, the standard lease, and the neighbors, all out in the open.',
+                       'Courthouse Square, a multi-suite building on Vashon Hwy, is one of them.',
               f'{OWN_REL}: the commercial card body changed (found {cbody!r})')
-        check(re.search(r'<a href="/buildings/courthouse-square/" class="[^"]*\bunderline\b[^"]*\bdecoration-eb-tangerine\b[^"]*">Courthouse Square</a>', com) is not None
-              and com.count('/buildings/courthouse-square/') == 1,
-              f'{OWN_REL}: "Courthouse Square" is one inline body link (Tangerine underline) to /buildings/courthouse-square/ in the commercial card')
+        check('/buildings/courthouse-square/' not in com and '/buildings/courthouse-square/' not in op,
+              f'{OWN_REL}: the commercial card (and the page) must not link /buildings/courthouse-square/; "Courthouse Square" there is plain text')
         check(clink == [('/listings/?type=commercial', 'See commercial spaces →')],
               f'{OWN_REL}: the commercial card link is "See commercial spaces →" to /listings/?type=commercial (found {clink})')
         check((rb, rt, rg) == ('Residential', 'Homes and cottages', 'Houses, cottages, and apartments.') and rlink == [('#tell-me', 'Tell me about your home →')],
@@ -1239,8 +1238,8 @@ for rel in A11Y_PAGES:
     check('/buildings/courthouse-square/' not in hdr_ and 'Courthouse Square' not in hdr_,
           f'{rel}: EB:HEADER must not carry a Courthouse Square link (it is one of the properties, not a top-level destination)')
     ftr_ = shell_block(pg_, 'FOOTER') or ''
-    check(re.search(r'<a href="/buildings/courthouse-square/"[^>]*>Courthouse Square</a>', ftr_) is not None,
-          f'{rel}: EB:FOOTER must still link Courthouse Square to /buildings/courthouse-square/')
+    check('/buildings/courthouse-square/' not in ftr_ and 'Courthouse Square' not in ftr_,
+          f'{rel}: EB:FOOTER must NOT link the Courthouse Square building page (only the suites\' own listing pages do)')
     check(re.search(r'<a href="/technology/"[^>]*>Technology</a>', ftr_) is not None, f'{rel}: EB:FOOTER has no "Technology" link to /technology/')
 # The nav keeps P8's one-row type: 16px with tight gaps at lg, 18px at xl (tools/test_listings.py measures the header at 1024px).
 nav_tag = re.search(r'<nav id="site-nav"[^>]*>', hdr, re.S)
@@ -1268,18 +1267,36 @@ check(not flagship_hits, f'"flagship" appears in {sorted(flagship_hits)}: Courth
 for B in buildings:
     check('flagship' not in json.dumps(B).lower(), f"buildings.json {B.get('id')}: copy must not call the building a flagship")
 
-# ---------------- the homepage: Courthouse Square is one modest strip, lighter than Homes, Commercial and Owners ----------------
-cs = (re.search(r'<section id="buildings".*?</section>', index, re.S) or [''])[0]
-check(bool(cs), 'index.html: the Courthouse Square strip (<section id="buildings">) is missing')
-if cs:
-    check(cs.count('<a ') == 1 and 'href="/buildings/courthouse-square/"' in cs, 'index.html: the Courthouse Square strip has exactly one link, to /buildings/courthouse-square/')
-    check(re.search(r'bg-eb-(?:berry|mustard|tangerine|sky|sage|sand)|eb-field-|eb-btn|eb-card|min-h-|var\(--eb-h2-size\)', cs) is None,
-          'index.html: the Courthouse Square strip must stay modest: no color field, no pill, no big heading, no tall card')
-    check(len(visible_text(cs)) <= 150, f'index.html: the Courthouse Square strip is a sentence and a link, not a section ({len(visible_text(cs))} characters of text)')
-    check('Courthouse Square' in visible_text(cs) and 'multi-suite' not in cs, 'index.html: the strip names Courthouse Square')
+# ---------------- Phase 14: the building page is linked ONLY from its own suites' listing pages ----------------
+# Scan every public page: the only files that may contain an href to /buildings/courthouse-square/ are listings/chs-*/index.html
+# (the "Part of Courthouse Square" breadcrumb) and the building page itself (self-references). js/listing-detail.js is the one script that
+# builds the link (its fallback path); no other script or page template may carry it.
+CS_HREF_RE = re.compile(r'href\s*=\s*["\']?(?:https?://[^/"\'\s]+)?/buildings/courthouse-square(?:/|["\'#?\s>])', re.I)
+CS_OWNERS = re.compile(r'^(?:listings/chs-[^/]+/index\.html|buildings/courthouse-square/index\.html)$')
+cs_offenders, cs_pages = [], 0
+for dp, dns, fns in os.walk(ROOT):
+    dns[:] = [d for d in dns if d not in ('.git', 'node_modules', 'tools', 'scratch')]
+    for fn in fns:
+        if fn.endswith('.html'):
+            rel_ = os.path.relpath(os.path.join(dp, fn), ROOT).replace(os.sep, '/')
+            cs_pages += 1
+            if CS_HREF_RE.search(read(rel_)) and not CS_OWNERS.match(rel_):
+                cs_offenders.append(rel_)
+check(cs_pages > 10 and not cs_offenders,
+      f'only listings/chs-*/index.html (and the building page itself) may link /buildings/courthouse-square/; these other pages do: {sorted(cs_offenders)} (scanned {cs_pages} pages)')
+for rel_ in sorted(glob.glob(os.path.join(ROOT, 'listings/chs-*/index.html'))):
+    rel_ = os.path.relpath(rel_, ROOT).replace(os.sep, '/')
+    check('href="/buildings/courthouse-square/"' in read(rel_), f'{rel_}: a Courthouse Square suite listing must still link its building page')
+cs_scripts = [os.path.relpath(f, ROOT) for f in sorted(glob.glob(os.path.join(ROOT, 'js/*.js')) + glob.glob(os.path.join(ROOT, 'tools/templates/*.html')))
+              if 'buildings/courthouse-square' in open(f, encoding='utf-8').read() and os.path.basename(f) != 'listing-detail.js']
+check(not cs_scripts, f'no script or page template may hard-code /buildings/courthouse-square (listing-detail.js and the generated suite listings link it by building id): {cs_scripts}')
+
+# ---------------- the homepage: no Courthouse Square strip, no link to the building page (Phase 14) ----------------
+check('<section id="buildings"' not in index and 'id="buildings-heading"' not in index and 'About the building' not in index and 'I also manage Courthouse Square' not in index,
+      'index.html: the Courthouse Square strip (<section id="buildings">) must be gone')
+check('/buildings/courthouse-square/' not in index, 'index.html: the home page must not link /buildings/courthouse-square/ (only the suites\' own listing pages do)')
+check('id="location"' in index and 'id="suites"' in index, 'index.html: the legacy #location and #suites anchors the lease pages link to must stay')
 check('The buildings I look after' not in index and 'Visit Courthouse Square' not in index, 'index.html: the old full Courthouse Square band is gone')
-hm = index.find('aria-label="Homes and commercial space"')
-check(0 < hm < index.find('id="buildings"') < index.find('id="owners"'), 'index.html: the strip sits after Homes/Commercial and before the owners block')
 check('<option value="Courthouse Square">Courthouse Square</option>' in index, 'index.html: the inquiry form still offers Courthouse Square')
 
 # ---------------- /technology/ ----------------
@@ -1413,7 +1430,7 @@ if exists(TECH_REL):
     for label, pat in FLAT_BRAND:
         check(re.search(pat, tp, re.I) is None, f'{TECH_REL}: contains {label} (E. Berry brand is flat, Berry/Cream only)')
 tw_css = read('css/tailwind.css')
-for cls in (r'lg\:grid-cols-\[5fr_7fr\]', r'lg\:grid-cols-3', r'lg\:grid-cols-4', r'text-\[length\:clamp\(2\.75rem\2c 11\.5vw\2c 8rem\)\]', r'sm\:py-12', r'sm\:flex-row'):
+for cls in (r'lg\:grid-cols-\[5fr_7fr\]', r'lg\:grid-cols-3', r'lg\:grid-cols-4', r'text-\[length\:clamp\(2\.75rem\2c 11\.5vw\2c 8rem\)\]', r'sm\:flex-row'):   # sm:py-12 went with the homepage strip (Phase 14)
     check(cls in tw_css, f"css/tailwind.css has no .{cls}; rebuild it (see README, 'Rebuilding the stylesheet')")
 
 # =====================================================================
@@ -1647,7 +1664,7 @@ LEGAL_PAGES = (('fair-housing', 'Fair housing', 'tools/templates/fair-housing.tm
                ('privacy', 'Privacy', 'tools/templates/privacy.tmpl.html'),
                ('accessibility', 'Accessibility', 'tools/templates/accessibility.tmpl.html'))
 LEGAL_LINKS = [('/fair-housing/', 'Fair housing'), ('/privacy/', 'Privacy'), ('/accessibility/', 'Accessibility')]
-FOOTER_LINKS = [('/listings/', 'Listings'), ('/buildings/courthouse-square/', 'Courthouse Square'), ('/owners/', 'For owners'),
+FOOTER_LINKS = [('/listings/', 'Listings'), ('/owners/', 'For owners'),
                 ('/technology/', 'Technology'), ('https://courthousesquarevashon.com/lease/', 'Lease documents'), ('mailto:me@ebberry.com', 'Email')]
 
 # ---- the verified lists, pinned (sources: see the header comment above PROTECTED_CLASSES in tools/build_pages.py, all read 2026-10-18) ----
@@ -1736,7 +1753,7 @@ for rel in A11Y_PAGES:
           f'{rel}: the footer order is Windermere panel, then the EHO mark, then the link row')
     navs = {m.group(1): re.findall(r'<a href="([^"]+)"[^>]*>([^<]+)</a>', m.group(2))
             for m in re.finditer(r'<nav aria-label="([^"]+)">(.*?)</nav>', ftr_, re.S)}
-    check(navs.get('Footer') == FOOTER_LINKS, f'{rel}: the six footer links must stay unchanged and in order (found {navs.get("Footer")})')
+    check(navs.get('Footer') == FOOTER_LINKS, f'{rel}: the five footer links must stay unchanged and in order (found {navs.get("Footer")})')
     check(navs.get('Legal') == LEGAL_LINKS, f'{rel}: the footer legal row must be exactly Fair housing, Privacy, Accessibility with hrefs /fair-housing/, /privacy/, /accessibility/ (found {navs.get("Legal")})')
     check('<ul class="flex flex-wrap gap-x-5 gap-y-1 text-sm">' in (re.search(r'<nav aria-label="Legal">.*?</nav>', ftr_, re.S) or [''])[0],
           f'{rel}: the legal row is text-sm, quieter than the main link row (text-base)')
