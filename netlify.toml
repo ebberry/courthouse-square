@@ -9,6 +9,14 @@
   status = 301
   force = true
 
+# The Two-Tier Value-Sharing Lease form (Sections 2/3 & 3/3) is a working form
+# shared by deal drafts, not yet released on the site. Keep it unpublished.
+[[redirects]]
+  from = "/forms/*"
+  to = "/"
+  status = 301
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]

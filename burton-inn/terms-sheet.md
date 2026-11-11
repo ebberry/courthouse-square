@@ -1,124 +1,170 @@
-# Lease Terms Sheet
+# The Burton Inn Lease
 
-**The Burton Inn — 24007 Vashon Highway SW, Vashon (Burton), Washington 98070**
-**Draft v0.10 — July 25, 2026 — prepared from the July 2026 Rent Basis & Owner Return prospectus**
+**Two-Tier Value-Sharing Lease© — 24007 Vashon Highway SW, Vashon (Burton), Washington 98070**
+**Draft v0.12 — November 11, 2026 — Section 1/3 on the Two-Tier form, with Option to Purchase**
 
-> *The specific, negotiated terms of this Lease. This Terms Sheet, together with its Exhibits, incorporates the **Standard Lease Terms** and the **Definitions & Glossary** (neutral standard form, Version 1.6, July 23, 2026), which are attached and apply unchanged. Where this Terms Sheet or an Exhibit is silent, the Standard Lease Terms and Definitions & Glossary control; in the event of a conflict, this Terms Sheet and its Exhibits prevail. The economic structure implements the deal described in "The Burton Inn — Rent Basis & Owner Return" (July 2026).*
+> *Section 1/3, including its Exhibits, incorporates Sections 2/3 and 3/3 (Version 2.1, September 19, 2026), which are attached and apply unchanged. Section 1/3 governs Sections 2/3 and 3/3 if any conflict arises. Capitalized terms have the meanings assigned in Section 3/3 unless specifically defined here.*
 
----
+**THE DEAL IN BRIEF** *(a summary only; the Articles and Exhibits below control)*
 
-## 1 · The Parties
-
-**LANDLORD:** The Burton Landing LLC, a Washington limited liability company.
-
-**TENANT (ENTITY):** eBerry LLC, a Washington limited liability company.
-
-**TENANT ADDRESS:** 9405 SW Gorsuch Road, Vashon, WA 98070.
-
----
-
-## 2 · The Premises
-
-**PROPERTY / BUILDING:** The Burton Inn.
-
-**ADDRESS:** 24007 Vashon Highway SW, Vashon (Burton), WA 98070.
-
-**PREMISES:** The entire building, together with the underlying land, parking, and grounds. The Premises comprise the whole building and grounds leased to a single tenant; there are no Common Areas, no Proportionate Share, and no landlord relocation right (see Exhibit D, §D.2).
-
-**APPROXIMATE SQUARE FOOTAGE:** Entire building (single-tenant).
-
-**LEGAL DESCRIPTION:** See Exhibit A, attached.
-
-**PROPORTIONATE SHARE:** 100% (single tenant; whole building).
+- **What is leased:** the whole Burton Inn building and grounds, to a single tenant.
+- **How long:** through December 31, 2031, with one option to extend five more years, to December 31, 2036.
+- **Tier One (property costs):** Tenant pays the property's taxes, insurance, and routine upkeep at actual cost (about $19,500 a year today), and all utilities directly. Landlord's costs of owning the building are covered.
+- **Tier Two (Landlord's return):** Landlord receives ten percent (10%) of the inn's gross revenue, with a guaranteed minimum of $1,650 a month starting January 1, 2028. Landlord's return rises and falls with the business.
+- **Option to buy:** Tenant may buy the property at any time during the Lease at the price schedule in Exhibit I — $1,200,000 in the first Lease Year, rising three percent (3%) a year.
+- **Improvements:** Tenant funds about $98,000 of fit-out, which stays with the building. Landlord installs fire suppression and HVAC (about $50,000).
 
 ---
 
-## 3 · The Term
+## Section 1/3 – Tenant Specific Terms & Exhibits
 
-**LEASE START DATE (COMMENCEMENT):** September 1, 2026. Possession has been delivered to and accepted by Tenant.
+### Article 1: Parties
 
-**INITIAL TERM:** Five (5) Lease Years, so performance can be assessed at the end of the first term before either party commits to the Extension Option below.
+**1.01 Landlord.** The Burton Landing LLC, a Washington limited liability company.
 
-**TRIPLE-NET / UTILITIES START DATE:** October 1, 2026 (Landlord carries the Premises' costs for September 2026).
+**1.02 Tenant.** eBerry LLC, a Washington limited liability company, 9405 SW Gorsuch Road, Vashon, Washington 98070.
 
-**RENT COMMENCEMENT DATE (BASE RENT):** September 1, 2027. Base Rent is abated in full during Lease Year 1 and begins on the first day of Lease Year 2.
+**1.03 Guarantor.** Intentionally omitted.
 
-**LEASE EXPIRATION DATE:** August 31, 2031 (end of Lease Year 5), unless extended under the Extension Option below.
+**1.04 Brokers.** None. Each party's representation and indemnity are set forth in Section 2/3 Article 17.03.
 
-**LEASE YEARS:** Each Lease Year runs September 1 – August 31. Lease Year 1 is September 1, 2026 – August 31, 2027 (see Exhibit D, §D.6).
+**1.05 Good Faith Deposit.** Intentionally omitted. (The $70,000 rent advance is addressed in Article 4.09.)
 
-**EXTENSION OPTION:** One (1) option to extend for a second term of five (5) years (September 1, 2031 – August 31, 2036, i.e., Lease Years 6–10), on the terms stated in Exhibit D, §D.6.
+### Article 2: Premises
 
----
+**2.01 Building.** The Burton Inn, 24007 Vashon Highway SW, Vashon (Burton), Washington 98070, on the land described in Exhibit A, as shown on the site plan in Exhibit B.
 
-## 4 · Financial Obligations
+**2.02 Tenant Premises.** The entire Building, together with the land, parking, and grounds, leased to a single tenant.
 
-**LEASE TYPE:** Triple Net (NNN) with Percentage Rent. Under Article 1.7 of the Standard Lease Terms, the NNN and Percentage-Rent provisions of **Exhibit D** modify and supersede Article 1 (CAM Charges) to the extent set forth therein.
+**2.03 Tenant Proportionate Share.** 100% (whole Building). Exhibit C is not used.
 
-**BASE RENT:** $1,650.00 per month ($19,800 per year), fixed for the entire Term with no escalation; abated in full during Lease Year 1 (see Exhibit D, §D.4).
+**2.04 Common Areas and Parking.** None. All parking, grounds, and outdoor areas are part of the Premises and are under Tenant's control (see Exhibit H, Section 1). Alley access is addressed in Exhibit J.
 
-**PERCENTAGE RENT:** Ten percent (10%) of Gross Revenue in excess of the Breakpoint, in every Lease Year including Lease Year 1 (see Exhibit D, §D.5).
+**2.05 Delivery Condition.** As-Is under Section 2/3 Article 2.03, on the Lease Start Date, except for Landlord's Work described in Exhibit E.
 
-**BREAKPOINT:** $198,000 per Lease Year (the natural breakpoint: annual Base Rent ÷ 10%); fixed for the Term, prorated only for a partial final Lease Year.
+**2.06 Tenant Improvements.** Tenant will fund and perform a fit-out of about Ninety-Eight Thousand Dollars ($98,000): flooring; interior paint and exterior touch-up; a commercial kitchen retrofit with all required permits; and guest-room, bar, and dining furnishings. Phase 1 is the guest rooms, related public areas, and life-safety items; Phase 2 (about three months later) is the kitchen, bar, and event spaces. This work is approved by Landlord under Section 2/3 Article 4.04. The amounts are estimates; the obligation is to complete the work lien-free, not to spend a particular amount. Work attached to the Building stays with the Building at the end of the Term under Section 2/3 Article 4.06; Tenant's Trade Fixtures, equipment, and inventory remain Tenant's property.
 
-**TRIPLE-NET EXPENSES (TENANT-PAID, AT ACTUAL COST):** Real property taxes (currently about $8,500/yr), Landlord's building-insurance premiums (currently about $6,500/yr), and routine maintenance and upkeep (currently about $375/mo) — about $19,500/yr today. Begins October 1, 2026 and applies in every Lease Year including Lease Year 1 (see Exhibit D, §D.3).
+### Article 3: Term
 
-**DIRECT UTILITIES (TENANT-PAID):** Electricity, water, sewer/septic, garbage, propane or heating fuel, telephone, internet/data (accounts in Tenant's name); all utilities are direct (see Exhibit D, §D.10).
+**3.01 Lease Start Date.** The date both parties have signed this Lease. Landlord delivers possession on that date.
 
-**SECURITY DEPOSIT:** None.
+**3.02 Rent Commencement Date.** The Lease Start Date. Base Rent Tier Two (the percentage of Gross Revenue) accrues from that date; the monthly minimum begins January 1, 2028 (Article 4.03).
 
-**GUARANTY:** None (no Exhibit B guaranty is attached).
+**3.03 Base Rent Tier One Commencement Date.** The first day of the month after the Lease Start Date.
 
----
+**3.04 Initial Term.** From the Lease Start Date through the Lease Expiration Date.
 
-## 5 · Operations & Special Conditions
+**3.05 Lease Expiration Date.** December 31, 2031 (the end of Lease Year 5), unless extended under Article 3.06 or sooner terminated under the Lease.
 
-**PERMITTED USE:** Operation of an inn with up to four (4) guest rooms; a cocktail bar and restaurant with beer, wine, and spirits service; ticketed chef's dinners, tastings, and culinary events; pop-up, takeaway, and counter food service; rental of the commercial kitchen as a commissary to licensed food businesses; private events and venue hire; and ancillary uses including retail sale of merchandise and provisions. Tenant shall use the Premises solely for this Permitted Use, per Article 3 of the Standard Lease Terms.
+**3.06 Extension Option.** Tenant may extend the Term once, for five (5) years through December 31, 2036 (Lease Years 6 through 10), by written notice to Landlord at least nine (9) months before the Lease Expiration Date, if no Event of Default exists when notice is given or when the extension begins. All terms stay the same during the extension, including the $1,650 monthly minimum and the ten percent (10%) rate.
 
-**DELIVERY CONDITION:** As-Is (possession delivered and accepted September 1, 2026), subject to Landlord's capital-systems scope and retained obligations under Exhibit D (§§D.7–D.8).
+**3.07 Lease Years.** Lease Year 1 runs from the Lease Start Date through December 31, 2027. Each later Lease Year is a calendar year (January 1 through December 31). Lease Years are fixed and do not move if opening is delayed.
 
-**PHASED OPENING:** Phase 1 — guest rooms open (the "Opening Date"); Phase 2 — kitchen, bar, and events, targeted about three (3) months later. Lease Years run on the fixed calendar above regardless of the pace of Tenant's fit-out (see Exhibit D, §D.6).
+### Article 4: Rent and Financial Obligations
 
----
+**4.01 Lease Type.** Two-Tier Value-Sharing Lease, Triple Net (NNN). Base Rent Tier One covers the property's operating costs (Article 4.02). Base Rent Tier Two is the Landlord Investment, paid as a share of Gross Revenue with a monthly minimum (Article 4.03). Together they constitute Base Rent; every other amount payable by Tenant is Additional Rent.
 
-## 6 · Additional Terms
+**4.02 Base Rent Tier One (Operational Costs).** Tenant pays, at actual cost and without markup or management fee, the property taxes and assessments on the Premises, Landlord's building insurance premiums, and routine maintenance and upkeep, as set out in Exhibit H, Section 2. There is no Escrow Account. Current estimate: about $19,500 per year (about $1,625 per month), per the Annual Budget attached as Exhibit D. Tenant's audit rights are set forth in Section 2/3 Article 1.07.
 
-*The following supplements the Standard Lease Terms. Where a term cites an article of the Standard Lease Terms, that article governs except as expressly modified here or in Exhibit D.*
+**4.03 Base Rent Tier Two (Landlord Investment).** For each Lease Year, Landlord receives the greater of (a) the Minimum Tier Two Rent or (b) ten percent (10%) of Gross Revenue. Mechanics, the definition of Gross Revenue, and reporting are in Exhibit H, Sections 3 through 5.
 
-**6.1** This Lease is Triple Net (NNN) with Percentage Rent. The provisions that adapt the Standard Lease Terms to this deal — the NNN pass-through (which, under Article 1.7, supersedes the CAM provisions of Article 1), the Percentage Rent, the single-tenant/whole-building adaptations, the phased opening and Base Rent abatement, Tenant's Work, Landlord's capital systems, and the additional insurance — are set out in **Exhibit D (Triple-Net, Percentage Rent & Single-Tenant Amendment)**. Exhibit D modifies and supplements the Standard Lease Terms and controls over them to the extent of any conflict.
+- Lease Year 1 (Lease Start Date through December 31, 2027): no minimum; ten percent (10%) of Gross Revenue.
+- Lease Years 2 through 10 (January 1, 2028 onward): Minimum Tier Two Rent of $1,650.00 per month ($19,800 per year), plus any amount by which ten percent (10%) of Gross Revenue for the Lease Year exceeds the minimum.
+- Examples for a full Lease Year: Gross Revenue of $150,000 means Tier Two of $19,800 (the minimum); $270,000 means $27,000; $450,000 means $45,000.
 
-**6.2** No special conditions apply other than those stated in this Terms Sheet and its Exhibits.
+*Escalation: None. The minimum and the ten percent (10%) rate are fixed for the Term, including any extension; Landlord's return grows as the business grows.*
 
----
+**4.04 Rent Payment.** The Minimum Tier Two Rent is paid monthly under Section 2/3 Article 1.01. The percentage portion of Tier Two is paid quarterly, by the last day of the month after each calendar quarter (April 30, July 31, October 31, and January 31), with a year-end true-up, as set out in Exhibit H, Section 3. Tier One items are paid as billed under Exhibit H, Section 2. Partial months are prorated by days.
 
-## 7 · Notices
+**4.05 Security Deposit.** None ($0).
 
-All notices under this Lease shall be in writing and delivered by personal delivery, overnight courier, or certified mail (return receipt requested), to the addresses below, effective on delivery or refusal. Any notice under chapter 59.12 RCW shall be served strictly as Washington law requires (including RCW 59.12.040). Email does not constitute legal notice of default. Either party may change its notice address by written notice.
+**4.06 Late Charges and Interest.** Under Section 2/3 Article 1.02: a late charge of five percent (5%) or Fifty Dollars ($50.00), whichever is greater, on any Rent not received within five (5) days after it is due, and interest at twelve percent (12%) per annum on any Rent more than thirty (30) days past due.
 
-**NOTICE TO LANDLORD:** The Burton Landing LLC, 24007 Vashon Highway SW, Vashon, WA 98070.
+**4.07 Utilities and Services.** Tenant puts all utilities in its own name and pays them directly under Section 2/3 Article 5.01, including electricity, propane or natural gas, water, trash and recycling, telephone, and internet. Section 2/3 Article 5.02 does not apply. The shared septic system is addressed in Exhibit J.
 
-**NOTICE TO TENANT:** eBerry LLC, 9405 SW Gorsuch Road, Vashon, WA 98070.
+**4.08 NNN Variation.** Elected. Under Section 2/3 Article 1.05, Exhibit H, Sections 1 and 2 modify Section 2/3 Article 1 as stated there.
 
----
+**4.09 Rent Advance.** Tenant paid Landlord $70,000 as a rent advance under the Side Agreement (Article 8.01). It is credited and, where applicable, refunded as the Side Agreement provides (see Exhibit H, Section 15, and Exhibit I, Section I.5).
 
-## 8 · Incorporation and Merger
+### Article 5: Use of Premises
 
-This Lease Terms Sheet, together with its Exhibits, the **Standard Lease Terms**, and the **Definitions & Glossary** (neutral standard form, Version 1.6, July 23, 2026, attached and applying unchanged), constitutes the entire Commercial Lease Agreement for the Premises and supersedes all prior discussions, including the July 2026 prospectus (a planning document, not a contract, except as expressly implemented herein) and any letter of intent. Order of precedence: (1) this Terms Sheet; (2) the Exhibits, with Exhibit D controlling over the other Exhibits and over the Standard Lease Terms to the extent of any conflict; (3) the Standard Lease Terms; (4) the Definitions & Glossary. Amendments must be in a writing signed by both parties.
+**5.01 Permitted Use.** Lodging (up to four (4) guest rooms, or such number as King County allows); a restaurant and bar serving beer, wine, and spirits; ticketed dinners, tastings, and events; pop-up and takeaway food service; rental of the commercial kitchen to licensed food businesses; private events; and related retail — in each case only as allowed by King County zoning, the certificate of occupancy, and applicable permits. If the County requires the lodging to operate as a bed-and-breakfast accessory to an operator's residence, Tenant may designate part of the Premises as that residence, and that residential use is a Permitted Use (Exhibit H, Section 9).
 
----
+**5.02 Hazardous Materials.** None beyond ordinary cleaning, maintenance, kitchen, and bar supplies customarily used in an inn and restaurant, kept and used under Section 2/3 Article 3.04.
 
-## 9 · Index of Exhibits
+**5.03 Insurance.** The coverages and limits in Section 2/3 Article 6.01, plus the additional coverages in Exhibit H, Section 10. Additional insureds under Section 2/3 Article 6.02. Tenant shall deliver certificates before the Lease Start Date and at each renewal.
 
-- **Exhibit A** — Legal Description.
-- **Exhibit B** — Guaranty (none; not attached).
-- **Exhibit C** — Tenant Work Letter (Tenant-Funded Fit-Out).
-- **Exhibit D** — Triple-Net, Percentage Rent & Single-Tenant Amendment (includes Landlord's Capital Systems).
+**5.04 Signage.** Tenant may keep and refresh the existing Burton Inn signage and install new exterior signs with required permits, as modified in Exhibit H, Section 13.
 
----
+**5.05 Site Rules.** Section 2/3 Article 19 applies, as modified in Exhibit H, Section 13.
 
-## Signatures
+**5.06 Access.** Tenant shall have access to the Premises twenty-four (24) hours a day, seven (7) days a week. Landlord's entry is governed by Section 2/3 Article 11.01, as modified in Exhibit H, Section 12.
 
-By signing below, Landlord and Tenant agree to this Lease, comprising this Lease Terms Sheet (with its Exhibits), the Standard Lease Terms, and the Definitions & Glossary.
+**5.07 Zoning and Opening.** If guest rooms cannot legally reopen by June 30, 2027, Tenant may end this Lease as provided in Exhibit H, Section 9.
+
+### Article 6: Notices and Payment
+
+**6.01 Notices.** Notices shall be in writing and delivered under Section 2/3 Article 15 to the addresses below. Either party may change its address by written notice.
+
+**6.02 Notice to Landlord.** The Burton Landing LLC, 24007 Vashon Highway SW, Vashon, Washington 98070.
+
+**6.03 Notice to Tenant.** eBerry LLC, 9405 SW Gorsuch Road, Vashon, Washington 98070.
+
+**6.04 Rent Payment Address.** By ACH to the account designated by Landlord in writing, or by check payable to Landlord at the address Landlord specifies.
+
+### Article 7: Special Provisions
+
+**7.01 Special Provisions.** The following provisions apply in addition to, and control over, Sections 2/3 and 3/3. Each cites the Article of Section 2/3 it modifies. As set out in Exhibit H, Addendum:
+
+- **(1) Whole Property** (modifies Section 2/3 Articles 1.03 through 1.06, 12, and 20.02).
+- **(2) Triple-Net Costs — Base Rent Tier One** (modifies Section 2/3 Articles 1.03 through 1.06, 5.02, and 6.01).
+- **(3) How Tier Two Is Paid** (modifies Section 2/3 Article 1.01).
+- **(4) Gross Revenue** (new).
+- **(5) Reports and Landlord's Audit** (new; Section 2/3 Article 1.07 continues to apply to Tier One).
+- **(6) Operating** (new).
+- **(7) Maintenance, Repairs, and Replacements** (modifies Section 2/3 Articles 1.03(e), 4.01, 4.02, and 4.03).
+- **(8) Tenant's Fit-Out** (modifies Section 2/3 Article 4.04).
+- **(9) Zoning, Permits, and Opening** (modifies Section 2/3 Article 3.01).
+- **(10) Insurance** (modifies Section 2/3 Article 6.01).
+- **(11) Guests, Events, and Kitchen Users** (modifies Section 2/3 Articles 8.01 through 8.03).
+- **(12) Landlord's Entry** (modifies Section 2/3 Article 11.01).
+- **(13) Site Rules and Signage** (modifies Section 2/3 Articles 19.04, 19.06, and 20.01).
+- **(14) Casualty and Holding Over** (modifies Section 2/3 Articles 7.01, 7.02, and 13.01).
+- **(15) Rent Advance** (new).
+- **(16) Default Damages** (modifies Section 2/3 Article 9.04).
+- **(17) Lender, Notary, and Recording** (modifies Section 2/3 Articles 10.01 and 18.09).
+
+**7.02 Option to Purchase.** Landlord grants Tenant the Option to Purchase in Exhibit I.
+
+**7.03 Shared Septic, Alley, and Yellow House.** As set out in Exhibit J.
+
+### Article 8: Incorporation and Exhibits
+
+**8.01 Entire Agreement.** This Section 1/3, its Exhibits, and Sections 2/3 and 3/3, Version 2.1, September 19, 2026, constitute the entire Lease and supersede all prior negotiations, letters of intent, and proposals, including the July 2026 prospectus — **except the Side Agreement dated [__________], 2026 between Landlord and Tenant (the "Side Agreement"), which remains in effect.** If this Lease and the Side Agreement conflict about the $70,000 rent advance, the Side Agreement controls; on everything else, this Lease controls. Precedence: (1) this Section 1/3 with its Exhibits; (2) Section 2/3; (3) Section 3/3. Any amendment must be in a written instrument signed by both parties.
+
+**8.02 Exhibit A.** Legal Description.
+
+**8.03 Exhibit B.** Site Plan of the Premises.
+
+**8.04 Exhibit C.** Unit Allocations (Intentionally omitted — whole Building, 100%).
+
+**8.05 Exhibit D.** Annual Budget (Base Rent Tier One estimate).
+
+**8.06 Exhibit E.** Landlord Work Letter.
+
+**8.07 Exhibit F.** Unconditional Guaranty of Lease (Intentionally omitted).
+
+**8.08 Exhibit G.** Additional Site Rules (Intentionally omitted).
+
+**8.09 Exhibit H.** Addendum (modifies the Section 2/3 Articles listed in Article 7.01).
+
+**8.10 Exhibit I.** Option to Purchase.
+
+**8.11 Exhibit J.** Shared Septic, Alley, and Yellow House.
+
+### Article 9: Execution
+
+**9.01 Execution.** By signing below, Landlord and Tenant agree to this Lease, comprising this Section 1/3 with its Exhibits and Sections 2/3 and 3/3, Version 2.1, September 19, 2026. Because the Term exceeds two (2) years, the parties will sign before a notary, and notary acknowledgments will be attached (see Exhibit H, Section 17).
 
 **LANDLORD:** The Burton Landing LLC, a Washington limited liability company
 
@@ -136,82 +182,165 @@ PRINTED NAME / TITLE: ____________________________________
 
 DATE: /ds2/
 
-*Notary acknowledgments to be attached (required for a lease term exceeding two years under Washington law; see Exhibit D, §D.15).*
+*End of Section 1/3 – Specific Lease Terms*
 
 ---
 
-## Exhibit A: Legal Description
+## Exhibit A: Legal Description and King County Tax Parcel Number
 
 The Premises are legally described as follows (abbreviated legal description, King County records):
 
 **S 100 FT OF N 130 FT OF W 150 FT OF E 180 FT OF GOVT LOT 2 IN NE QTR STR 19-22-03**
 
-(That is: the south 100 feet of the north 130 feet of the west 150 feet of the east 180 feet of Government Lot 2 in the northeast quarter of Section 19, Township 22 North, Range 3 East, W.M., King County, Washington.) If the full legal description in Landlord's vesting deed differs, the vesting deed controls.
+(That is: the south 100 feet of the north 130 feet of the west 150 feet of the east 180 feet of Government Lot 2 in the northeast quarter of Section 19, Township 22 North, Range 3 East, W.M., King County, Washington.) King County Tax Parcel No. [__________]. If the full legal description in Landlord's vesting deed differs, the vesting deed controls.
 
 ---
 
-## Exhibit B: Guaranty
+## Exhibit B: Site Plan
 
-None. Tenant's obligations under this Lease are not guaranteed by any person or entity, and no guaranty is attached. (See Terms Sheet §1 and §4.)
-
----
-
-## Exhibit C: Tenant Work Letter (Tenant-Funded Fit-Out)
-
-This is the Tenant Work Letter referenced in Article 2.3 of the Standard Lease Terms. Tenant shall fund and perform the following fit-out, with a total anticipated investment of approximately Ninety-Eight Thousand Dollars ($98,000). Line amounts are Tenant's planning estimates; the obligation is to complete the described scope lien-free, not to spend a particular amount.
-
-- **Flooring** — repair, refinish, and/or replace flooring throughout the guest rooms and public areas.
-- **Paint** — full interior repaint; exterior touch-up as reasonably needed for opening.
-- **Kitchen retrofit and permits** — commercial kitchen build-out sufficient for restaurant, bar, chef's-dinner, and commissary operation, including equipment, ventilation, and all required health-department and building permits.
-- **Furnishings** — guest-room, bar, and dining furnishings and fixtures appropriate to a small destination inn.
-
-**Phasing.** Phase 1 (before the Opening Date): guest rooms, associated public areas, and life-safety basics. Phase 2 (target: approximately three months after the Opening Date): kitchen, bar, and events spaces.
-
-**Ownership.** Tenant's Work that is attached to or incorporated into the building (including flooring, finishes, the kitchen retrofit, and built-in furnishings) is a permanent Alteration that remains Landlord's property at the end of the tenancy under Article 4.5 of the Standard Lease Terms, without compensation — a bargained-for element of the rent structure. Tenant's movable Trade Fixtures, equipment, and inventory remain Tenant's and are removed at the end of the Term per Article 4.5.
+[Site plan of the Building, grounds, parking, and alley to be attached.]
 
 ---
 
-## Exhibit D: Triple-Net, Percentage Rent & Single-Tenant Amendment
+## Exhibit C: Unit Allocations
 
-*This Exhibit D is the "NNN Lease Amendment" referenced in Article 1.7 of the Standard Lease Terms, and it further modifies and supplements the Standard Lease Terms to reflect that the Premises are the entire building leased to a single tenant and that the Lease includes Percentage Rent. Capitalized terms not defined here have the meanings in the Terms Sheet or the Definitions & Glossary. Where this Exhibit conflicts with the Standard Lease Terms, this Exhibit controls; where it conflicts with the Terms Sheet, the Terms Sheet controls.*
-
-**D.1 Additional Definitions.** For this Lease: "**Breakpoint**," "**Base Rent**," and "**Percentage Rent Rate**" have the values stated in Section 4 of the Terms Sheet. "**Lease Year**" is defined in §D.6. "**Opening Date**" is the date the guest rooms first open to paying guests (Phase 1). "**Gross Revenue**" is defined in §D.5.
-
-**D.2 Single-Tenant, Whole-Building Premises.** The Premises are the entire Building and grounds, leased to Tenant as the sole tenant. Accordingly: there are no Common Areas and no Proportionate Share; every reference in the Standard Lease Terms to Common Areas, Proportionate Share, other tenants, or shared facilities is inapplicable; and **Article 12 (Relocation of Tenant) does not apply.** Tenant's rights extend to the entire Premises for the entire Term.
-
-**D.3 Triple-Net Expenses; Supersession of CAM (Article 1).** This Lease is Triple Net. In lieu of the CAM Charges, estimate/reconciliation, and CAM audit provisions of Article 1 (Sections 1.3–1.6), Tenant shall pay, directly and at actual cost, from the Triple-Net Start Date stated in the Terms Sheet and in every Lease Year thereafter (including the remainder of Lease Year 1): (a) all real property taxes, assessments, and surface-water-management charges levied against the Premises for periods within the Term; (b) Landlord's building-insurance premiums (special-form property at replacement cost, plus liability for Landlord's ownership interest); and (c) all routine maintenance and upkeep of the Premises under §D.7. Landlord shall deliver each tax and premium statement to Tenant promptly on receipt, and Tenant shall pay it (or reimburse Landlord) at least thirty (30) days before delinquency or within thirty (30) days after invoice, respectively. There is no CAM estimate, no Proportionate Share, and no base year; costs pass through at actuals as they change. Landlord carries the Premises' costs for any portion of the Term before the Triple-Net Start Date.
-
-**D.4 Base Rent; Year 1 Abatement; No Escalation.** Base Rent is the amount stated in Section 4 of the Terms Sheet, payable under Article 1.1. It is abated in full from the Commencement Date through the last day of Lease Year 1 and commences on the Rent Commencement Date stated in the Terms Sheet; the abatement applies to Base Rent only (Percentage Rent, Triple-Net Expenses, and utilities are payable during Lease Year 1). Base Rent is flat for the entire Term; the parties intend Percentage Rent (§D.5), against a fixed Breakpoint, to be the escalator.
-
-**D.5 Percentage Rent.** In addition to Base Rent, for each Lease Year Tenant shall pay Landlord Percentage Rent equal to the Percentage Rent Rate applied to the amount by which Gross Revenue for that Lease Year exceeds the Breakpoint (each as stated in Section 4 of the Terms Sheet). Percentage Rent is Additional Rent under the Standard Lease Terms.
-
-- **(a) Gross Revenue.** "Gross Revenue" means the entire amount of revenue, whether cash, card, electronic, or credit, and whether collected directly or through booking platforms, ticketing services, or other intermediaries (without deduction for platform or processing fees), generated by or arising from business conducted at, from, or originating from the Premises — including guest-room and lodging charges; food and beverage sales; ticket sales for dinners, tastings, and events; pop-up and takeaway sales; commissary and kitchen-rental fees; venue, event, and private-hire fees; and merchandise sales — calculated from receipts, with no expense accounting.
-- **(b) Exclusions.** Gross Revenue excludes only: sales, lodging, liquor, and similar taxes collected and remitted; bona fide refunds, credits, and voided transactions; tips and gratuities paid over to employees; proceeds of insurance or condemnation; security or reservation deposits until applied or forfeited; and proceeds from the sale of used furniture, fixtures, or equipment in the ordinary course of replacement.
-- **(c) Breakpoint timing.** The full Breakpoint (not prorated) applies to Lease Year 1 notwithstanding the staged opening; for any partial final Lease Year, the Breakpoint is prorated by days.
-- **(d) Calendar Quarters; statements and payment.** A "**Calendar Quarter**" is each of the four fixed three-month periods of the calendar year — January–March, April–June, July–September, and October–December — applying on that fixed calendar regardless of the Commencement Date or the Lease Year cycle. Because Lease Year 1 begins September 1 (mid-quarter), the Lease Year cycle does not align to Calendar Quarter boundaries; the cumulative Lease-Year-to-date computation below trues this up automatically each quarter, so no separate partial-quarter calculation is needed. Within twenty (20) days after each calendar month from the Commencement Date, Tenant shall deliver a written statement of Gross Revenue for that month, broken out by line of business. Percentage Rent is reconciled and paid on a Calendar Quarter basis, within one (1) month after the end of each Calendar Quarter — that is, by April 30 for the Calendar Quarter ended March 31; by July 31 for the Calendar Quarter ended June 30; by October 31 for the Calendar Quarter ended September 30; and by January 31 for the Calendar Quarter ended December 31 — each such payment computed cumulatively for the Lease Year to date: the Percentage Rent Rate applied to the amount by which cumulative Gross Revenue for the Lease Year to date exceeds the Breakpoint, less Percentage Rent already paid for that Lease Year. Within ninety (90) days after each Lease Year, Tenant shall deliver a reconciliation statement certified by an officer or manager of Tenant, with payment of any deficiency; overpayment is credited against the next Percentage Rent due (or refunded within thirty (30) days after the end of the Term).
-- **(e) Records and audit.** Tenant shall keep complete point-of-sale (POS) and booking records for at least three (3) years after each Lease Year. Not more than once per Lease Year, on fifteen (15) days' notice, Landlord (or its accountant) may audit those records for the preceding two (2) Lease Years. Tenant shall pay any disclosed deficiency plus interest at the Article 1.2 rate within thirty (30) days; and if the understatement for the audited Lease Year exceeds the audit-cost threshold stated in Section 4 of the Terms Sheet (ten percent (10%)), Tenant shall also reimburse Landlord's reasonable audit cost. Records and audit results are confidential under Article 18.8.
-- **(f) Operating covenant.** From the Opening Date, Tenant shall continuously operate the inn business in the ordinary course, consistent with the Permitted Use, subject to closures for the Exhibit C fit-out phases, casualty, condemnation, remodeling, repairs, and Force Majeure, and to seasonal closures not exceeding six (6) weeks per Lease Year in the aggregate. Nothing requires any line of business to meet any revenue level; if revenue falls, Percentage Rent falls with it.
-
-**D.6 Term; Lease Year; Commencement; Phased Opening; Extension.** The "Commencement Date," "Rent Commencement Date," and "Lease Expiration Date" are as stated in Section 3 of the Terms Sheet. Each "**Lease Year**" runs September 1 – August 31 (Lease Year 1: September 1, 2026 – August 31, 2027); the final Lease Year ends on the last day of the Term; all Gross Revenue from and after the Commencement Date is included in the Lease Year in which it arises. Tenant intends to open in two phases (Phase 1 guest rooms; Phase 2 kitchen, bar, and events, targeted about three (3) months later), pursued with commercially reasonable diligence; because Lease Years run on the fixed calendar above regardless of the pace of Tenant's fit-out, delay in opening extends neither the Base Rent abatement nor any other milestone. **Extension option:** provided no Event of Default then exists, Tenant may extend the Term once for a second term of five (5) years (September 1, 2031 – August 31, 2036, i.e., Lease Years 6–10), on the same terms except this option and the Lease Year 1 abatement, by written notice to Landlord given 9–15 months before the end of the initial Term.
-
-**D.7 Maintenance; Landlord's Retained Scope (modifies Article 4).** Because the Premises are the whole building, Tenant shall, at its sole cost, maintain the entire Premises — interior and exterior, grounds, walkways, parking, guest rooms, kitchen equipment, and building systems — in clean, safe, operable condition (ordinary wear and tear and insured casualty excepted), including routine and preventative maintenance of the HVAC installed under §D.8 through a licensed contractor. **Section 4.1 (HVAC as a CAM item) does not apply.** Landlord shall, at its sole cost (not passed through), maintain and repair the roof and roof membrane, the structural foundation and load-bearing walls, and shall replace (as distinct from routine maintenance) the §D.8 capital systems except where necessitated by Tenant's negligence or misuse. Article 4.2's structural obligations otherwise stand.
-
-**D.8 Landlord's Capital Systems (Owner Scope).** The following capital building systems are Landlord's scope and cost (approximately $50,000 combined), separate from the rent structure: (a) a **fire suppression system** designed, permitted, and installed as required by code for the Permitted Use; and (b) **HVAC** serving the Premises. Landlord shall complete each as needed to support Tenant's phased opening — any component legally required for Phase 1 before the Opening Date, and the remainder before the Phase 2 opening — subject to Force Majeure and Tenant cooperation. Routine maintenance thereafter is Tenant's (§D.7); full replacement is Landlord's.
-
-**D.9 Utilities (modifies Article 5).** Tenant shall establish accounts in its own name and pay all utilities serving the Premises directly (electricity, water, sewer/septic, garbage, propane or heating fuel, telephone, internet). Because there are no Common Areas, **Section 5.2 (shared and common-area utilities via CAM) does not apply**; there are no shared utilities.
-
-**D.10 Insurance (supplements Article 6).** In addition to the coverage required by Article 6, Tenant shall carry, from the date any alcohol is served, **liquor liability insurance** of at least $1,000,000 per occurrence; and **business-income insurance** covering at least twelve (12) months of Rent. Tenant's liability policies (including liquor liability) name Landlord (and Landlord's lender, if any) as additional insured on a primary, non-contributory basis.
-
-**D.11 Assignment; Ordinary-Course Occupancies (supplements Article 8).** The following are licenses in the ordinary course of the Permitted Use, not assignments or subleases, and require no consent: overnight guest stays; event and venue hires; ticketed dinners; pop-up arrangements with visiting chefs or vendors; and hourly or short-term commissary-kitchen use by licensed food businesses. Tenant remains fully responsible for the Premises and all such occupants, and all revenue therefrom is Gross Revenue. Article 8 otherwise governs assignments and subleases.
-
-**D.12 No Option to Purchase.** Tenant has expressed a goal of purchasing the building around Lease Year 10. This is a goal only: nothing in this Lease grants Tenant an option to purchase, right of first refusal, or right of first offer, and nothing obligates either party to transact. Any sale would be by separate written agreement.
-
-**D.13 Percentage Rent in Default Damages (supplements Article 9).** For purposes of computing damages under Article 9, Percentage Rent for future periods is deemed to equal the average annual Percentage Rent payable during the thirty-six (36) months preceding the default (or the actual period, if shorter).
-
-**D.14 SNDA.** As a condition to subordination of this Lease to any future mortgage or deed of trust under Article 10.1, the holder shall deliver a commercially reasonable non-disturbance agreement recognizing this Lease (including the Base Rent abatement and Percentage Rent structure) so long as no Event of Default exists.
-
-**D.15 Acknowledgment; Recording (supplements Article 18.9).** Because the Term exceeds two (2) years, the parties shall execute and acknowledge this Lease before a notary. Notwithstanding Article 18.9, at either party's request the parties shall execute a memorandum of lease in recordable form (omitting economic terms), recorded at the requesting party's cost; the Lease itself shall not be recorded.
+Intentionally omitted. The Premises are the whole Building; Tenant's Proportionate Share is 100%.
 
 ---
 
-*End of the Lease Terms Sheet and Exhibits for The Burton Inn — Draft v0.10, July 25, 2026. To be read with the attached Standard Lease Terms and Definitions & Glossary (neutral standard form, Version 1.6, July 23, 2026).*
+## Exhibit D: Annual Budget (Base Rent Tier One estimate)
+
+Tenant's good-faith estimate of the Tier One costs it will pay at actual cost under Exhibit H, Section 2. These are estimates, not caps; Tenant pays the actual bills.
+
+- Property taxes and assessments: about $8,500 per year.
+- Landlord's building insurance: about $6,500 per year.
+- Routine maintenance and upkeep: about $375 per month ($4,500 per year).
+- **Total: about $19,500 per year (about $1,625 per month).**
+
+Utilities are paid directly by Tenant (Article 4.07) and are not part of this budget.
+
+---
+
+## Exhibit E: Landlord Work Letter
+
+At Landlord's own cost, and not passed through to Tenant as Tier One or otherwise:
+
+- **E.1 Fire suppression and HVAC.** Landlord installs the fire suppression system required by code for the Permitted Use and the HVAC serving the Premises (about $50,000 combined), completed in time for each phase of Tenant's opening, subject to Force Majeure and Tenant's cooperation.
+- **E.2 Existing code violations.** Landlord resolves any code violation existing on the Lease Start Date, including the open violation on the sunroom, either by correcting it or by closing off the affected area.
+- **E.3 Punch list.** Section 2/3 Articles 2.04 and 2.05 apply to Landlord's Work.
+
+---
+
+## Exhibit F: Unconditional Guaranty of Lease
+
+Intentionally omitted.
+
+---
+
+## Exhibit G: Additional Site Rules
+
+Intentionally omitted.
+
+---
+
+## Exhibit H: Addendum
+
+This Addendum is part of Section 1/3 and controls over Sections 2/3 and 3/3 where they differ.
+
+**1. Whole Property (modifies Section 2/3 Articles 1.03 through 1.06, 12, and 20.02).** The Premises are the entire Building and grounds, leased to one tenant. There are no Common Areas and no CAM Charges. Article 12 (Relocation of Tenant) does not apply. In place of Article 20.02, Tenant controls the parking on the Premises for its employees, guests, and suppliers.
+
+**2. Triple-Net Costs — Base Rent Tier One (modifies Section 2/3 Articles 1.03 through 1.06, 5.02, and 6.01).** Base Rent Tier One consists only of the following, paid at actual cost from the Base Rent Tier One Commencement Date: (a) property taxes and assessments on the Premises for periods within the Term; (b) Landlord's building insurance premiums (special-form property coverage at replacement cost, plus liability coverage for Landlord's ownership); and (c) routine maintenance and upkeep, which Tenant performs or contracts for directly under Section 7 of this Addendum. Landlord sends each tax and insurance bill when received; Tenant pays taxes at least thirty (30) days before they are delinquent and insurance within thirty (30) days after invoice. There is no management fee, no Escrow Account, no contingency or reserve, and no capital improvement charge. Tenant pays all utilities directly (Article 4.07).
+
+**3. How Tier Two Is Paid (modifies Section 2/3 Article 1.01).**
+
+- **(a) The rule.** For each Lease Year, Tier Two is the greater of the Minimum Tier Two Rent or ten percent (10%) of Gross Revenue.
+- **(b) Monthly minimum.** Beginning January 1, 2028, Tenant pays the $1,650 Minimum Tier Two Rent in advance on the first day of each month. There is no minimum in Lease Year 1.
+- **(c) Quarterly payments.** By the last day of the month after each calendar quarter — April 30, July 31, October 31, and January 31 — Tenant pays ten percent (10%) of Gross Revenue for the Lease Year to date, less all Tier Two already paid for that Lease Year, if the result is more than zero.
+- **(d) Year-end true-up.** By March 31 after each Lease Year, Tenant delivers an annual Gross Revenue statement certified by an officer or manager of Tenant, with payment of any shortfall. Any overpayment is credited against the next Rent due, or refunded within thirty (30) days after the Lease ends.
+- **(e) Partial final year.** If the Lease ends on a day other than December 31, the minimum for that final Lease Year is prorated by days.
+
+**4. Gross Revenue (new).** "Gross Revenue" means all revenue from business conducted at or from the Premises — whether received in cash, by card, electronically, or through booking platforms, ticketing services, or other intermediaries (without deducting their fees) — including lodging, food and beverage, tickets, pop-up and takeaway sales, commissary and kitchen rental, venue and private-event fees, and merchandise. It is measured from receipts, with no expense deductions. It does not include: sales, lodging, liquor, and similar taxes collected and paid to the government; refunds, credits, and voided transactions; tips paid over to employees; insurance or condemnation proceeds; deposits until applied or forfeited; or proceeds from selling used furniture, fixtures, or equipment.
+
+**5. Reports and Landlord's Audit (new; Section 2/3 Article 1.07 continues to apply to Tier One).** Within twenty (20) days after each month, Tenant sends Landlord that month's Gross Revenue (a point-of-sale report is sufficient). Tenant keeps its point-of-sale and booking records for three (3) years. Once per Lease Year, on fifteen (15) days' notice, Landlord or its accountant may audit those records for the two (2) prior Lease Years. Tenant pays any shortfall found, with interest at the Section 2/3 Article 1.02 rate, within thirty (30) days; if Gross Revenue was understated by more than ten percent (10%) for a Lease Year, Tenant also pays Landlord's reasonable audit cost. Records and audit results are confidential under Section 2/3 Article 18.08.
+
+**6. Operating (new).** Once guest rooms have reopened, Tenant will keep the business operating in the ordinary course, except for closures for fit-out, casualty, condemnation, repairs, permits, or Force Majeure, and seasonal closures of up to six (6) weeks per Lease Year in total. No minimum revenue is required; if revenue falls, Tier Two falls with it, down to the minimum.
+
+**7. Maintenance, Repairs, and Replacements (modifies Section 2/3 Articles 1.03(e), 4.01, 4.02, and 4.03).** Tenant maintains the entire Premises — interior, exterior, grounds, parking, and building systems — in clean, safe, working condition, including routine HVAC servicing by a licensed contractor. At Landlord's own cost, not passed through to Tenant: (a) Landlord maintains and repairs the roof, foundation, and structure; (b) Landlord performs the Landlord's Work in Exhibit E; and (c) Landlord replaces the fire suppression system and the HVAC when needed, unless the replacement is caused by Tenant's misuse. Septic costs are as stated in Exhibit J.
+
+**8. Tenant's Fit-Out (modifies Section 2/3 Article 4.04).** The Tenant Improvements described in Article 2.06 are approved. Later Alterations follow Article 4.04.
+
+**9. Zoning, Permits, and Opening (modifies Section 2/3 Article 3.01).**
+
+- **(a) Cooperation.** Landlord will reasonably cooperate, at no material cost to Landlord, with Tenant's zoning, permit, and license applications, including signing owner consents.
+- **(b) Operator's residence.** If the County requires the lodging to operate as a bed-and-breakfast accessory to an operator's residence, Tenant may designate part of the Premises as the residence of its operator, and that residential use is a Permitted Use.
+- **(c) If guest rooms cannot reopen.** If guest rooms cannot legally reopen by June 30, 2027, for reasons other than Tenant's failure to pursue its applications diligently, Tenant may end this Lease by thirty (30) days' written notice given before the guest rooms are approved. On that termination, each party is released from future obligations; Tenant pays Rent accrued to the termination date and removes its Trade Fixtures; Tenant's fit-out stays with the Building; and the rent advance is handled as the Side Agreement provides.
+- **(d) Phased opening.** Delays in opening do not move the Lease Years or the start of the monthly minimum.
+
+**10. Insurance (modifies Section 2/3 Article 6.01).** In addition to Article 6.01, Tenant carries **liquor liability insurance** of at least $1,000,000 per occurrence from the first day alcohol is served, and **business-income insurance** covering at least twelve (12) months of Rent. Landlord's building insurance is a Tier One cost under Section 2 of this Addendum.
+
+**11. Guests, Events, and Kitchen Users (modifies Section 2/3 Articles 8.01 through 8.03).** Overnight guests, event and venue hires, ticketed dinners, visiting chefs and pop-up vendors, and short-term commissary-kitchen users are ordinary parts of the business, not assignments or subleases, and need no consent. Tenant remains responsible for them, and the revenue they generate is Gross Revenue. Article 8.02 (Recapture) does not apply. Article 8.03 (Excess Rent) applies only to a sublease of all or substantially all of the Premises.
+
+**12. Landlord's Entry (modifies Section 2/3 Article 11.01).** Landlord will coordinate entry with Tenant's manager and will not enter an occupied guest room except in an emergency.
+
+**13. Site Rules and Signage (modifies Section 2/3 Articles 19.04, 19.06, and 20.01).** The ordinary sounds and cooking odors of a lawfully operated inn, restaurant, bar, and event venue do not violate Article 19.04, subject to any operating standards in Exhibit J. Tenant may allow guests' pets under a written house policy, and Tenant's own animals with Landlord's consent, not unreasonably withheld. Under Article 20.01, Landlord consents to the existing Burton Inn signage and its refresh, and will not unreasonably withhold consent to new signs that have the required permits.
+
+**14. Casualty and Holding Over (modifies Section 2/3 Articles 7.01, 7.02, and 13.01).** During any abatement under Article 7.01 or 7.02, the monthly minimum abates in the same proportion, and ten percent (10%) continues to apply to whatever Gross Revenue is earned. For Article 13.01, the monthly Base Rent Tier Two "in effect" is the greater of the monthly minimum or one-twelfth of the Tier Two paid for the twelve (12) months before expiration.
+
+**15. Rent Advance (new).** Tenant paid Landlord $70,000 as a rent advance under the Side Agreement. It is credited against Rent, and the stated portion is refundable if this Lease is not extended beyond December 31, 2031, as the Side Agreement provides. The parties understand "extended" to mean Tenant's exercise of the extension option in Article 3.06. If Tenant buys the property under Exhibit I, any part of the advance not yet credited or refunded is credited toward the purchase price.
+
+**16. Default Damages (modifies Section 2/3 Article 9.04).** In calculating damages, Base Rent Tier Two for future periods is deemed to equal the average annual Tier Two paid for the thirty-six (36) months before the default (or the actual period, if shorter), but not less than the minimum.
+
+**17. Lender, Notary, and Recording (modifies Section 2/3 Articles 10.01 and 18.09).** As a condition of subordinating this Lease to any future mortgage, the lender must sign a commercially reasonable non-disturbance agreement recognizing this Lease, including the rent structure and the Option to Purchase, so long as no Event of Default exists. Because the Term exceeds two (2) years, the parties will sign this Lease before a notary. Notwithstanding Article 18.09, either party may record a memorandum of this Lease and of the Option to Purchase (omitting economic terms) at its own cost.
+
+---
+
+## Exhibit I: Option to Purchase
+
+**I.1 The Option.** Landlord grants Tenant the option to buy the property — the land, the Building, and Landlord's fixtures and improvements, including Tenant's fit-out — on the terms of this Exhibit (the "Option").
+
+**I.2 When Tenant May Exercise.** Tenant may exercise the Option at any time during the Term, including any extension, by written notice to Landlord, as long as no Event of Default exists.
+
+**I.3 Purchase Price.** The price depends on the Lease Year in which Tenant gives notice. It is $1,200,000 in Lease Year 1 and increases three percent (3%) each Lease Year, rounded to the nearest $1,000:
+
+- Lease Year 1 (through December 31, 2027): $1,200,000
+- Lease Year 2 (2028): $1,236,000
+- Lease Year 3 (2029): $1,273,000
+- Lease Year 4 (2030): $1,311,000
+- Lease Year 5 (2031): $1,351,000
+- Lease Year 6 (2032, if extended): $1,391,000
+- Lease Year 7 (2033): $1,433,000
+- Lease Year 8 (2034): $1,476,000
+- Lease Year 9 (2035): $1,520,000
+- Lease Year 10 (2036): $1,566,000
+
+**I.4 Earnest Money.** Within ten (10) business days after giving notice, Tenant deposits $25,000 of earnest money with a mutually acceptable escrow company. It is applied to the price at closing.
+
+**I.5 Credits.** At closing, Tenant receives a credit for any part of the $70,000 rent advance not yet credited against Rent or refunded (Exhibit H, Section 15). Rent paid under this Lease is not otherwise credited toward the price.
+
+**I.6 Closing.** Closing takes place within one hundred twenty (120) days after Tenant's notice, or on another date the parties agree. Landlord conveys the property by statutory warranty deed, free of mortgages and liens, subject only to matters of record on the Lease Start Date and matters Tenant approves. Landlord pays for a standard owner's title insurance policy and the Washington real estate excise tax; the parties split escrow fees; property taxes and other property costs are prorated to the closing date. The property is sold as-is. This Lease ends at closing, with Rent prorated to that date.
+
+**I.7 If a Party Does Not Close.** If Tenant fails to close for a reason other than Landlord's default, Landlord keeps the earnest money as its sole remedy, the Option ends, and this Lease continues. If Landlord fails to close, Tenant may seek specific performance, or recover its earnest money and its reasonable out-of-pocket costs.
+
+**I.8 Protecting the Option.** The Option binds Landlord's successors and any buyer of the property. Landlord will not grant any right of first refusal, option, or other right that would prevent a sale to Tenant under this Exhibit. Any right of first refusal Landlord grants to the owner of the Yellow House (Exhibit J) must exclude a sale to Tenant under this Option. A memorandum of the Option may be recorded (Exhibit H, Section 17).
+
+**I.9 Transfer of the Option.** The Option may be transferred only together with this Lease, to an assignee permitted under Section 2/3 Article 8.
+
+**I.10 When the Option Ends.** The Option ends on the earliest of: closing; the expiration or earlier termination of this Lease; or termination of this Lease after an Event of Default.
+
+---
+
+## Exhibit J: Shared Septic, Alley, and Yellow House
+
+*To be completed before signing. The principles below apply; bracketed items need the parties' details.*
+
+**J.1 Shared Septic.** The Premises share a septic system with the neighboring Yellow House property [describe location and any recorded easement or septic agreement]. Tenant may use the system as needed for the Permitted Use, within its permitted capacity. Routine pumping and maintenance costs are shared [___% Premises / ___% Yellow House], and Tenant pays the Premises' share as a Tier One cost. Repair and replacement of the system are Landlord's responsibility [, shared with the Yellow House owner as their agreement provides].
+
+**J.2 Mutual Right of First Refusal.** Because of the shared septic system, Landlord intends to enter into a mutual right of first refusal with the owner of the Yellow House. That agreement is between the property owners and is not part of this Lease, and it must exclude a sale to Tenant under Exhibit I.
+
+**J.3 Alley Access.** Tenant and its employees, guests, and suppliers may use the alley [describe] for access, deliveries, and parking as it has historically been used. [Describe any easement and who maintains the alley.]
+
+**J.4 Yellow House.** [Describe any agreed operating standards for the benefit of the Yellow House residence — for example, quiet hours, limits on outdoor events, and exterior lighting.] Landlord's arrangements with the Yellow House owner will not interfere with Tenant's quiet enjoyment of the Premises.
+
+---
+
+*End of Section 1/3 and Exhibits for The Burton Inn — Draft v0.12, November 11, 2026. To be read with the attached Sections 2/3 and 3/3 of the Two-Tier Value-Sharing Lease© (Version 2.1, September 19, 2026).*

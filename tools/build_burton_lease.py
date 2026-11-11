@@ -2,19 +2,17 @@
 # Build the Burton Inn lease document set, reusing the house document style
 # (fonts, styles, markdown renderer, numbered footer) from build_lease_docs.py.
 #
-# Architecture (Option A — keep Parts 2 & 3 consistent):
-#   - Part 1  = burton-inn/terms-sheet.md  (Terms Sheet §1-9, signatures, and
-#               Exhibits A-D; Exhibit D is the Triple-Net / Percentage-Rent /
-#               Single-Tenant Amendment that carries all deal-specific terms).
-#   - Parts 2 & 3 = lease/lease.md  (the Courthouse Square Standard Lease Terms
-#               + Definitions & Glossary, Version 1.5) — the vetted master form,
-#               reused VERBATIM, not copied into burton-inn/ so it cannot drift.
+# Architecture (Two-Tier Value-Sharing Lease, keep Sections 2/3 & 3/3 identical):
+#   - Section 1/3 = burton-inn/terms-sheet.md  (Articles 1-9, signatures, and
+#               Exhibits A-J; Exhibit H, Addendum, carries every modification of
+#               Section 2/3, each citing the Article it modifies).
+#   - Sections 2/3 & 3/3 = forms/two-tier-v2.1.md  (Standard Lease Terms +
+#               Definitions & Glossary Terms, Version 2.1, September 19, 2026) —
+#               the shared form, reused VERBATIM, never copied or edited here.
 #
 # Outputs:
-#   - burton-inn/terms-sheet.pdf   Part 1 alone (deal page + exhibits + amendment)
-#   - burton-inn/lease.pdf         full package: Part 1, then the v1.5 form
-# The standalone v1.5 form PDF is lease/lease.pdf (built by build_lease_docs.py);
-# the Burton package does not emit its own copy, keeping a single source.
+#   - burton-inn/terms-sheet.pdf   Section 1/3 alone (with Exhibits)
+#   - burton-inn/lease.pdf         full package: Section 1/3, then Sections 2/3 & 3/3
 
 import re
 from reportlab.lib.pagesizes import letter
@@ -25,7 +23,7 @@ import build_lease_docs as house
 
 ROOT = house.ROOT
 BDIR = ROOT + '/burton-inn'
-STANDARD_FORM = ROOT + '/lease/lease.md'   # v1.5 Standard Lease Terms + Definitions (Parts 2 & 3)
+STANDARD_FORM = ROOT + '/forms/two-tier-v2.1.md'   # Sections 2/3 & 3/3, Version 2.1
 
 
 def version_of(md):
@@ -66,18 +64,18 @@ if __name__ == '__main__':
     with open(BDIR + '/terms-sheet.md') as f:
         ts_md = f.read()
     with open(STANDARD_FORM) as f:
-        form_md = f.read()          # Parts 2 & 3, verbatim v1.5
-    ver = version_of(ts_md)         # Part 1 draft version (Parts 2 & 3 carry their own v1.5 stamp)
+        form_md = f.read()          # Sections 2/3 & 3/3, verbatim v2.1
+    ver = version_of(ts_md)         # Section 1/3 draft version (the form carries its own v2.1 stamp)
     check_glyphs(ts_md, form_md)
 
-    # Part 1 on its own.
+    # Section 1/3 on its own.
     build(house.md_to_story(ts_md), BDIR + '/terms-sheet.pdf',
-          'The Burton Inn — Lease Terms Sheet',
-          f'The Burton Inn — Lease Terms Sheet    {ver}')
+          'The Burton Inn — Section 1/3',
+          f'The Burton Inn — Section 1/3    {ver}')
 
-    # Full signable package: Part 1, then the v1.5 Standard Lease Terms +
-    # Definitions on a fresh page, with continuous page numbering.
+    # Full signable package: Section 1/3, then Sections 2/3 & 3/3 on a fresh
+    # page, with continuous page numbering.
     build(house.md_to_story(ts_md) + [PageBreak()] + house.md_to_story(form_md),
           BDIR + '/lease.pdf',
-          'The Burton Inn — Commercial Lease Agreement',
-          f'The Burton Inn — Commercial Lease Agreement    {ver}')
+          'The Burton Inn — Two-Tier Value-Sharing Lease',
+          f'The Burton Inn — Two-Tier Lease    {ver}')

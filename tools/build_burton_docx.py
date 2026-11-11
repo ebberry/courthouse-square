@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # Build an editable Word (.docx) of the Burton Inn lease for redlining.
-# Combines Part 1 (burton-inn/terms-sheet.md — Terms Sheet + Exhibits A-D) and
-# the v1.5 Standard Lease Terms + Definitions (lease/lease.md, Parts 2 & 3,
-# reused verbatim) into one document, mirroring the merged lease.pdf. Uses real
+# Combines Section 1/3 (burton-inn/terms-sheet.md — Articles 1-9 + Exhibits A-J)
+# and Sections 2/3 & 3/3 of the Two-Tier form (forms/two-tier-v2.1.md, reused
+# verbatim) into one document, mirroring the merged lease.pdf. Uses real
 # Word heading styles so the document is navigable and Track Changes works
 # cleanly. Plain python-docx; absolute paths.
 #
-# Note: Parts 2 & 3 are the vetted v1.5 master form — the intent is to redline
-# Part 1 (Terms Sheet + Exhibit D amendment) only and leave the form unchanged.
+# Note: Sections 2/3 & 3/3 are the shared form — redline Section 1/3 (and its
+# Exhibit H, Addendum) only and leave the form unchanged.
 
 import os, re
 from docx import Document
@@ -87,8 +87,8 @@ def style_document(doc):
 if __name__ == '__main__':
     with open(BDIR + '/terms-sheet.md') as f:
         ts = f.read()
-    with open(ROOT + '/lease/lease.md') as f:
-        form = f.read()          # Parts 2 & 3, verbatim v1.5
+    with open(ROOT + '/forms/two-tier-v2.1.md') as f:
+        form = f.read()          # Sections 2/3 & 3/3, verbatim v2.1
 
     doc = Document()
     style_document(doc)
