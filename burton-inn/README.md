@@ -14,6 +14,14 @@ terms to agree or discuss with the Landlord, one item at a time (proposed · why
 Landlord's view · agreed). It is safe to share with the Landlord: it holds Tenant's proposals but
 no fallback positions. Once the terms are agreed, they go into `terms-sheet.md` (Section 1/3).
 
+## Prospectus
+
+`prospectus.md` → `prospectus.pdf` (`python3 tools/build_burton_prospectus.py`): the "Rent Basis &
+Owner Return" case for the owner, v2.0 (November 2026), rewritten from the July 2026 prospectus to
+match the workbook: Two-Tier terms, 10% of all revenue in Lease Year 1, a five-year initial term
+plus extension, the $70,000 rent advance in place of the systems loan, and the purchase price and
+property value left blank for the owner to fill in. It has ruled space to write in every section.
+
 ## Structure (three sections; only Section 1/3 varies)
 
 - **Section 1/3** — `terms-sheet.md`. Articles 1–9 (Parties · Premises · Term · Rent and Financial
