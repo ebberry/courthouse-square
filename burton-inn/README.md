@@ -7,6 +7,13 @@ a whole-building, single-tenant **Two-Tier Value-Sharing Lease©** between The B
 > **Not public.** `netlify.toml` force-redirects `/burton-inn/*` (and `/forms/*`) away from the
 > deployed site, so committing these files does not publish them.
 
+## Workbook (current focus)
+
+`workbook.md` → `workbook.pdf` / `workbook.docx` (`python3 tools/build_burton_workbook.py`): the
+terms to agree or discuss with the Landlord, one item at a time (proposed · why · discuss ·
+Landlord's view · agreed). It is safe to share with the Landlord: it holds Tenant's proposals but
+no fallback positions. Once the terms are agreed, they go into `terms-sheet.md` (Section 1/3).
+
 ## Structure (three sections; only Section 1/3 varies)
 
 - **Section 1/3** — `terms-sheet.md`. Articles 1–9 (Parties · Premises · Term · Rent and Financial
