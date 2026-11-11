@@ -1,7 +1,7 @@
 # The Burton Inn Lease
 
 **Two-Tier Value-Sharing Lease© — 24007 Vashon Highway SW, Vashon (Burton), Washington 98070**
-**Draft v0.12 — November 11, 2026 — Section 1/3 on the Two-Tier form, with Option to Purchase**
+**Draft v0.13 — November 11, 2026 — Option to Purchase terms left open for negotiation**
 
 > *Section 1/3, including its Exhibits, incorporates Sections 2/3 and 3/3 (Version 2.1, September 19, 2026), which are attached and apply unchanged. Section 1/3 governs Sections 2/3 and 3/3 if any conflict arises. Capitalized terms have the meanings assigned in Section 3/3 unless specifically defined here.*
 
@@ -11,7 +11,7 @@
 - **How long:** through December 31, 2031, with one option to extend five more years, to December 31, 2036.
 - **Tier One (property costs):** Tenant pays the property's taxes, insurance, and routine upkeep at actual cost (about $19,500 a year today), and all utilities directly. Landlord's costs of owning the building are covered.
 - **Tier Two (Landlord's return):** Landlord receives ten percent (10%) of the inn's gross revenue, with a guaranteed minimum of $1,650 a month starting January 1, 2028. Landlord's return rises and falls with the business.
-- **Option to buy:** Tenant may buy the property at any time during the Lease at the price schedule in Exhibit I — $1,200,000 in the first Lease Year, rising three percent (3%) a year.
+- **Option to buy:** Tenant has an option to buy the property during the Lease. The price and purchase terms are to be agreed (Exhibit I).
 - **Improvements:** Tenant funds about $98,000 of fit-out, which stays with the building. Landlord installs fire suppression and HVAC (about $50,000).
 
 ---
@@ -84,7 +84,7 @@
 
 **4.08 NNN Variation.** Elected. Under Section 2/3 Article 1.05, Exhibit H, Sections 1 and 2 modify Section 2/3 Article 1 as stated there.
 
-**4.09 Rent Advance.** Tenant paid Landlord $70,000 as a rent advance under the Side Agreement (Article 8.01). It is credited and, where applicable, refunded as the Side Agreement provides (see Exhibit H, Section 15, and Exhibit I, Section I.5).
+**4.09 Rent Advance.** Tenant paid Landlord $70,000 as a rent advance under the Side Agreement (Article 8.01). It is credited and, where applicable, refunded as the Side Agreement provides (see Exhibit H, Section 15).
 
 ### Article 5: Use of Premises
 
@@ -286,7 +286,7 @@ This Addendum is part of Section 1/3 and controls over Sections 2/3 and 3/3 wher
 
 **14. Casualty and Holding Over (modifies Section 2/3 Articles 7.01, 7.02, and 13.01).** During any abatement under Article 7.01 or 7.02, the monthly minimum abates in the same proportion, and ten percent (10%) continues to apply to whatever Gross Revenue is earned. For Article 13.01, the monthly Base Rent Tier Two "in effect" is the greater of the monthly minimum or one-twelfth of the Tier Two paid for the twelve (12) months before expiration.
 
-**15. Rent Advance (new).** Tenant paid Landlord $70,000 as a rent advance under the Side Agreement. It is credited against Rent, and the stated portion is refundable if this Lease is not extended beyond December 31, 2031, as the Side Agreement provides. The parties understand "extended" to mean Tenant's exercise of the extension option in Article 3.06. If Tenant buys the property under Exhibit I, any part of the advance not yet credited or refunded is credited toward the purchase price.
+**15. Rent Advance (new).** Tenant paid Landlord $70,000 as a rent advance under the Side Agreement. It is credited against Rent, and the stated portion is refundable if this Lease is not extended beyond December 31, 2031, as the Side Agreement provides. The parties understand "extended" to mean Tenant's exercise of the extension option in Article 3.06.
 
 **16. Default Damages (modifies Section 2/3 Article 9.04).** In calculating damages, Base Rent Tier Two for future periods is deemed to equal the average annual Tier Two paid for the thirty-six (36) months before the default (or the actual period, if shorter), but not less than the minimum.
 
@@ -296,36 +296,11 @@ This Addendum is part of Section 1/3 and controls over Sections 2/3 and 3/3 wher
 
 ## Exhibit I: Option to Purchase
 
-**I.1 The Option.** Landlord grants Tenant the option to buy the property — the land, the Building, and Landlord's fixtures and improvements, including Tenant's fit-out — on the terms of this Exhibit (the "Option").
+**I.1 The Option.** Landlord grants Tenant the option to buy the property — the land, the Building, and Landlord's fixtures and improvements — during the Term, including any extension (the "Option").
 
-**I.2 When Tenant May Exercise.** Tenant may exercise the Option at any time during the Term, including any extension, by written notice to Landlord, as long as no Event of Default exists.
+**I.2 Price and Terms.** [Purchase price and purchase terms to be agreed by the parties before signing.]
 
-**I.3 Purchase Price.** The price depends on the Lease Year in which Tenant gives notice. It is $1,200,000 in Lease Year 1 and increases three percent (3%) each Lease Year, rounded to the nearest $1,000:
-
-- Lease Year 1 (through December 31, 2027): $1,200,000
-- Lease Year 2 (2028): $1,236,000
-- Lease Year 3 (2029): $1,273,000
-- Lease Year 4 (2030): $1,311,000
-- Lease Year 5 (2031): $1,351,000
-- Lease Year 6 (2032, if extended): $1,391,000
-- Lease Year 7 (2033): $1,433,000
-- Lease Year 8 (2034): $1,476,000
-- Lease Year 9 (2035): $1,520,000
-- Lease Year 10 (2036): $1,566,000
-
-**I.4 Earnest Money.** Within ten (10) business days after giving notice, Tenant deposits $25,000 of earnest money with a mutually acceptable escrow company. It is applied to the price at closing.
-
-**I.5 Credits.** At closing, Tenant receives a credit for any part of the $70,000 rent advance not yet credited against Rent or refunded (Exhibit H, Section 15). Rent paid under this Lease is not otherwise credited toward the price.
-
-**I.6 Closing.** Closing takes place within one hundred twenty (120) days after Tenant's notice, or on another date the parties agree. Landlord conveys the property by statutory warranty deed, free of mortgages and liens, subject only to matters of record on the Lease Start Date and matters Tenant approves. Landlord pays for a standard owner's title insurance policy and the Washington real estate excise tax; the parties split escrow fees; property taxes and other property costs are prorated to the closing date. The property is sold as-is. This Lease ends at closing, with Rent prorated to that date.
-
-**I.7 If a Party Does Not Close.** If Tenant fails to close for a reason other than Landlord's default, Landlord keeps the earnest money as its sole remedy, the Option ends, and this Lease continues. If Landlord fails to close, Tenant may seek specific performance, or recover its earnest money and its reasonable out-of-pocket costs.
-
-**I.8 Protecting the Option.** The Option binds Landlord's successors and any buyer of the property. Landlord will not grant any right of first refusal, option, or other right that would prevent a sale to Tenant under this Exhibit. Any right of first refusal Landlord grants to the owner of the Yellow House (Exhibit J) must exclude a sale to Tenant under this Option. A memorandum of the Option may be recorded (Exhibit H, Section 17).
-
-**I.9 Transfer of the Option.** The Option may be transferred only together with this Lease, to an assignee permitted under Section 2/3 Article 8.
-
-**I.10 When the Option Ends.** The Option ends on the earliest of: closing; the expiration or earlier termination of this Lease; or termination of this Lease after an Event of Default.
+**I.3 Protecting the Option.** The Option binds Landlord's successors and any buyer of the property. Any right of first refusal Landlord grants to the owner of the Yellow House (Exhibit J) must exclude a sale to Tenant under this Option.
 
 ---
 
@@ -343,4 +318,4 @@ This Addendum is part of Section 1/3 and controls over Sections 2/3 and 3/3 wher
 
 ---
 
-*End of Section 1/3 and Exhibits for The Burton Inn — Draft v0.12, November 11, 2026. To be read with the attached Sections 2/3 and 3/3 of the Two-Tier Value-Sharing Lease© (Version 2.1, September 19, 2026).*
+*End of Section 1/3 and Exhibits for The Burton Inn — Draft v0.13, November 11, 2026. To be read with the attached Sections 2/3 and 3/3 of the Two-Tier Value-Sharing Lease© (Version 2.1, September 19, 2026).*

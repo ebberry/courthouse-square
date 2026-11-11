@@ -15,7 +15,7 @@ a whole-building, single-tenant **Two-Tier Value-Sharing Lease©** between The B
   Description · **B** Site Plan · **C** Unit Allocations (omitted) · **D** Annual Budget (Tier One) ·
   **E** Landlord Work Letter · **F** Guaranty (omitted) · **G** Additional Site Rules (omitted) ·
   **H** Addendum · **I** Option to Purchase · **J** Shared Septic, Alley, and Yellow House.
-  **Every deal-specific term lives in this one file.** Draft v0.12, November 11, 2026.
+  **Every deal-specific term lives in this one file.** Draft v0.13, November 11, 2026.
 - **Sections 2/3 & 3/3** — `forms/two-tier-v2.1.md` (Standard Lease Terms + Definitions & Glossary
   Terms, Version 2.1, September 19, 2026), transcribed word-for-word from the Courthouse Square
   Two-Tier Lease v2.2 and attached **unchanged**. Do not edit it for this deal. Every departure is
@@ -32,14 +32,13 @@ a whole-building, single-tenant **Two-Tier Value-Sharing Lease©** between The B
   percentage is paid quarterly by Apr 30 / Jul 31 / Oct 31 / Jan 31, with a true-up by March 31.
 - **Term:** signing through Dec 31, 2031. Lease Years are calendar years, except that Lease Year 1
   runs from signing through Dec 31, 2027. One 5-year extension through Dec 31, 2036.
-- **Option to Purchase:** $1,200,000 in Lease Year 1, +3%/yr (Exhibit I). Any unapplied part of the
-  $70k rent advance is credited at closing. The Yellow House ROFR must exclude it.
+- **Option to Purchase:** granted in Exhibit I; price and terms deliberately left blank for Tom to propose.
 
 ## Build
 
 - `python3 tools/build_burton_lease.py` → `terms-sheet.pdf` (Section 1/3 with its Exhibits) and
   `lease.pdf` (the full package: Section 1/3, then Sections 2/3 & 3/3). The footer version comes
-  from the `**Draft v0.12 — …**` line.
+  from the `**Draft v0.13 — …**` line.
 - `python3 tools/build_burton_docx.py` → `lease.docx` for redlining. **Redline Section 1/3 only.**
 
 ## Open before signing
@@ -47,4 +46,5 @@ a whole-building, single-tenant **Two-Tier Value-Sharing Lease©** between The B
 - Side Agreement date (Article 8.01); King County tax parcel number (Exhibit A); site plan (Exhibit B).
 - Exhibit J details: septic split and agreement, alley description, Yellow House operating standards.
 - Zoning: Mark Rowe (King County) feedback; the B&B-as-operator-residence path; the sunroom violation.
-- Tom's acceptance of the purchase price schedule and the 10% / $1,650 Tier Two terms.
+- Option to Purchase price and terms (Exhibit I) — Tom to propose first.
+- Tom's acceptance of the 10% / $1,650 Tier Two terms.
