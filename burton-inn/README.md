@@ -14,19 +14,27 @@ terms to agree or discuss with the Landlord, one item at a time (proposed · why
 Landlord's view · agreed). It is safe to share with the Landlord: it holds Tenant's proposals but
 no fallback positions. Once the terms are agreed, they go into `terms-sheet.md` (Section 1/3).
 
-## Operating budget
+## Operating budget (Exhibit D)
 
-`operating-budget.pdf` (`python3 tools/build_burton_budget.py`): a one-page projected annual
-operating budget for the owner ("Exhibit D"), laid out like the Courthouse Square Exhibit D Tier One
-budget sheet. It shows the prospectus target case (50% occupancy at $215; bar at 18 covers for 42
-weeks; breakfast and coffee at 40 sales a morning). Cost rates come from the Google Sheet "Financial
-Projections for Burton Inn - Rev 70% (for Tom)". All inputs sit at the top of the build script, in a
-`model()` shared with the prospectus numbers (floor and target cases).
+`operating-budget.pdf` (`python3 tools/build_burton_budget.py`), two pages for the owner:
+
+- **Page 1:** the stabilized target year, laid out like the Courthouse Square Exhibit D Tier One
+  budget sheet (summary box, boxed ledger, Shared / Inn Rooms / Food & Bev columns). Upkeep and
+  utilities are split into line items, with a 10% contingency in place of a management fee or
+  repair reserve.
+- **Page 2:** the same lines for Year 1, the conservative floor, and the target, with Tier Two rent
+  and what is left.
+
+Upkeep and utility lines are low estimates (no bills or quotes yet; the tenant does most upkeep
+labor). All inputs sit at the top of the build script, in a `model()` shared with the prospectus
+numbers. The same inputs and formulas are in the Google Sheet "Burton Inn - Exhibit D - Projected
+Operating Budget" (tabs: Exhibit D, Cases, Assumptions); the PDF is built from the script, not the
+sheet, so change both together.
 
 ## Prospectus
 
 `prospectus.md` → `prospectus.pdf` (`python3 tools/build_burton_prospectus.py`): "A Five-Year Lease
-and a Path to Purchase", v3.1 (November 13, 2026), for the owner. It leads with the five-year path
+and a Path to Purchase", v3.3 (November 13, 2026), for the owner. It leads with the five-year path
 (appraisal at signing, Years 1–3 to build the record, a value review in spring 2030, Years 4–5 to
 close), then the rent, what the owner receives, the capped-share price method, the two purchase
 scenarios (inn alone, or with the Yellow House), and the case for a short extension. Revenue detail
