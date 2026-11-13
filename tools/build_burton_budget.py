@@ -4,8 +4,8 @@
 #           laid out like the Courthouse Square "Exhibit D - Estimated Budget
 #           Allocations - Tier One" sheet (summary box, boxed ledger, three
 #           allocation columns).
-#   Page 2: the same lines for Year 1, the conservative floor, and the target,
-#           with rent and what is left.
+#   Page 2: the same lines for Year 1 (kitchen opens mid-year), rooms only,
+#           the conservative floor, and the target, with rent and what is left.
 #
 # Revenue assumptions are the prospectus cases. Cost rates come from the Google
 # Sheet "Financial Projections for Burton Inn - Rev 70% (for Tom)". Upkeep and
@@ -65,13 +65,15 @@ HOUSEKEEPER_HR, HRS_PER_TURN, AMENITIES, LINEN_PER_TURN = 35, 1.5, 6, 20
 FNB_COGS, FNB_LABOR = 0.30, 0.32
 BIZ_INS, SOFTWARE = 24000, 6000
 CARD_FEE, CONTINGENCY, TIER_TWO, TIER_TWO_MIN = 0.03, 0.10, 0.10, 19800
-YEAR1_ROOMS, YEAR1_FNB = 0.75, 0.5625               # staged opening: rooms 75%; kitchen and bar 75% x 9/12
+YEAR1_ROOMS, YEAR1_FNB = 0.75, 0.375                # staged opening: rooms 75%; kitchen and bar 75% x 6/12
+RAMP = [None, 0.90, 1.00, 1.03, 1.03 ** 2]          # Lease Years 2-5 as a share of a stabilized year
 
 # ---------------- calculations ----------------
-def model(case, year1=False):
-    """Revenue, every budget line (shared, rooms, food & beverage), and totals for one case."""
+def model(case, year1=False, rooms_only=False):
+    """Revenue, every budget line (shared, rooms, food & beverage), and totals for one case.
+    year1: staged opening, no rent minimum. rooms_only: the kitchen and bar never open."""
     c = CASES[case]
-    rs, fs = (YEAR1_ROOMS, YEAR1_FNB) if year1 else (1, 1)
+    rs, fs = (YEAR1_ROOMS, YEAR1_FNB) if year1 else (1, 0) if rooms_only else (1, 1)
     nights = ROOMS * DAYS * c['occ'] * rs
     turns = nights / ALOS
     m = {k: v * fs for k, v in c.items() if k in ('bar', 'dinners', 'breakfast', 'commissary', 'misc')}
@@ -114,7 +116,9 @@ def P(text, font=FB, size=8, align=TA_LEFT, color=colors.black):
     return Paragraph(text, ParagraphStyle('p', fontName=font, fontSize=size, leading=size + 2,
                                           alignment=align, textColor=color))
 def money(x, dash=True):
-    return '-' if (dash and abs(x) < 0.005) else f'{x:,.2f}'
+    if dash and abs(x) < 0.005:
+        return '-'
+    return f'({-x:,.2f})' if x < 0 else f'{x:,.2f}'
 def pct(x):
     return f'{x * 100:.1f}%'
 PAD = [('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
@@ -185,9 +189,10 @@ def ledger(m):
 
 # ---------------- page 2: Year 1, floor, target ----------------
 def cases_table(ms):
-    """ms = [year 1, floor, target] models. One column each."""
+    """ms = [year 1, rooms only, floor, target] models. One column each."""
     d, st = [], []
-    WC = [226, 12, 78, 12, 78, 12, 78]
+    n = len(ms)
+    WC = [190] + [12, 64.5] * n
     def row(label, vals, bold=False, fmt=money, grid=True, align=TA_LEFT):
         f = FB if bold else FN
         r = [P(label, f, 8.5, align)]
@@ -198,13 +203,14 @@ def cases_table(ms):
             st.append(('GRID', (0, i), (-1, i), 0.5, colors.black))
         return i
     def head(title):
-        d.append([P(title, FB, 8.5)] + [''] * 6); i = len(d) - 1
+        d.append([P(title, FB, 8.5)] + [''] * (2 * n)); i = len(d) - 1
         st.extend([('SPAN', (0, i), (-1, i)), ('LINEBELOW', (0, i), (-1, i), 0.9, colors.black),
                    ('LINEABOVE', (0, i), (-1, i), 0.9, colors.black)])
     hdr = lambda t: P(t, size=7.5, align=TA_CENTER, color=GRAY)
     d.append([P('ANNUAL BUDGET BY CASE', size=7.5, align=TA_RIGHT, color=GRAY),
-              hdr('YEAR 1<br/>(staged opening)'), '', hdr('FLOOR<br/>(stabilized)'), '', hdr('TARGET<br/>(stabilized)'), ''])
-    st += [('SPAN', (1, 0), (2, 0)), ('SPAN', (3, 0), (4, 0)), ('SPAN', (5, 0), (6, 0))]
+              hdr('YEAR 1<br/>(kitchen mid-year)'), '', hdr('ROOMS ONLY<br/>(no kitchen)'), '',
+              hdr('FLOOR<br/>(stabilized)'), '', hdr('TARGET<br/>(stabilized)'), ''])
+    st += [('SPAN', (2 * k + 1, 0), (2 * k + 2, 0)) for k in range(n)]
     head('Projected Revenue')
     row('Inn rooms', [m['rev_rooms'] for m in ms])
     row('Food and beverage', [m['rev_fnb'] for m in ms])
@@ -217,7 +223,7 @@ def cases_table(ms):
     head('Budget, Rent and Result')
     row('10% Contingency Reserve', [sum(m['contingency']) for m in ms])
     row('TOTAL ANNUAL OPERATING BUDGET', [m['budget'] for m in ms], True, align=TA_RIGHT)
-    row('Tier Two rent to owner (10% of gross revenue) ****', [m['tier_two'] for m in ms])
+    row('Tier Two rent to owner ****', [m['tier_two'] for m in ms])
     row('TOTAL COST INCLUDING RENT', [m['budget'] + m['tier_two'] for m in ms], True, align=TA_RIGHT)
     row('NET AFTER ALL COSTS', [m['net'] for m in ms], True, align=TA_RIGHT)
     row('Rent and property costs as a share of revenue', [(m['tier_two'] + m['tier_one']) / m['rev'] for m in ms], fmt=pct)
@@ -231,7 +237,7 @@ def footer(canvas, doc):
     canvas.drawString(40, 30, f'Burton Inn Exhibit D - Projected Operating Budget - page {doc.page} of 2')
 
 if __name__ == '__main__':
-    T, F, Y1 = model('target'), model('floor'), model('target', year1=True)
+    T, F, Y1, RO = model('target'), model('floor'), model('target', year1=True), model('target', rooms_only=True)
     doc = SimpleDocTemplate(OUT, pagesize=letter, leftMargin=52, rightMargin=52, topMargin=46, bottomMargin=46,
                             title='The Burton Inn - Exhibit D - Projected Annual Operating Budget')
     note = lambda s: P(s, FB, 7.6, TA_LEFT)
@@ -247,15 +253,16 @@ if __name__ == '__main__':
         note(f"Stabilized year at the target case: {T['occ']:.0%} occupancy at ${T['adr']} a night. Year 1 and the floor case are on page 2."),
         PageBreak(),
         title('THE BURTON INN', 12.5), Spacer(1, 4),
-        title('EXHIBIT D - YEAR 1, FLOOR AND TARGET', 11.5), Spacer(1, 12),
-        cases_table([Y1, F, T]), Spacer(1, 8),
-        note('Year 1: target case with a staged opening. Rooms reach 75% of the stabilized year; the kitchen and bar open about three months later.'),
+        title('EXHIBIT D - YEAR 1, ROOMS ONLY, FLOOR AND TARGET', 11.5), Spacer(1, 12),
+        cases_table([Y1, RO, F, T]), Spacer(1, 8),
+        note('Year 1: target case with a staged opening. Rooms reach 75% of a stabilized year; the kitchen and bar open halfway through the year.'),
+        note('Rooms only: target-case rooms for a full year with the kitchen and bar not open.'),
         note(f"Floor: {F['occ']:.0%} occupancy at ${F['adr']} a night, with a slower bar, fewer dinners and half the breakfast trade."),
         note('Fixed costs are shown for a full year in every case.'),
-        note('**** No minimum in Lease Year 1; from 2028, the greater of 10% of gross revenue or $19,800 a year. Before the $70,000 rent advance is credited.'),
+        note('**** 10% of gross revenue. No minimum in Lease Year 1; from 2028, not less than $19,800 a year. Before the $70,000 rent advance is credited.'),
     ]
     doc.build(story, onFirstPage=footer, onLaterPages=footer)
     print('wrote', OUT)
-    for name, m in (('year1', Y1), ('floor', F), ('target', T)):
+    for name, m in (('year1', Y1), ('rooms only', RO), ('floor', F), ('target', T)):
         print(f"{name}: rev {m['rev']:,.0f} budget {m['budget']:,.2f} rent {m['tier_two']:,.2f} net {m['net']:,.2f} "
               f"cov {(m['rev'] - m['opex']) / (m['tier_two'] + m['tier_one']):.2f}")

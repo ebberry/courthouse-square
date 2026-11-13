@@ -1,7 +1,7 @@
 # The Burton Inn
 
 **A Five-Year Lease and a Path to Purchase — prepared for the building owner**
-**Draft v3.3 — November 13, 2026 — replaces the July 2026 version**
+**Draft v3.4 — November 13, 2026 — replaces the July 2026 version**
 
 > *This document lays out a five-year plan for the Burton Inn: how the rent works, what the owner receives, and how the two of us would arrive at a fair price for the building. The projected cost of running the inn is itemized in the attached Exhibit D, Projected Annual Operating Budget. Figures are projections from the stated assumptions, not guarantees. There is space to write under each section.*
 
@@ -66,7 +66,7 @@
 | Profit before occupancy cost (coverage) | $49,835 (1.1x) | $128,181 (1.9x) |
 | Left after all costs | $2,672 | $62,115 |
 
-**Two honest notes.** First, 14–17% is a full rent load. Single-use restaurant benchmarks put median occupancy cost near 6% of sales (National Restaurant Association, 2024) and call anything over 10% high. The owner is paid above single-use norms, which is supportable because the same building earns several ways: an inn around the clock, a bar at night, a dinner venue, a morning coffee service, and a commercial kitchen by day. Second, coverage is the real safety measure, and it is thinner than the July figures showed. With the full cost list in Exhibit D, including a 10% contingency, the business earns about 1.9 times its occupancy cost at target and about 1.1 times at the floor. At the floor the business roughly breaks even after rent, which is why the percentage matters: if revenue falls, Tier Two falls with it, down to the minimum. The revenue behind these figures is itemized in Appendix A, and the costs in Exhibit D, which also shows Year 1.
+**Two honest notes.** First, 14–17% is a full rent load. Single-use restaurant benchmarks put median occupancy cost near 6% of sales (National Restaurant Association, 2024) and call anything over 10% high. The owner is paid above single-use norms, which is supportable because the same building earns several ways: an inn around the clock, a bar at night, a dinner venue, a morning coffee service, and a commercial kitchen by day. Second, coverage is the real safety measure, and it is thinner than the July figures showed. With the full cost list in Exhibit D, including a 10% contingency, the business earns about 1.9 times its occupancy cost at target and about 1.1 times at the floor. At the floor the business roughly breaks even after rent, which is why the percentage matters: if revenue falls, Tier Two falls with it, down to the minimum. The revenue behind these figures is itemized in Appendix A, and the costs in Exhibit D, which also shows Year 1 and a rooms-only year.
 
 [[notes:9]]
 
@@ -98,19 +98,23 @@
 
 ## 3 · What the Owner Receives
 
-Lease Year 1 runs from signing through December 31, 2027, and reflects the staged opening (rooms first, kitchen and bar about three months later). Its revenue depends on the opening date. From Lease Year 2, revenue is assumed to grow 5% a year. The figures are Tier Two only: cash to the owner, with property costs already paid by the tenant.
+Lease Year 1 runs from signing through December 31, 2027. The rooms open first; the kitchen and bar are planned to open about halfway through that year. Revenue is assumed to build over three years: rooms at 75% of a stabilized year in Lease Year 1 (with the kitchen and bar open for half of it), everything at 90% in Lease Year 2, and 100% in Lease Year 3, then 3% growth a year. The figures are Tier Two only: cash to the owner, with property costs already paid by the tenant.
 
 | Lease Year | Conservative revenue | Tier Two to owner | Target revenue | Tier Two to owner |
 |---|--:|--:|--:|--:|
-| 1 (through 2027) | $176,303 | $17,630 | $291,363 | $29,136 |
-| 2 (2028) | $290,468 | $29,047 | $488,945 | $48,895 |
-| 3 (2029) | $304,991 | $30,499 | $513,392 | $51,339 |
-| 4 (2030) | $320,241 | $32,024 | $539,062 | $53,906 |
-| 5 (2031) | $336,253 | $33,625 | $566,015 | $56,602 |
-| **Five-year total** | | **$142,825** | | **$239,878** |
+| 1 (through 2027) | $145,130 | $14,513 | $233,480 | $23,348 |
+| 2 (2028) | $248,972 | $24,897 | $419,096 | $41,910 |
+| 3 (2029) | $276,636 | $27,664 | $465,662 | $46,566 |
+| 4 (2030) | $284,935 | $28,494 | $479,632 | $47,963 |
+| 5 (2031) | $293,483 | $29,348 | $494,021 | $49,402 |
+| **Five-year total** | | **$124,916** | | **$209,189** |
 
-- **Plus property costs the owner no longer pays:** $19,500 a year at today's costs, or $97,500 over five years. Counting these, the swing from today's empty building is $240,325 (conservative) to $337,378 (target).
-- **Stress case:** if revenue never grows past the conservative floor, Tier Two totals $128,286 over the five years.
+- **Plus property costs the owner no longer pays:** $19,500 a year at today's costs, or $97,500 over five years. Counting these, the swing from today's empty building is $222,416 (conservative) to $306,689 (target).
+- **Stress case:** if revenue never grows past the conservative floor, Tier Two totals $122,402 over the five years.
+- **The first year is the thin one.** With the kitchen open for only half of Lease Year 1, the business roughly breaks even that year (Exhibit D, page 2). Rent that year is 10% of whatever comes in, with no minimum.
+- **If the kitchen is delayed further.** Exhibit D also shows a rooms-only year: the rooms alone carry the property costs and the minimum rent, at a small loss to the tenant.
+
+[[pagebreak]]
 
 **Where the owner stands at the end of Year 5**
 
@@ -121,7 +125,7 @@ Lease Year 1 runs from signing through December 31, 2027, and reflects the stage
 | Income record | Supports the price | Five years of documented revenue to show any future tenant, buyer, or lender |
 | Work for the owner | None after closing | The lease ends or continues by agreement (Section 6) |
 
-[[notes:3]]
+[[notes:10]]
 
 [[pagebreak]]
 
@@ -194,7 +198,7 @@ The Yellow House does not have to wait. If the owner prefers to sell it sooner, 
 Five years is long enough to know whether the business works. It may not be long enough for the business to finish growing, or for a lender to see it at full strength.
 
 - **Hotels take about three years to settle.** A Cornell study of 3,699 hotels found that occupancy takes about 3.1 years on average to stabilize, and practitioners plan on 36 to 48 months. That average means many are still climbing at three years.
-- **The clock starts at opening, not signing.** If the rooms reopen in spring 2027 and the kitchen and bar a few months later, the value review looks at about two and a half years of operation.
+- **The clock starts at opening, not signing.** If the rooms reopen in spring 2027 and the kitchen and bar around mid-year, the value review looks at about two and a half years of rooms and less than that for the kitchen.
 - **Restaurants and bars run on a similar timeline.** Reliable data is thinner, but most estimates put break-even at 6 to 18 months and consistent profit at up to three years.
 
 **Proposed.** The price is set at the value review and does not change after that. If the purchase has not closed by the end of Year 5 and the tenant is in good standing, the tenant may extend the lease once, for up to two years, on the same terms, to finish the financing. The owner keeps receiving rent throughout.
