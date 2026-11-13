@@ -4,9 +4,11 @@
 # Allocations - Tier One" sheet (summary box on top, boxed ledger below, three
 # allocation columns), so the owner can read it the same way.
 #
-# Figures come from the Google Sheet "Financial Projections for Burton Inn -
-# Rev 70% (for Tom)" (Inputs and Assumptions tab, as of November 13, 2026).
+# Cost rates come from the Google Sheet "Financial Projections for Burton Inn -
+# Rev 70% (for Tom)"; revenue assumptions are the prospectus target case
+# (50% occupancy, bar at 18 covers for 42 weeks, breakfast and coffee).
 # Change the INPUTS below and rebuild; every other number is calculated.
+# build_burton_prospectus numbers are derived from model() too.
 
 import os
 from reportlab.lib.pagesizes import letter
@@ -19,27 +21,54 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = ROOT + '/burton-inn/operating-budget.pdf'
 STAMP = 'eb20261113'
 
-# ---------------- INPUTS (from the projections workbook) ----------------
-ROOMS, DAYS, OCC, ADR, ALOS = 4, 365, 0.70, 195, 2.5
+# ---------------- INPUTS ----------------
+# Two cases, matching the prospectus. The budget page shows CASE (the target).
+CASES = {
+    'target': dict(occ=0.50, adr=215,
+                   bar=18 * 38 * 4 * 42,            # covers x check x nights/wk x weeks
+                   dinners=107100,                  # 2 a month, 35 seats, $150, 85% sold
+                   breakfast=40 * 10 * 4 * 42,      # transactions x ticket x mornings/wk x weeks
+                   commissary=50 * 5 * 50,          # rate x hours/wk x weeks
+                   misc=7000),
+    'floor':  dict(occ=0.36, adr=210,
+                   bar=12.5 * 38 * 4 * 42,
+                   dinners=46085,                   # about 16 a year, 55% sold
+                   breakfast=20 * 9 * 4 * 42,
+                   commissary=32 * 2 * 50,
+                   misc=6820),
+}
+CASE = 'target'
+ROOMS, DAYS, ALOS = 4, 365, 2.5
 OTA_SHARE, OTA_RATE = 0.75, 0.15
-REV_DINNERS = 150 * 35 * 2 * 0.85 * 12          # ticket x seats x dinners/mo x fill x 12
-REV_BAR = 4 * 50 * 30 * 35                      # nights/wk x weeks x guests x check
-REV_BREAKFAST = 4 * 50 * 50 * 13                # mornings/wk x weeks x transactions x ticket
-REV_COMMISSARY = 50 * 5 * 50                    # rate x hours/wk x weeks
-REV_MISC = 1000 * 12 + 500                      # private events + misc
 TAXES, BLDG_INS, MAINT_MO = 8500, 6500, 375
 HOUSEKEEPER_HR, HRS_PER_TURN, AMENITIES, LINEN_PER_TURN = 35, 1.5, 6, 20
 FNB_COGS, FNB_LABOR = 0.30, 0.32
 UTIL_MO, BIZ_INS_MO, SEPTIC, SOFTWARE_MO = 2750, 2000, 3000, 500
-CARD_FEE, RESERVE, TIER_TWO = 0.03, 0.03, 0.10
+CARD_FEE, RESERVE, TIER_TWO, TIER_TWO_MIN = 0.03, 0.03, 0.10, 19800
 
 # ---------------- calculations ----------------
-nights = ROOMS * DAYS * OCC
-turns = nights / ALOS
-rev_rooms = nights * ADR
-rev_fnb_base = REV_DINNERS + REV_BAR + REV_BREAKFAST + REV_MISC     # COGS/labor base
-rev_fnb = rev_fnb_base + REV_COMMISSARY
-rev = rev_rooms + rev_fnb
+def model(case):
+    """All revenue and cost figures for one case, as a dict."""
+    c = CASES[case]
+    m = dict(c)
+    m['nights'] = ROOMS * DAYS * c['occ']
+    m['turns'] = m['nights'] / ALOS
+    m['rev_rooms'] = m['nights'] * c['adr']
+    m['fnb_base'] = c['dinners'] + c['bar'] + c['breakfast'] + c['misc']   # COGS/labor base
+    m['rev_fnb'] = m['fnb_base'] + c['commissary']
+    m['rev'] = m['rev_rooms'] + m['rev_fnb']
+    m['tier_one'] = TAXES + BLDG_INS + MAINT_MO * 12
+    m['opex'] = (m['turns'] * HOUSEKEEPER_HR * HRS_PER_TURN + m['turns'] * LINEN_PER_TURN
+                 + m['nights'] * AMENITIES + m['rev_rooms'] * OTA_SHARE * OTA_RATE
+                 + m['fnb_base'] * (FNB_COGS + FNB_LABOR) + m['rev'] * (CARD_FEE + RESERVE)
+                 + (UTIL_MO + BIZ_INS_MO + SOFTWARE_MO) * 12 + SEPTIC)
+    m['tier_two'] = max(TIER_TWO_MIN, m['rev'] * TIER_TWO)
+    return m
+
+M = model(CASE)
+OCC, ADR = M['occ'], M['adr']
+nights, turns = M['nights'], M['turns']
+rev_rooms, rev_fnb_base, rev_fnb, rev = M['rev_rooms'], M['fnb_base'], M['rev_fnb'], M['rev']
 
 # (label, shared, rooms, food & beverage)
 SECTIONS = [
@@ -65,7 +94,7 @@ SECTIONS = [
     ], 'Total Operational Expenses'),
 ]
 reserve = rev * RESERVE
-rent = rev * TIER_TWO
+rent = M['tier_two']
 
 def money(x, dash=True):
     return '-' if (dash and abs(x) < 0.005) else f'{x:,.2f}'
@@ -184,21 +213,21 @@ def result():
 
 def footer(canvas, doc):
     canvas.setFont(FN, 8.5)
-    canvas.drawString(40, 34, 'Burton Inn - Projected Operating Budget')
+    canvas.drawString(40, 34, 'Burton Inn Exhibit D - Projected Operating Budget')
 
 if __name__ == '__main__':
     doc = SimpleDocTemplate(OUT, pagesize=letter, leftMargin=52, rightMargin=52, topMargin=52, bottomMargin=50,
-                            title='The Burton Inn - Projected Annual Operating Budget')
+                            title='The Burton Inn - Exhibit D - Projected Annual Operating Budget')
     note = lambda s: P(s, FB, 8, TA_LEFT)
     story = [
         P('THE BURTON INN', FB, 12.5, TA_CENTER, GRAY), Spacer(1, 4),
-        P('PROJECTED ANNUAL OPERATING BUDGET - STABILIZED YEAR', FB, 12.5, TA_CENTER, GRAY), Spacer(1, 3),
+        P('EXHIBIT D - PROJECTED ANNUAL OPERATING BUDGET - STABILIZED YEAR', FB, 11.5, TA_CENTER, GRAY), Spacer(1, 3),
         P(STAMP, FB, 7, TA_RIGHT), Spacer(1, 1),
         summary(), Spacer(1, 12), ledger(), Spacer(1, 10), result(), Spacer(1, 10),
         note('* Billed to tenant; copies to owner'),
         note('** Tier One: paid by tenant at actual cost'),
         note('*** Placeholder until the septic service contract is quoted'),
-        note(f'Stabilized year: {OCC:.0%} occupancy at ${ADR} a night. Year 1 is projected at 75% and Year 2 at 90% of stabilized revenue.'),
+        note(f'Stabilized year at the target case: {OCC:.0%} occupancy at ${ADR} a night. Year 1 will be lower while the inn opens in stages.'),
     ]
     for f in story:
         if isinstance(f, Table) and f.hAlign != 'LEFT':

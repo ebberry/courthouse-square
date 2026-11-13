@@ -17,14 +17,16 @@ no fallback positions. Once the terms are agreed, they go into `terms-sheet.md` 
 ## Operating budget
 
 `operating-budget.pdf` (`python3 tools/build_burton_budget.py`): a one-page projected annual
-operating budget for the owner, laid out like the Courthouse Square "Exhibit D" Tier One budget
-sheet. Inputs are copied from the Google Sheet "Financial Projections for Burton Inn - Rev 70% (for
-Tom)" and sit at the top of the build script; everything else is calculated.
+operating budget for the owner ("Exhibit D"), laid out like the Courthouse Square Exhibit D Tier One
+budget sheet. It shows the prospectus target case (50% occupancy at $215; bar at 18 covers for 42
+weeks; breakfast and coffee at 40 sales a morning). Cost rates come from the Google Sheet "Financial
+Projections for Burton Inn - Rev 70% (for Tom)". All inputs sit at the top of the build script, in a
+`model()` shared with the prospectus numbers (floor and target cases).
 
 ## Prospectus
 
 `prospectus.md` → `prospectus.pdf` (`python3 tools/build_burton_prospectus.py`): "A Five-Year Lease
-and a Path to Purchase", v3.0 (November 13, 2026), for the owner. It leads with the five-year path
+and a Path to Purchase", v3.1 (November 13, 2026), for the owner. It leads with the five-year path
 (appraisal at signing, Years 1–3 to build the record, a value review in spring 2030, Years 4–5 to
 close), then the rent, what the owner receives, the capped-share price method, the two purchase
 scenarios (inn alone, or with the Yellow House), and the case for a short extension. Revenue detail

@@ -1,9 +1,9 @@
 # The Burton Inn
 
 **A Five-Year Lease and a Path to Purchase — prepared for the building owner**
-**Draft v3.0 — November 13, 2026 — replaces the July 2026 version**
+**Draft v3.1 — November 13, 2026 — replaces the July 2026 version**
 
-> *This document lays out a five-year plan for the Burton Inn: how the rent works, what the owner receives, and how the two of us would arrive at a fair price for the building. It uses the same terms and numbering as the Lease Workbook, so the two can be read side by side. Figures are projections from the stated assumptions, not guarantees. There is space to write under each section.*
+> *This document lays out a five-year plan for the Burton Inn: how the rent works, what the owner receives, and how the two of us would arrive at a fair price for the building. The projected cost of running the inn is itemized in the attached Exhibit D, Projected Annual Operating Budget. Figures are projections from the stated assumptions, not guarantees. There is space to write under each section.*
 
 **The baseline is an empty building.** Today the property earns nothing and costs its owner about $19,500 a year in taxes, insurance, and upkeep. The plan below turns it into a building that pays its own way, earns a return, and has a documented value — and it takes work off the owner's desk at every step.
 
@@ -32,6 +32,7 @@
 | How rent is described | Fixed base rent plus 10% above a $198,000 breakpoint | The greater of the $1,650 monthly minimum or 10% of gross revenue. From 2028 the result is identical; it is simply easier to state. |
 | First lease year | Base rent abated; 10% only on revenue above $198,000 | No minimum, but 10% of all revenue from the first dollar |
 | Building systems | Optional $50,000 loan from tenant to owner | The fire suppression and HVAC work is under way, funded by the tenant's $70,000 rent advance |
+| Revenue and costs | Target inn occupancy 45%; weekend pop-ups; a short cost list | Target occupancy 50%. A breakfast and coffee service replaces the weekend pop-ups. Costs now include kitchen and bar labor, linens, septic service, software, and a repair reserve, so the coverage figures in Section 1 are lower and more complete. |
 | Yellow House | Not addressed | May be included in the purchase (Section 5) |
 | Zoning | Not addressed | Addressed in Section 7 |
 
@@ -40,8 +41,6 @@
 [[pagebreak]]
 
 ## 1 · How the Rent Is Calculated
-
-*Workbook items 4.1 through 4.7.*
 
 | Component | Amount | Basis |
 |---|---|---|
@@ -61,22 +60,21 @@
 
 | | Conservative (floor) | Target |
 |---|--:|--:|
-| Gross revenue | $270,280 | $447,767 |
-| Tier Two to the owner (10%) | $27,028 | $44,777 |
+| Gross revenue | $276,521 | $465,662 |
+| Tier Two to the owner (10%) | $27,652 | $46,566 |
 | Tier One costs paid by tenant | $19,500 | $19,500 |
-| Tenant's total occupancy cost | $46,528 | $64,277 |
-| Occupancy cost as a share of revenue | 17.2% | 14.4% |
-| Profit before occupancy cost (coverage) | $96,408 (2.1x) | $182,668 (2.8x) |
+| Tenant's total occupancy cost | $47,152 | $66,066 |
+| Occupancy cost as a share of revenue | 17.1% | 14.2% |
+| Operating costs before occupancy cost | $214,430 | $320,798 |
+| Profit before occupancy cost (coverage) | $62,091 (1.3x) | $144,864 (2.2x) |
 
-**Two honest notes.** First, 14–17% is a full rent load. Single-use restaurant benchmarks put median occupancy cost near 6% of sales (National Restaurant Association, 2024) and call anything over 10% high. The owner is paid above single-use norms, which is supportable because the same building earns several ways: an inn around the clock, a bar at night, a dinner venue, and a commercial kitchen by day. Second, coverage is the real safety measure. Even at the floor, the business earns about twice its occupancy cost, and if revenue falls, the percentage falls with it, down to the minimum. The revenue behind these figures is itemized in Appendix A.
+**Two honest notes.** First, 14–17% is a full rent load. Single-use restaurant benchmarks put median occupancy cost near 6% of sales (National Restaurant Association, 2024) and call anything over 10% high. The owner is paid above single-use norms, which is supportable because the same building earns several ways: an inn around the clock, a bar at night, a dinner venue, a morning coffee service, and a commercial kitchen by day. Second, coverage is the real safety measure, and it is thinner than the July figures showed. With the full cost list in Exhibit D, the business earns about 2.2 times its occupancy cost at target and about 1.3 times at the floor. At the floor there is little left after rent, which is why the percentage matters: if revenue falls, Tier Two falls with it, down to the minimum. The revenue behind these figures is itemized in Appendix A, and the costs in Exhibit D.
 
 [[notes:9]]
 
 [[pagebreak]]
 
 ## 2 · Who Does What
-
-*Workbook items 2.2 through 2.4, 5.1, 7.1, and 10.1.*
 
 | Item | Carried by |
 |---|---|
@@ -102,21 +100,19 @@
 
 ## 3 · What the Owner Receives
 
-*Workbook items 3.1, 3.2, 4.2, and 4.3.*
-
 Lease Year 1 runs from signing through December 31, 2027, and reflects the staged opening (rooms first, kitchen and bar about three months later). Its revenue depends on the opening date. From Lease Year 2, revenue is assumed to grow 5% a year. The figures are Tier Two only: cash to the owner, with property costs already paid by the tenant.
 
 | Lease Year | Conservative revenue | Tier Two to owner | Target revenue | Tier Two to owner |
 |---|--:|--:|--:|--:|
-| 1 (through 2027) | $172,728 | $17,273 | $278,354 | $27,835 |
-| 2 (2028) | $283,795 | $28,380 | $470,155 | $47,016 |
-| 3 (2029) | $297,984 | $29,798 | $493,663 | $49,366 |
-| 4 (2030) | $312,883 | $31,288 | $518,346 | $51,835 |
-| 5 (2031) | $328,528 | $32,853 | $544,264 | $54,426 |
-| **Five-year total** | | **$139,592** | | **$230,478** |
+| 1 (through 2027) | $176,239 | $17,624 | $291,363 | $29,136 |
+| 2 (2028) | $290,347 | $29,035 | $488,945 | $48,895 |
+| 3 (2029) | $304,864 | $30,486 | $513,392 | $51,339 |
+| 4 (2030) | $320,108 | $32,011 | $539,062 | $53,906 |
+| 5 (2031) | $336,113 | $33,611 | $566,015 | $56,602 |
+| **Five-year total** | | **$142,767** | | **$239,878** |
 
-- **Plus property costs the owner no longer pays:** $19,500 a year at today's costs, or $97,500 over five years. Counting these, the swing from today's empty building is $237,092 (conservative) to $327,978 (target).
-- **Stress case:** if revenue never grows past the conservative floor, Tier Two totals $125,385 over the five years.
+- **Plus property costs the owner no longer pays:** $19,500 a year at today's costs, or $97,500 over five years. Counting these, the swing from today's empty building is $240,267 (conservative) to $337,378 (target).
+- **Stress case:** if revenue never grows past the conservative floor, Tier Two totals $128,232 over the five years.
 
 **Where the owner stands at the end of Year 5**
 
@@ -132,8 +128,6 @@ Lease Year 1 runs from signing through December 31, 2027, and reflects the stage
 [[pagebreak]]
 
 ## 4 · Setting a Fair Price
-
-*Workbook section 6.*
 
 No one has to name a number today. The price comes from a method both sides agree to now and apply together at the value review.
 
@@ -177,8 +171,6 @@ No one has to name a number today. The price comes from a method both sides agre
 
 ## 5 · Two Ways to Buy
 
-*Workbook items 6.4 and 9.1 through 9.4.*
-
 | | The inn alone | The inn and the Yellow House together |
 |---|---|---|
 | What is bought | The Burton Inn building and its parcel | Both parcels |
@@ -201,8 +193,6 @@ The Yellow House does not have to wait. If the owner prefers to sell it sooner, 
 
 ## 6 · If the Inn Is Still Growing
 
-*Workbook item 3.3.*
-
 Five years is long enough to know whether the business works. It may not be long enough for the business to finish growing, or for a lender to see it at full strength.
 
 - **Hotels take about three years to settle.** A Cornell study of 3,699 hotels found that occupancy takes about 3.1 years on average to stabilize, and practitioners plan on 36 to 48 months. That average means many are still climbing at three years.
@@ -221,8 +211,6 @@ Five years is long enough to know whether the business works. It may not be long
 
 ## 7 · Getting Open: Zoning and Permits
 
-*Workbook items 2.3 and 8.1 through 8.4.*
-
 The revenue in this document depends on reopening the guest rooms and then the kitchen and bar. Where that stands:
 
 - **Zone.** The property is zoned NB. A bed-and-breakfast is allowed only as accessory to the operator's residence, with a maximum of five rooms.
@@ -240,7 +228,7 @@ The revenue in this document depends on reopening the guest rooms and then the k
 
 ## Appendix A · Revenue Detail
 
-*The basis for the revenue figures in Section 3. Workbook items 4.2, 4.3, and 4.5.*
+*The basis for the revenue figures in Sections 1 and 3.*
 
 Because Tier Two is 10% of all revenue, each line of business contributes 10% of what it earns. Tier One is shown spread across the lines by revenue share, to illustrate what each line carries. The lease itself is a single obligation of the tenant.
 
@@ -248,18 +236,18 @@ Because Tier Two is 10% of all revenue, each line of business contributes 10% of
 
 | Line of business | Revenue | Tier Two (10%) | Tier One share | Total | Share |
 |---|--:|--:|--:|--:|--:|
-| Inn — 4 guest rooms | $110,376 | $11,038 | $7,963 | $19,001 | 40.8% |
-| Cocktail bar (Sylvan Kitchen) | $79,800 | $7,980 | $5,757 | $13,737 | 29.5% |
-| Chef's dinners | $46,085 | $4,608 | $3,325 | $7,933 | 17.1% |
-| Weekend pop-ups | $24,000 | $2,400 | $1,732 | $4,132 | 8.9% |
-| Commissary rental | $3,200 | $320 | $231 | $551 | 1.2% |
-| Misc kitchen and events | $6,820 | $682 | $492 | $1,174 | 2.5% |
-| **Total** | **$270,280** | **$27,028** | **$19,500** | **$46,528** | **100%** |
+| Inn — 4 guest rooms | $110,376 | $11,038 | $7,784 | $18,821 | 39.9% |
+| Cocktail bar (Sylvan Kitchen) | $79,800 | $7,980 | $5,627 | $13,607 | 28.9% |
+| Chef's dinners | $46,085 | $4,608 | $3,250 | $7,858 | 16.7% |
+| Breakfast and coffee | $30,240 | $3,024 | $2,132 | $5,156 | 10.9% |
+| Commissary rental | $3,200 | $320 | $226 | $546 | 1.2% |
+| Misc kitchen and events | $6,820 | $682 | $481 | $1,163 | 2.5% |
+| **Total** | **$276,521** | **$27,652** | **$19,500** | **$47,152** | **100%** |
 
 - **Inn ($110,376):** 36% occupancy at $210 a night, or 525 booked nights a year across 4 rooms. The observed Vashon short-term lodging average is 52% occupancy (AirDNA, June 2026; Bainbridge Island runs 56%), so this case sits 16 points below the market as a margin of safety. $210 is at the entry point for Vashon lodging ($221–234 cheapest-room rates on Tripadvisor; whole-home rentals average $327).
 - **Cocktail bar ($79,800):** 12.5 covers a night at $38, 4 nights a week, 42 weeks. Two craft cocktails at Seattle-area prices ($16–24 each) plus a snack puts a realistic check at $38–50, so $38 is the low end. That is roughly a quarter of a 50-seat room on an average night.
 - **Chef's dinners ($46,085):** 35 seats at $150, about 16 dinners a year, 55% sell-through. The nearest Seattle comparable is $130 all-inclusive with pairings; the low sell-through absorbs the pricing risk.
-- **Weekend pop-ups ($24,000):** 24 orders a day at $25, two days a week, 20 peak weeks.
+- **Breakfast and coffee ($30,240):** 20 sales a morning at $9, 4 mornings a week, 42 weeks. Sized to inn guests and a modest walk-up trade, alongside the coffee stand already operating next door.
 - **Commissary ($3,200):** $32 an hour, 2 hours a week. Mid-range of Seattle-area commissary rates ($15–35 an hour), on a token schedule.
 - **Misc kitchen and events ($6,820):** $210 a month of small hires plus $4,300 a year of private events.
 
@@ -269,18 +257,18 @@ Because Tier Two is 10% of all revenue, each line of business contributes 10% of
 
 | Line of business | Revenue | Tier Two (10%) | Tier One share | Total | Share |
 |---|--:|--:|--:|--:|--:|
-| Inn — 4 guest rooms | $141,255 | $14,125 | $6,152 | $20,277 | 31.5% |
-| Cocktail bar (Sylvan Kitchen) | $114,912 | $11,491 | $5,004 | $16,496 | 25.7% |
-| Chef's dinners | $107,100 | $10,710 | $4,664 | $15,374 | 23.9% |
-| Weekend pop-ups | $65,000 | $6,500 | $2,831 | $9,331 | 14.5% |
-| Commissary rental | $12,500 | $1,250 | $544 | $1,794 | 2.8% |
-| Misc kitchen and events | $7,000 | $700 | $305 | $1,005 | 1.6% |
-| **Total** | **$447,767** | **$44,777** | **$19,500** | **$64,277** | **100%** |
+| Inn — 4 guest rooms | $156,950 | $15,695 | $6,572 | $22,267 | 33.7% |
+| Cocktail bar (Sylvan Kitchen) | $114,912 | $11,491 | $4,812 | $16,303 | 24.7% |
+| Chef's dinners | $107,100 | $10,710 | $4,485 | $15,195 | 23.0% |
+| Breakfast and coffee | $67,200 | $6,720 | $2,814 | $9,534 | 14.4% |
+| Commissary rental | $12,500 | $1,250 | $523 | $1,773 | 2.7% |
+| Misc kitchen and events | $7,000 | $700 | $293 | $993 | 1.5% |
+| **Total** | **$465,662** | **$46,566** | **$19,500** | **$66,066** | **100%** |
 
-- **Inn ($141,255):** 45% occupancy at $215 a night, still 7 points below the 52% Vashon market average. Even the target case does not require the inn to outperform its market.
-- **Cocktail bar ($114,912):** 18 covers a night, about a third of the room. Amelia's existing following (Sylvan Kitchen) is the engine here.
+- **Inn ($156,950):** 50% occupancy at $215 a night, or 730 booked nights a year. That is just under the 52% Vashon market average. Even the target case does not require the inn to outperform its market.
+- **Cocktail bar ($114,912):** 18 covers a night at $38, 4 nights a week, 42 weeks; about a third of the room. Amelia's existing following (Sylvan Kitchen) is the engine here.
 - **Chef's dinners ($107,100):** two ticketed dinners a month at 85% sell-through.
-- **Weekend pop-ups ($65,000):** 50 orders a day across 26 ferry-season weekends.
+- **Breakfast and coffee ($67,200):** 40 sales a morning at $10, 4 mornings a week, 42 weeks. A $10 average sale is the middle of the usual $8–12 range for coffee with a pastry or breakfast item.
 - **Commissary ($12,500):** $50 an hour, 5 hours a week; the top of the $25–50 national shared-kitchen band, justified by the scarcity of licensed kitchens on the island.
 - **Misc kitchen and events ($7,000):** $500 a month plus $1,000 a year of events.
 
@@ -290,23 +278,23 @@ Because Tier Two is 10% of all revenue, each line of business contributes 10% of
 
 ## Appendix B · Market Sources
 
-Every load-bearing assumption was checked against outside market data in July 2026. Vashon is too small a lodging market for the standard hotel-industry reports, so short-term-rental data and named comparables are the best available evidence.
+The main assumptions were checked against outside market data in July and November 2026. Vashon is too small a lodging market for the standard hotel-industry reports, so short-term-rental data and named comparables are the best available evidence. They are directional. A full source list is available on request.
 
 | Assumption | This document | Market evidence | Source |
 |---|---|---|---|
-| Inn occupancy | 36% floor / 45% target | Vashon short-term-rental average 52% (June 2026); Bainbridge 56%. Both cases sit below the observed average. | AirDNA |
+| Inn occupancy | 36% floor / 50% target | Vashon short-term-rental average 52% (June 2026); Bainbridge 56%. Both cases sit below the observed average. | AirDNA |
 | Nightly rate | $210–215 blended | Vashon listings from $221–234 (cheapest-room rates); whole-home rentals average $327. | Tripadvisor; AirDNA |
 | Seasonality | Blended year-round rate | Winter occupancy on a comparable island (Whidbey) is 20–35%, which supports blending. | UBRPM market guide |
 | Bar check | $38 a cover | Seattle craft cocktails run $16–24 each; two drinks and a snack is $38–50. | Seattle bar menus (Canon, Deep Dive, and others) |
 | Chef's dinner | $150 a seat | Nearest Seattle comparable: $130 a seat all-inclusive. The conservative case absorbs the premium through 55% sell-through. | Seattle pop-up listings |
+| Breakfast and coffee | $9–10 a sale; 20–40 sales a morning | Typical coffee-shop sales run about $8–12. A walk-up coffee stand already operates next to the inn, so volumes are set low. | Square; Dojo Business |
 | Commissary rate | $32 floor / $50 target | Seattle-area commissaries list $15–35 an hour; $25–50 nationally. | The Food Corridor; Farm Kitchen; CBG |
 | Percentage rent | 10% of gross revenue | 10% matches bar and venue norms; single-use restaurants run 5–8%. The blend reflects the mix. | Northmarq; Stoner Law; Fork CPAs |
-| Occupancy cost | 14–17% of revenue including property costs | Single-use restaurant median is about 6% (2024); over 10% is called high. Carried here by multi-use economics and 2.1–2.8x coverage. | National Restaurant Association; Toast; Paytronix |
+| Occupancy cost | 14–17% of revenue including property costs | Single-use restaurant median is about 6% (2024); over 10% is called high. Carried here by multi-use economics; coverage is 1.3x at the floor and 2.2x at target. | National Restaurant Association; Toast; Paytronix |
 | Flat minimum with a percentage escalator | Minimum flat; percentage grows | Annual 2–3% escalators are the majority convention; percentage-based restaurant leases are a growing, accepted model. | STRATAFOLIO; FIP Commercial |
 | Time to establish | Value review after Lease Year 3; up to two more years if still growing | A Cornell study of 3,699 hotels found occupancy takes about 3.1 years on average to stabilize; practitioners plan on 36–48 months. Restaurant data is thinner: 6–18 months to break even and up to 3 years for consistent profit. | Cornell Hospitality Quarterly (O'Neill); Hospitality Net; CoStar/STR |
 | Property tax | $8,500 (current bill) | Vashon effective rates are about 1.07–1.13% of assessed value. Actual bills pass through to the tenant. | Ownwell; Vashon Beachcomber |
 
-*Benchmarks are directional. Hotel-grade occupancy data specific to Vashon does not exist publicly; short-term-rental figures measure whole-home listings, not per-room inn performance. A full source list is available on request.*
 
 [[pagebreak]]
 
