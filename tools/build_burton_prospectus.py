@@ -8,6 +8,8 @@
 #   [[notes:N]]      a "NOTES" label followed by N ruled lines to write on
 #   [[lines:N]]      N ruled lines, no label
 #   [[pagebreak]]    start a new page
+# prospectus.md is a template: {names} in braces are filled in from the Exhibit D
+# model (tools/build_burton_budget.py), so the two documents cannot drift apart.
 # Everything else is passed to the house renderer unchanged.
 
 import re
@@ -47,7 +49,7 @@ def table(rows):
     # Column widths from content length: numbers stay narrow, prose gets room.
     def weight(j):
         longest = max(len(re.sub(r'\*', '', r[j])) for r in [header] + body)
-        return max(longest, 9) ** 0.72
+        return max(longest, 12 if right[j] else 9) ** 0.72
     w = [weight(j) for j in range(ncol)]
     widths = [WIDTH * x / sum(w) for x in w]
     data = [[Paragraph(house.inline(h).upper(), HEAD_R if right[j] else HEAD)
@@ -96,9 +98,31 @@ def story(md):
     return out
 
 
+def figures():
+    """Every number in the prospectus, from the same model as Exhibit D."""
+    import build_burton_budget as b
+    d = lambda x: f'${x:,.0f}' if x >= 0 else f'(${-x:,.0f})'
+    F, T = b.model('floor'), b.model('target')
+    Y1 = {'F': b.model('floor', year1=True), 'T': b.model('target', year1=True)}
+    v = {'tier_one': d(T['tier_one']), 'tier_one_5': d(T['tier_one'] * 5)}
+    for k, m in (('F', F), ('T', T)):
+        v[k + '_rev'], v[k + '_t2'], v[k + '_net'] = d(m['rev']), d(m['tier_two']), d(m['net'])
+        v[k + '_opex'] = d(m['opex'])
+        v[k + '_share'] = f"{(m['tier_two'] + m['tier_one']) / m['rev'] * 100:.1f}%"
+        v[k + '_rooms'] = d(m['rev_rooms'])
+        for line in ('bar', 'dinners', 'breakfast', 'commissary', 'misc'):
+            v[f'{k}_{line}'] = d(m[line])
+        revs = [Y1[k]['rev']] + [m['rev'] * f for f in b.RAMP[1:]]
+        rents = [r * b.TIER_TWO if i == 0 else max(b.TIER_TWO_MIN, r * b.TIER_TWO) for i, r in enumerate(revs)]
+        for i in range(5):
+            v[f'y{k}{i + 1}'], v[f't{k}{i + 1}'] = d(revs[i]), d(rents[i])
+        v['sum' + k] = d(sum(round(r) for r in rents))
+    return v
+
+
 if __name__ == '__main__':
     with open(BDIR + '/prospectus.md') as f:
-        md = f.read()
+        md = f.read().format_map(figures())     # prospectus.md is a template: {names} are filled from the model
     check_glyphs(md)
     ver = version_of(md)
     build(story(md), BDIR + '/prospectus.pdf',

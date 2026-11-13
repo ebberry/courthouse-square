@@ -34,11 +34,14 @@ sheet, so change both together.
 ## Prospectus
 
 `prospectus.md` → `prospectus.pdf` (`python3 tools/build_burton_prospectus.py`): "A Five-Year Lease
-and a Path to Purchase", v3.5 (November 13, 2026), for the owner. It leads with the five-year path
-(appraisal at signing, Years 1–3 to build the record, a value review in spring 2030, Years 4–5 to
-close), then the rent, what the owner receives, the capped-share price method, the two purchase
-scenarios (inn alone, or with the Yellow House), and the case for a short extension. Revenue detail
-and sources are appendices. It has ruled space to write in every section.
+and a Path to Purchase", v4.0 (November 13, 2026), five pages for the owner. It covers the five-year
+path, what changed since July, the rent, who does what, what the owner receives, the capped-share
+price method, the two purchase scenarios, the extension, zoning, and the revenue assumptions. It is
+written as information, not a pitch.
+
+`prospectus.md` is a **template**: names in braces (`{T_rev}`, `{sumF}`, ...) are filled in at build
+time from the Exhibit D model in `tools/build_burton_budget.py`, so the two documents always agree.
+To change a number, change the model inputs and rebuild both.
 
 ## Structure (three sections; only Section 1/3 varies)
 
