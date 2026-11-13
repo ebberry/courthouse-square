@@ -14,6 +14,13 @@ terms to agree or discuss with the Landlord, one item at a time (proposed · why
 Landlord's view · agreed). It is safe to share with the Landlord: it holds Tenant's proposals but
 no fallback positions. Once the terms are agreed, they go into `terms-sheet.md` (Section 1/3).
 
+## Operating budget
+
+`operating-budget.pdf` (`python3 tools/build_burton_budget.py`): a one-page projected annual
+operating budget for the owner, laid out like the Courthouse Square "Exhibit D" Tier One budget
+sheet. Inputs are copied from the Google Sheet "Financial Projections for Burton Inn - Rev 70% (for
+Tom)" and sit at the top of the build script; everything else is calculated.
+
 ## Prospectus
 
 `prospectus.md` → `prospectus.pdf` (`python3 tools/build_burton_prospectus.py`): "A Five-Year Lease
