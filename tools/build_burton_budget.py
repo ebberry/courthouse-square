@@ -259,7 +259,7 @@ if __name__ == '__main__':
         note('Rooms only: target-case rooms for a full year with the kitchen and bar not open.'),
         note(f"Floor: {F['occ']:.0%} occupancy at ${F['adr']} a night, with a slower bar, fewer dinners and half the breakfast trade."),
         note('Fixed costs are shown for a full year in every case.'),
-        note('**** 10% of gross revenue. No minimum in Lease Year 1; from 2028, not less than $19,800 a year. Before the $70,000 rent advance is credited.'),
+        note('**** 10% of gross revenue. No minimum in Lease Year 1; from 2028, not less than $19,800 a year. Assumes the $70,000 advance is repaid by March 31, 2027.'),
     ]
     doc.build(story, onFirstPage=footer, onLaterPages=footer)
     print('wrote', OUT)

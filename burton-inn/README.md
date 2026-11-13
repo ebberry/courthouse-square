@@ -34,7 +34,7 @@ sheet, so change both together.
 ## Prospectus
 
 `prospectus.md` → `prospectus.pdf` (`python3 tools/build_burton_prospectus.py`): "A Five-Year Lease
-and a Path to Purchase", v3.4 (November 13, 2026), for the owner. It leads with the five-year path
+and a Path to Purchase", v3.5 (November 13, 2026), for the owner. It leads with the five-year path
 (appraisal at signing, Years 1–3 to build the record, a value review in spring 2030, Years 4–5 to
 close), then the rent, what the owner receives, the capped-share price method, the two purchase
 scenarios (inn alone, or with the Yellow House), and the case for a short extension. Revenue detail

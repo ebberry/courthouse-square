@@ -1,7 +1,7 @@
 # The Burton Inn
 
 **A Five-Year Lease and a Path to Purchase — prepared for the building owner**
-**Draft v3.4 — November 13, 2026 — replaces the July 2026 version**
+**Draft v3.5 — November 13, 2026 — replaces the July 2026 version**
 
 > *This document lays out a five-year plan for the Burton Inn: how the rent works, what the owner receives, and how the two of us would arrive at a fair price for the building. The projected cost of running the inn is itemized in the attached Exhibit D, Projected Annual Operating Budget. Figures are projections from the stated assumptions, not guarantees. There is space to write under each section.*
 
@@ -28,7 +28,7 @@
 | Purchase price | About $1,200,000 around Year 10 | Set by a method: an independent appraisal today, reviewed against three years of results (Section 4) |
 | How rent is described | Fixed base rent plus 10% above a $198,000 breakpoint | The greater of the $1,650 monthly minimum or 10% of gross revenue. From 2028 the result is identical; it is simply easier to state. |
 | First lease year | Base rent abated; 10% only on revenue above $198,000 | No minimum, but 10% of all revenue from the first dollar |
-| Building systems | Optional $50,000 loan from tenant to owner | The fire suppression and HVAC work is under way, funded by the tenant's $70,000 rent advance |
+| Building systems | Optional $50,000 loan from tenant to owner | The fire suppression and HVAC work is under way, funded by a $70,000 advance from the tenant, which the owner plans to repay by March 31, 2027 |
 | Revenue and costs | Target inn occupancy 45%; weekend pop-ups; a short cost list | Target occupancy 50%. A breakfast and coffee service replaces the weekend pop-ups. Costs now include kitchen and bar labor, linens, utilities and upkeep by line, and a 10% contingency, so the coverage figures in Section 1 are lower and more complete. |
 | Yellow House | Not addressed | May be included in the purchase (Section 5) |
 | Zoning | Not addressed | Addressed in Section 7 |
@@ -82,13 +82,13 @@
 | Utilities (power, water, garbage, internet) | Tenant |
 | Liability, liquor-liability, and business-income insurance | Tenant (owner named as additional insured) |
 | Interior fit-out (about $98,000) | Tenant |
-| Fire suppression and HVAC (about $50,000) | Owner — under way now, funded by the tenant's $70,000 rent advance |
+| Fire suppression and HVAC (about $50,000) | Owner — under way now, funded by the tenant's $70,000 advance |
 | Roof, foundation, and structure | Owner |
 | Existing code violations, including the sunroom | Owner |
 
 **What is left on the owner's list.** Finish the fire suppression and HVAC work already in progress, resolve the sunroom violation, and sign owner consents on permit applications. After that, the owner's part is the roof, foundation, and structure, as it is today.
 
-**The $70,000 rent advance.** The tenant has paid the owner $70,000 as a rent advance under the Side Agreement, with a 12% credit, and it is paying for the building systems work. The rent figures in Section 3 are rent earned, before the advance is credited. Proposed: if the purchase closes, any part of the advance not yet used is credited toward the price.
+**The $70,000 advance.** The tenant has advanced the owner $70,000 under the Side Agreement, and it is paying for the building systems work. The owner plans to repay it by March 31, 2027, on the Side Agreement's terms. Any part not repaid by then is credited against rent as the Side Agreement provides.
 
 **The owner's downside.** If the business underperforms, rent falls toward the minimum rather than the tenant defaulting. If the tenancy ends early, the owner keeps the fit-out attached to his building, his new systems, and a property that has been maintained and insured at the tenant's expense. The owner has no capital in the operating company. His exposure is vacancy, which is the risk the building carries today, on a materially improved building.
 
