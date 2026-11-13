@@ -1,7 +1,7 @@
 # Lease Workbook
 
 **The Burton Inn — 24007 Vashon Highway SW, Vashon (Burton), Washington 98070**
-**Draft v1.0 — November 11, 2026 — terms to agree or discuss**
+**Draft v1.1 — November 13, 2026 — five-year lease with a path to purchase**
 
 > *A working list of the lease terms between The Burton Landing LLC (Landlord) and eBerry LLC (Tenant). For each term: what Tenant proposes, why, the questions to settle, and space to record Landlord's view and what is agreed. This is a discussion document, not an offer or a lease. Once the terms are agreed, they go into Section 1/3 of the Two-Tier Value-Sharing Lease©.*
 
@@ -10,11 +10,12 @@
 ## The Deal on One Page
 
 - **What is leased:** the whole Burton Inn building and grounds, to one tenant.
-- **Term:** from signing through December 31, 2031, with an option to extend five years.
+- **Term:** five years, from signing through December 31, 2031.
+- **The plan:** Years 1–3 establish the business and its revenue record. A value review in spring 2030 sets the purchase price. Years 4–5 are for financing and closing.
 - **Tier One — property costs:** Tenant pays the property taxes, building insurance, and routine upkeep at actual cost (about $19,500 a year), and all utilities. Owning the building costs Landlord nothing out of pocket.
 - **Tier Two — Landlord's return:** ten percent (10%) of the inn's gross revenue, with a guaranteed minimum of $1,650 a month from January 1, 2028. Landlord's return rises with the business.
-- **Option to purchase:** Tenant may buy the property during the Lease. Landlord to propose the price and terms.
-- **Investment:** Tenant funds about $98,000 of fit-out that stays with the building. Landlord installs fire suppression and HVAC (about $50,000).
+- **Option to purchase:** Tenant may buy the inn, or the inn and the Yellow House together. The price comes from an agreed method: an independent appraisal today, reviewed against three years of results.
+- **Investment:** Tenant funds about $98,000 of fit-out that stays with the building. Landlord's fire suppression and HVAC work (about $50,000) is under way, funded by Tenant's $70,000 rent advance.
 
 **What Landlord receives at different revenue levels** (full year, Tier Two only; Tier One costs are paid by Tenant on top):
 
@@ -64,9 +65,9 @@
 
 **2.2 Condition at delivery and Landlord's work**
 
-**PROPOSED:** As-is, except that Landlord installs the code-required fire suppression system and the HVAC (about $50,000 combined), in time for each phase of opening.
+**PROPOSED:** As-is, except that Landlord completes the code-required fire suppression system and the HVAC (about $50,000 combined), in time for each phase of opening. This work is already under way, funded by the $70,000 rent advance.
 
-**DISCUSS:** Scope, contractor, schedule, and who manages the work. What happens if the work runs late?
+**DISCUSS:** Current status and expected completion date. What happens if the work runs late?
 
 **LANDLORD'S VIEW:** ______________________________________________
 
@@ -108,19 +109,23 @@
 
 **AGREED:** ______________________________________________
 
-**3.2 Initial term**
+**3.2 Term**
 
-**PROPOSED:** Through December 31, 2031 (end of Lease Year 5).
+**PROPOSED:** Five years, through December 31, 2031 (end of Lease Year 5).
+
+**WHY:** Years 1–3 establish the business and a revenue record. Years 4–5 are for planning and closing the purchase (Section 6).
 
 **LANDLORD'S VIEW:** ______________________________________________
 
 **AGREED:** ______________________________________________
 
-**3.3 Extension**
+**3.3 If the purchase has not closed by the end of Year 5**
 
-**PROPOSED:** One five-year extension through December 31, 2036, on the same terms, with at least nine months' notice.
+**PROPOSED:** If the purchase has not closed by December 31, 2031 and Tenant is in good standing, Tenant may extend once, for up to two years, on the same terms. The purchase price stays as set at the value review.
 
-**DISCUSS:** Same terms, or a reset of the minimum at extension? Notice period?
+**WHY:** Five years is enough to know whether the business works, but it may still be growing. A Cornell study of 3,699 hotels found occupancy takes about 3.1 years on average to stabilize, and practitioners plan on 36 to 48 months; restaurant estimates run up to three years for consistent profit. The clock starts at opening, not signing, so the value review will see only about two and a half years of operation. A lender may need to see more.
+
+**DISCUSS:** Landlord may feel five years is enough to know. Is an extension acceptable if revenue is still rising? One year or two? What happens if neither a purchase nor an extension occurs?
 
 **LANDLORD'S VIEW:** ______________________________________________
 
@@ -200,7 +205,9 @@
 
 **5.1 How the advance is applied**
 
-**PROPOSED:** The Side Agreement stays in effect after the lease is signed and governs the advance: a 12% credit against rent, with about $39,600 refundable if the lease is not extended past 2031. The lease refers to the Side Agreement rather than restating it.
+**FACTS:** Tenant paid $70,000 as a rent advance under the Side Agreement, with a 12% credit against rent. Landlord is using it to pay for the fire suppression and HVAC work. About $39,600 is refundable if the lease is not extended past 2031.
+
+**PROPOSED:** The Side Agreement stays in effect after the lease is signed. The lease refers to it rather than restating it.
 
 **DISCUSS:** Confirm the Side Agreement date and that it survives the lease. The October 31 walk-away date has passed; does anything in the Side Agreement need updating?
 
@@ -208,11 +215,11 @@
 
 **AGREED:** ______________________________________________
 
-**5.2 What "extended" means**
+**5.2 The advance and the purchase**
 
-**PROPOSED:** "Extended past 2031" means Tenant exercises the five-year extension.
+**PROPOSED:** If Tenant buys the property, any part of the advance not yet credited against rent is credited toward the purchase price at closing, in place of a refund.
 
-**DISCUSS:** Does a purchase of the property count as "extended"? How is the advance handled if Tenant buys?
+**DISCUSS:** The refund is tied to the lease being "extended past 2031." With a five-year lease and a purchase, how should that work? Does the short extension in item 3.3 count as "extended"?
 
 **LANDLORD'S VIEW:** ______________________________________________
 
@@ -222,33 +229,62 @@
 
 ## 6 · Option to Purchase
 
-**6.1 The option**
+**6.1 The option and the timeline**
 
-**PROPOSED:** Tenant has the option to buy the land, building, and fixtures at any time during the term, including any extension.
+**PROPOSED:** Tenant has an option to buy the land, building, and fixtures. A value review in spring 2030, after the Lease Year 3 annual statement, sets the price. Tenant may then exercise the option by written notice, with closing by December 31, 2031.
 
-**LANDLORD'S VIEW:** ______________________________________________
-
-**AGREED:** ______________________________________________
-
-**6.2 Price**
-
-**LANDLORD TO PROPOSE:** ______________________________________________
-
-**DISCUSS:** A fixed price, a price schedule by year, or an appraisal-based price? Does the price change over the term?
-
-**AGREED:** ______________________________________________
-
-**6.3 Purchase terms**
-
-**DISCUSS:** Earnest money; time to close; who pays for title insurance, excise tax, and escrow; whether any rent or the unused rent advance is credited toward the price; seller financing.
+**DISCUSS:** The date of the value review. The last date to give notice. Whether Tenant may exercise earlier.
 
 **LANDLORD'S VIEW:** ______________________________________________
 
 **AGREED:** ______________________________________________
 
-**6.4 Protecting the option**
+**6.2 How the price is set**
 
-**PROPOSED:** The option binds any later owner or lender. Any right of first refusal with the Yellow House owner excludes a sale to Tenant. A short memorandum of the option may be recorded.
+**PROPOSED (capped share):**
+
+- **Step 1:** At signing, an independent appraiser both parties accept values the building as it stands today, before Tenant's fit-out.
+- **Step 2:** At the value review, that value is adjusted for inflation.
+- **Step 3:** The average Tier Two rent for Lease Years 2 and 3 is converted to a value at a rate agreed now. If that rent-based value is higher than the adjusted appraisal, half of the difference is added to the price, up to a cap of 10% of the adjusted appraisal.
+- Tenant's own fit-out is not added to the price.
+
+**WHY:** Landlord is guaranteed today's value, kept whole for inflation, and shares in the upside if the inn proves the building can earn more. Landlord also receives 10% of revenue throughout. Tenant can invest in the business knowing the price cannot run away from it.
+
+**DISCUSS — the alternative ("greater of"):** the price is simply the greater of the adjusted appraisal or the full rent-based value, with no cap. That gives Landlord all of the upside, and means Tenant pays more for the building the better it runs the business. If Landlord prefers this, what would balance it: a lower rent percentage, credit for rent paid, or a higher conversion rate?
+
+**APPRAISER, AND WHO PAYS:** ______________________________________________
+
+**RATE TO CONVERT RENT TO VALUE:** __________ %     **CAP (10% PROPOSED):** __________ %
+
+**INFLATION MEASURE:** ______________________________________________
+
+**LANDLORD'S VIEW:** ______________________________________________
+
+**AGREED:** ______________________________________________
+
+**6.3 What is bought: the inn alone, or with the Yellow House**
+
+**PROPOSED:** Tenant may buy the inn alone or, if Landlord still owns it, the inn and the Yellow House parcel together. The Yellow House would be appraised the same way (today's value, adjusted for inflation), with no rent-based share. Tenant would use it for long-term rental housing and for laundry and work space.
+
+**WHY:** One buyer and one closing settle both properties, and the shared septic, alley, and right-of-first-refusal questions go away.
+
+**DISCUSS:** Is the Yellow House available, or is the sale to others going ahead? Would Landlord prefer to sell it sooner? Is there anyone living there whose housing should be protected?
+
+**LANDLORD'S VIEW:** ______________________________________________
+
+**AGREED:** ______________________________________________
+
+**6.4 Purchase terms**
+
+**DISCUSS:** Earnest money; time to close; who pays for title insurance, excise tax, and escrow; seller financing, if Landlord would prefer payments over time to a single payment.
+
+**LANDLORD'S VIEW:** ______________________________________________
+
+**AGREED:** ______________________________________________
+
+**6.5 Protecting the option**
+
+**PROPOSED:** The option binds any later owner or lender. Any right of first refusal with a Yellow House owner excludes a sale to Tenant. A short memorandum of the option may be recorded.
 
 **LANDLORD'S VIEW:** ______________________________________________
 
@@ -334,9 +370,9 @@
 
 **9.2 Mutual right of first refusal (Yellow House)**
 
-**PROPOSED:** Landlord may enter into a mutual right of first refusal with the Yellow House owner, because of the shared septic. It is an agreement between the two owners, outside the lease, and it must exclude a sale to Tenant under the purchase option.
+**PROPOSED:** Needed only if the Yellow House is sold to someone other than Tenant. In that case Landlord may enter into a mutual right of first refusal with the Yellow House owner, because of the shared septic. It is an agreement between the two owners, outside the lease, and it must exclude a sale to Tenant under the purchase option.
 
-**DISCUSS:** Timing, given the likely sale of the Yellow House (Larry and Luciana).
+**DISCUSS:** Status of the possible sale of the Yellow House (Larry and Luciana), given item 6.3.
 
 **LANDLORD'S VIEW:** ______________________________________________
 
@@ -410,9 +446,11 @@
 - [ ] King County tax parcel number and full legal description.
 - [ ] Site plan of the building, grounds, parking, and alley.
 - [ ] Mark Rowe's feedback on zoning and the sunroom violation.
-- [ ] Landlord's proposed purchase price and terms.
+- [ ] Choose the appraiser and order the as-is appraisal.
+- [ ] Agree the price method: conversion rate, cap, and inflation measure.
+- [ ] Decide whether the Yellow House is part of the plan.
 - [ ] Septic details and the Yellow House right of first refusal.
-- [ ] Scope and schedule for the fire suppression and HVAC work.
+- [ ] Completion date for the fire suppression and HVAC work.
 - [ ] Once terms are agreed: fill in Section 1/3 of the lease and circulate for signature.
 
 **NOTES:** ______________________________________________

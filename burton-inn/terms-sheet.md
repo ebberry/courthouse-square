@@ -1,17 +1,17 @@
 # The Burton Inn Lease
 
 **Two-Tier Value-Sharing Lease© — 24007 Vashon Highway SW, Vashon (Burton), Washington 98070**
-**Draft v0.13 — November 11, 2026 — Option to Purchase terms left open for negotiation**
+**Draft v0.14 — November 13, 2026 — five-year term; purchase price set by appraisal and a Year 3 value review**
 
 > *Section 1/3, including its Exhibits, incorporates Sections 2/3 and 3/3 (Version 2.1, September 19, 2026), which are attached and apply unchanged. Section 1/3 governs Sections 2/3 and 3/3 if any conflict arises. Capitalized terms have the meanings assigned in Section 3/3 unless specifically defined here.*
 
 **THE DEAL IN BRIEF** *(a summary only; the Articles and Exhibits below control)*
 
 - **What is leased:** the whole Burton Inn building and grounds, to a single tenant.
-- **How long:** through December 31, 2031, with one option to extend five more years, to December 31, 2036.
+- **How long:** five years, through December 31, 2031. Years 1–3 establish the business; Years 4–5 are for completing the purchase.
 - **Tier One (property costs):** Tenant pays the property's taxes, insurance, and routine upkeep at actual cost (about $19,500 a year today), and all utilities directly. Landlord's costs of owning the building are covered.
 - **Tier Two (Landlord's return):** Landlord receives ten percent (10%) of the inn's gross revenue, with a guaranteed minimum of $1,650 a month starting January 1, 2028. Landlord's return rises and falls with the business.
-- **Option to buy:** Tenant has an option to buy the property during the Lease. The price and purchase terms are to be agreed (Exhibit I).
+- **Option to buy:** Tenant may buy the inn, or the inn and the Yellow House together. The price is set by an independent appraisal at signing and a value review after Lease Year 3 (Exhibit I).
 - **Improvements:** Tenant funds about $98,000 of fit-out, which stays with the building. Landlord installs fire suppression and HVAC (about $50,000).
 
 ---
@@ -56,7 +56,7 @@
 
 **3.05 Lease Expiration Date.** December 31, 2031 (the end of Lease Year 5), unless extended under Article 3.06 or sooner terminated under the Lease.
 
-**3.06 Extension Option.** Tenant may extend the Term once, for five (5) years through December 31, 2036 (Lease Years 6 through 10), by written notice to Landlord at least nine (9) months before the Lease Expiration Date, if no Event of Default exists when notice is given or when the extension begins. All terms stay the same during the extension, including the $1,650 monthly minimum and the ten percent (10%) rate.
+**3.06 Extension Option.** [To be agreed. Proposed: if the purchase under Exhibit I has not closed by the Lease Expiration Date and no Event of Default exists, Tenant may extend the Term once, for up to two (2) years, by written notice to Landlord at least nine (9) months before the Lease Expiration Date. All terms stay the same during the extension, including the $1,650 monthly minimum, the ten percent (10%) rate, and the Purchase Price set under Exhibit I.]
 
 **3.07 Lease Years.** Lease Year 1 runs from the Lease Start Date through December 31, 2027. Each later Lease Year is a calendar year (January 1 through December 31). Lease Years are fixed and do not move if opening is delayed.
 
@@ -69,7 +69,7 @@
 **4.03 Base Rent Tier Two (Landlord Investment).** For each Lease Year, Landlord receives the greater of (a) the Minimum Tier Two Rent or (b) ten percent (10%) of Gross Revenue. Mechanics, the definition of Gross Revenue, and reporting are in Exhibit H, Sections 3 through 5.
 
 - Lease Year 1 (Lease Start Date through December 31, 2027): no minimum; ten percent (10%) of Gross Revenue.
-- Lease Years 2 through 10 (January 1, 2028 onward): Minimum Tier Two Rent of $1,650.00 per month ($19,800 per year), plus any amount by which ten percent (10%) of Gross Revenue for the Lease Year exceeds the minimum.
+- From Lease Year 2 (January 1, 2028 onward): Minimum Tier Two Rent of $1,650.00 per month ($19,800 per year), plus any amount by which ten percent (10%) of Gross Revenue for the Lease Year exceeds the minimum.
 - Examples for a full Lease Year: Gross Revenue of $150,000 means Tier Two of $19,800 (the minimum); $270,000 means $27,000; $450,000 means $45,000.
 
 *Escalation: None. The minimum and the ten percent (10%) rate are fixed for the Term, including any extension; Landlord's return grows as the business grows.*
@@ -225,7 +225,7 @@ Utilities are paid directly by Tenant (Article 4.07) and are not part of this bu
 
 At Landlord's own cost, and not passed through to Tenant as Tier One or otherwise:
 
-- **E.1 Fire suppression and HVAC.** Landlord installs the fire suppression system required by code for the Permitted Use and the HVAC serving the Premises (about $50,000 combined), completed in time for each phase of Tenant's opening, subject to Force Majeure and Tenant's cooperation.
+- **E.1 Fire suppression and HVAC.** Landlord completes the fire suppression system required by code for the Permitted Use and the HVAC serving the Premises (about $50,000 combined; work under way on the Lease Start Date), in time for each phase of Tenant's opening, subject to Force Majeure and Tenant's cooperation.
 - **E.2 Existing code violations.** Landlord resolves any code violation existing on the Lease Start Date, including the open violation on the sunroom, either by correcting it or by closing off the affected area.
 - **E.3 Punch list.** Section 2/3 Articles 2.04 and 2.05 apply to Landlord's Work.
 
@@ -286,7 +286,7 @@ This Addendum is part of Section 1/3 and controls over Sections 2/3 and 3/3 wher
 
 **14. Casualty and Holding Over (modifies Section 2/3 Articles 7.01, 7.02, and 13.01).** During any abatement under Article 7.01 or 7.02, the monthly minimum abates in the same proportion, and ten percent (10%) continues to apply to whatever Gross Revenue is earned. For Article 13.01, the monthly Base Rent Tier Two "in effect" is the greater of the monthly minimum or one-twelfth of the Tier Two paid for the twelve (12) months before expiration.
 
-**15. Rent Advance (new).** Tenant paid Landlord $70,000 as a rent advance under the Side Agreement. It is credited against Rent, and the stated portion is refundable if this Lease is not extended beyond December 31, 2031, as the Side Agreement provides. The parties understand "extended" to mean Tenant's exercise of the extension option in Article 3.06.
+**15. Rent Advance (new).** Tenant paid Landlord $70,000 as a rent advance under the Side Agreement. It is credited against Rent, and the stated portion is refundable, as the Side Agreement provides. [To be confirmed: how the refund applies under a five-year Term.] If Tenant buys the property under Exhibit I, any part of the advance not yet credited or refunded is credited toward the Purchase Price.
 
 **16. Default Damages (modifies Section 2/3 Article 9.04).** In calculating damages, Base Rent Tier Two for future periods is deemed to equal the average annual Tier Two paid for the thirty-six (36) months before the default (or the actual period, if shorter), but not less than the minimum.
 
@@ -296,11 +296,24 @@ This Addendum is part of Section 1/3 and controls over Sections 2/3 and 3/3 wher
 
 ## Exhibit I: Option to Purchase
 
-**I.1 The Option.** Landlord grants Tenant the option to buy the property — the land, the Building, and Landlord's fixtures and improvements — during the Term, including any extension (the "Option").
+*Bracketed items are to be agreed before signing.*
 
-**I.2 Price and Terms.** [Purchase price and purchase terms to be agreed by the parties before signing.]
+**I.1 The Option.** Landlord grants Tenant the option to buy the property — the land, the Building, and Landlord's fixtures and improvements — on the terms of this Exhibit (the "Option").
 
-**I.3 Protecting the Option.** The Option binds Landlord's successors and any buyer of the property. Any right of first refusal Landlord grants to the owner of the Yellow House (Exhibit J) must exclude a sale to Tenant under this Option.
+**I.2 Today's Value.** Before or promptly after the Lease Start Date, an independent appraiser accepted by both parties [name; cost shared equally] will appraise the property in its condition on the Lease Start Date, before Tenant's fit-out (the "Baseline Value").
+
+**I.3 Value Review.** By April 30, 2030, after Tenant delivers its annual statement for Lease Year 3, the parties will meet and set the Purchase Price as follows:
+
+- **(a) Adjusted Baseline.** The Baseline Value, adjusted for inflation from the Lease Start Date to December 31, 2029 [by the Consumer Price Index for the Seattle area].
+- **(b) Rent-Based Value.** The average annual Base Rent Tier Two paid for Lease Years 2 and 3, divided by [____] percent.
+- **(c) Purchase Price.** The Adjusted Baseline, plus one-half of any amount by which the Rent-Based Value exceeds the Adjusted Baseline. The amount added under this paragraph will not exceed [ten percent (10%)] of the Adjusted Baseline.
+- **(d) Tenant's fit-out.** No amount is added for Tenant's Improvements or Alterations.
+
+**I.4 Yellow House.** If Landlord owns the neighboring Yellow House parcel when Tenant exercises the Option, Tenant may elect to buy it together with the property. Its price is its appraised value on the Lease Start Date, set by the same appraiser and adjusted for inflation as in Section I.3(a). No Rent-Based Value applies to it.
+
+**I.5 Exercise and Closing.** Tenant may exercise the Option by written notice to Landlord at any time after the Purchase Price is set and on or before [June 30, 2031], as long as no Event of Default exists. Closing takes place by December 31, 2031, or by the end of any extension under Article 3.06. The Purchase Price does not change after it is set. [Earnest money, title, closing costs, and any seller financing: to be agreed.]
+
+**I.6 Protecting the Option.** The Option binds Landlord's successors and any buyer of the property. Any right of first refusal Landlord grants to an owner of the Yellow House (Exhibit J) must exclude a sale to Tenant under this Option.
 
 ---
 
@@ -310,7 +323,7 @@ This Addendum is part of Section 1/3 and controls over Sections 2/3 and 3/3 wher
 
 **J.1 Shared Septic.** The Premises share a septic system with the neighboring Yellow House property [describe location and any recorded easement or septic agreement]. Tenant may use the system as needed for the Permitted Use, within its permitted capacity. Routine pumping and maintenance costs are shared [___% Premises / ___% Yellow House], and Tenant pays the Premises' share as a Tier One cost. Repair and replacement of the system are Landlord's responsibility [, shared with the Yellow House owner as their agreement provides].
 
-**J.2 Mutual Right of First Refusal.** Because of the shared septic system, Landlord intends to enter into a mutual right of first refusal with the owner of the Yellow House. That agreement is between the property owners and is not part of this Lease, and it must exclude a sale to Tenant under Exhibit I.
+**J.2 Mutual Right of First Refusal.** If the Yellow House is sold to someone other than Tenant, Landlord may enter into a mutual right of first refusal with its owner, because of the shared septic system. That agreement is between the property owners and is not part of this Lease, and it must exclude a sale to Tenant under Exhibit I.
 
 **J.3 Alley Access.** Tenant and its employees, guests, and suppliers may use the alley [describe] for access, deliveries, and parking as it has historically been used. [Describe any easement and who maintains the alley.]
 
@@ -318,4 +331,4 @@ This Addendum is part of Section 1/3 and controls over Sections 2/3 and 3/3 wher
 
 ---
 
-*End of Section 1/3 and Exhibits for The Burton Inn — Draft v0.13, November 11, 2026. To be read with the attached Sections 2/3 and 3/3 of the Two-Tier Value-Sharing Lease© (Version 2.1, September 19, 2026).*
+*End of Section 1/3 and Exhibits for The Burton Inn — Draft v0.14, November 13, 2026. To be read with the attached Sections 2/3 and 3/3 of the Two-Tier Value-Sharing Lease© (Version 2.1, September 19, 2026).*

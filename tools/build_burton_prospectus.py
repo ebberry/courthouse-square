@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Build the Burton Inn "Rent Basis & Owner Return" prospectus
+# Build the Burton Inn prospectus ("A Five-Year Lease and a Path to Purchase")
 # (burton-inn/prospectus.md -> burton-inn/prospectus.pdf) in the house style.
 #
 # The house markdown renderer has no tables or write-in space, so this adds
@@ -102,5 +102,5 @@ if __name__ == '__main__':
     check_glyphs(md)
     ver = version_of(md)
     build(story(md), BDIR + '/prospectus.pdf',
-          'The Burton Inn — Rent Basis & Owner Return',
-          f'The Burton Inn — Rent Basis & Owner Return    {ver}')
+          'The Burton Inn — Five-Year Lease and Path to Purchase',
+          f'The Burton Inn — Lease and Path to Purchase    {ver}')
