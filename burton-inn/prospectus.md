@@ -1,7 +1,7 @@
 # The Burton Inn
 
 **A Five-Year Lease and a Path to Purchase — prepared for the building owner**
-**Draft v3.1 — November 13, 2026 — replaces the July 2026 version**
+**Draft v3.2 — November 13, 2026 — replaces the July 2026 version**
 
 > *This document lays out a five-year plan for the Burton Inn: how the rent works, what the owner receives, and how the two of us would arrive at a fair price for the building. The projected cost of running the inn is itemized in the attached Exhibit D, Projected Annual Operating Budget. Figures are projections from the stated assumptions, not guarantees. There is space to write under each section.*
 
@@ -16,10 +16,7 @@
 | **Value review** (spring 2030) | We sit down with the three-year record and set the purchase price by the method in Section 4. | A price based on the appraisal and the record, not on a negotiation under pressure. |
 | **Years 4–5** (2030–2031) | The tenant arranges financing and completes the purchase: the inn alone, or the inn and the Yellow House together. | Rent continues until closing. One buyer, one closing. |
 
-**What the owner can count on, whichever way it ends:**
-
-- **Value that lasts.** The building is improved, maintained, insured, and earning. If the sale closes, the price is fair and documented. If it does not, the owner holds a better building with a proven income record, which is easier to hold, pass on, or sell than the one he has today.
-- **A simpler property to own.** No bills to pay, no repairs to arrange, no tenants to manage. One report a month, one payment a quarter.
+[[notes:6]]
 
 [[pagebreak]]
 
