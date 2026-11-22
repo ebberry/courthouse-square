@@ -51,7 +51,7 @@ PROPERTY = [                                        # Tier One: paid by tenant a
     ('Cleaning and maintenance **', 1200),
     ('Fire and safety **', 600),
     ('HVAC maintenance and repairs **', 900),
-    ('Landscaping and grounds **', 600),
+    ('Landscaping and grounds **', 2400),
     ('Repairs - general **', 1200),
 ]
 UTILITIES = [

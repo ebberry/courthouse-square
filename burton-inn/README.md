@@ -36,7 +36,7 @@ sheet, so change both together.
 ## Prospectus
 
 `prospectus.md` → `prospectus.pdf` (`python3 tools/build_burton_prospectus.py`): "A Five-Year Lease
-and a Path to Purchase", v4.2 (November 22, 2026), five pages for the owner. It covers the five-year
+and a Path to Purchase", v4.3 (November 22, 2026), five pages for the owner. It covers the five-year
 path, what changed since July, the rent, who does what, what the owner receives, the capped-share
 price method, the two purchase scenarios, the extension, zoning, and the revenue assumptions. It is
 written as information, not a pitch.

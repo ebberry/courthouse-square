@@ -104,7 +104,9 @@ def figures():
     d = lambda x: f'${x:,.0f}' if x >= 0 else f'(${-x:,.0f})'
     F, T = b.model('floor'), b.model('target')
     Y1 = {'F': b.model('floor', year1=True), 'T': b.model('target', year1=True)}
-    v = {'tier_one': d(T['tier_one']), 'tier_one_5': d(T['tier_one'] * 5)}
+    share = lambda m: (m['tier_two'] + m['tier_one']) / m['rev'] * 100
+    v = {'tier_one': d(T['tier_one']), 'upkeep': d(T['tier_one'] - b.PROPERTY[0][1] - b.PROPERTY[1][1]),
+         'share_lo': f'{min(share(F), share(T)):.0f}', 'share_hi': f'{max(share(F), share(T)):.0f}'}
     for k, m in (('F', F), ('T', T)):
         v[k + '_rev'], v[k + '_t2'], v[k + '_net'] = d(m['rev']), d(m['tier_two']), d(m['net'])
         v[k + '_opex'] = d(m['opex'])

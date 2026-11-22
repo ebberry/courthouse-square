@@ -1,7 +1,7 @@
 # The Burton Inn
 
 **A Five-Year Lease and a Path to Purchase — prepared for the building owner**
-**Draft v4.2 — November 22, 2026 — replaces the July 2026 version**
+**Draft v4.3 — November 22, 2026 — replaces the July 2026 version**
 
 > *A summary of the proposed lease: how the rent works, what the owner receives, and how the purchase price would be set. The projected cost of running the inn is itemized in the attached Exhibit D. Figures are projections from the stated assumptions, not guarantees.*
 
@@ -31,7 +31,7 @@
 
 | Component | Amount | Basis |
 |---|---|---|
-| **Tier One** — property costs | About {tier_one} a year | Taxes $8,500, building insurance $6,500, and upkeep $4,500, paid by the tenant at actual cost. No management fee or escrow account. |
+| **Tier One** — property costs | About {tier_one} a year | Taxes $8,500, building insurance $6,500, and upkeep {upkeep}, paid by the tenant at actual cost. No management fee or escrow account. |
 | **Tier Two** — percentage | 10% of gross revenue | Measured from receipts, not profit. |
 | **Tier Two** — minimum | $1,650 a month from January 1, 2028 | No minimum in Lease Year 1. The owner receives the greater of the minimum or the percentage. |
 
@@ -46,7 +46,7 @@ The minimum is paid monthly. The percentage is paid within a month after each ca
 | Tenant's other operating costs (Exhibit D) | {F_opex} | {T_opex} |
 | Left for the tenant after all costs | {F_net} | {T_net} |
 
-Rent and property costs of 14–17% of revenue are above the 6–10% usual for restaurants. At the floor the tenant runs at a loss, because the staff needed to keep the bar and kitchen open does not shrink with sales. If revenue falls, Tier Two falls with it, down to the minimum.
+Rent and property costs of {share_lo}–{share_hi}% of revenue are above the 6–10% usual for restaurants. At the floor the tenant runs at a loss, because the staff needed to keep the bar and kitchen open does not shrink with sales. If revenue falls, Tier Two falls with it, down to the minimum.
 
 ## 2 · Who Does What
 
@@ -76,7 +76,7 @@ Lease Year 1 runs from signing through December 31, 2027. Revenue is assumed to 
 | 5 (2031) | {yF5} | {tF5} | {yT5} | {tT5} |
 | **Five-year total** | | **{sumF}** | | **{sumT}** |
 
-- **Property costs the owner no longer pays:** {tier_one} a year at today's costs, or {tier_one_5} over five years.
+- **Property costs the owner no longer pays:** about $19,500 a year for the empty building today, or $97,500 over five years.
 - **Year 1:** with the kitchen open for half the year, the tenant runs at a small loss. Rent that year is 10% of revenue with no minimum.
 - **If the kitchen is delayed further:** Exhibit D shows a rooms-only year. The rooms alone carry the property costs and the minimum rent, at a small loss to the tenant.
 
