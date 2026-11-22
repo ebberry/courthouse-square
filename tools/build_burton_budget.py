@@ -30,12 +30,14 @@ STAMP = 'eb20261113'
 CASES = {
     'target': dict(occ=0.50, adr=215,
                    bar=18 * 38 * 4 * 42,            # covers x check x nights/wk x weeks
+                   dinners_n=24,
                    dinners=150 * 35 * 24 * 0.85,    # ticket x seats x dinners a year x share sold
                    breakfast=40 * 10 * 4 * 42,      # sales x average sale x mornings/wk x weeks
                    commissary=50 * 5 * 50,          # rate x hours/wk x weeks
                    misc=7000),
     'floor':  dict(occ=0.36, adr=210,
                    bar=12.5 * 38 * 4 * 42,
+                   dinners_n=16,
                    dinners=150 * 35 * 16 * 0.55,
                    breakfast=20 * 9 * 4 * 42,
                    commissary=32 * 2 * 50,
@@ -53,7 +55,7 @@ PROPERTY = [                                        # Tier One: paid by tenant a
     ('Repairs - general **', 1200),
 ]
 UTILITIES = [
-    ('Electricity *', 21000),
+    ('Electricity *', 15000),                       # placeholder; allows for the solar on the building
     ('Natural gas (water heater) *', 1800),
     ('Water *', 3600),
     ('Garbage *', 2400),
@@ -63,9 +65,16 @@ UTILITIES = [
 ]
 HOUSEKEEPER_HR, HRS_PER_TURN, AMENITIES, LINEN_PER_TURN = 35, 1.5, 6, 20
 FNB_COGS, FNB_LABOR = 0.30, 0.32
+# Staffing needed to keep the schedule open, whatever the sales: labor is the
+# greater of FNB_LABOR x sales or these hours x the loaded wage.
+NIGHTS, MORNINGS, WEEKS = 4, 4, 42
+HRS_BAR_NIGHT, HRS_MORNING, HRS_DINNER, HRS_PREP_WEEK, LOADED_WAGE = 7, 5, 30, 10, 27
+SUPPLIES = 0.015                                    # kitchen and cleaning supplies, share of F&B sales
+KITCHEN_FIRE, SEPTIC = 1500, 2400                   # hood/fire-system/alarm service; septic and grease trap
 BIZ_INS, SOFTWARE = 24000, 6000
 CARD_FEE, CONTINGENCY, TIER_TWO, TIER_TWO_MIN = 0.03, 0.10, 0.10, 19800
-YEAR1_ROOMS, YEAR1_FNB = 0.75, 0.375                # staged opening: rooms 75%; kitchen and bar 75% x 6/12
+YEAR1_OPEN = 0.5                                    # share of Year 1 the kitchen and bar are open
+YEAR1_ROOMS, YEAR1_FNB = 0.75, 0.75 * YEAR1_OPEN    # staged opening: rooms 75%; kitchen and bar 75% x 6/12
 RAMP = [None, 0.90, 1.00, 1.03, 1.03 ** 2]          # Lease Years 2-5 as a share of a stabilized year
 
 # ---------------- calculations ----------------
@@ -74,6 +83,7 @@ def model(case, year1=False, rooms_only=False):
     year1: staged opening, no rent minimum. rooms_only: the kitchen and bar never open."""
     c = CASES[case]
     rs, fs = (YEAR1_ROOMS, YEAR1_FNB) if year1 else (1, 0) if rooms_only else (1, 1)
+    open_share = YEAR1_OPEN if year1 else 0 if rooms_only else 1
     nights = ROOMS * DAYS * c['occ'] * rs
     turns = nights / ALOS
     m = {k: v * fs for k, v in c.items() if k in ('bar', 'dinners', 'breakfast', 'commissary', 'misc')}
@@ -82,6 +92,10 @@ def model(case, year1=False, rooms_only=False):
     m['fnb_base'] = m['dinners'] + m['bar'] + m['breakfast'] + m['misc']      # cost of goods / labor base
     m['rev_fnb'] = m['fnb_base'] + m['commissary']
     m['rev'] = m['rev_rooms'] + m['rev_fnb']
+    hours = (NIGHTS * WEEKS * HRS_BAR_NIGHT + MORNINGS * WEEKS * HRS_MORNING
+             + c['dinners_n'] * HRS_DINNER + HRS_PREP_WEEK * WEEKS)
+    m['min_staff'] = hours * LOADED_WAGE * open_share
+    m['labor'] = max(m['fnb_base'] * FNB_LABOR, m['min_staff'])
     m['sections'] = [
         ('Property Costs - Tier One', [(l, a, 0, 0) for l, a in PROPERTY], 'Total Property Costs'),
         ('Utilities', [(l, a, 0, 0) for l, a in UTILITIES], 'Total Utilities'),
@@ -91,8 +105,11 @@ def model(case, year1=False, rooms_only=False):
             ('Room amenities', 0, nights * AMENITIES, 0),
             ('Booking platform commissions', 0, m['rev_rooms'] * OTA_SHARE * OTA_RATE, 0),
             ('Food and beverage cost of goods', 0, 0, m['fnb_base'] * FNB_COGS),
-            ('Kitchen, bar and counter labor', 0, 0, m['fnb_base'] * FNB_LABOR),
+            ('Kitchen, bar and counter labor', 0, 0, m['labor']),
             ('Credit card fees', 0, m['rev_rooms'] * CARD_FEE, m['rev_fnb'] * CARD_FEE),
+            ('Kitchen and cleaning supplies', 0, 0, m['fnb_base'] * SUPPLIES),
+            ('Kitchen hood, fire-system and alarm service', KITCHEN_FIRE, 0, 0),
+            ('Septic pumping and grease-trap service', SEPTIC, 0, 0),
             ('Business insurance and licenses', BIZ_INS, 0, 0),
             ('Software, POS and marketing', SOFTWARE, 0, 0),
         ], 'Total Operational Expenses'),
@@ -111,7 +128,7 @@ def model(case, year1=False, rooms_only=False):
 # ---------------- styles ----------------
 GRAY = colors.Color(0.30, 0.30, 0.30)
 FN, FB = 'Helvetica', 'Helvetica-Bold'
-RH = 12.6                                           # ledger row height
+RH = 12.2                                           # ledger row height
 def P(text, font=FB, size=8, align=TA_LEFT, color=colors.black):
     return Paragraph(text, ParagraphStyle('p', fontName=font, fontSize=size, leading=size + 2,
                                           alignment=align, textColor=color))
@@ -249,7 +266,8 @@ if __name__ == '__main__':
         summary(T), Spacer(1, 10), ledger(T), Spacer(1, 8),
         note('* Billed to tenant; copies to owner'),
         note('** Tier One: paid by tenant at actual cost'),
-        note('Utility and upkeep figures are estimates until bills and quotes are in. Most upkeep labor is done by the tenant.'),
+        note('Utility and upkeep figures are estimates until bills and quotes are in. Electricity allows for the solar on the building.'),
+        note('Most upkeep labor is done by the tenant.'),
         note(f"Stabilized year at the target case: {T['occ']:.0%} occupancy at ${T['adr']} a night. Year 1 and the floor case are on page 2."),
         PageBreak(),
         title('THE BURTON INN', 12.5), Spacer(1, 4),
@@ -258,6 +276,7 @@ if __name__ == '__main__':
         note('Year 1: target case with a staged opening. Rooms reach 75% of a stabilized year; the kitchen and bar open halfway through the year.'),
         note('Rooms only: target-case rooms for a full year with the kitchen and bar not open.'),
         note(f"Floor: {F['occ']:.0%} occupancy at ${F['adr']} a night, with a slower bar, fewer dinners and half the breakfast trade."),
+        note('Kitchen and bar labor is the greater of 32% of sales or the staffing needed to keep the schedule open.'),
         note('Fixed costs are shown for a full year in every case.'),
         note('**** 10% of gross revenue. No minimum in Lease Year 1; from 2028, not less than $19,800 a year. Assumes the $70,000 advance is repaid by March 31, 2027.'),
     ]

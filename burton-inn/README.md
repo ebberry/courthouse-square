@@ -26,7 +26,9 @@ no fallback positions. Once the terms are agreed, they go into `terms-sheet.md` 
   rooms-only year, the conservative floor, and the target, with Tier Two rent and what is left.
 
 Upkeep and utility lines are low estimates (no bills or quotes yet; the tenant does most upkeep
-labor). All inputs sit at the top of the build script, in a `model()` shared with the prospectus
+labor); electricity is a $15,000 placeholder that allows for the solar on the building. Kitchen and
+bar labor is the greater of 32% of sales or the cost of staffing the schedule, so the weak cases do
+not understate labor. All inputs sit at the top of the build script, in a `model()` shared with the prospectus
 numbers. The same inputs and formulas are in the Google Sheet "Burton Inn - Exhibit D - Projected
 Operating Budget" (tabs: Exhibit D, Cases, Assumptions); the PDF is built from the script, not the
 sheet, so change both together.
@@ -34,7 +36,7 @@ sheet, so change both together.
 ## Prospectus
 
 `prospectus.md` → `prospectus.pdf` (`python3 tools/build_burton_prospectus.py`): "A Five-Year Lease
-and a Path to Purchase", v4.0 (November 13, 2026), five pages for the owner. It covers the five-year
+and a Path to Purchase", v4.2 (November 22, 2026), five pages for the owner. It covers the five-year
 path, what changed since July, the rent, who does what, what the owner receives, the capped-share
 price method, the two purchase scenarios, the extension, zoning, and the revenue assumptions. It is
 written as information, not a pitch.

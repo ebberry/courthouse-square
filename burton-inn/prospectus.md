@@ -1,7 +1,7 @@
 # The Burton Inn
 
 **A Five-Year Lease and a Path to Purchase — prepared for the building owner**
-**Draft v4.0 — November 13, 2026 — replaces the July 2026 version**
+**Draft v4.2 — November 22, 2026 — replaces the July 2026 version**
 
 > *A summary of the proposed lease: how the rent works, what the owner receives, and how the purchase price would be set. The projected cost of running the inn is itemized in the attached Exhibit D. Figures are projections from the stated assumptions, not guarantees.*
 
@@ -46,7 +46,7 @@ The minimum is paid monthly. The percentage is paid within a month after each ca
 | Tenant's other operating costs (Exhibit D) | {F_opex} | {T_opex} |
 | Left for the tenant after all costs | {F_net} | {T_net} |
 
-Rent and property costs of 14–17% of revenue are above the 6–10% usual for restaurants. At the floor the business roughly breaks even after rent; if revenue falls, Tier Two falls with it, down to the minimum.
+Rent and property costs of 14–17% of revenue are above the 6–10% usual for restaurants. At the floor the tenant runs at a loss, because the staff needed to keep the bar and kitchen open does not shrink with sales. If revenue falls, Tier Two falls with it, down to the minimum.
 
 ## 2 · Who Does What
 
@@ -77,7 +77,7 @@ Lease Year 1 runs from signing through December 31, 2027. Revenue is assumed to 
 | **Five-year total** | | **{sumF}** | | **{sumT}** |
 
 - **Property costs the owner no longer pays:** {tier_one} a year at today's costs, or {tier_one_5} over five years.
-- **Year 1:** with the kitchen open for half the year, the tenant roughly breaks even. Rent that year is 10% of revenue with no minimum.
+- **Year 1:** with the kitchen open for half the year, the tenant runs at a small loss. Rent that year is 10% of revenue with no minimum.
 - **If the kitchen is delayed further:** Exhibit D shows a rooms-only year. The rooms alone carry the property costs and the minimum rent, at a small loss to the tenant.
 
 | End of Year 5 | If the purchase closes | If it does not |
